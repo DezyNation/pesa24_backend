@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('customer_id')->nullable();
             $table->string('merchant_code')->nullable();
             $table->string('merchant_name')->nullable();
+            $table->integer('commission')->nullable();
             $table->string('customer_balance')->nullable();
             $table->string('sender_name')->nullable();
             $table->string('auth_code')->nullable();
