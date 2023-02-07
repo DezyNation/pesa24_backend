@@ -10,6 +10,25 @@ class CustomerRecipientController extends Controller
 {
     /*-----------------------Customer-----------------------*/
     
+    public function customerInfo()
+    {
+        $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
+        $encodedKey = base64_encode($key);
+        $secret_key_timestamp = round(microtime(true) * 1000);
+        $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
+        $secret_key = base64_encode($signature);
+        $phone = auth()->user()->phone_number;
+        $user_code = auth()->user()->user_code;
+
+        $response = Http::asForm()->withHeaders([
+            'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
+            'secret-key-timestamp'=> $secret_key_timestamp,
+            'secret-key'=> $secret_key,
+        ])->get("https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:$phone?initiator_id=9962981729&user_code=$user_code");
+
+        return $response;
+    }
+
     public function createCustomer(Request $request)
     {
         $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
@@ -21,7 +40,7 @@ class CustomerRecipientController extends Controller
         $data = [
             'name' => $request['name'],
             'initiator_id' => 9962981729,
-            'user_code' => 20810200,
+            'user_code' => auth()->user()->user_code,
             'dob' => date('Y-m-d'),
             'title'=> $request['title'],
             'residence_address' => ['state' => $request['state']]
@@ -46,7 +65,7 @@ class CustomerRecipientController extends Controller
 
         $data = [
             'initiator_id' => 9962981729,
-            'user_code' => 20810200,
+            'user_code' => auth()->user()->user_code,
             'pipe' => 9
         ];
 
@@ -95,12 +114,14 @@ class CustomerRecipientController extends Controller
         $secret_key_timestamp = round(microtime(true) * 1000);
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
         $secret_key = base64_encode($signature);
+        $user_code = auth()->user()->user_code;
+        $phone = auth()->user()->phone_number;
 
         $response = Http::withHeaders([
             'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
             'secret-key-timestamp'=> $secret_key_timestamp,
             'secret-key'=> $secret_key,
-        ])->get('https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:8800990087/recipients?initiator_id=9962981729&user_code=20810200');
+        ])->get("https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:$phone/recipients?initiator_id=9962981729&user_code=$user_code");
 
         return $response; 
     }
@@ -112,12 +133,14 @@ class CustomerRecipientController extends Controller
         $secret_key_timestamp = round(microtime(true) * 1000);
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
         $secret_key = base64_encode($signature);
+        $user_code = auth()->user()->user_code;
+        $phone = auth()->user()->phone_number;
 
         $response = Http::withHeaders([
             'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
             'secret-key-timestamp'=> $secret_key_timestamp,
             'secret-key'=> $secret_key,
-        ])->get('https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:8800990087/recipients/recipient_id:10019064?initiator_id=9962981729&user_code=20810200');
+        ])->get("https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:$phone/recipients/recipient_id:10019064?initiator_id=9962981729&user_code=$user_code");
 
         return $response; 
     }
@@ -134,9 +157,9 @@ class CustomerRecipientController extends Controller
             'initiator_id' => 9962981729,
             'bank_id' => 56,
             'recipient_name' => 'John Doe',
-            'recipient_mobile' => 7661109875,
+            'recipient_mobile' => 9971412064,
             'recipient_type' => 3,
-            'user_code' => 20810200
+            'user_code' => auth()->user()->user_code
         ];
 
         $response = Http::asForm()->withHeaders([

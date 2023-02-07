@@ -28,6 +28,7 @@ class User extends Authenticatable
         'last_name',
         'otp',
         'profile',
+        'company_name',
         'phone_number'
     ];
 

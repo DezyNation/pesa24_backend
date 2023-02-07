@@ -4,33 +4,44 @@ namespace App\Http\Controllers\Eko\Agent;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use App\Http\Resources\v1\UserResource;
 
 class AgentManagementController extends Controller
 {
     public function userOnboard()
     {
-        $key = env('AUTHENTICATOR_KEY');
+
+        $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
         $secret_key = base64_encode($signature);
 
+        $line = auth()->user()->line;
+        $city = auth()->user()->city;
+        $state = auth()->user()->state;
+        $pincode = auth()->user()->pincode;
+
+        $residence_address['line'] = strval($line);
+        $residence_address['city'] = strval($city);
+        $residence_address['state'] = strval($state);
+        $residence_address['pincode'] = strval($pincode);
+        
         $data = [
-            'initiator_id' => env('INITIATOR_ID'),
-            'pan_number' => 'ABCQE1234F',
-            'mobile' => 9971412064,
-            'first_name' => 'Rishi',
-            'middle_name' => '',
-            'last_name' => 'Kumar',
-            'email' => 'rk3141508@gmail.com',
-            // 'residence_address' => `{"line": $request->input('line'),"city":$request->input('city'),"state":$request->input('state'),"pincode":$request->input('pin')}`,
-            'residence_address' => "{'line': $a,'city':$b, 'state':$c,'pincode':$d}",
-            'dob' => date("d-m-Y"),
-            // 'dob' => date("d-m-Y"),
-            'shop_name' => 'Vishal'
+            'initiator_id' => 9962981729,
+            'pan_number' => auth()->user()->pan_number,
+            'mobile' => auth()->user()->phone_number,
+            'first_name' => auth()->user()->first_name,
+            'middle_name' => auth()->user()->middle_name,
+            'last_name' => auth()->user()->last_name,
+            'email' => auth()->user()->email,
+            'residence_address' => json_encode($residence_address),
+            'dob' => auth()->user()->dob,
+            'shop_name' => auth()->user()->company_name
         ];
 
         $response = Http::asForm()->withHeaders([
@@ -38,8 +49,16 @@ class AgentManagementController extends Controller
             'secret-key-timestamp'=> $secret_key_timestamp,
             'secret-key'=> $secret_key,
         ])->put('https://staging.eko.in:25004/ekoapi/v1/user/onboard', $data);
+        
+        if(collect($response->json($key = 'data'))->has('user_code'))
+        {
+        DB::table('users')->where('id', auth()->user()->id)->update([
+            'user_code' => $response->json($key = 'data')['user_code']
+        ]);
+        return response(new UserResource(User::findOrFail(Auth::id())), 200);
+        }
+        return response($response, 400);
 
-        return $response;
     }
 
     public function activateService(Request $request)

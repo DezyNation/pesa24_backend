@@ -3,8 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Eko\BBPS\BBPSController;
 use App\Http\Controllers\Eko\AePS\AepsApiController;
+use App\Http\Controllers\Eko\DMT\AgentCustomerController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 
 /*
@@ -27,11 +29,15 @@ Route::post('users/otp', [UserController::class, 'otp']);
 Route::post('users/verify-otp', [UserController::class, 'verifyOtp']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    /*------------------------USER------------------------*/
+    Route::post('user/update', [ProfileController::class, 'update']);
+    Route::post('user/info', [ProfileController::class, 'info']);
+
 
     /*------------------------EKO AEPS------------------------*/
+    Route::get('user-service-inquiry', [AepsApiController::class, 'userServiceInquiry']);
     Route::post('aeps-inquiry', [AepsApiController::class, 'aepsInquiry']);
     Route::post('fund-settlement', [AepsApiController::class, 'fundSettlement']);
-    Route::get('user-service-inquiry', [AepsApiController::class, 'userServiceInquiry']);
     Route::post('aeps-inquiry', [AepsApiController::class, 'aepsInquiry']);
 
     /*------------------------EKO BBPS------------------------*/
@@ -39,7 +45,22 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('eko/bbps/operators/{category_id?}', [BBPSController::class, 'operators']);
     Route::get('eko/bbps/operators/fields/{operator_id}', [BBPSController::class, 'operatorField']);
     Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill']);
-    /*------------------------EKO DMT------------------------*/ 
+
+    /*------------------------EKO DMT------------------------*/
+
+    Route::get('eko/dmt/customer-info', [CustomerRecipientController::class, 'customerInfo']);
+    Route::get('eko/dmt/create-customer', [CustomerRecipientController::class, 'createCustomer']);
+    Route::get('eko/dmt/resend-otp', [CustomerRecipientController::class, 'resendOtp']);
+    Route::get('eko/dmt/verify-customer', [CustomerRecipientController::class, 'verifyCustomerIdentity']);
+
+    Route::get('eko/dmt/recipient-list', [CustomerRecipientController::class, 'recipientList']);
+    Route::get('eko/dmt/recipient-details', [CustomerRecipientController::class, 'recipientDetails']);
+    Route::get('eko/dmt/add-recipient', [CustomerRecipientController::class, 'addRecipient']);
+
+    Route::get('eko/dmt/customer-info', [CustomerRecipientController::class, 'customerInfo']);
+    Route::get('eko/dmt/register-agent', [AgentCustomerController::class, 'dmtRegistration']);
+    Route::get('eko/dmt/fetch-agent', [AgentCustomerController::class, 'fetchAgent']);
+
 });
 Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
 Route::get('paysprint/bbps/mobile-recharge/hlr', [RechargeController::class, 'hlrCheck']);
