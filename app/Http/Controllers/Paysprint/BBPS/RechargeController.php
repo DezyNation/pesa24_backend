@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Paysprint\BBPS;
 
 use Firebase\JWT\JWT;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
@@ -38,6 +39,35 @@ class RechargeController extends Controller
 
         return collect($response->json($key = 'data'))->whereIn('category', [$type]);
     }
+
+    // public function operatorList(Request $request)
+    // {
+
+    //     $token  = $this->token();
+    //     $response = Http::acceptJson()->withHeaders([
+    //         'Token' => $token,
+    //         'accept' => 'application/json',
+    //         'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+    //         'content-type' => 'application/json',
+    //     ])->post("https://paysprint.in/service-api/api/v1/service/recharge/Recharge_v2/getoperator", []);
+
+    //     // return collect($response->json($key = 'data'))->whereIn('category', [$type]);
+    //     return $response;
+    // }
+
+    // public function location(Request $request)
+    // {
+    //     $token  = $this->token();
+    //     $response = Http::acceptJson()->withHeaders([
+    //         'Token' => $token,
+    //         'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+    //         'content-type' => 'application/json',
+    //     ])->post("https://paysprint.in/service-api/api/v1/service/recharge/Recharge_v2/location", []);
+
+    //     return $response;
+    // }
+
+
 
     public function operatorParameter(Request $request, $id)
     {
@@ -78,16 +108,17 @@ class RechargeController extends Controller
     {
         $token = $this->token();
         $data = [
-            'number' => '9232341000',
+            'number' => 9971412064,
             'type' => 'mobile'
         ];
 
+        new Client();
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
             'accept' => 'application/json',
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'content-type' => 'application/json',
-        ])->post("https://paysprint.in/service-api/api/v1/service/recharge/hlrapi/hlrcheck", $data);
+        ])->post("https://paysprint.in/service-api/api/v1/service/recharge/hlrapi/hlrcheck", ['body'=> json_encode(['number'=> 9971412064, 'type'=> 'moblie'])] );
 
 
         return $response;

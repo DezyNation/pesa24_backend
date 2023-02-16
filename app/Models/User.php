@@ -46,7 +46,7 @@ class User extends Authenticatable
         'referal_code',
         'onboard_fee',
         'kyc',
-        'user_code'
+        'otp'
     ];
 
     /**

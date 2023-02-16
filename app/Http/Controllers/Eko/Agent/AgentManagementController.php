@@ -73,20 +73,17 @@ class AgentManagementController extends Controller
             'service_code' => 2,
             'initiator_id' => '9962981729',
             'user_code' => auth()->user()->user_code,
-            'devicenumber' => $request['devicenumber'],
-            'model_name' => $request['model_name'],
-            'address_as_per_proof' => "{'line': '$request->line','city':'$request->city','state':'$request->state','pincode':'$request->pincode'}",
-            'office_address' => "{'line': '$request->office_line','city':'$request->office_city','state':'$request->office_state','pincode':'$request->office_pincode'}"
+            // 'devicenumber' => $request['devicenumber'],
+            // 'model_name' => $request['model_name'],
+            // 'address_as_per_proof' => "{'line': '$request->line','city':'$request->city','state':'$request->state','pincode':'$request->pincode'}",
+            // 'office_address' => "{'line': '$request->office_line','city':'$request->office_city','state':'$request->office_state','pincode':'$request->office_pincode'}"
         ];
 
-        $aadhar_front = $request->file('aadhar_front');
-        $aadhar_back = $request->file('aadhar_back');
-        $pan_card = $request->file('pan_card');
+        // $aadhar_front = $request->file('aadhar_front');
+        // $aadhar_back = $request->file('aadhar_back');
+        // $pan_card = $request->file('pan_card');
 
-        $response = Http::attach('aadhar_front', file_get_contents($aadhar_front), 'aadhar_front.jpg')->
-                          attach('aadhar_back', file_get_contents($aadhar_back), 'aadhar_back.jpg')->
-                          attach('pan_card', file_get_contents($pan_card), 'pan_card.jpg')->
-                          asForm()->withHeaders([
+        $response = Http::asForm()->withHeaders([
             'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
             'secret-key-timestamp'=> $secret_key_timestamp,
             'secret-key'=> $secret_key,

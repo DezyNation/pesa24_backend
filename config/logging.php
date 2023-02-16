@@ -56,6 +56,12 @@ return [
             'channels' => ['single'],
             'ignore_exceptions' => false,
         ],
+        
+        'pesa24' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/pesa24.log'),
+            'level' => 'info',
+        ],
 
         'single' => [
             'driver' => 'single',

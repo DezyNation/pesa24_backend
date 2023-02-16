@@ -32,7 +32,7 @@ class LoginRequest extends FormRequest
             // 'user_id' => ['required', 'string'],
             'password' => ['required' ,'string'],
             'authMethod' => ['required'],
-            'otp' => ['string']
+            // 'otp' => ['string']
         ];
     }
 

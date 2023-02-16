@@ -68,19 +68,17 @@ class BBPSController extends Controller
         $secret_key = base64_encode($signature);
         
         $data1 = [
-            'user_code' => 20810200,
+            'user_code' => auth()->user()->user_code,
             'client_ref_id' => uniqid(),
-            'confirmation_mobile_no' => 9971412064,
-            'sender_name' => 'Rishi',
             'source_ip' => $request->ip(),
 
         ];
         $data = $request->all();
         $data2 = $data1 + $data;
+        // return $data2;
 
         $response = Http::withHeaders([
             'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
-            'Content-Type' => 'application/json',
             'Connection' => 'Keep-Alive',
             'Accept-Encoding' => 'gzip',
             'User-Agent' => 'okhttp/3.9.0',
