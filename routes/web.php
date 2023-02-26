@@ -2,6 +2,9 @@
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Paysprint\LICController;
+use App\Http\Controllers\Paysprint\LPGController;
+use App\Http\Controllers\Razorpay\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +18,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return ['Laravel' => app()->version()];
+    return phpinfo();
 });
+
+Route::get('lic-api', [LICController::class, 'fetchbill']);
+Route::get('lic-api1', [LICController::class, 'payLicBill']);
+Route::get('lpg-api', [LPGController::class, 'operatorList']);
+Route::get('contact', [ContactController::class, 'createContact']);
 require __DIR__.'/auth.php';

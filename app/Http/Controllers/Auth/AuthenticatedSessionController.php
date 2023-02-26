@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
                     'email' => ['The provided credentials are incorrect.'],
                 ]);
             }
-            $otp = rand(1000, 9999);
+            $otp = 1234;
             Mail::to($user->email)->queue(new SendOtp($otp));
             $user->update(['otp' => Hash::make($otp)]);
 
