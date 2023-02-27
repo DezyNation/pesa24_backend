@@ -9,6 +9,7 @@ use App\Http\Controllers\Eko\AePS\AepsApiController;
 use App\Http\Controllers\Eko\DMT\AgentCustomerController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
+use App\Http\Controllers\Razorpay\PayoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +64,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('eko/dmt/customer-info', [CustomerRecipientController::class, 'customerInfo']);
     Route::get('eko/dmt/register-agent', [AgentCustomerController::class, 'dmtRegistration']);
     Route::get('eko/dmt/fetch-agent', [AgentCustomerController::class, 'fetchAgent']);
+
+    /*-----------------------Razorpay Payout-----------------------*/
+    Route::post('razorpay/payout/fetch-payout', [PayoutController::class, 'fetchPayouts']);
+    Route::post('razorpay/payout/make-payout', [PayoutController::class, 'bankPayout']);
 
 });
 Route::get('paysprint/bbps/mobile-operators', [RechargeController::class, 'operatorList']);

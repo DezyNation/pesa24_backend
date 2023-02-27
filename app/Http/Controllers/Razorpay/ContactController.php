@@ -25,4 +25,9 @@ class ContactController extends Controller
 
         return $request;
     }
+
+    public function updateContact()
+    {
+        $data = [];
+    }
 }

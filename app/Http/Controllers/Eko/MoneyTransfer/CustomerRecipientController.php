@@ -127,7 +127,7 @@ class CustomerRecipientController extends Controller
         
     /*-----------------------Recipient-----------------------*/
 
-    public function recipientList()
+    public function recipientList(Request $request)
     {
         $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
         $encodedKey = base64_encode($key);
