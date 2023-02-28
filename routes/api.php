@@ -67,9 +67,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     /*-----------------------Razorpay Payout-----------------------*/
     Route::post('razorpay/payout/fetch-payout', [PayoutController::class, 'fetchPayouts']);
-    Route::post('razorpay/payout/make-payout', [PayoutController::class, 'bankPayout']);
 
 });
+    Route::get('razorpay/payout/make-payout', [PayoutController::class, 'bankPayout']);
 Route::get('paysprint/bbps/mobile-operators', [RechargeController::class, 'operatorList']);
 Route::get('paysprint/bbps/location', [RechargeController::class, 'location']);
 Route::get('paysprint/bbps/mobile-recharge/hlr', [RechargeController::class, 'hlrCheck']);

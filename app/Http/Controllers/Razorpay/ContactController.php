@@ -22,7 +22,6 @@ class ContactController extends Controller
             'Content-type' => 'application/json'
         ])->post('https://api.razorpay.com/v1/contacts', $data);
         
-
         return $request;
     }
 

@@ -3,12 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Package;
 use App\Models\KYCVerification;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -66,5 +68,15 @@ class User extends Authenticatable
     public function kyc(): HasOne
     {
         return $this->hasOne(KYCVerification::class);
+    }
+
+    /**
+     * Get the package associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function package(): BelongsTo
+    {
+        return $this->belongsTo(Package::class)->select(['id', 'name']);
     }
 }
