@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Http;
 
 class RegisteredUserController extends Controller
 {
@@ -36,14 +37,20 @@ class RegisteredUserController extends Controller
             // 'role' => ['required'],
         ]);
 
+        $email = $request['email'];
+        $phone = $request['phone'];
+        $user = $request['first_name'];
+        $mpin = rand(1001, 9999);
         $password = Str::random(8);
         $user = User::create([
             'name' => $request['first_name']." ".$request['last_name'],
             'first_name' => $request['first_name'],
             'last_name' => $request['last_name'],
             'email' => $request['email'],
+            'phone' => $request['phone'],
             'password' => Hash::make($password),
-        ]);
+            'mpin' => Hash::make($mpin)
+        ])->assignRole('retailer');
         // return ['Login' => true];
         event(new Registered($user));
         Mail::raw("Hello Your one time password is $password", function ($message) {
@@ -52,6 +59,8 @@ class RegisteredUserController extends Controller
             $message->subject('Welcome to Pesa24');
             $message->priority(1);
         });
+        $text = "Dear $user, Welcome to Rpay. You have registered sucessfully, your ID-$phone, Password-$password, Mpin-$mpin Now you can login https://rpay.live/. From-P24 Technology Pvt. Ltd";
+        Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
         // Auth::login($user);
 
         return response()->noContent();

@@ -7,6 +7,6 @@
     <title>OTP</title>
 </head>
 <body>
-    <h1>Your Ot is {{ $otp }}</h1>
+    <h1>Your Otp is {{ $otp }}</h1>
 </body>
 </html>

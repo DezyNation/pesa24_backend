@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\v1\UserResource;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\Eko\Agent\AgentManagementController;
 
 class ProfileController extends AgentManagementController
@@ -66,7 +69,8 @@ class ProfileController extends AgentManagementController
             'values.state' => ['required', 'string', 'max:255'],
             'values.phone' => ['required', Rule::unique('users', 'phone_number')->ignore(auth()->user()->id)],
             'values.pan' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')->ignore(auth()->user()->id)],
-            'values.companyName' => ['required', 'max:255']
+            'values.companyName' => ['required', 'max:255'],
+            'values.mpin' => ['required', 'digits:4', 'integer']
         ]);
 
         User::where('id', auth()->user()->id)->update([
@@ -81,7 +85,8 @@ class ProfileController extends AgentManagementController
             'phone_number' => $request['values']['phone'],
             'pan_number' => $request['values']['pan'],
             'company_name' => $request['values']['companyName'],
-            'profile' => 1
+            'profile' => 1,
+            'mpin' => Hash::make( $request['values']['mpin'])
         ]);
 
         if (is_null(auth()->user()->user_code))
@@ -100,5 +105,49 @@ class ProfileController extends AgentManagementController
     public function destroy($id)
     {
         //
+    }
+
+    public function newMpin(Request $request)
+    {
+        $request->validate([
+            'old_mpin' => 'required',
+            'new_mpin' => 'required|digits:8|confirmed'
+        ]);
+
+        $user =  User::where('id', auth()->user()->id)->first();
+
+        if (!$user || !Hash::check($request['old_mpin'], $user->mpin)) {
+            throw ValidationException::withMessages([
+                'error' => ['You entered wrong MPIN'],
+            ]);
+        }
+        
+        User::where('id', auth()->user()->id)->update([
+            'mpin' => $request['new_mpin']
+        ]);
+
+        return response('MPIN changed successfully', 200);
+    }
+
+    public function newPass(Request $request)
+    {
+        $request->validate([
+            'old_pass' => 'required',
+            'new_pass' => 'required|digits:8|confirmed'
+        ]);
+
+        $user =  User::where('id', auth()->user()->id)->first();
+
+        if (!$user || !Hash::check($request['old_pass'], $user->mpin)) {
+            throw ValidationException::withMessages([
+                'error' => ['You entered wrong Password'],
+            ]);
+        }
+
+        User::where('id', auth()->user()->id)->update([
+            'password' => $request['new_pass']
+        ]);
+
+        return response('Password changed successfully', 200);
     }
 }

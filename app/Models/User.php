@@ -31,7 +31,8 @@ class User extends Authenticatable
         'otp',
         'profile',
         'company_name',
-        'phone_number'
+        'phone_number',
+        'mpin'
     ];
 
     /**k
@@ -78,5 +79,15 @@ class User extends Authenticatable
     public function package(): BelongsTo
     {
         return $this->belongsTo(Package::class)->select(['id', 'name']);
+    }
+    
+    /**
+     * Get the user associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function contact(): HasOne
+    {
+        return $this->hasOne(Contact::class);
     }
 }

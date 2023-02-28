@@ -9,6 +9,8 @@ use App\Http\Controllers\Eko\AePS\AepsApiController;
 use App\Http\Controllers\Eko\DMT\AgentCustomerController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
+use App\Http\Controllers\Razorpay\ContactController;
+use App\Http\Controllers\Razorpay\FundAccountController;
 use App\Http\Controllers\Razorpay\PayoutController;
 
 /*
@@ -35,6 +37,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('user/update', [ProfileController::class, 'update']);
     Route::post('user/info', [ProfileController::class, 'info']);
 
+    /*-----------------------Password and MPIN-----------------------*/
+    Route::post('new-mpin', [ProfileController::class, 'newMpin']);
+    Route::post('new-mpin', [ProfileController::class, 'newPass']);
 
     /*------------------------EKO AEPS------------------------*/
     Route::get('user-service-inquiry', [AepsApiController::class, 'userServiceInquiry']);
@@ -66,17 +71,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('eko/dmt/fetch-agent', [AgentCustomerController::class, 'fetchAgent']);
 
     /*-----------------------Razorpay Payout-----------------------*/
-    Route::post('razorpay/payout/fetch-payout', [PayoutController::class, 'fetchPayouts']);
+    Route::post('razorpay/contacts/create-contact', [FundAccountController::class, 'createFundAcc']);
+    Route::post('razorpay/contacts/create-contact', [PayoutController::class, 'fetchPayoutAdmin']);
 
+    /*-----------------------Password and MPIN-----------------------*/
 });
-    Route::get('razorpay/payout/make-payout', [PayoutController::class, 'bankPayout']);
-Route::get('paysprint/bbps/mobile-operators', [RechargeController::class, 'operatorList']);
-Route::get('paysprint/bbps/location', [RechargeController::class, 'location']);
-Route::get('paysprint/bbps/mobile-recharge/hlr', [RechargeController::class, 'hlrCheck']);
-Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
-Route::get('paysprint/bbps/mobile-recharge/parameter/{id}', [RechargeController::class, 'operatorParameter']);
+// Route::get('paysprint/bbps/mobile-operators', [RechargeController::class, 'operatorList']);
+// Route::get('paysprint/bbps/location', [RechargeController::class, 'location']);
+// Route::get('paysprint/bbps/mobile-recharge/hlr', [RechargeController::class, 'hlrCheck']);
+// Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
+// Route::get('paysprint/bbps/mobile-recharge/parameter/{id}', [RechargeController::class, 'operatorParameter']);
 
 Route::group(['middleware' => ['auth:sanctum', 'role:admin'], 'prefix' => 'admin'], function () {
     Route::get('users', [UserController::class, 'index']);
     Route::get('users/{id}', [UserController::class, 'show']);
+    Route::get('payouts', [PayoutController::class, 'fetchPayoutAdmin']);
 });
