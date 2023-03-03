@@ -20,7 +20,9 @@ return new class extends Migration
             $table->string('transacion_id');
             $table->date('transaction_date');
             $table->string('transaction_receipt');
+            $table->boolean('approved')->default('false');
             $table->string('remarks')->nullable();
+            $table->string('admin_remarks')->nullable();
             $table->timestamps();
         });
     }

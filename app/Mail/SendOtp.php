@@ -9,6 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailables\Address;
 
 class SendOtp extends Mailable
 {
@@ -33,7 +34,7 @@ class SendOtp extends Mailable
     public function envelope()
     {
         return new Envelope(
-            from: 'pesa24@gmail.com',
+            from: new Address('info@pesa24.co.in', 'Rpay'),
             subject: 'Login To Pesa24',
         );
     }
@@ -47,7 +48,6 @@ class SendOtp extends Mailable
     {
         return new Content(
             view: 'Otp'
-            // text: "Your OTP is $this->otp",
         );
     }
 

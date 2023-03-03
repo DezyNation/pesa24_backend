@@ -111,7 +111,7 @@ class ProfileController extends AgentManagementController
     {
         $request->validate([
             'old_mpin' => 'required',
-            'new_mpin' => 'required|digits:8|confirmed'
+            'new_mpin' => 'required|digits:4|confirmed'
         ]);
 
         $user =  User::where('id', auth()->user()->id)->first();
@@ -123,7 +123,7 @@ class ProfileController extends AgentManagementController
         }
         
         User::where('id', auth()->user()->id)->update([
-            'mpin' => $request['new_mpin']
+            'mpin' => Hash::make($request['new_mpin'])
         ]);
 
         return response('MPIN changed successfully', 200);
@@ -132,22 +132,28 @@ class ProfileController extends AgentManagementController
     public function newPass(Request $request)
     {
         $request->validate([
-            'old_pass' => 'required',
-            'new_pass' => 'required|digits:8|confirmed'
+            'old_password' => 'required',
+            'new_password' => 'required|min:8|max:16|confirmed'
         ]);
 
         $user =  User::where('id', auth()->user()->id)->first();
 
-        if (!$user || !Hash::check($request['old_pass'], $user->mpin)) {
+        if (!$user || !Hash::check($request['old_password'], $user->password)) {
             throw ValidationException::withMessages([
                 'error' => ['You entered wrong Password'],
             ]);
         }
 
         User::where('id', auth()->user()->id)->update([
-            'password' => $request['new_pass']
+            'password' => Hash::make($request['new_password'])
         ]);
 
         return response('Password changed successfully', 200);
+    }
+    
+        public function wallet()
+    {
+        $wallet = DB::table('users')->where('id', auth()->user()->id)->get('wallet');
+        return $wallet;
     }
 }

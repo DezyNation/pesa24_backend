@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\FundRequestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
@@ -36,6 +37,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     /*------------------------USER------------------------*/
     Route::post('user/update', [ProfileController::class, 'update']);
     Route::post('user/info', [ProfileController::class, 'info']);
+    Route::post('user/wallet', [ProfileController::class, 'wallet']);
 
     /*-----------------------Password and MPIN-----------------------*/
     Route::post('new-mpin', [ProfileController::class, 'newMpin']);
@@ -74,6 +76,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('razorpay/contacts/create-contact', [FundAccountController::class, 'createFundAcc']);
     Route::post('razorpay/contacts/create-contact', [PayoutController::class, 'fetchPayoutAdmin']);
 
+    Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
+    Route::get('fund/fetch-fund', [FundRequestController::class, 'fetchFundUser']);
+
     /*-----------------------Password and MPIN-----------------------*/
 });
 // Route::get('paysprint/bbps/mobile-operators', [RechargeController::class, 'operatorList']);
@@ -85,5 +90,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::group(['middleware' => ['auth:sanctum', 'role:admin'], 'prefix' => 'admin'], function () {
     Route::get('users', [UserController::class, 'index']);
     Route::get('users/{id}', [UserController::class, 'show']);
+
+    
+
+
     Route::get('payouts', [PayoutController::class, 'fetchPayoutAdmin']);
+
+    Route::get('fetch-fund-requests', [FundRequestController::class, 'fetchFund']);
+    Route::get('fetch-fund-requests/{id}', [FundRequestController::class, 'fetchFundId']);
+    Route::post('update-fund-requests', [FundRequestController::class, 'updateFund']);
 });
+
+//Line 78 'api/fund/request-fund' --> for fund request
+//Line 93 'api/admin/fetch-fund-requests' --> get all fund requests
+//Line 94 'api/admin/fetch-fund-requests/{if}' --> get specific fund request
+//Line 94 'api/admin/update-fund-requests' --> update-fund-request

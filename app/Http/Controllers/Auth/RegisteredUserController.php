@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
 
         $email = $request['email'];
         $phone = $request['phone'];
-        $user = $request['first_name'];
+        $username = $request['first_name'];
         $mpin = rand(1001, 9999);
         $password = Str::random(8);
         $user = User::create([
@@ -47,22 +47,30 @@ class RegisteredUserController extends Controller
             'first_name' => $request['first_name'],
             'last_name' => $request['last_name'],
             'email' => $request['email'],
-            'phone' => $request['phone'],
+            'phone_number' => $request['phone'],
             'password' => Hash::make($password),
             'mpin' => Hash::make($mpin)
         ])->assignRole('retailer');
+        // $this->email($email, $username, $password);
         // return ['Login' => true];
         event(new Registered($user));
-        Mail::raw("Hello Your one time password is $password", function ($message) {
-            $message->from('john@johndoe.com', 'John Doe');
-            $message->to('john@johndoe.com', 'John Doe');
-            $message->subject('Welcome to Pesa24');
-            $message->priority(1);
-        });
-        $text = "Dear $user, Welcome to Rpay. You have registered sucessfully, your ID-$phone, Password-$password, Mpin-$mpin Now you can login https://rpay.live/. From-P24 Technology Pvt. Ltd";
-        Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
+
+        $newmsg = "Dear $username , Welcome to Rpay. You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Now you can login https://rpay.live/. From'-P24 Technology Pvt. Ltd";
+        Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
         // Auth::login($user);
 
         return response()->noContent();
     }
+    
+    // public function email($to, $name, $password)
+    // {
+    //         Mail::raw("Hello Your one time password is $password", function ($message, $to, $name) {
+    //         $message->from('info@pesa24.co.in', 'John Doe');
+    //         $message->to($to, $name);
+    //         $message->subject('Welcome to Pesa24');
+    //         $message->priority(1);
+    //     });
+        
+    //     return "Mail sent";
+    // }
 }
