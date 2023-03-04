@@ -75,7 +75,7 @@ class BBPSController extends Controller
         ];
         $data = $request->all();
         $data2 = $data1 + $data;
-        // return $data2;
+        return $data2;
 
         $response = Http::withHeaders([
             'developer_key'=> 'becbbce45f79c6f5109f848acd540567',

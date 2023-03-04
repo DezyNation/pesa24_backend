@@ -25,6 +25,11 @@ Route::get('/', function () {
     return phpinfo();
 });
 
+Route::get('/user', function () {
+    $user = User::with('roles:name')->select('id')->findOrFail(23);
+    return $user['roles'][0]['pivot']['minimum_balance'];
+})->middleware('minimum_balance');
+
 Route::get('lic-api', [LICController::class, 'fetchbill']);
 Route::get('lic-api1', [LICController::class, 'payLicBill']);
 Route::get('lpg-api', [LPGController::class, 'operatorList']);
@@ -41,14 +46,20 @@ Route::get('logic', function () {
     // $commission = $user['package']['commissions'][0]['pivot']['commission'];
     // $surcharge = $user['package']['commissions'][0]['pivot']['surcharge'];
 
-    $payout = DB::table('payouts')->where('user_id', 23)->get([
-        'payout_id',
-        'amount',
-        'created_at'
-    ]);
+    // $payout = DB::table('payouts')->where('user_id', 23)->get([
+    //     'payout_id',
+    //     'amount',
+    //     'created_at'
+    // ]);
 
-    return $payout;
+    // User::where('id', 23)->update([
+    //     'password' => Hash::make('@60Kmph00'),
+    //     'mpin' => Hash::make('4742')
+    // ]);
+
+    // return 'dome';
 });
+
 
 
 

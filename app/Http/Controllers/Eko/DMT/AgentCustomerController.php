@@ -77,8 +77,9 @@ class AgentCustomerController extends Controller
         return $response;
     }
 
-    public function agentEkyc()
+    public function agentEkyc(Request $request)
     {
+        $aadhar = $request['aadhar'];
         $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
@@ -139,13 +140,20 @@ class AgentCustomerController extends Controller
 
     public function createCustomer(Request $request)
     {
+
+        $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
+        $encodedKey = base64_encode($key);
+        $secret_key_timestamp = round(microtime(true) * 1000);
+        $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
+        $secret_key = base64_encode($signature);
+
         $data = [
             'initiator_id' => 545102,
             'user_code' => auth()->user()->user_code,
             'customer_id' => 9971412064,
             'sender_name' => 'John Doe',
             'pan_number' => 'MFUPK1391B',
-            'dob' => date(),
+            'dob' => date(''),
             'gender' => 'M',
             'title' => 'Mr'
         ];

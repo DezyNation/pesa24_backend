@@ -28,7 +28,9 @@ class CustomerRecipientController extends Controller
             'secret-key'=> $secret_key,
         ])->get("https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:$phone?initiator_id=9962981729&user_code=$user_code");
 
-        return $response;
+        $data = $this->recipientList($phone);
+
+        return ['response' => $response->json(), 'recepient' => $data->json()];
     }
 
     public function createCustomer(Request $request)
@@ -127,7 +129,7 @@ class CustomerRecipientController extends Controller
         
     /*-----------------------Recipient-----------------------*/
 
-    public function recipientList(Request $request)
+    public function recipientList(int $phone)
     {
         $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
         $encodedKey = base64_encode($key);
@@ -135,7 +137,7 @@ class CustomerRecipientController extends Controller
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
         $secret_key = base64_encode($signature);
         $user_code = auth()->user()->user_code;
-        $phone = $request['phoneNumber'];
+        $phone = $phone;
 
         $response = Http::withHeaders([
             'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
