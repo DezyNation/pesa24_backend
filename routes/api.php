@@ -84,11 +84,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
     Route::get('fund/fetch-fund', [FundRequestController::class, 'fetchFundUser']);
 });
-// Route::get('paysprint/bbps/mobile-operators', [RechargeController::class, 'operatorList']);
-// Route::get('paysprint/bbps/location', [RechargeController::class, 'location']);
-// Route::get('paysprint/bbps/mobile-recharge/hlr', [RechargeController::class, 'hlrCheck']);
-// Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
-// Route::get('paysprint/bbps/mobile-recharge/parameter/{id}', [RechargeController::class, 'operatorParameter']);
 
 Route::group(['middleware' => ['auth:sanctum', 'role:admin'], 'prefix' => 'admin'], function () {
     Route::get('users', [UserController::class, 'index']);
