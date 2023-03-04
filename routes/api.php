@@ -76,10 +76,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('razorpay/contacts/create-contact', [FundAccountController::class, 'createFundAcc']);
     Route::post('razorpay/contacts/create-contact', [PayoutController::class, 'fetchPayoutAdmin']);
 
+    /*-----------------------Paysprint Recharge-----------------------*/
+    Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
+    Route::get('paysprint/bbps/mobile-operators/parameter/{id}', [RechargeController::class, 'operatorParameter']);
+    Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
+    /*-----------------------Fund Requests-----------------------*/
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
     Route::get('fund/fetch-fund', [FundRequestController::class, 'fetchFundUser']);
-
-    /*-----------------------Password and MPIN-----------------------*/
 });
 // Route::get('paysprint/bbps/mobile-operators', [RechargeController::class, 'operatorList']);
 // Route::get('paysprint/bbps/location', [RechargeController::class, 'location']);

@@ -24,7 +24,7 @@ class RechargeController extends Controller
         return $jwt;
     }
 
-    public function operatorList(Request $request, $type)
+    public function operatorList($type)
     {
         $data = [
             "mode" => "online",
@@ -69,7 +69,7 @@ class RechargeController extends Controller
 
 
 
-    public function operatorParameter(Request $request, $id)
+    public function operatorParameter($id)
     {
         $data = [
             "mode" => "online",
