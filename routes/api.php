@@ -48,6 +48,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('aeps-inquiry', [AepsApiController::class, 'aepsInquiry']);
     Route::post('fund-settlement', [AepsApiController::class, 'fundSettlement']);
     Route::post('aeps-inquiry', [AepsApiController::class, 'aepsInquiry']);
+    Route::post('eko/aeps/money-transfer', [AepsApiController::class, 'moneyTransfer']);
 
     /*------------------------EKO BBPS------------------------*/
     Route::get('eko/bbps/operators/categories', [BBPSController::class, 'operatorCategoryList']);
@@ -80,7 +81,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
     Route::get('paysprint/bbps/mobile-operators/parameter/{id}', [RechargeController::class, 'operatorParameter']);
     Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
+    Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge']);
     /*-----------------------Fund Requests-----------------------*/
+    
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
     Route::get('fund/fetch-fund', [FundRequestController::class, 'fetchFundUser']);
 });

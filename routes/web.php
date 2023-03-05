@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -35,6 +36,9 @@ Route::get('lic-api1', [LICController::class, 'payLicBill']);
 Route::get('lpg-api', [LPGController::class, 'operatorList']);
 Route::get('contact', [ContactController::class, 'createContact']);
 Route::get('payout', [PayoutController::class, 'bankPayout']);
+Route::get('hlr', [RechargeController::class, 'hlrCheck']);
+Route::get('location', [RechargeController::class, 'location']);
+Route::get('location-op', [RechargeController::class, 'doRecharge']);
 
 Route::get('logic', function () {
     // $money = 1000;
