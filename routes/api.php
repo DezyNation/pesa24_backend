@@ -10,6 +10,7 @@ use App\Http\Controllers\Eko\AePS\AepsApiController;
 use App\Http\Controllers\Eko\DMT\AgentCustomerController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
+use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Razorpay\ContactController;
 use App\Http\Controllers\Razorpay\FundAccountController;
 use App\Http\Controllers\Razorpay\PayoutController;
@@ -72,6 +73,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('eko/dmt/customer-info', [CustomerRecipientController::class, 'customerInfo']);
     Route::get('eko/dmt/register-agent', [AgentCustomerController::class, 'dmtRegistration']);
     Route::get('eko/dmt/fetch-agent', [AgentCustomerController::class, 'fetchAgent']);
+
+    Route::post('eko/dmt/initiate-payment', [TransactionController::class, 'initiatePayment']);
+    Route::get('eko/dmt/transaction-inquiry/{transactionid}', [TransactionController::class, 'transactionInquiry']);
+    Route::post('eko/dmt/transaction-refund/{tid}', [TransactionController::class, 'refund']);
+    Route::post('eko/dmt/transaction-refund-otp/{tid}', [TransactionController::class, 'refund']);
 
     /*-----------------------Razorpay Payout-----------------------*/
     Route::post('razorpay/contacts/create-contact', [FundAccountController::class, 'createFundAcc']);

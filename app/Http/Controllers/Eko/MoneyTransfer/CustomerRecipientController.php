@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Session;
 class CustomerRecipientController extends Controller
 {
     /*-----------------------Customer-----------------------*/
-    
+
     public function customerInfo(Request $request)
     {
         $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
@@ -23,9 +23,9 @@ class CustomerRecipientController extends Controller
         $user_code = auth()->user()->user_code;
 
         $response = Http::asForm()->withHeaders([
-            'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
-            'secret-key-timestamp'=> $secret_key_timestamp,
-            'secret-key'=> $secret_key,
+            'developer_key' => 'becbbce45f79c6f5109f848acd540567',
+            'secret-key-timestamp' => $secret_key_timestamp,
+            'secret-key' => $secret_key,
         ])->get("https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:$phone?initiator_id=9962981729&user_code=$user_code");
 
         $data = $this->recipientList($phone);
@@ -50,21 +50,22 @@ class CustomerRecipientController extends Controller
             'pipe' => 9,
             'residence_address' => json_encode(['street' => strval($request['values.street']), 'city' => strval($request['values.city']), 'state' => strval($request['values.state']), 'pincode' => strval($request['values.pincode'])])
         ];
-        
-        $response = Http::asForm()->withHeaders([
-            'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
-            'secret-key-timestamp'=> $secret_key_timestamp,
-            'secret-key'=> $secret_key,
-            ])->put("https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:$customer_id", $data);
-            
-            if($response->json($key = 'response_status_id') == 0 && $response->json($key = 'status') == 0){
-                Session::put('otp_ref_id', $response->json($key = 'data')['otp_ref_id']);
-                return response('OTP Send', 200);
-            }elseif ($response->json($key = 'response_status_id') == 1 && $response->json($key = 'status') == 1419) {
-                return response('Enter valid number', 400);
-            }
 
-            return response('Customer already verified', 409);
+        $response = Http::asForm()->withHeaders([
+            'developer_key' => 'becbbce45f79c6f5109f848acd540567',
+            'secret-key-timestamp' => $secret_key_timestamp,
+            'secret-key' => $secret_key,
+        ])->put("https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:$customer_id", $data);
+
+        /*---------------------------------Condition for OTP---------------------------------*/
+        if ($response->json($key = 'response_status_id') == 0 && $response->json($key = 'status') == 0) {
+            Session::put('otp_ref_id', $response->json($key = 'data')['otp_ref_id']);
+            return response('OTP Send', 200);
+        } elseif ($response->json($key = 'response_status_id') == 1 && $response->json($key = 'status') == 1419) {
+            return response('Enter valid number', 400);
+        }
+
+        return response('Customer already verified', 409);
     }
 
     public function resendOtp(Request $request)
@@ -83,23 +84,21 @@ class CustomerRecipientController extends Controller
         ];
 
         $response = Http::asForm()->withHeaders([
-            'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
-            'secret-key-timestamp'=> $secret_key_timestamp,
-            'secret-key'=> $secret_key,
-            ])->post("https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:$customer_id/otp", $data);
-            
-            if($response->json($key = 'response_status_id') == 0 && $response->json($key = 'status') == 0){
-                Session::put('otp_ref_id', $response->json($key = 'data')['otp_ref_id']);
-                return response('OTP Send', 200);
+            'developer_key' => 'becbbce45f79c6f5109f848acd540567',
+            'secret-key-timestamp' => $secret_key_timestamp,
+            'secret-key' => $secret_key,
+        ])->post("https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:$customer_id/otp", $data);
 
-            }elseif ($response->json($key = 'response_status_id') == -1 && $response->json($key = 'status') == 0) {
-                return response('Customer already registered', 204);
-            }
+        if ($response->json($key = 'response_status_id') == 0 && $response->json($key = 'status') == 0) {
+            Session::put('otp_ref_id', $response->json($key = 'data')['otp_ref_id']);
+            return response('OTP Send', 200);
+        } elseif ($response->json($key = 'response_status_id') == -1 && $response->json($key = 'status') == 0) {
+            return response('Customer already registered', 204);
+        }
 
-            return response( 'Customer does not exist', 409);
-
+        return response('Customer does not exist', 409);
     }
-        
+
     public function verifyCustomerIdentity(Request $request)
     {
         $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
@@ -112,21 +111,23 @@ class CustomerRecipientController extends Controller
         $data = [
             'initiator_id' => 9962981729,
             'user_code' => auth()->user()->user_code,
-            'customer_id_type'=> 'mobile_number',
+            'customer_id_type' => 'mobile_number',
             'customer_id' => $request['customerId'],
-            'pipe'=> 9,
+            'pipe' => 9,
             'otp_ref_id' => Session::get('otp_ref_id')
         ];
+        Session::forget('otp_ref_id');
 
         $response = Http::asForm()->withHeaders([
-            'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
-            'secret-key-timestamp'=> $secret_key_timestamp,
-            'secret-key'=> $secret_key,
-            ])->put("https://staging.eko.in:25004/ekoapi/v2/customers/verification/otp:$otp", $data);
-            
+            'developer_key' => 'becbbce45f79c6f5109f848acd540567',
+            'secret-key-timestamp' => $secret_key_timestamp,
+            'secret-key' => $secret_key,
+        ])->put("https://staging.eko.in:25004/ekoapi/v2/customers/verification/otp:$otp", $data);
+
         return $response;
     }
-        
+
+    
     /*-----------------------Recipient-----------------------*/
 
     public function recipientList(int $phone)
@@ -140,12 +141,12 @@ class CustomerRecipientController extends Controller
         $phone = $phone;
 
         $response = Http::withHeaders([
-            'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
-            'secret-key-timestamp'=> $secret_key_timestamp,
-            'secret-key'=> $secret_key,
+            'developer_key' => 'becbbce45f79c6f5109f848acd540567',
+            'secret-key-timestamp' => $secret_key_timestamp,
+            'secret-key' => $secret_key,
         ])->get("https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:$phone/recipients?initiator_id=9962981729&user_code=$user_code");
 
-        return $response; 
+        return $response;
     }
 
     public function recipientDetails(Request $request)
@@ -160,16 +161,16 @@ class CustomerRecipientController extends Controller
         $recipient_id = $request['recipientId'];
 
         $response = Http::withHeaders([
-            'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
-            'secret-key-timestamp'=> $secret_key_timestamp,
-            'secret-key'=> $secret_key,
+            'developer_key' => 'becbbce45f79c6f5109f848acd540567',
+            'secret-key-timestamp' => $secret_key_timestamp,
+            'secret-key' => $secret_key,
         ])->get("https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:$phone/recipients/recipient_id:$recipient_id?initiator_id=9962981729&user_code=$user_code");
 
-        return $response; 
+        return $response;
     }
 
     public function addRecipient(Request $request)
-    {         
+    {
         $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
@@ -189,14 +190,14 @@ class CustomerRecipientController extends Controller
         ];
 
         $customer_id = $request['customerId'];
-        $acc_ifsc = $request['values.accountNumber'].'_'.$request['values.ifsc'];
+        $acc_ifsc = $request['values.accountNumber'] . '_' . $request['values.ifsc'];
 
         $response = Http::asForm()->withHeaders([
-            'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
-            'secret-key-timestamp'=> $secret_key_timestamp,
-            'secret-key'=> $secret_key,
+            'developer_key' => 'becbbce45f79c6f5109f848acd540567',
+            'secret-key-timestamp' => $secret_key_timestamp,
+            'secret-key' => $secret_key,
         ])->put("https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:$customer_id/recipients/acc_ifsc:$acc_ifsc");
 
-        return $response; 
+        return $response;
     }
 }

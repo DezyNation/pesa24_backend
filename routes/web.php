@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -38,7 +39,7 @@ Route::get('contact', [ContactController::class, 'createContact']);
 Route::get('payout', [PayoutController::class, 'bankPayout']);
 Route::get('hlr', [RechargeController::class, 'hlrCheck']);
 Route::get('location', [RechargeController::class, 'location']);
-Route::get('location-op', [RechargeController::class, 'doRecharge']);
+Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
 
 Route::get('logic', function () {
     // $money = 1000;
