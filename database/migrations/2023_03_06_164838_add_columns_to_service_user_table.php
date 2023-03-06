@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('banks', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('account');
-            $table->string('ifsc');
-            $table->longText('address');
-            $table->timestamps();
+        Schema::table('service_user', function (Blueprint $table) {
+            $table->boolean('is_active')->after('is_paid');
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('banks');
+        Schema::table('service_user', function (Blueprint $table) {
+            $table->dropColumn('is_active');
+        });
     }
 };
