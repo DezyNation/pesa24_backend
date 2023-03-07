@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Paysprint\LICController;
 use App\Http\Controllers\Paysprint\LPGController;
+use App\Http\Controllers\Pesa24\KycVerificationController;
 use App\Http\Controllers\Razorpay\PayoutController;
 use App\Http\Controllers\Razorpay\ContactController;
 
@@ -39,7 +40,7 @@ Route::get('contact', [ContactController::class, 'createContact']);
 Route::get('payout', [PayoutController::class, 'bankPayout']);
 Route::get('hlr', [RechargeController::class, 'hlrCheck']);
 Route::get('location', [RechargeController::class, 'location']);
-Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
+Route::get('dmt', [KycVerificationController::class, 'sendOtpAadhaar']);
 
 Route::get('logic', function () {
     // $money = 1000;
