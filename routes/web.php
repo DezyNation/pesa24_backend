@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Eko\AePS\AepsApiController;
+use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Models\User;
@@ -41,6 +43,7 @@ Route::get('payout', [PayoutController::class, 'bankPayout']);
 Route::get('hlr', [RechargeController::class, 'hlrCheck']);
 Route::get('location', [RechargeController::class, 'location']);
 Route::get('dmt', [KycVerificationController::class, 'sendOtpAadhaar']);
+Route::get('inquiry', [PaysprintAeps::class, 'bankList']);
 
 Route::get('logic', function () {
     // $money = 1000;

@@ -21,15 +21,10 @@ class AgentManagementController extends Controller
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
         $secret_key = base64_encode($signature);
 
-        $line = auth()->user()->line;
-        $city = auth()->user()->city;
-        $state = auth()->user()->state;
-        $pincode = auth()->user()->pincode;
-
-        $residence_address['line'] = strval($line);
-        $residence_address['city'] = strval($city);
-        $residence_address['state'] = strval($state);
-        $residence_address['pincode'] = strval($pincode);
+        $residence_address['line'] = strval(auth()->user()->line);
+        $residence_address['city'] = strval(auth()->user()->city);
+        $residence_address['state'] = strval(auth()->user()->state);
+        $residence_address['pincode'] = strval(auth()->user()->pincode);
         
         $data = [
             'initiator_id' => 9962981729,
