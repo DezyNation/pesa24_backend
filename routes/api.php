@@ -48,7 +48,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('user-service-inquiry', [AepsApiController::class, 'userServiceInquiry']);
     Route::post('aeps-inquiry', [AepsApiController::class, 'aepsInquiry']);
     Route::post('fund-settlement', [AepsApiController::class, 'fundSettlement']);
-    Route::post('aeps-inquiry', [AepsApiController::class, 'aepsInquiry']);
     Route::post('eko/aeps/money-transfer', [AepsApiController::class, 'moneyTransfer']);
 
     /*------------------------EKO BBPS------------------------*/

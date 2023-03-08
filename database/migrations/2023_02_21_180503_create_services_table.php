@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('provider');
             $table->string('service');
             $table->integer('price');
+            $table->integer('admin_commission');
             $table->integer('super_distributor_commission');
             $table->integer('distributor_commission');
             $table->integer('retailer_commission');
