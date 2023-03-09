@@ -43,7 +43,7 @@ class RegisteredUserController extends Controller
         $mpin = rand(1001, 9999);
         $password = Str::random(8);
         $user = User::create([
-            'name' => $request['first_name']." ".$request['last_name'],
+            'name' => $request['first_name'] . " " . $request['last_name'],
             'first_name' => $request['first_name'],
             'last_name' => $request['last_name'],
             'email' => $request['email'],
@@ -55,13 +55,20 @@ class RegisteredUserController extends Controller
         // return ['Login' => true];
         event(new Registered($user));
 
+        Mail::raw("Hello Your one time password is $password and Mpin'-$mpin", function ($message) {
+            $message->from('info@pesa24.co.in', 'John Doe');
+            $message->to('rk3141508@gmail.com', 'Rishi');
+            $message->subject('Welcome to Pesa24');
+            $message->priority(1);
+        });
+
         $newmsg = "Dear $username , Welcome to Rpay. You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Now you can login https://rpay.live/. From'-P24 Technology Pvt. Ltd";
-        Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
+        // Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
         // Auth::login($user);
 
         return response()->noContent();
     }
-    
+
     // public function email($to, $name, $password)
     // {
     //         Mail::raw("Hello Your one time password is $password", function ($message, $to, $name) {
@@ -70,7 +77,7 @@ class RegisteredUserController extends Controller
     //         $message->subject('Welcome to Pesa24');
     //         $message->priority(1);
     //     });
-        
+
     //     return "Mail sent";
     // }
 }

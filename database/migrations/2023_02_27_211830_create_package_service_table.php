@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('commission_package', function (Blueprint $table) {
+        Schema::create('package_service', function (Blueprint $table) {
             $table->id();
             $table->foreignId('package_id')->nullable()->constrained()->nullOnDelete()->cascadeOnUpdate();
-            $table->foreignId('commission_id')->nullable()->constrained()->nullOnDelete()->cascadeOnUpdate();
+            $table->foreignId('service_id')->nullable()->constrained()->nullOnDelete()->cascadeOnUpdate();
             $table->integer('from');
             $table->integer('to');
             $table->integer('commission');

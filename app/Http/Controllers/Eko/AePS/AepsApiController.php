@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -91,11 +92,12 @@ class AepsApiController extends Controller
                 ]
             );
 
-            DB::insert(
+            DB::insertGetId(
                 'insert into transactions (user_id, transaction_for, credit_amount, debit_amount, opening_balance, balance_left, commission, transaction_id, is_flat, created_at, updated_at) values [?,?,?,?,?,?,?,?,?,?,?]',
                 [
-                    auth()->user()->id, 'AePS: Money Transfer', $data['amount'], 
-                ]);
+                    auth()->user()->id, 'AePS: Money Transfer', $data['amount'],
+                ]
+            );
         });
         return $response;
     }
@@ -350,9 +352,31 @@ class AepsApiController extends Controller
         return $response;
     }
 
-    public function commission(Str $service)
+    public function commission(Str $service, int $amount)
     {
-        DB::table('services')->where(['user_id'=> auth()->user()->id, 'service' => $service])->get();
-        
+        $user = auth()->user();
+        if ($user->has_parent) {
+            $parentId = DB::table('user_parent')->where('user_id', $user->id)->pluck('parent_id');
+            $parent = User::findOrFail($parentId);
+            if ($parent->has_parent) {
+                $parentId2 = DB::table('user_parent')->where('user_id', $parentId)->pluck('parent_id');
+                $parent2 = User::findOrFail($parentId2);
+                if ($parent2->has_parent) {
+                    $parentId3 = DB::table('user_parent')->where('user_id', $parentId2)->pluck('parent_id');
+                    $parent3 = User::findOrFail($parentId3);
+                    if ($parent3->has_parent) {
+                        $commission = 5;
+                    } else {
+                        $commission = 5;
+                    }
+                } else {
+                    $commission = 5;
+                }
+            } else {
+                $commission = 5;
+            }
+        } else {
+            $commission = 5;
+        }
     }
 }

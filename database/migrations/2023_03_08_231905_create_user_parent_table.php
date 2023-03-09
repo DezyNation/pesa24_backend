@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('commissions', function (Blueprint $table) {
+        Schema::create('user_parent', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
-            $table->string('operator_type');
-            $table->string('operator_name');
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete()->cascadeOnUpdate();
+            $table->foreignId('parent_id')->nullable()->constrained('users', 'id')->nullOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('commissions');
+        Schema::dropIfExists('user_parent');
     }
 };
