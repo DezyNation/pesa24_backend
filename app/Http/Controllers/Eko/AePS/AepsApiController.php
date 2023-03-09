@@ -413,34 +413,12 @@ class AepsApiController extends Controller
 
     public function testTransaction()
     {
-        $amount = 1000;
-        $serviceId = DB::table('services')->where(['type' => 'aeps', 'operator_type' => 'withdrawal', 'operator_name' => 'eko'])->pluck('id');
-        $packageId = DB::table('package_user')->where('user_id', 23)->pluck('package_id');
-        $commission_table = DB::table('package_service')->where(['service_id' => $serviceId, 'package_id' => $packageId]);
-        $pluck = $commission_table->pluck('commission');
-        $is_flat = $commission_table->pluck('is_flat');
-        if (!$is_flat) {
-            $commission = $amount*$pluck[0]/100;
-        } else {
-            $commission = $pluck[0];
-        }
-        // return $commission;
-        $id = DB::table('transactions')->insertGetId([
-            'user_id' => 23,
-            'transaction_for' => 'AePS: Money Transfer',
-            'credit_amount' => $amount,
-            'debit_amount' => 0,
-            'opening_balance' => 5000,
-            'balance_left' => 6000,
-            'commission' => $commission,
-            'transaction_id' => uniqid(),
-            'is_flat' => $is_flat[0],
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-        $user = User::findOrFail(23);
-        $this->commissionTest($user, $id, $amount, $serviceId);
-
+        
         return response('Done', 200);
+    }
+
+    public function test()
+    {
+        $user = User::with(['packages.services', 'parents:id,name', 'roles:name'])->select('id')->find(23);
     }
 }

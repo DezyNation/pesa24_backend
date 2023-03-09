@@ -14,6 +14,7 @@ use App\Http\Controllers\Paysprint\LPGController;
 use App\Http\Controllers\Pesa24\KycVerificationController;
 use App\Http\Controllers\Razorpay\PayoutController;
 use App\Http\Controllers\Razorpay\ContactController;
+use Illuminate\Database\Eloquent\Builder;
 
 /*
 |--------------------------------------------------------------------------
@@ -88,13 +89,20 @@ Route::get('logic', function () {
     //         'admin_commission' => 5
     //     ]);
     // }
-    $parent = User::with(['packages.services', 'parents:id,name'])->select('id')->find(23);
+
+
     // $parent_id = DB::table('user_parent')->where('user_id', 23)->pluck('parent_id');
     // $user_package = DB::table('package_user')->where('user_id', $parent_id[0])->pluck('package_id');
     // $commission = DB::table('package_service')->where(['package_id' => $user_package, 'service_id'=> $service_id[0]])->where('to', '<=', $amount)->pluck('commission');
     // $roles = $parent->getRoleNames();
     // return $roles[0];
     // return 'dome';
+    $parent = User::with(['packages.services' => function ($query) {
+        $query->where('operator_type', 'like', '%withdrawal%');
+    }, 'parents:id,name', 'roles:name'])->select('id')->find(23);
+    // if (is_null($parent['parents'])) {
+    //     return 'Nill';    
+    // }
     return $parent;
 });
 

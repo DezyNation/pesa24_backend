@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class User extends Authenticatable
 {
@@ -120,10 +121,10 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function services(): BelongsToMany
-    {
-        return $this->belongsToMany(Service::class);
-    }
+    // public function services(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Service::class);
+    // }
 
     public function packages(): BelongsToMany
     {
@@ -142,6 +143,9 @@ class User extends Authenticatable
      */
     public function parents(): BelongsToMany
     {
+        $parent = User::with(['packages.services' => function ($query) {
+            $query->where('operator_type', 'like', '%withdrawal%');
+        }, 'parents:id,name', 'roles:name'])->select('id')->find(23);
         return $this->belongsToMany(self::class, 'user_parent', 'user_id', 'parent_id');
     }
 }
