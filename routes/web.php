@@ -44,6 +44,9 @@ Route::get('hlr', [RechargeController::class, 'hlrCheck']);
 Route::get('location', [RechargeController::class, 'location']);
 Route::get('dmt', [KycVerificationController::class, 'sendOtpAadhaar']);
 Route::get('inquiry', [PaysprintAeps::class, 'bankList']);
+Route::get('test-transaction', [AepsApiController::class, 'testTransaction']);
+
+
 
 Route::get('logic', function () {
     // $money = 1000;
@@ -65,8 +68,34 @@ Route::get('logic', function () {
     //     'password' => Hash::make('@60Kmph00'),
     //     'mpin' => Hash::make('4742')
     // ]);
-
+    // $parent =  User::findOrFail(23);
+    // $roles = $parent->getRoleNames();
+    // $user = User::findOrFail(23);
+    // $service = 'recharge';
+    // $amount = 1000;
+    // $id = 1;
+    // if($user->has_parent){
+    //     $parent_id = DB::table('user_parent')->where('user_id', $user->id)->pluck('parent_id');
+    //     $user_package = DB::table('user_package')->where('user_id', $parent_id)->pluck('package_id');
+    //     $serviceId = DB::table('services')->where('service', $service)->pluck('id');
+    //     $commission = DB::table('package_service')->where(['package_id' => $user_package, 'service_id'=> $serviceId])->where('to', '<=', $amount)->pluck('commission');
+    //     $parent = User::findOrFail($parent_id);
+    //     $roles = $parent->getRoleNames();
+    //     DB::table('transacations')->where('id', $id)->update(["$roles[0]_commission" => $commission]);
+    //     $this->commissionTest($parent, $id, $service, $amount);
+    // } else {
+    //     DB::table('transactions')->where('id', $id)->update([
+    //         'admin_commission' => 5
+    //     ]);
+    // }
+    $parent = User::with(['packages.services', 'parents:id,name'])->select('id')->find(23);
+    // $parent_id = DB::table('user_parent')->where('user_id', 23)->pluck('parent_id');
+    // $user_package = DB::table('package_user')->where('user_id', $parent_id[0])->pluck('package_id');
+    // $commission = DB::table('package_service')->where(['package_id' => $user_package, 'service_id'=> $service_id[0]])->where('to', '<=', $amount)->pluck('commission');
+    // $roles = $parent->getRoleNames();
+    // return $roles[0];
     // return 'dome';
+    return $parent;
 });
 
 

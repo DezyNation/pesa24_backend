@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Eko\AePS;
 
+use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 class AepsApiController extends Controller
 {
@@ -92,12 +92,14 @@ class AepsApiController extends Controller
                 ]
             );
 
-            DB::insertGetId(
+            $id = DB::insertGetId(
                 'insert into transactions (user_id, transaction_for, credit_amount, debit_amount, opening_balance, balance_left, commission, transaction_id, is_flat, created_at, updated_at) values [?,?,?,?,?,?,?,?,?,?,?]',
                 [
                     auth()->user()->id, 'AePS: Money Transfer', $data['amount'],
                 ]
             );
+
+            $this->commission('aeps', $data['amount'], $id);
         });
         return $response;
     }
@@ -352,12 +354,22 @@ class AepsApiController extends Controller
         return $response;
     }
 
-    public function commission(Str $service, int $amount)
+    /**
+     * @param $service
+     * @param int $amount
+     * @param $id
+     */
+    public function commission($service, int $amount, $id)
     {
         $user = auth()->user();
+        $user_package = DB::table('user_package')->where('user_id', auth()->user()->id)->pluck('package_id');
+        $serviceId = DB::table('services')->where('service', $service)->pluck('id');
+        $user_service = DB::table('package_service')->where(['package_id' => $user_package, 'service_id'=> $serviceId])->where('to', '<=', $amount)->pluck('commission');
         if ($user->has_parent) {
             $parentId = DB::table('user_parent')->where('user_id', $user->id)->pluck('parent_id');
-            $parent = User::findOrFail($parentId);
+            $parent   = User::findOrFail($parentId);
+            $packageId  = DB::table('user_package')->where('user_id', $parent)->pluck('package_id');
+            DB::table('package_service')->where(['package_id' => $packageId, 'service_id'=> $serviceId])->where('to', '<=', $amount)->pluck('commission');
             if ($parent->has_parent) {
                 $parentId2 = DB::table('user_parent')->where('user_id', $parentId)->pluck('parent_id');
                 $parent2 = User::findOrFail($parentId2);
@@ -367,7 +379,7 @@ class AepsApiController extends Controller
                     if ($parent3->has_parent) {
                         $commission = 5;
                     } else {
-                        $commission = 5;
+                        $commission  = 5;
                     }
                 } else {
                     $commission = 5;
@@ -378,5 +390,57 @@ class AepsApiController extends Controller
         } else {
             $commission = 5;
         }
+    }
+
+    public function commissionTest(User $user, $id, $amount, $service_id)
+    {
+        if($user->has_parent){
+            $parent_id = DB::table('user_parent')->where('user_id', $user->id)->pluck('parent_id');
+            $user_package = DB::table('package_user')->where('user_id', $parent_id[0])->pluck('package_id');
+            $commission = DB::table('package_service')->where(['package_id' => $user_package[0], 'service_id'=> $service_id[0]])->where('to', '<=', $amount)->pluck('commission');
+            $parent = User::find($parent_id[0]);
+            $roles = $parent->getRoleNames();
+            DB::table('transactions')->where('id', $id)->update(["$roles[0]_commission" => $commission[0]]);
+            $this->commissionTest($parent, $id, $amount, $service_id);
+        } else {
+            DB::table('transactions')->where('id', $id)->update([
+                'admin_commission' => 5
+            ]);
+        }
+
+        return response("Commission asssigned", 200);
+    }
+
+    public function testTransaction()
+    {
+        $amount = 1000;
+        $serviceId = DB::table('services')->where(['type' => 'aeps', 'operator_type' => 'withdrawal', 'operator_name' => 'eko'])->pluck('id');
+        $packageId = DB::table('package_user')->where('user_id', 23)->pluck('package_id');
+        $commission_table = DB::table('package_service')->where(['service_id' => $serviceId, 'package_id' => $packageId]);
+        $pluck = $commission_table->pluck('commission');
+        $is_flat = $commission_table->pluck('is_flat');
+        if (!$is_flat) {
+            $commission = $amount*$pluck[0]/100;
+        } else {
+            $commission = $pluck[0];
+        }
+        // return $commission;
+        $id = DB::table('transactions')->insertGetId([
+            'user_id' => 23,
+            'transaction_for' => 'AePS: Money Transfer',
+            'credit_amount' => $amount,
+            'debit_amount' => 0,
+            'opening_balance' => 5000,
+            'balance_left' => 6000,
+            'commission' => $commission,
+            'transaction_id' => uniqid(),
+            'is_flat' => $is_flat[0],
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+        $user = User::findOrFail(23);
+        $this->commissionTest($user, $id, $amount, $serviceId);
+
+        return response('Done', 200);
     }
 }

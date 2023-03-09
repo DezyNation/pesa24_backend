@@ -103,6 +103,6 @@ class AepsApiController extends Controller
             'Token' => $token,
             'accept' => 'application/json',
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
-        ])
+        ]);
     }
 }

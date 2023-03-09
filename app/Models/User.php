@@ -124,4 +124,24 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Service::class);
     }
+
+    public function packages(): BelongsToMany
+    {
+        return $this->belongsToMany(Package::class);
+    }
+
+    /**
+     * Get the user associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    /**
+     * The parents that belong to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function parents(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'user_parent', 'user_id', 'parent_id');
+    }
 }

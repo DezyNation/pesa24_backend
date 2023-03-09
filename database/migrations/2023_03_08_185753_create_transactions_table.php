@@ -20,6 +20,9 @@ return new class extends Migration
             $table->integer('opening_balance');
             $table->integer('balance_left');
             $table->integer('commission');
+            $table->integer('distributor_commission');
+            $table->integer('super_distributor_commission');
+            $table->integer('admin_commission');
             $table->string('transaction_id');
             $table->boolean('is_flat');
             $table->timestamps();
