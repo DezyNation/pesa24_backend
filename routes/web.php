@@ -49,60 +49,10 @@ Route::get('test-transaction', [AepsApiController::class, 'testTransaction']);
 
 
 
-Route::get('logic', function () {
-    // $money = 1000;
-    // $trxnamt = 200;
-    // $user = User::with(['package.commissions' => function ($query) {
-    //     $query->where(['operator_name' => 'jio', 'operator_type' => 'mobile postpaid']);
-    // }])->select('name', 'package_id')->findOrFail(23);
-
-    // $commission = $user['package']['commissions'][0]['pivot']['commission'];
-    // $surcharge = $user['package']['commissions'][0]['pivot']['surcharge'];
-
-    // $payout = DB::table('payouts')->where('user_id', 23)->get([
-    //     'payout_id',
-    //     'amount',
-    //     'created_at'
-    // ]);
-
-    // User::where('id', 23)->update([
-    //     'password' => Hash::make('@60Kmph00'),
-    //     'mpin' => Hash::make('4742')
-    // ]);
-    // $parent =  User::findOrFail(23);
-    // $roles = $parent->getRoleNames();
-    // $user = User::findOrFail(23);
-    // $service = 'recharge';
-    // $amount = 1000;
-    // $id = 1;
-    // if($user->has_parent){
-    //     $parent_id = DB::table('user_parent')->where('user_id', $user->id)->pluck('parent_id');
-    //     $user_package = DB::table('user_package')->where('user_id', $parent_id)->pluck('package_id');
-    //     $serviceId = DB::table('services')->where('service', $service)->pluck('id');
-    //     $commission = DB::table('package_service')->where(['package_id' => $user_package, 'service_id'=> $serviceId])->where('to', '<=', $amount)->pluck('commission');
-    //     $parent = User::findOrFail($parent_id);
-    //     $roles = $parent->getRoleNames();
-    //     DB::table('transacations')->where('id', $id)->update(["$roles[0]_commission" => $commission]);
-    //     $this->commissionTest($parent, $id, $service, $amount);
-    // } else {
-    //     DB::table('transactions')->where('id', $id)->update([
-    //         'admin_commission' => 5
-    //     ]);
-    // }
-
-
-    // $parent_id = DB::table('user_parent')->where('user_id', 23)->pluck('parent_id');
-    // $user_package = DB::table('package_user')->where('user_id', $parent_id[0])->pluck('package_id');
-    // $commission = DB::table('package_service')->where(['package_id' => $user_package, 'service_id'=> $service_id[0]])->where('to', '<=', $amount)->pluck('commission');
-    // $roles = $parent->getRoleNames();
-    // return $roles[0];
-    // return 'dome';
+Route::get('hello', function () {
     $parent = User::with(['packages.services' => function ($query) {
         $query->where('operator_type', 'like', '%withdrawal%');
-    }, 'parents:id,name', 'roles:name'])->select('id')->find(23);
-    // if (is_null($parent['parents'])) {
-    //     return 'Nill';    
-    // }
+    }, 'parents:id,name', 'roles:name'])->select('id')->findOrFail(23);
     return $parent;
 });
 

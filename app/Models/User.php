@@ -143,9 +143,6 @@ class User extends Authenticatable
      */
     public function parents(): BelongsToMany
     {
-        $parent = User::with(['packages.services' => function ($query) {
-            $query->where('operator_type', 'like', '%withdrawal%');
-        }, 'parents:id,name', 'roles:name'])->select('id')->find(23);
         return $this->belongsToMany(self::class, 'user_parent', 'user_id', 'parent_id');
     }
 }
