@@ -37,24 +37,20 @@ Route::get('/user', function () {
 })->middleware('minimum_balance');
 
 Route::get('lic-api', [LICController::class, 'fetchbill']);
-Route::get('lic-api1', [LICController::class, 'payLicBill']);
-Route::get('lpg-api', [LPGController::class, 'operatorList']);
-Route::get('contact', [ContactController::class, 'createContact']);
-Route::get('payout', [PayoutController::class, 'bankPayout']);
-Route::get('hlr', [RechargeController::class, 'hlrCheck']);
-Route::get('location', [RechargeController::class, 'location']);
-Route::get('dmt', [KycVerificationController::class, 'sendOtpAadhaar']);
-Route::get('inquiry', [PaysprintAeps::class, 'bankList']);
-Route::get('test-transaction', [AepsApiController::class, 'testTransaction']);
-
-
+// Route::get('test', [AepsApiController::class, 'testTransaction']);
 
 Route::get('hello', function () {
     $parent = User::with(['packages.services' => function ($query) {
         $query->where('operator_type', 'like', '%withdrawal%');
-    }, 'parents:id,name', 'roles:name'])->select('id')->findOrFail(23);
+    }, 'parents:id,name', 'roles:name'])->select('id')->findOrFail(55);
+
+    // if (count($parent['parents']) === 0) {
+    //     return "null";
+    // }
     return $parent;
 });
+
+Route::get('test', [AepsApiController::class, 'moneyTransfer']);
 
 
 
