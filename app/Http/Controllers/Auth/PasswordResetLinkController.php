@@ -47,6 +47,9 @@ class PasswordResetLinkController extends Controller
                     'error' => 'Email and MPIN did not match'
                 ]);
             }
+            User::where('email', $request['email'])->update([
+                'password' => Hash::make($password)
+            ]);
             Mail::raw("Dear User, Your new password for Login to Pesa24 is $password", function($message) use ($request){
                 $message->from('info@pesa24.co.in', 'Pesa24');
                 $message->to($request['email'], 'User');
