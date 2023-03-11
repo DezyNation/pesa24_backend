@@ -145,4 +145,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(self::class, 'user_parent', 'user_id', 'parent_id');
     }
+
+    /**
+     * The services that belong to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function services(): BelongsToMany
+    {
+        return $this->belongsToMany(Service::class);
+    }
 }

@@ -19,7 +19,7 @@ class MinimumBalance
         $user = User::with('roles:name')->select('id', 'minimum_balance', 'wallet')->findOrFail(auth()->user()->id);    
         $minimumBalance = $user['roles'][0]['pivot']['minimum_balance'];
 
-        if ($user['wallet'] < $minimumBalance && $user['wallet'] < $user['minimum_balance']) {
+        if ($user['wallet'] < $minimumBalance || $user['wallet'] < $user['minimum_balance']  ) {
             return response()->json(['Error' => 'Your balance is lower than minimum balance, please top-up your wallet.']);
         }
         return $next($request);

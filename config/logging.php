@@ -63,6 +63,12 @@ return [
             'level' => 'info',
         ],
 
+        'response' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/response.log'),
+            'level' => 'info',
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),

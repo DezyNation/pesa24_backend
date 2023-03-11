@@ -475,6 +475,6 @@ class AepsApiController extends Controller
             Log::info('step-user-recursive');
              $this->test($user['parents'][0]['pivot']['parent_id'], $id, $amount, $service);
         }
-        return response('Done', 200);
+        echo 'done';
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Eko\AePS\AepsApiController;
+use App\Http\Controllers\Eko\Agent\AgentManagementController;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
@@ -40,17 +41,16 @@ Route::get('lic-api', [LICController::class, 'fetchbill']);
 // Route::get('test', [AepsApiController::class, 'testTransaction']);
 
 Route::get('hello', function () {
-    $parent = User::with(['packages.services' => function ($query) {
-        $query->where('operator_type', 'like', '%withdrawal%');
-    }, 'parents:id,name', 'roles:name'])->select('id')->findOrFail(55);
-
+    // $parent = User::with(['packages.services' => function ($query) {
+    //     $query->where('operator_type', 'like', '%withdrawal%');
+    // }, 'parents:id,name', 'roles:name'])->select('id')->findOrFail(55);
     // if (count($parent['parents']) === 0) {
     //     return "null";
     // }
-    return $parent;
 });
 
-Route::get('test', [AepsApiController::class, 'moneyTransfer']);
+// Route::get('test', [AepsApiController::class, 'moneyTransfer']);
+Route::get('service', [AgentManagementController::class, 'services']);
 
 
 
