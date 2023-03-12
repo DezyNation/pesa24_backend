@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Service;
+use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class PackageController extends Controller
 {
@@ -74,6 +75,14 @@ class PackageController extends Controller
         Log::channel('response')->info($response, ['user_name' => auth()->user()->name, 'user_id' => auth()->user()->phone_number]);
 
         return $response['data']['service_status'];
+    }
+
+    public function parentPackage($id)
+    {
+         $org = Organization::with(['roles' => function ($q) use ($id) {
+            $q->where('role_id', $id);
+        }])->select('id')->where('code', 'DEZ45')->get();
+        return $org;
     }
 
 

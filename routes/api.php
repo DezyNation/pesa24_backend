@@ -11,6 +11,7 @@ use App\Http\Controllers\Eko\DMT\AgentCustomerController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
+use App\Http\Controllers\PackageController;
 use App\Http\Controllers\Razorpay\ContactController;
 use App\Http\Controllers\Razorpay\FundAccountController;
 use App\Http\Controllers\Razorpay\PayoutController;
@@ -98,7 +99,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin'], 'prefix' => 'admin
     Route::get('users', [UserController::class, 'index']);
     Route::get('users/{id}', [UserController::class, 'show']);
     Route::post('create/user', [UserController::class, 'store']);
-    
+    Route::get('packages', [PackageController::class, 'parentPackage']);
 
 
     Route::get('payouts', [PayoutController::class, 'fetchPayoutAdmin']);

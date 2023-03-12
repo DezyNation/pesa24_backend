@@ -57,7 +57,7 @@ Route::get('service', [AgentManagementController::class, 'services']);
 
 Route::get('logic', function () {
     $organization = 'AMV45';
-    $test = Organization::with(['packages.users' => function($q){
+    $test = Organization::with(['packages.users' => function ($q) {
         $q->paginate(1);
     }])->where('code', $organization)->get();
     # http://127.0.0.1:8000/logic?page=1
@@ -73,6 +73,14 @@ Route::get('policy', function () {
 
         return 'False';
     }
+});
+
+Route::get('admin', function () {
+    $id = 1;
+    $org = Organization::with(['roles' => function ($q) use ($id) {
+        $q->where('role_id', $id);
+    }])->select('id')->where('code', 'DEZ45')->get();
+    return $org;
 });
 
 
