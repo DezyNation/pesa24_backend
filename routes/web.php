@@ -15,7 +15,10 @@ use App\Http\Controllers\Paysprint\LPGController;
 use App\Http\Controllers\Pesa24\KycVerificationController;
 use App\Http\Controllers\Razorpay\PayoutController;
 use App\Http\Controllers\Razorpay\ContactController;
+use App\Models\Organization;
+use App\Models\Package;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Client\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,7 +55,21 @@ Route::get('hello', function () {
 // Route::get('test', [AepsApiController::class, 'moneyTransfer']);
 Route::get('service', [AgentManagementController::class, 'services']);
 
+Route::get('logic', function () {
+    $organization = 'AMV45';
+    $test = Organization::with(['packages.users'])->where('code', $organization)->get();
+    return $test;
+});
 
+Route::get('policy', function () {
+    $user = User::find(55)->can('view', User::find(56));
+    if ($user) {
+        return 'True';
+    } else {
+
+        return '$user';
+    }
+});
 
 
 require __DIR__ . '/auth.php';

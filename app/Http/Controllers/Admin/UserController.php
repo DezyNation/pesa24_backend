@@ -76,7 +76,7 @@ class UserController extends Controller
             'alternate_phone' => $request['alternativePhone'],
             'user_code' => $request['user_code'],
             'company_name' => $request['firmName'],
-            'firm_type' => $request['firm_type'],
+            'firm_type' => $request['companyType'],
             'gst_number' => $request['gst'],
             'dob' => $request['dob'],
             'pan_number' => $request['panNum'],
@@ -92,7 +92,13 @@ class UserController extends Controller
             'state' => $request['state'],
             'pincode' => $request['pincode'],
             'profile' => 0,
-        ])->assignRole($request['role']);
+            'aadhar_front' => $request->file('aadhar_front')->store('aadhar_front'),
+            'aadhar_back' => $request->file('aadhar_back')->store('aadhar_back'),
+            'pan' => $request->file('pan')->store('pan_card'),
+            'profile_pic' => $request->file('profile_pic')->store('profile')
+        ])->assignRole($request['userType']);
+
+        return response()->json(['message' => 'User created Successfully']);
     }
 
     /**

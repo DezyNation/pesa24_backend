@@ -7,6 +7,7 @@ use App\Models\Commission;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -50,5 +51,15 @@ class Package extends Model
     public function services(): BelongsToMany
     {
         return $this->belongsToMany(Service::class)->withPivot(['is_flat', 'commission', 'from', 'to', 'is_surcharge']);
+    }
+
+    /**
+     * Get the organizations that owns the Package
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
     }
 }
