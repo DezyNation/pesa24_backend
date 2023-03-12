@@ -76,11 +76,11 @@ Route::get('policy', function () {
 });
 
 Route::get('admin', function () {
-    $id = 1;
-    $org = Organization::with(['roles' => function ($q) use ($id) {
-        $q->where('role_id', $id);
-    }])->select('id')->where('code', 'DEZ45')->get();
-    return $org;
+    $id = 3;
+    $org = 'DEZ45';
+    $org_id = DB::table('organizations')->where('code', $org)->pluck('id');
+    $user = User::with(['roles:name'])->select('id', 'name', 'organization_id')->where('organization_id', $org_id)->get();
+    return $user;
 });
 
 

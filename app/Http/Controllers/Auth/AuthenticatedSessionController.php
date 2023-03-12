@@ -14,6 +14,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -65,6 +66,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
+        Session::put('organization_code', $request['organization_code']);
         
         if ($request->has('mpin')) {
             if ($request['authMethod'] == 'email') {

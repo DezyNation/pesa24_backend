@@ -6,11 +6,13 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Resources\v1\UserResource;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Resources\v1\UserResource;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -177,5 +179,13 @@ class UserController extends Controller
         $user->update(['phone_number' => $request['newNumber']]);
 
         return ['message' => 'Phone number updated sucessfully'];
+    }
+
+    public function getUsers()
+    {
+        $org = Session::get('organization_code');
+        $org_id = DB::table('organizations')->where('code', $org)->pluck('id');
+        $user = User::with(['roles:name'])->select('id', 'name', 'organization_id')->where('organization_id', $org_id)->get();
+        return $user;
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
 
 class PackageController extends Controller
 {
@@ -79,9 +80,10 @@ class PackageController extends Controller
 
     public function parentPackage($id)
     {
+        $code = Session::get('organization_code');
          $org = Organization::with(['roles' => function ($q) use ($id) {
-            $q->where('role_id', $id);
-        }])->select('id')->where('code', 'DEZ45')->get();
+            $q->select('role_id')->where('role_id', $id);
+        }])->select('id')->where('code', $code)->get();
         return $org;
     }
 

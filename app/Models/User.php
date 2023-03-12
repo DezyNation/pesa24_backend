@@ -158,12 +158,12 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user associated with the User
+     * Get the organizations that owns the User
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function organizations(): HasOneThrough
+    public function organizations(): BelongsTo
     {
-        return $this->hasOneThrough(Package::class, Organization::class, 'package_id', 'organization_id');
+        return $this->belongsTo(Organization::class, 'organization_id');
     }
 }

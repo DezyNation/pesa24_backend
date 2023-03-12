@@ -32,4 +32,14 @@ class Organization extends Model
     {
         return $this->belongsToMany(Role::class, 'packages')->withPivot(['id', 'name']);
     }
+
+    /**
+     * Get all of the users for the Organization
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
 }
