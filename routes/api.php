@@ -96,7 +96,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::group(['middleware' => ['auth:sanctum', 'role:admin'], 'prefix' => 'admin'], function () {
     Route::get('users', [UserController::class, 'index']);
     Route::get('users/{id}', [UserController::class, 'show']);
-
+    
     
 
 

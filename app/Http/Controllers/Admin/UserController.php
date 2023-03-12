@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\v1\UserResource;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -65,6 +66,8 @@ class UserController extends Controller
 
         $password = Str::random(8);
         $mpin = rand(4);
+        $to = $request['email'];
+        $name = $request['first_name'] . " " . $request['last_name'];
 
         $user = User::create([
             'first_name' => $request['first_name'],
@@ -97,7 +100,12 @@ class UserController extends Controller
             'pan' => $request->file('pan')->store('pan_card'),
             'profile_pic' => $request->file('profile_pic')->store('profile')
         ])->assignRole($request['userType']);
-
+        Mail::raw("Hello Your one time password is $password adn MPIN is $mpin", function ($message) use ($to, $name) {
+            $message->from('info@pesa24.co.in', 'John Doe');
+            $message->to($to, $name);
+            $message->subject('Welcome to Pesa24');
+            $message->priority(1);
+        });
         return response()->json(['message' => 'User created Successfully']);
     }
 

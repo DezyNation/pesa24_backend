@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\DB;
 
 class ParentPolicy
 {
@@ -12,7 +13,12 @@ class ParentPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        $code = 'DEZ45';
+        $user_id = DB::table('organizations')->where('code', $code)->pluck('user_id');
+
+        return $user_id === auth()->user()->id
+            ? Response::allow()
+            : Response::denyWithStatus(401, "Unauthorized Access");
     }
 
     /**
@@ -20,7 +26,11 @@ class ParentPolicy
      */
     public function view(User $user, User $model)
     {
-        return $user->id === $model->parents()->pluck('parent_id');
+        if (empty($model['parents'][0])) {
+            return false;
+        } else {
+            return $user->id === $model['parents'][0]['id'];
+        }
     }
 
     /**
