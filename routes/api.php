@@ -14,6 +14,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Razorpay\ContactController;
 use App\Http\Controllers\Razorpay\FundAccountController;
 use App\Http\Controllers\Razorpay\PayoutController;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,7 +97,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::group(['middleware' => ['auth:sanctum', 'role:admin'], 'prefix' => 'admin'], function () {
     Route::get('users', [UserController::class, 'index']);
     Route::get('users/{id}', [UserController::class, 'show']);
-    
+    Route::post('create/user', [UserController::class, 'admin']);
     
 
 
