@@ -50,7 +50,7 @@ class Package extends Model
      */
     public function services(): BelongsToMany
     {
-        return $this->belongsToMany(Service::class)->withPivot(['is_flat', 'commission', 'from', 'to', 'is_surcharge']);
+        return $this->belongsToMany(Service::class)->withPivot(['is_flat', 'from', 'to', 'is_surcharge', 'fixed_deduction', 'retailer_commission', 'distributor_commission', 'super_distributor_commission']);
     }
 
     /**

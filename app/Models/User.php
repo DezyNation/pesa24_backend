@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Package;
 use App\Models\Service;
+use App\Models\PackageService;
 use App\Models\KYCVerification;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
@@ -15,8 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class User extends Authenticatable
 {
@@ -153,9 +154,9 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function services(): BelongsToMany
+    public function parents(): BelongsToMany
     {
-        return $this->belongsToMany(Service::class);
+        return $this->belongsToMany(self::class, 'user_parent', 'user_id', 'parent_id');
     }
 
     /**
@@ -166,5 +167,15 @@ class User extends Authenticatable
     public function organizations(): BelongsTo
     {
         return $this->belongsTo(Organization::class, 'organization_id');
+    }
+    
+    /**
+     * Get all of the services for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function services(): HasManyThrough
+    {
+        return $this->hasManyThrough(PackageService::class, PackageUser::class, 'user_id', 'package_id');
     }
 }

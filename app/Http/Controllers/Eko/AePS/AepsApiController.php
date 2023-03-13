@@ -48,8 +48,6 @@ class AepsApiController extends Controller
 
         /*--------------------------------Data------------------------------------ */
 
-        $client_ref_id =
-
             $data = [
                 "service_type" => "2",
                 "initiator_id" => 9962981729,
@@ -90,30 +88,30 @@ class AepsApiController extends Controller
 
         /*--------------------------------Store Response--------------------------------*/
 
-        // DB::transaction(function (Response $response, $data) {
-        //     DB::insert(
-        //         'insert into ae_p_s_transactions (user_id, shop, service_tax, total_fee, stan, tid, client_ref_id,
-        //         customer_id, merchant_code, merchant_name, customer_balance, sender_name, auth_code, bank_ref_num, terminal_id,
-        //         amount, tx_status, transaction_date, aadhar, response_type_id, reason, comment, message, status) values [?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?]',
-        //         [
-        //             auth()->id, $response->json($key = 'data')['shop'], $response->json($key = 'data')['service_tax'], $response->json($key = 'data')['total_fee'],
-        //             $response->json($key = 'data')['stan'], $response->json($key = 'data')['tid'], $data['client_ref_id'], $data['customer_id'], $response->json($key = 'data')['merchant_code'],
-        //             $response->json($key = 'data')['merchantname'], $response->json($key = 'data')['customer_balance'], $response->json($key = 'data')['sender_name'], $response->json($key = 'data')['auth_code'],
-        //             $response->json($key = 'data')['bank_ref_num'], $response->json($key = 'data')['terminal_id'], $response->json($key = 'data')['amount'], $response->json($key = 'data')['tx_status'], $response->json($key = 'data')['transaction_date'],
-        //             $response->json($key = 'data')['aadhar'], $response->json($key = 'response_type_id'), $response->json($key = 'data')['reason'], $response->json($key = 'data')['comment'], $response->json($key = 'message'),
-        //             $response->json($key = 'status')
-        //         ]
-        //     );
 
-        //     $id = DB::insertGetId(
-        //         'insert into transactions (user_id, transaction_for, credit_amount, debit_amount, opening_balance, balance_left, commission, transaction_id, is_flat, created_at, updated_at) values [?,?,?,?,?,?,?,?,?,?,?]',
-        //         [
-        //             auth()->user()->id, 'AePS: Money Transfer', $data['amount'],
-        //         ]
-        //     );
+            DB::insert(
+                'insert into ae_p_s_transactions (user_id, shop, service_tax, total_fee, stan, tid, client_ref_id,
+                customer_id, merchant_code, merchant_name, customer_balance, sender_name, auth_code, bank_ref_num, terminal_id,
+                amount, tx_status, transaction_date, aadhar, response_type_id, reason, comment, message, status) values [?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?]',
+                [
+                    auth()->id, $response->json($key = 'data')['shop'], $response->json($key = 'data')['service_tax'], $response->json($key = 'data')['total_fee'],
+                    $response->json($key = 'data')['stan'], $response->json($key = 'data')['tid'], $data['client_ref_id'], $data['customer_id'], $response->json($key = 'data')['merchant_code'],
+                    $response->json($key = 'data')['merchantname'], $response->json($key = 'data')['customer_balance'], $response->json($key = 'data')['sender_name'], $response->json($key = 'data')['auth_code'],
+                    $response->json($key = 'data')['bank_ref_num'], $response->json($key = 'data')['terminal_id'], $response->json($key = 'data')['amount'], $response->json($key = 'data')['tx_status'], $response->json($key = 'data')['transaction_date'],
+                    $response->json($key = 'data')['aadhar'], $response->json($key = 'response_type_id'), $response->json($key = 'data')['reason'], $response->json($key = 'data')['comment'], $response->json($key = 'message'),
+                    $response->json($key = 'status')
+                ]
+            );
 
-        //     $this->commission('aeps', $data['amount'], $id);
-        // });
+            $id = DB::insertGetId(
+                'insert into transactions (user_id, transaction_for, credit_amount, debit_amount, opening_balance, balance_left, commission, transaction_id, is_flat, created_at, updated_at) values [?,?,?,?,?,?,?,?,?,?,?]',
+                [
+                    auth()->user()->id, 'AePS: Money Transfer', $data['amount'],
+                ]
+            );
+
+            $this->commission('aeps', $data['amount'], $id);
+
         return $response;
     }
 
@@ -449,12 +447,11 @@ class AepsApiController extends Controller
         $user = User::with(['packages.services' => function ($query) use ($service) {
             $query->where('operator_type', 'like', "%$service%");
         }, 'parents:id,name', 'roles:name'])->select('id')->findOrFail($user_id);
-        Log::info('step-user');
+
         $user_role = $user['roles'][0]['name'];
-        Log::info('step-user-role');
+
         $user_service = $user['packages'][0]['services'][0];
-        Log::info('step-user-service');
-        // return $user_service;
+
         if ($user_service['pivot']['is_flat'] && $user_service['pivot']['is_surcharge']) {
             $commission = -$user_service['pivot']['commission'];
         } elseif (!$user_service['pivot']['is_flat'] && $user_service['pivot']['is_surcharge']) {
@@ -467,13 +464,13 @@ class AepsApiController extends Controller
         Log::info('step-user-commission');
         // return $commission;
         DB::table('transactions')->where('id', $id)->update([
-            "$user_role"."_"."commission" => $commission,
+            "$user_role" . "_" . "commission" => $commission,
         ]);
-        Log::info('step-user-db');
+
 
         if (!sizeof($user['parents']) == 0) {
-            Log::info('step-user-recursive');
-             $this->test($user['parents'][0]['pivot']['parent_id'], $id, $amount, $service);
+
+            $this->test($user['parents'][0]['pivot']['parent_id'], $id, $amount, $service);
         }
         echo 'done';
     }

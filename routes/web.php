@@ -81,8 +81,8 @@ Route::get('paysprint-test', [PaysprintAeps::class, 'onBoard']);
 
 Route::get('admin', function () {
     // $id = 3;
-    $org = 'DEZ45';
-    $org_id = DB::table('organizations')->where('code', $org)->pluck('id');
+    // $org = 'DEZ45';
+    // $org_id = DB::table('organizations')->where('code', $org)->pluck('id');
     // $user = User::with(['roles:name'])->select('id', 'name', 'organization_id')->where('organization_id', $org_id)->get();
     // $test = Role::with(['users' => function($q) use ($org_id) {
     //     $q->select('id', 'name', 'organization_id')->where('organization_id', $org_id);
@@ -105,11 +105,17 @@ Route::get('admin', function () {
     //     $query->where('parent_id', 57);
     // }])->where('id', $id)->get();
 
-    $test3 = User::with(['children' => function($query){
-        $query->select('user_id','parent_id', 'name')->role('super_distributor');
-    }])->where(['id' => $id, 'organization_id' => $org_id])->get();
+    // $test3 = User::with(['children' => function($query){
+    //     $query->select('user_id','parent_id', 'name')->role('super_distributor');
+    // }])->where(['id' => $id, 'organization_id' => $org_id])->get();
 
-    return $test3;
+    $service = 'money transfer';
+    // $user = User::with(['packages.services' => function ($query) use ($service) {
+    //     $query->where('operator_type', 'like', "%$service%");
+    // }])->select('id', 'name')->findOrFail(55);
+
+    $user = User::with(['services'])->where('id', 55)->get();
+    echo $user;
 });
 
 
