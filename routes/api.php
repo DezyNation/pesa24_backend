@@ -15,6 +15,7 @@ use App\Http\Controllers\PackageController;
 use App\Http\Controllers\Razorpay\ContactController;
 use App\Http\Controllers\Razorpay\FundAccountController;
 use App\Http\Controllers\Razorpay\PayoutController;
+use App\Http\Controllers\TicketController;
 use App\Models\User;
 
 /*
@@ -109,6 +110,9 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin'], 'prefix' => 'admin
     Route::get('fetch-fund-requests', [FundRequestController::class, 'fetchFund']);
     Route::get('fetch-fund-requests/{id}', [FundRequestController::class, 'fetchFundId']);
     Route::post('update-fund-requests', [FundRequestController::class, 'updateFund']);
+
+    Route::get('tickets', [TicketController::class, 'index']);
+    Route::post('tickets', [TicketController::class, 'store']);
 });
 
 //Line 78 'api/fund/request-fund' --> for fund request

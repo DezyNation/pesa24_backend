@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Ticket;
 use App\Models\Package;
 use App\Models\Service;
 use App\Models\PackageService;
@@ -12,6 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\PermissionRegistrar;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -203,5 +205,15 @@ class User extends Authenticatable
     public function services(): HasManyThrough
     {
         return $this->hasManyThrough(PackageService::class, PackageUser::class, 'user_id', 'package_id');
+    }
+
+    /**
+     * Get all of the tickets for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class);
     }
 }
