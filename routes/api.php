@@ -101,7 +101,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin'], 'prefix' => 'admin
     Route::post('create/user', [UserController::class, 'store']);
     Route::get('packages/{id}', [PackageController::class, 'parentPackage']);
     Route::get('get-users/{role_id}/{parent?}', [UserController::class, 'getUsers']);
-    Route::get('users-list/{role}', [UserController::class, 'userInfo']);
+    Route::get('users-list/{role}/{id?}', [UserController::class, 'userInfo']);
 
 
     Route::get('payouts', [PayoutController::class, 'fetchPayoutAdmin']);

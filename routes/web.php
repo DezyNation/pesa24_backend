@@ -114,8 +114,10 @@ Route::get('admin', function () {
     //     $query->where('operator_type', 'like', "%$service%");
     // }])->select('id', 'name')->findOrFail(55);
 
-    $user = User::with(['services'])->where('id', 55)->get();
-    echo $user;
+    $user = User::with(['services' => function($query) use ($id) {
+        $query->where('service_id', 22);
+    }, 'parents:id,name'])->where('id', 55)->get();
+    return $user;
 });
 
 
