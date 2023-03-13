@@ -102,7 +102,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin'], 'prefix' => 'admin
     Route::get('packages/{id}', [PackageController::class, 'parentPackage']);
     Route::get('get-users/{role_id}/{parent?}', [UserController::class, 'getUsers']);
     Route::get('users-list/{role}/{id?}', [UserController::class, 'userInfo']);
-    Route::get('users-active/{active}/{bool}', [UserController::class, 'active']);
+    Route::get('user/status/{id}/{bool}', [UserController::class, 'active']);
 
     Route::get('payouts', [PayoutController::class, 'fetchPayoutAdmin']);
 
