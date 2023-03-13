@@ -1,24 +1,26 @@
 <?php
 
-use App\Http\Controllers\Eko\AePS\AepsApiController;
-use App\Http\Controllers\Eko\Agent\AgentManagementController;
-use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
-use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
-use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Models\User;
+use App\Models\Package;
+use App\Models\Organization;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\Paysprint\LICController;
 use App\Http\Controllers\Paysprint\LPGController;
-use App\Http\Controllers\Pesa24\KycVerificationController;
 use App\Http\Controllers\Razorpay\PayoutController;
+use App\Http\Controllers\Eko\AePS\AepsApiController;
 use App\Http\Controllers\Razorpay\ContactController;
-use App\Models\Organization;
-use App\Models\Package;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Client\Request;
+use App\Http\Controllers\Pesa24\KycVerificationController;
+use App\Http\Controllers\Paysprint\BBPS\RechargeController;
+use App\Http\Controllers\Eko\Agent\AgentManagementController;
+use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
+use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
+use App\Models\ParentUser;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,13 +77,42 @@ Route::get('policy', function () {
     }
 });
 
+Route::get('paysprint-test', [PaysprintAeps::class, 'onBoard']);
+
 Route::get('admin', function () {
-    $id = 3;
+    // $id = 3;
     $org = 'DEZ45';
     $org_id = DB::table('organizations')->where('code', $org)->pluck('id');
-    $user = User::with(['roles:name'])->select('id', 'name', 'organization_id')->where('organization_id', $org_id)->get();
-    return $user;
+    // $user = User::with(['roles:name'])->select('id', 'name', 'organization_id')->where('organization_id', $org_id)->get();
+    // $test = Role::with(['users' => function($q) use ($org_id) {
+    //     $q->select('id', 'name', 'organization_id')->where('organization_id', $org_id);
+    // }])->where('id', 1)->get();
+
+    // $test2 = User::with(['roles', 'parents' => function($query) {
+    //     $query->where('user_id', 56);
+    // }])->where('organization_id', 2)->get();
+
+    // $test3 = ParentUser::has('users')->with(['users' => function($query){
+    //     $query->where('parent_id', 57);
+    // }, 'users.roles' => function($q){
+    //     $q->select('model_id', 'role_id', 'name')->where('role_id', 3);
+    // }])->select('id', 'organization_id', 'name')->where('organization_id', $org_id)->get();
+
+    $id = 57;
+    // $test3 = Role::with(['users' => function ($q) use ($org_id) {
+    //     $q->where('organization_id', $org_id);
+    // }, 'users.parents' => function($query){
+    //     $query->where('parent_id', 57);
+    // }])->where('id', $id)->get();
+
+    $test3 = User::with(['children' => function($query){
+        $query->select('user_id','parent_id', 'name')->role('super_distributor');
+    }])->where(['id' => $id, 'organization_id' => $org_id])->get();
+
+    return $test3;
 });
+
+
 
 
 require __DIR__ . '/auth.php';

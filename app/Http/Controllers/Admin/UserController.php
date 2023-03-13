@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Models\ParentUser;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -36,7 +38,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'parentDistributor' => ['required', 'integer'],
+            'parent' => ['integer'],
             'userPlan' => ['required', 'integer'],
             'firstName' => ['required', 'string'],
             'lastName' => ['required', 'string'],
@@ -59,25 +61,25 @@ class UserController extends Controller
             'isActive' => ['required', 'boolean'],
             'gst' => 'string',
         ]);
+        $id = DB::table('organizations')->where('code', Session::get('organization_code'))->pluck('id');
 
-        if ($request->has('parentDistributor')) {
-            $parent = 1;
-        } else {
-            $parent = 0;
-        }
+        $pan = $request->file('pan')->store('pan');
+        $aadhar_front = $request->file('aadhaarFront')->store('aadhar_front');
+        $aadhar_back = $request->file('aadhaarBack')->store('aadhar_back');
+        $profile = $request->file('profilePic')->store('profile');
 
         $password = Str::random(8);
-        $mpin = rand(4);
-        $to = $request['email'];
+        $mpin = rand(1001, 9999);
+        $to = $request['userEmail'];
         $name = $request['first_name'] . " " . $request['last_name'];
 
         $user = User::create([
-            'first_name' => $request['first_name'],
-            'last_name' => $request['last_name'],
-            'name' => $request['first_name'] . " " . $request['last_name'],
-            'has_parent' => $parent,
+            'first_name' => $request['firstName'],
+            'last_name' => $request['lastName'],
+            'name' => $request['firstName'] . " " . $request['lastName'],
+            'has_parent' => $request['hasParent'],
             'phone_number' => $request['phoneNumber'],
-            'email' => $request['email'],
+            'email' => $request['userEmail'],
             'alternate_phone' => $request['alternativePhone'],
             'user_code' => $request['user_code'],
             'company_name' => $request['firmName'],
@@ -97,11 +99,31 @@ class UserController extends Controller
             'state' => $request['state'],
             'pincode' => $request['pincode'],
             'profile' => 0,
-            'aadhar_front' => $request->file('aadhar_front')->store('aadhar_front'),
-            'aadhar_back' => $request->file('aadhar_back')->store('aadhar_back'),
-            'pan' => $request->file('pan')->store('pan_card'),
-            'profile_pic' => $request->file('profile_pic')->store('profile')
+            'aadhar_front' => $aadhar_front,
+            'aadhar_back' => $aadhar_back,
+            'pan' => $pan,
+            'profile_pic' => $profile
         ])->assignRole($request['userType']);
+
+        if ($request['hasParent']) {
+            DB::table('user_parent')->insert([
+                'user_id' => $user->id,
+                'parent_id' => $request['parent'],
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+
+        DB::table('package_user')->insert([
+            'user_id' => $user->id,
+            'package_id' => $request['userPlan'],
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        if (!$request['isActive']) {
+            return response()->json(['message' => 'User created Successfully']);
+        }
         Mail::raw("Hello Your one time password is $password adn MPIN is $mpin", function ($message) use ($to, $name) {
             $message->from('info@pesa24.co.in', 'John Doe');
             $message->to($to, $name);
@@ -181,11 +203,39 @@ class UserController extends Controller
         return ['message' => 'Phone number updated sucessfully'];
     }
 
-    public function getUsers()
+    public function getUsers(string $role, int $parent = null)
     {
         $org = Session::get('organization_code');
         $org_id = DB::table('organizations')->where('code', $org)->pluck('id');
-        $user = User::with(['roles:name'])->select('id', 'name', 'organization_id')->where('organization_id', $org_id)->get();
+        if (is_null($parent)) {
+            $user = User::role($role)->with(['children' => function ($query) use ($role) {
+                $query->select('user_id', 'parent_id', 'name')->role($role);
+            }])->where(['organization_id' => $org_id])->get();
+
+            return $user;
+        }
+
+
+        $user = User::role($role)->with(['children' => function ($query) use ($role) {
+            $query->select('user_id', 'parent_id', 'name')->role($role);
+        }])->where(['id' => $parent, 'organization_id' => $org_id])->get();
+
+        return $user;
+    }
+
+    public function userInfo(string $role, $id = null)
+    {
+
+        $org = Session::get('organization_code');
+        $org_id = DB::table('organizations')->where('code', $org)->pluck('id');
+        if (is_null($id)) {
+            $user = User::role($role)->where(['organization_id' => $org_id])->get();
+            return $user;
+        }
+
+        $user = User::role($role)->with(['children' => function ($query) use ($role) {
+            $query->select('user_id', 'parent_id', 'name')->role($role);
+        }])->where(['id' => $id, 'organization_id' => $org_id])->get();
         return $user;
     }
 }

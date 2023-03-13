@@ -54,7 +54,8 @@ class User extends Authenticatable
         'referal_code',
         'onboard_fee',
         'kyc',
-        'otp'
+        'otp',
+        'mpin'
     ];
 
     /**
@@ -142,9 +143,9 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function parents(): BelongsToMany
+    public function children(): BelongsToMany
     {
-        return $this->belongsToMany(self::class, 'user_parent', 'user_id', 'parent_id');
+        return $this->belongsToMany(self::class, 'user_parent', 'parent_id', 'user_id');
     }
 
     /**
