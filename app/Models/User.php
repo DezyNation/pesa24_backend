@@ -38,7 +38,34 @@ class User extends Authenticatable
         'profile',
         'company_name',
         'phone_number',
-        'mpin'
+        'mpin',
+        'alternate_phone',
+        'user_code',
+        'company_name',
+        'firm_type',
+        'gst_number',
+        'wallet',
+        'minimum_balance',
+        'dob',
+        'portal',
+        'pan_number',
+        'aadhaar',
+        'pan_photo',
+        'aadhar_front',
+        'aadhar_back',
+        'profile_pic',
+        'onboard_fee',
+        'referal_code',
+        'password',
+        'mpin',
+        'otp',
+        'kyc',
+        'line',
+        'city',
+        'state',
+        'pincode',
+        'profile',
+        'organization_id'
     ];
 
     /**k
@@ -168,7 +195,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Organization::class, 'organization_id');
     }
-    
+
     /**
      * Get all of the services for the User
      *
