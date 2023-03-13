@@ -13,6 +13,7 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         $ticket = DB::table('tickets')->insert([
+            'user_id' => auth()->user()->id,
             'title' => $request['title'],
             'body' => $request['body'],
             'status' => 'created',
