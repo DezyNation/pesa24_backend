@@ -81,7 +81,6 @@ class User extends Authenticatable
         'portal',
         'referal_code',
         'onboard_fee',
-        'kyc',
         'otp',
         'mpin'
     ];
