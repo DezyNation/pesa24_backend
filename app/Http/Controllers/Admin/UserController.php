@@ -236,6 +236,15 @@ class UserController extends Controller
         $user = User::role($role)->with('packages:name')->where(['id' => $id, 'organization_id' => $org_id])->get();
         return $user;
     }
+
+    public function active($id, $bool)
+    {
+        User::where('id', $id)->update([
+            'is_active' => $bool
+        ]);
+
+        return response()->noContent();
+    }
 }
 
 // $user = User::role($role)->with(['children' => function ($query) use ($role) {
