@@ -14,7 +14,7 @@ class Controller extends BaseController
 
     public function index()
     {
-        $data = DB::table('services')->get(['type', 'operator_type', 'operator_name', 'image_url', 'amount']);
+        $data = DB::table('services')->get(['type', 'operator_type', 'operator_name', 'image_url', 'price']);
         return $data;
     }
 }
