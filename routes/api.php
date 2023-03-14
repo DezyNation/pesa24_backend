@@ -38,7 +38,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::resource('users', UserController::class);
 Route::post('users/otp', [UserController::class, 'otp']);
 Route::post('users/verify-otp', [UserController::class, 'verifyOtp']);
-Route::get('services', [Controller::class, 'verifyOtp']);
+Route::get('services', [Controller::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     /*------------------------USER------------------------*/
