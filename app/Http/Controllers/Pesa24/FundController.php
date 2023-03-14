@@ -10,7 +10,7 @@ class FundController extends Controller
 {
     public function parents()
     {
-        $user = User::with(['parentsRoles.parentsRoles.parentsRoles'])->select('id', 'name')->where('id', 55)->get();
+        $user = User::with(['parentsRoles.parentsRoles.parentsRoles'])->select('id', 'name')->where('id', auth()->user()->id)->get();
         return $user;
     }
 }
