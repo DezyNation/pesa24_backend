@@ -84,7 +84,32 @@ class User extends Authenticatable
         'referal_code',
         'onboard_fee',
         'otp',
-        'mpin'
+        'mpin',
+        'phone_number',
+        'pan_photo',
+        'aadhar_front',
+        'aadhar_back',
+        'profile_pic',
+        'line',
+        'city',
+        'state',
+        'pincode',
+        'profile',
+        'created_at',
+        'email',
+        'has_parent',
+        'gst_number',
+        'firm_type',
+        'company_name',
+        'user_code',
+        'alternate_phone',
+        'pan_number',
+        'aadhaar',
+        'kyc',
+        'organization_id',
+        'wallet',
+        'minimum_balance',
+        'dob'
     ];
 
     /**
@@ -185,6 +210,18 @@ class User extends Authenticatable
     public function parents(): BelongsToMany
     {
         return $this->belongsToMany(self::class, 'user_parent', 'user_id', 'parent_id');
+    }
+
+    /**
+     * The roles that belong to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function parentsRoles(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'user_parent', 'user_id', 'parent_id')->with(['roles' => function($q){
+            $q->select('role_id', 'model_id', 'name');
+        }]);
     }
 
     /**

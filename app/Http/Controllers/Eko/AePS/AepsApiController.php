@@ -479,10 +479,12 @@ class AepsApiController extends Controller
     {
         $user = User::with(['services' => function ($query) use ($service_id, $amount) {
             $query->where(['service_id' => $service_id])->where('to', '>=', $amount);
-        }, 'parents:id,name'])->select('id', 'name')->where('id', $user_id)->get();
+        }, 'parents:id,name'])->select('id', 'name')->where('id', $user_id)->first();
 
-        $deduction =$user[0]['services'][0]['fixed_deduction'];
-        $deduction =$user[0]['services'][0]['fixed_deduction'];
+        $deduction = $user[0]['services'][0]['fixed_deduction'];
+        $commission = 
+        $newAmount = 
+
 
         $db = DB::table('transactions')->where('id', $transaction_id)->update([
 

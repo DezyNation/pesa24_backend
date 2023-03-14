@@ -1,22 +1,23 @@
 <?php
 
-use App\Http\Controllers\Admin\FundRequestController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\PackageController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Pesa24\FundController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Eko\BBPS\BBPSController;
+use App\Http\Controllers\Razorpay\PayoutController;
 use App\Http\Controllers\Eko\AePS\AepsApiController;
+use App\Http\Controllers\Razorpay\ContactController;
+use App\Http\Controllers\Admin\FundRequestController;
+use App\Http\Controllers\Razorpay\FundAccountController;
 use App\Http\Controllers\Eko\DMT\AgentCustomerController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
-use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
-use App\Http\Controllers\PackageController;
-use App\Http\Controllers\Razorpay\ContactController;
-use App\Http\Controllers\Razorpay\FundAccountController;
-use App\Http\Controllers\Razorpay\PayoutController;
-use App\Http\Controllers\TicketController;
-use App\Models\User;
+use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -93,6 +94,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     /*-----------------------Fund Requests-----------------------*/
     
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
+    Route::get('fund/fetch-parents', [FundController::class, 'parents']);
     Route::get('fund/fetch-fund', [FundRequestController::class, 'fetchFundUser']);
 });
 

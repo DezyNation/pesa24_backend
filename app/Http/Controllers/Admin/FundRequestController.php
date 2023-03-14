@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class FundRequestController extends Controller
 {
@@ -72,7 +73,7 @@ class FundRequestController extends Controller
             'updated_at' => now()
         ]);
 
-        if ($request['approved']) {
+        if ($request['approved'] == 1) {
             $money = DB::table('users')->where('id', $request['user_id'])->pluck('wallet');
             $amount = $money + $request['amount'];
             DB::table('users')->where('id', $request['user_id'])->update([
@@ -98,5 +99,30 @@ class FundRequestController extends Controller
         ]);
 
         return $data;
+    }
+
+    public function fundTransfer(Request $request)
+    {
+        $request->validate([
+            'mpin' => 'required|digits:4',
+            'amount' => 'required|integer',
+            'to' => 'required|integer',
+            'remark' => 'string', 
+        ]);
+        if (!Hash::check($request['mpin'], auth()->user()->mpin)) {
+            return response()->json(['message' => 'Wrong MPIN']);
+        }
+
+        $user = DB::table('users')->where('phone_number', $request['to']);
+        $wallet = $user->pluck('wallet');
+        $total_amount = $wallet + $request['amount'];
+        $user->update([
+            'wallet' => $total_amount,
+            'updated_at' => now()
+        ]);
+
+        return response()->json(['message' => 'Fund transfer Successful']);
+
+
     }
 }
