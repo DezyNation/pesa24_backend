@@ -27,8 +27,8 @@ class FundRequestController extends Controller
             'amount' => $request['amount'],
             'bank_name' => $request['bankName'],
             'transaction_type' => $request['transactionType'],
-            'transaction_id	' => $request['transactionId'],
-            'transaction_date	' => $request['transactionDate'],
+            'transaction_id' => $request['transactionId'],
+            'transaction_date' => $request['transactionDate'],
             'receipt' => $imgPath,
             'created_at' => now(),
             'updated_at' => now()
