@@ -104,9 +104,22 @@ Route::get('admin', function () {
     // }, 'parents:id,name'])->select('id', 'name')->where('id', 55)->first();
 
     // $roles = $user->getRoleNames();
-    $user = User::with(['funds'])->where('id', 55)->get();
+    // $user = User::with(['funds'])->where('id', 55)->get();
     // $user = User::with(['parentsRoles.parentsRoles.parentsRoles'])->select('id', 'name')->where('id', 55)->get();
-    return $user;
+    $service_id = 22;
+    $amount = 0;
+    $user_id = 55;
+    // $user = User::with(['services' => function ($query) use ($service_id, $amount) {
+    //     $query->where(['service_id' => $service_id])->where('to', '>=', $amount);
+    // }, 'parents:id,name'])->select('id', 'name')->where('id', $user_id)->first();
+
+    $result = DB::table('users')
+        ->join('package_user','users.id','=','package_user.user_id')
+        ->join('packages','package_user.package_id','=','packages.id')
+        ->join('package_service','packages.id','=','package_service.package_id')
+        ->join('services','package_service.service_id','=','services.id')
+        ->select('package_service.*')->where('users.id','=',55)->where('services.id','=',22)->get();
+    echo $result;
 });
 
 

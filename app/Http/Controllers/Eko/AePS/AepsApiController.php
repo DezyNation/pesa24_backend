@@ -481,13 +481,24 @@ class AepsApiController extends Controller
             $query->where(['service_id' => $service_id])->where('to', '>=', $amount);
         }, 'parents:id,name'])->select('id', 'name')->where('id', $user_id)->first();
 
+        $result = DB::table('users')
+            ->join('package_user', 'users.id', '=', 'package_user.user_id')
+            ->join('packages', 'package_user.package_id', '=', 'packages.id')
+            ->join('package_service', 'packages.id', '=', 'package_service.package_id')
+            ->join('services', 'package_service.service_id', '=', 'services.id')
+            ->select('package_service.*')->where('users.id', '=', $user_id)->where('services.id', '=', $service_id)->get();
+
+        $user = User::with('parents:id,name')->select('id', 'name')->where('id', $user_id)->first();
+
+        $role = $user->getRoleName();
+        $commission_role = $role[0];
+
         $deduction = $user[0]['services'][0]['fixed_deduction'];
-        $commission = 
-        $newAmount = 
+        $commission_type = $commission_role . "_commission";
+        $commission = $user;
+        $newAmount = $user[0]['parents'][0]['id'];
 
 
-        $db = DB::table('transactions')->where('id', $transaction_id)->update([
-
-        ]);
+        $db = DB::table('transactions')->where('id', $transaction_id)->update([]);
     }
 }

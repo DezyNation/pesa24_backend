@@ -65,6 +65,7 @@ class FundRequestController extends Controller
             'user_id' => auth()->user()->id,
             'amount' => $request['amount'],
             'bank_name' => $request['bankName'],
+            'parent_id' => $request['requestFrom'],
             'transaction_type' => $request['transactionType'],
             'transaction_id	' => $request['transactionId'],
             'transaction_date	' => $request['transactionDate'],
