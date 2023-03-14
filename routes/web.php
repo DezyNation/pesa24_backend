@@ -98,14 +98,15 @@ Route::get('admin', function () {
     //     $q->select('model_id', 'role_id', 'name')->where('role_id', 3);
     // }])->select('id', 'organization_id', 'name')->where('organization_id', $org_id)->get();
 
-    $service = 'money transfer';
-    $user = User::with(['services' => function($query) {
-        $query->where(['service_id'=> 22])->where('to', '<=', 1);
-    }, 'parents:id,name'])->select('id', 'name')->where('id', 55)->first();
+    // $service = 'money transfer';
+    // $user = User::with(['services' => function($query) {
+    //     $query->where(['service_id'=> 22])->where('to', '<=', 1);
+    // }, 'parents:id,name'])->select('id', 'name')->where('id', 55)->first();
 
-    $roles = $user->getRoleNames();
+    // $roles = $user->getRoleNames();
+    $user = User::with(['funds'])->where('id', 55)->get();
     // $user = User::with(['parentsRoles.parentsRoles.parentsRoles'])->select('id', 'name')->where('id', 55)->get();
-    echo $user;
+    return $user;
 });
 
 

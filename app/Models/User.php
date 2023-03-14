@@ -253,4 +253,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Ticket::class);
     }
+
+    /**
+     * The funds that belong to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function funds(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'funds', 'parent_id', 'user_id')->withPivot(['amount', 'bank_name', 'transaction_type', 'transaction_id', 'transaction_date', 'receipt', 'approved', 'status', 'remarks', 'admin_remarks', 'created_at', 'updated_at']);
+    }
 }
