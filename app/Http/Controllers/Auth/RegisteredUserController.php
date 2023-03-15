@@ -46,6 +46,7 @@ class RegisteredUserController extends Controller
         $phone = $request['phone'];
         $username = $request['first_name'];
         $mpin = rand(1001, 9999);
+        $name = $request['first_name'] . " " . $request['last_name'];
         $password = Str::random(8);
         $user = User::create([
             'name' => $request['first_name'] . " " . $request['last_name'],
@@ -55,15 +56,16 @@ class RegisteredUserController extends Controller
             'phone_number' => $request['phone'],
             'password' => Hash::make($password),
             'mpin' => Hash::make($mpin),
-            'organization_id' => $org_id
+            // 'organization_id' => null
         ])->assignRole('retailer');
+        Session::forget('organization_code');
         // $this->email($email, $username, $password);
         // return ['Login' => true];
         event(new Registered($user));
 
-        Mail::raw("Hello Your one time password is $password and Mpin'-$mpin", function ($message) {
+        Mail::raw("Hello Your one time password is $password and Mpin'-$mpin", function ($message) use ($email, $name) {
             $message->from('info@pesa24.co.in', 'John Doe');
-            $message->to('rk3141508@gmail.com', 'Rishi');
+            $message->to($email, $name);
             $message->subject('Welcome to Pesa24');
             $message->priority(1);
         });

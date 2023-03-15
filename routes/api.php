@@ -19,6 +19,7 @@ use App\Http\Controllers\Eko\DMT\AgentCustomerController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
+use App\Http\Controllers\Pesa24\KycVerificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +36,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource('users', UserController::class);
+// Route::resource('users', UserController::class);
 Route::post('users/otp', [UserController::class, 'otp']);
 Route::post('users/verify-otp', [UserController::class, 'verifyOtp']);
 Route::get('services', [Controller::class, 'index']);
@@ -45,6 +46,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('user/update', [ProfileController::class, 'update']);
     Route::post('user/info', [ProfileController::class, 'info']);
     Route::post('user/wallet', [ProfileController::class, 'wallet']);
+    Route::post('user/verify/aadhaar/send-otp', [KycVerificationController::class, 'sendOtpAadhaar']);
+    Route::post('user/verify/aadhaar/verify-otp', [KycVerificationController::class, 'verifyOtpAadhaar']);
 
     /*-----------------------Password and MPIN-----------------------*/
     Route::post('new-mpin', [ProfileController::class, 'newMpin']);

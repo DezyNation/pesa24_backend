@@ -37,6 +37,8 @@ Route::get('/', function () {
     return phpinfo();
 });
 
+Route::get('aadhar-otp', [KycVerificationController::class, 'sendOtpAadhaar']);
+
 Route::get('/user', function () {
     $user = User::with('roles:name')->select('id')->findOrFail(23);
     return $user['roles'][0]['pivot']['minimum_balance'];
@@ -80,39 +82,6 @@ Route::get('policy', function () {
 Route::get('paysprint-test', [PaysprintAeps::class, 'onBoard']);
 
 Route::get('admin', function () {
-    // $id = 3;
-    // $org = 'DEZ45';
-    // $org_id = DB::table('organizations')->where('code', $org)->pluck('id');
-    // $user = User::with(['roles:name'])->select('id', 'name', 'organization_id')->where('organization_id', $org_id)->get();
-    // $test = Role::with(['users' => function($q) use ($org_id) {
-    //     $q->select('id', 'name', 'organization_id')->where('organization_id', $org_id);
-    // }])->where('id', 1)->get();
-
-    // $test2 = User::with(['roles', 'parents' => function($query) {
-    //     $query->where('user_id', 56);
-    // }])->where('organization_id', 2)->get();
-
-    // $test3 = ParentUser::has('users')->with(['users' => function($query){
-    //     $query->where('parent_id', 57);
-    // }, 'users.roles' => function($q){
-    //     $q->select('model_id', 'role_id', 'name')->where('role_id', 3);
-    // }])->select('id', 'organization_id', 'name')->where('organization_id', $org_id)->get();
-
-    // $service = 'money transfer';
-    // $user = User::with(['services' => function($query) {
-    //     $query->where(['service_id'=> 22])->where('to', '<=', 1);
-    // }, 'parents:id,name'])->select('id', 'name')->where('id', 55)->first();
-
-    // $roles = $user->getRoleNames();
-    // $user = User::with(['funds'])->where('id', 55)->get();
-    // $user = User::with(['parentsRoles.parentsRoles.parentsRoles'])->select('id', 'name')->where('id', 55)->get();
-    $service_id = 22;
-    $amount = 0;
-    $user_id = 55;
-    // $user = User::with(['services' => function ($query) use ($service_id, $amount) {
-    //     $query->where(['service_id' => $service_id])->where('to', '>=', $amount);
-    // }, 'parents:id,name'])->select('id', 'name')->where('id', $user_id)->first();
-
     $result = DB::table('users')
         ->join('package_user','users.id','=','package_user.user_id')
         ->join('packages','package_user.package_id','=','packages.id')
