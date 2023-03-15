@@ -79,7 +79,7 @@ class AgentManagementController extends Controller
         $token = $this->token();
 
         $data = [
-            'merchantcode' => auth()->user()->user_code,
+            'merchantcode' => 554477,
             'mobile' => auth()->user()->phone_number,
             'is_new' => 0,
             'email' => auth()->user()->email,

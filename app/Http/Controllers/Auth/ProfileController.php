@@ -98,8 +98,9 @@ class ProfileController extends AgentManagementController
             // 'mpin' => Hash::make( $request['values']['mpin'])
         ]);
 
-        if (is_null(auth()->user()->user_code))
-           return  $this->userOnboard();
+        // if (is_null(auth()->user()->user_code))
+        //    return  $this->userOnboard();
+        return $this->onboard();
 
 
         return new UserResource(User::findOrFail(Auth::id()));

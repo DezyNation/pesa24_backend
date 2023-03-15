@@ -51,8 +51,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('user/verify/aadhaar/verify-otp', [KycVerificationController::class, 'verifyOtpAadhaar']);
     Route::post('user/verify/pan/verify-pan', [KycVerificationController::class, 'panVerification']);
     Route::get('user/check/onboard-fee', function () {
-        $data = DB::table('users')->where('id', auth()->user()->id)->get('onboard_fee');
-        return $data;
+        $data = json_decode(DB::table('users')->where('id', auth()->user()->id)->get('onboard_fee'), true);
+        $user = User::findOrFail(auth()->user()->id)->makeVisible(['organization_id', 'wallet']);
+        $role = $user->getRoleNames();
+        $role_details = json_decode(DB::table('roles')->where('name', $role[0])->get(['fee']), true);
+        $arr = array_merge($data, $role_details);
+        return $arr;
     });
     Route::get('user/pay/onboard-fee', [KycVerificationController::class, 'onboardFee']);
 
