@@ -56,7 +56,7 @@ class RegisteredUserController extends Controller
             'phone_number' => $request['phone'],
             'password' => Hash::make($password),
             'mpin' => Hash::make($mpin),
-            'organization_id' => $org_id
+            'organization_id' => $org_id[0]
         ])->assignRole('retailer');
         Session::forget('organization_code');
         // $this->email($email, $username, $password);
