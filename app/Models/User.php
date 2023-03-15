@@ -67,7 +67,8 @@ class User extends Authenticatable
         'state',
         'pincode',
         'profile',
-        'organization_id'
+        'organization_id',
+        'paysprint_onboard'
     ];
 
     /**k

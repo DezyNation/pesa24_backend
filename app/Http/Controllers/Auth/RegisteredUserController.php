@@ -12,9 +12,11 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class RegisteredUserController extends Controller
 {
@@ -37,6 +39,9 @@ class RegisteredUserController extends Controller
             // 'role' => ['required'],
         ]);
 
+        $code = Session::put('organization_code', $request['organization_code']);
+        $org_id = DB::table('organizations')->where('code', $code)->pluck('id');
+
         $email = $request['email'];
         $phone = $request['phone'];
         $username = $request['first_name'];
@@ -49,7 +54,8 @@ class RegisteredUserController extends Controller
             'email' => $request['email'],
             'phone_number' => $request['phone'],
             'password' => Hash::make($password),
-            'mpin' => Hash::make($mpin)
+            'mpin' => Hash::make($mpin),
+            'organization_id' => $org_id
         ])->assignRole('retailer');
         // $this->email($email, $username, $password);
         // return ['Login' => true];

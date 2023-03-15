@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Eko\Agent;
 
 use App\Models\User;
+use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -12,6 +14,19 @@ use App\Http\Resources\v1\UserResource;
 
 class AgentManagementController extends Controller
 {
+    public function token()
+    {
+        $key = 'UFMwMDEyNGQ2NTliODUzYmViM2I1OWRjMDc2YWNhMTE2M2I1NQ==';
+        $payload = [
+            'timestamp' => now(),
+            'partnerId' => 'PS001',
+            'reqid' => abs(crc32(uniqid()))
+        ];
+        
+        $jwt = JWT::encode($payload, $key, 'HS256');
+        return $jwt;
+    }
+
     public function userOnboard()
     {
 
@@ -49,9 +64,34 @@ class AgentManagementController extends Controller
             DB::table('users')->where('id', auth()->user()->id)->update([
                 'user_code' => $response->json($key = 'data')['user_code']
             ]);
+
+            $this->onboard();
+
             return response(new UserResource(User::findOrFail(Auth::id())), 200);
         }
         return response($response, 400);
+    }
+
+    public function onboard()
+    {
+        $token = $this->token();
+
+        $data = [
+            'merchantcode' => auth()->user()->user_code,
+            'mobile' => auth()->user()->phone_number,
+            'is_new' => 0,
+            'email' => auth()->user()->email,
+            'firm' => auth()->user()->company_name ?? 'PAYMONEY',
+            'callback' => 'https://pesa24.in/api/apiservice/paysprint-onboarding-callbackurl.php',
+        ];
+
+        $response = Http::withHeaders([
+            'Token' => $token,
+            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Content-Type: application/json'
+        ])->post('https://api.paysprint.in/api/v1/service/onboard/onboard/getonboardurl', $data);
+            Log::channel('response')->info($response);
+        return $response;
     }
 
     public function activateService(Request $request)

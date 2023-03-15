@@ -45,7 +45,7 @@ class ProfileController extends AgentManagementController
      */
     public function info()
     {
-        return new UserResource(User::findOrFail(Auth::id()));
+        return new UserResource(User::findOrFail(Auth::id())->makeVisible(['phone_number', 'dob', 'aadhaar', 'user_code', 'company_name', 'line', 'city', 'state', 'pincode', 'profile', 'kyc']));
     }
 
     /**
@@ -70,8 +70,14 @@ class ProfileController extends AgentManagementController
             'values.phone' => ['required', Rule::unique('users', 'phone_number')->ignore(auth()->user()->id)],
             'values.pan' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')->ignore(auth()->user()->id)],
             'values.companyName' => ['required', 'max:255'],
-            'values.mpin' => ['required', 'digits:4', 'integer']
+            'values.aadhaarFront' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'values.aadhaarBack' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'values.panCard' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
         ]);
+
+        $aadhaar_front = $request->file('values.aadhaarFront')->store('aadhar_front');
+        $aadhaar_back = $request->file('values.aadhaarBack')->store('aadhar_back');
+        $pan_card = $request->file('values.panCard')->store('pan');
 
         User::where('id', auth()->user()->id)->update([
             'first_name' => $request['values']['firstName'],
@@ -86,7 +92,10 @@ class ProfileController extends AgentManagementController
             'pan_number' => $request['values']['pan'],
             'company_name' => $request['values']['companyName'],
             'profile' => 1,
-            'mpin' => Hash::make( $request['values']['mpin'])
+            'aadhar_front' => $aadhaar_front,
+            'aadhar_back' => $aadhaar_back,
+            'pan_photo' => $pan_card,
+            // 'mpin' => Hash::make( $request['values']['mpin'])
         ]);
 
         if (is_null(auth()->user()->user_code))
