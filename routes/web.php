@@ -34,62 +34,41 @@ use App\Models\ParentUser;
 */
 
 Route::get('/', function () {
-    return phpinfo();
+    return "Pesa24";
 });
 
-Route::get('aadhar-otp', [KycVerificationController::class, 'sendOtpAadhaar']);
 
-Route::get('/user', function () {
-    $user = User::with('roles:name')->select('id')->findOrFail(23);
-    return $user['roles'][0]['pivot']['minimum_balance'];
-})->middleware('minimum_balance');
+// Route::get('logic', function () {
+//     $organization = 'AMV45';
+//     $test = Organization::with(['packages.users' => function ($q) {
+//         $q->paginate(1);
+//     }])->where('code', $organization)->get();
+//     # http://127.0.0.1:8000/logic?page=1
+//     echo $test;
+// });
 
-Route::get('lic-api', [LICController::class, 'fetchbill']);
-// Route::get('test', [AepsApiController::class, 'testTransaction']);
+// Route::get('policy', function () {
+//     $user = User::with('parents')->find(56)->can('view', User::with('parents')->find(55));
 
-Route::get('hello', function () {
-    // $parent = User::with(['packages.services' => function ($query) {
-    //     $query->where('operator_type', 'like', '%withdrawal%');
-    // }, 'parents:id,name', 'roles:name'])->select('id')->findOrFail(55);
-    // if (count($parent['parents']) === 0) {
-    //     return "null";
-    // }
-});
+//     if ($user) {
+//         return 'True';
+//     } else {
 
-// Route::get('test', [AepsApiController::class, 'moneyTransfer']);
-Route::get('service', [AgentManagementController::class, 'services']);
+//         return 'False';
+//     }
+// });
 
-Route::get('logic', function () {
-    $organization = 'AMV45';
-    $test = Organization::with(['packages.users' => function ($q) {
-        $q->paginate(1);
-    }])->where('code', $organization)->get();
-    # http://127.0.0.1:8000/logic?page=1
-    echo $test;
-});
+// Route::get('paysprint-test', [PaysprintAeps::class, 'onBoard']);
 
-Route::get('policy', function () {
-    $user = User::with('parents')->find(56)->can('view', User::with('parents')->find(55));
-
-    if ($user) {
-        return 'True';
-    } else {
-
-        return 'False';
-    }
-});
-
-Route::get('paysprint-test', [PaysprintAeps::class, 'onBoard']);
-
-Route::get('admin', function () {
-    $result = DB::table('users')
-        ->join('package_user','users.id','=','package_user.user_id')
-        ->join('packages','package_user.package_id','=','packages.id')
-        ->join('package_service','packages.id','=','package_service.package_id')
-        ->join('services','package_service.service_id','=','services.id')
-        ->select('package_service.*')->where('users.id','=',55)->where('services.id','=',22)->get();
-    echo $result;
-});
+// Route::get('admin', function () {
+//     $result = DB::table('users')
+//         ->join('package_user','users.id','=','package_user.user_id')
+//         ->join('packages','package_user.package_id','=','packages.id')
+//         ->join('package_service','packages.id','=','package_service.package_id')
+//         ->join('services','package_service.service_id','=','services.id')
+//         ->select('package_service.*')->where('users.id','=',55)->where('services.id','=',22)->get();
+//     echo $result;
+// });
 
 
 
