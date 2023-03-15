@@ -48,6 +48,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('user/wallet', [ProfileController::class, 'wallet']);
     Route::post('user/verify/aadhaar/send-otp', [KycVerificationController::class, 'sendOtpAadhaar']);
     Route::post('user/verify/aadhaar/verify-otp', [KycVerificationController::class, 'verifyOtpAadhaar']);
+    Route::post('user/verify/pan/verify-pan', [KycVerificationController::class, 'panVerification']);
 
     /*-----------------------Password and MPIN-----------------------*/
     Route::post('new-mpin', [ProfileController::class, 'newMpin']);

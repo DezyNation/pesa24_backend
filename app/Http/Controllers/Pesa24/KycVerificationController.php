@@ -71,15 +71,17 @@ class KycVerificationController extends Controller
             'content-type' => 'application/json'
         ])->post('https://api.apiclub.in/uat/v1/aadhaar_v2/submit_otp', $data);
 
-        if ($response['response']['registered_name'] == auth()->user()->name) {
-            DB::table('kyc')->updateOrInsert(
-                ['user_id' => auth()->user()->id],
-                ['pan' => 1]
-            );
-        } else {
-            return response("Could not verify your aadhar", 419);
+        if ($response->json($key = 'status') == 'success') {
+            if ($response['response']['registered_name'] == auth()->user()->name) {
+                DB::table('kyc')->updateOrInsert(
+                    ['user_id' => auth()->user()->id],
+                    ['pan' => 1]
+                );
+            } else {
+                return response("Could not verify your aadhar", 419);
+            }
         }
 
-        return $response;
+        return response()->json(['message' => 'PAN Card Verified']);
     }
 }
