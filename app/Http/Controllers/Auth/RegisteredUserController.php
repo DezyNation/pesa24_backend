@@ -40,7 +40,8 @@ class RegisteredUserController extends Controller
         ]);
 
         $code = Session::put('organization_code', $request['organization_code']);
-        $org_id = DB::table('organizations')->where('code', $code)->pluck('id');
+        $org_id = DB::table('organizations')->where('code', $request['organization_code'])->pluck('id');
+        return $org_id;
 
         $email = $request['email'];
         $phone = $request['phone'];
@@ -56,7 +57,7 @@ class RegisteredUserController extends Controller
             'phone_number' => $request['phone'],
             'password' => Hash::make($password),
             'mpin' => Hash::make($mpin),
-            // 'organization_id' => null
+            'organization_id' => $org_id
         ])->assignRole('retailer');
         Session::forget('organization_code');
         // $this->email($email, $username, $password);
