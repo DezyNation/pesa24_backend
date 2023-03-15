@@ -20,6 +20,7 @@ use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Pesa24\KycVerificationController;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,11 +50,23 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('user/verify/aadhaar/send-otp', [KycVerificationController::class, 'sendOtpAadhaar']);
     Route::post('user/verify/aadhaar/verify-otp', [KycVerificationController::class, 'verifyOtpAadhaar']);
     Route::post('user/verify/pan/verify-pan', [KycVerificationController::class, 'panVerification']);
+    Route::get('user/check/onboard-fee', function () {
+        $data = DB::table('users')->where('id', auth()->user()->id)->get('onboard_fee');
+        return $data;
+    });
+    Route::get('user/pay/onboard-fee', [KycVerificationController::class, 'onboardFee']);
 
     /*-----------------------Password and MPIN-----------------------*/
     Route::post('new-mpin', [ProfileController::class, 'newMpin']);
     Route::post('new-mpin', [ProfileController::class, 'newPass']);
+    /*-----------------------Fund Requests-----------------------*/
 
+    Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
+    Route::get('fund/fetch-parents', [FundController::class, 'parents']);
+    Route::get('fund/fetch-fund', [FundRequestController::class, 'fetchFundUser']);
+});
+
+Route::middleware(['auth:sanctum', 'onboard', 'minimum_balance'])->group(function () {
     /*------------------------EKO AEPS------------------------*/
     Route::get('user-service-inquiry', [AepsApiController::class, 'userServiceInquiry']);
     Route::post('aeps-inquiry', [AepsApiController::class, 'aepsInquiry']);
@@ -97,11 +110,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('paysprint/bbps/mobile-operators/parameter/{id}', [RechargeController::class, 'operatorParameter']);
     Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
     Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge']);
-    /*-----------------------Fund Requests-----------------------*/
-    
-    Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
-    Route::get('fund/fetch-parents', [FundController::class, 'parents']);
-    Route::get('fund/fetch-fund', [FundRequestController::class, 'fetchFundUser']);
 });
 
 Route::group(['middleware' => ['auth:sanctum', 'role:admin'], 'prefix' => 'admin'], function () {

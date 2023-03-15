@@ -36,4 +36,22 @@ class Controller extends BaseController
             'pesa24_active' => 1,
         ]);
     }
+
+    public function transaction(int $amount, string $service, string $service_type, int $user_id, int $opening_balance, string $transaction_id, int $closing_balance, int $credit = null)
+    {
+        DB::table('transactions')->insert([
+            'debit_amount' => $amount,
+            'transaction_for' => $service,
+            'user_id' => $user_id,
+            'credit_amount' => $credit,
+            'opening_balance' => $opening_balance,
+            'closing_balance' => $closing_balance,
+            'service_type' => $service_type,
+            'transaction_id' => $transaction_id,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        return response()->json(['message' => 'Transaction successful.']);
+    }
 }

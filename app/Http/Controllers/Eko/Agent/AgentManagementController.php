@@ -60,6 +60,8 @@ class AgentManagementController extends Controller
             'secret-key' => $secret_key,
         ])->put('https://staging.eko.in:25004/ekoapi/v1/user/onboard', $data);
 
+        Log::channel('response')->info($response);
+
         if (collect($response->json($key = 'data'))->has('user_code')) {
             DB::table('users')->where('id', auth()->user()->id)->update([
                 'user_code' => $response->json($key = 'data')['user_code']

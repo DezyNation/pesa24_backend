@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Pesa24;
 
+use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class KycVerificationController extends Controller
@@ -86,5 +89,34 @@ class KycVerificationController extends Controller
         } else {
             return response($response->json($key = 'response'), 419);
         }
+    }
+
+    public function onboardFee()
+    {
+        $user = User::findOrFail(auth()->user()->id)->makeVisible(['organization_id', 'wallet']);
+        $role = $user->getRoleNames();
+        $role_details = json_decode(DB::table('roles')->where('name', $role[0])->get(['id', 'fee']), true);
+        $id = json_decode(DB::table('packages')->where(['role_id' => $role_details[0]['id'], 'organization_id' => $user->organization_id, 'is_default' => 1])->get('id'), true);
+        $opening_balance = $user->wallet;
+        $final_amount = $user->wallet - $role_details[0]['fee'];
+
+        $attach_user = DB::table('package_user')->insert([
+            'user_id' => auth()->user()->id,
+            'package_id' => $id[0]['id'],
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('users')->where('id', auth()->user()->id)->update([
+           'wallet' => $final_amount,
+           'onboard_fee' => 1,
+           'updated_at' => now()
+        ]);
+
+        $transaction_id = "ONB".strtoupper(Str::random(5));
+
+        $this->transaction($role_details[0]['fee'], 'Onboard and Package fee', 'onboarding', auth()->user()->id, $opening_balance, $transaction_id, $final_amount, 0);
+
+        return response()->json(['message' => 'User onboarded successfully.']);
     }
 }

@@ -16,11 +16,11 @@ class MinimumBalance
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = User::with('roles:name')->select('id', 'minimum_balance', 'wallet')->findOrFail(auth()->user()->id);    
+        $user = User::with('roles:name')->select('id', 'minimum_balance', 'wallet')->findOrFail(auth()->user()->id)->makeVisible(['wallet', 'minimum_balance']);
         $minimumBalance = $user['roles'][0]['pivot']['minimum_balance'];
-
-        if ($user['wallet'] < $minimumBalance || $user['wallet'] < $user['minimum_balance']  ) {
-            return response()->json(['Error' => 'Your balance is lower than minimum balance, please top-up your wallet.']);
+        $final_amount = $user->wallet - $request['amount'];
+        if ($final_amount < $minimumBalance || $final_amount < $user->minimum_balance) {
+            return response()->json(['Error' => 'You have not enough balance to make this transaction.']);
         }
         return $next($request);
     }

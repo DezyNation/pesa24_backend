@@ -2,6 +2,8 @@
 
 use App\Models\User;
 use App\Models\Package;
+use App\Models\ParentUser;
+use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
@@ -20,7 +22,6 @@ use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\Agent\AgentManagementController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
-use App\Models\ParentUser;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,7 +61,7 @@ Route::get('/', function () {
 
 // Route::get('paysprint-test', [PaysprintAeps::class, 'onBoard']);
 
-// Route::get('admin', function () {
+Route::get('admin', function () {
 //     $result = DB::table('users')
 //         ->join('package_user','users.id','=','package_user.user_id')
 //         ->join('packages','package_user.package_id','=','packages.id')
@@ -68,7 +69,13 @@ Route::get('/', function () {
 //         ->join('services','package_service.service_id','=','services.id')
 //         ->select('package_service.*')->where('users.id','=',55)->where('services.id','=',22)->get();
 //     echo $result;
-// });
+// $user = User::findOrFail(55)->makeVisible(['organization_id']);
+// $role = $user->getRoleNames();
+// $role_price = json_decode(DB::table('roles')->where('name', $role[0])->get(['fee', 'id']), true);
+// $arr = json_decode($role_price, true);
+$str = strtoupper(Str::random(5));
+return $str;
+});
 
 
 
