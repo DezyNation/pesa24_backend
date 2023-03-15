@@ -62,16 +62,21 @@ Route::get('/', function () {
 // Route::get('paysprint-test', [PaysprintAeps::class, 'onBoard']);
 
 Route::get('admin', function () {
-    $result = DB::table('users')
-        ->join('service_user','users.id','=','service_user.user_id')
-        ->join('services','service_user.service_id','=','services.id')
-        // ->join('package_service','packages.id','=','package_service.package_id')
-        // ->join('services','package_service.service_id','=','services.id')
-        ->select('services.*')->where('users.id','=',55)
-        // ->where('services.id','=',22)
-        ->get();
+    // $result = DB::table('users')
+    // ->join('service_user','users.id','=','service_user.user_id')
+    // ->join('services','service_user.service_id','=','services.id')
+    // ->join('package_service','packages.id','=','package_service.package_id')
+    // ->join('services','package_service.service_id','=','services.id')
+    // ->select('services.*')->where('users.id','=',55)
+    // ->where('services.id','=',22)
+    // ->get();
     // echo $result;
-return $result;
+
+    $result = DB::table('users')
+        ->join('service_user', 'users.id', '=', 'service_user.user_id')
+        ->join('services', 'service_user.service_id', '=', 'services.id')
+        ->select('services.type', 'services.service_name', 'services.image_url', 'services.price')->where('users.id', '=', 55)->where('service_user.pesa24_active', '=', 1)->get(['type', 'service_name', 'image_url', 'price']);
+    return $result;
 });
 
 

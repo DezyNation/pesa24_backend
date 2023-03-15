@@ -56,7 +56,7 @@ class ProfileController extends AgentManagementController
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
-    {     
+    {
         // $data = collect($request->values);
         $request->validate([
             'values.firstName' => ['required', 'max:255'],
@@ -65,7 +65,7 @@ class ProfileController extends AgentManagementController
             'values.aadhaar' => ['required', 'digits:12', 'integer', Rule::unique('users', 'aadhaar')->ignore(auth()->user()->id)],
             'values.line' => ['required', 'string', 'max:255'],
             'values.city' => ['required', 'string', 'max:255'],
-            'values.pincode' => ['required','digits:6','integer'],
+            'values.pincode' => ['required', 'digits:6', 'integer'],
             'values.state' => ['required', 'string', 'max:255'],
             'values.phone' => ['required', Rule::unique('users', 'phone_number')->ignore(auth()->user()->id)],
             'values.pan' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')->ignore(auth()->user()->id)],
@@ -125,7 +125,7 @@ class ProfileController extends AgentManagementController
                 'error' => ['You entered wrong MPIN'],
             ]);
         }
-        
+
         User::where('id', auth()->user()->id)->update([
             'mpin' => Hash::make($request['new_mpin'])
         ]);
@@ -154,10 +154,19 @@ class ProfileController extends AgentManagementController
 
         return response('Password changed successfully', 200);
     }
-    
-        public function wallet()
+
+    public function wallet()
     {
         $wallet = DB::table('users')->where('id', auth()->user()->id)->get('wallet');
         return $wallet;
+    }
+
+    public function userServices()
+    {
+        $result = DB::table('users')
+            ->join('service_user', 'users.id', '=', 'service_user.user_id')
+            ->join('services', 'service_user.service_id', '=', 'services.id')
+            ->select('services.type', 'services.service_name', 'services.image_url', 'services.price')->where('users.id', '=', 55)->where('service_user.pesa24_active', '=', 1)->get(['type', 'service_name', 'image_url', 'price']);
+        return $result;
     }
 }
