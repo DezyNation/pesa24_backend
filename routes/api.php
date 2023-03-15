@@ -2,25 +2,24 @@
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Pesa24\FundController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Eko\BBPS\BBPSController;
+use App\Http\Controllers\Pesa24\TicketController;
 use App\Http\Controllers\Razorpay\PayoutController;
 use App\Http\Controllers\Eko\AePS\AepsApiController;
 use App\Http\Controllers\Razorpay\ContactController;
 use App\Http\Controllers\Admin\FundRequestController;
 use App\Http\Controllers\Razorpay\FundAccountController;
 use App\Http\Controllers\Eko\DMT\AgentCustomerController;
+use App\Http\Controllers\Pesa24\KycVerificationController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
-use App\Http\Controllers\Pesa24\KycVerificationController;
-use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +58,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return $arr;
     });
     Route::get('user/pay/onboard-fee', [KycVerificationController::class, 'onboardFee']);
+
+    /*-----------------------Tickets-----------------------*/
+    Route::get('tickets', [TicketController::class, 'index']);
+    Route::get('tickets/user/{id}', [TicketController::class, 'userTicket']);
+    Route::get('tickets/{id}', [TicketController::class, 'ticket']);
+    Route::post('tickets/{id}', [TicketController::class, 'update']);
+    /*-----------------------Tickets-----------------------*/
 
     /*-----------------------Password and MPIN-----------------------*/
     Route::post('new-mpin', [ProfileController::class, 'newMpin']);
