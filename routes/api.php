@@ -60,6 +60,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('user/pay/onboard-fee', [KycVerificationController::class, 'onboardFee']);
 
     /*-----------------------Tickets-----------------------*/
+    Route::post('tickets', [TicketController::class, 'store']);
     Route::get('tickets', [TicketController::class, 'index']);
     Route::get('tickets/user/{id}', [TicketController::class, 'userTicket']);
     Route::get('tickets/{id}', [TicketController::class, 'ticket']);
@@ -137,8 +138,6 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin'], 'prefix' => 'admin
     Route::get('fetch-fund-requests/{id}', [FundRequestController::class, 'fetchFundId']);
     Route::post('update-fund-requests', [FundRequestController::class, 'updateFund']);
 
-    Route::get('tickets', [TicketController::class, 'index']);
-    Route::post('tickets', [TicketController::class, 'store']);
 });
 
 //Line 78 'api/fund/request-fund' --> for fund request
