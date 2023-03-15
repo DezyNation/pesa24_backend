@@ -16,7 +16,7 @@ class AgentManagementController extends Controller
 {
     public function token()
     {
-        $key = 'UFMwMDEyNGQ2NTliODUzYmViM2I1OWRjMDc2YWNhMTE2M2I1NQ==';
+        $key = 'UFMwMDkxNDNmZmM0OWRhZGE5NDdlZGZlMmEzNGU0ZWNhYWRlOGQ4';
         $payload = [
             'timestamp' => now(),
             'partnerId' => 'PS001',
@@ -89,7 +89,7 @@ class AgentManagementController extends Controller
 
         $response = Http::withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'Content-Type: application/json'
         ])->post('https://api.paysprint.in/api/v1/service/onboard/onboard/getonboardurl', $data);
             Log::channel('response')->info($response);
