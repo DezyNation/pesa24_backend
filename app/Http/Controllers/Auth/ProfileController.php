@@ -95,13 +95,7 @@ class ProfileController extends AgentManagementController
             'aadhar_front' => $aadhaar_front,
             'aadhar_back' => $aadhaar_back,
             'pan_photo' => $pan_card,
-            // 'mpin' => Hash::make( $request['values']['mpin'])
         ]);
-
-        // if (is_null(auth()->user()->user_code))
-        //    return  $this->userOnboard();
-        return $this->onboard();
-
 
         return new UserResource(User::findOrFail(Auth::id()));
     }
