@@ -67,8 +67,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     /*-----------------------Tickets-----------------------*/
 
     /*-----------------------Password and MPIN-----------------------*/
-    Route::post('new-mpin', [ProfileController::class, 'newMpin']);
-    Route::post('new-mpin', [ProfileController::class, 'newPass']);
+    Route::post('user/new-mpin', [ProfileController::class, 'newMpin']);
+    Route::post('user/new-password', [ProfileController::class, 'newPass']);
     /*-----------------------Fund Requests-----------------------*/
 
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);

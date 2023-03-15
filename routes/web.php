@@ -62,19 +62,16 @@ Route::get('/', function () {
 // Route::get('paysprint-test', [PaysprintAeps::class, 'onBoard']);
 
 Route::get('admin', function () {
-//     $result = DB::table('users')
-//         ->join('package_user','users.id','=','package_user.user_id')
-//         ->join('packages','package_user.package_id','=','packages.id')
-//         ->join('package_service','packages.id','=','package_service.package_id')
-//         ->join('services','package_service.service_id','=','services.id')
-//         ->select('package_service.*')->where('users.id','=',55)->where('services.id','=',22)->get();
-//     echo $result;
-// $user = User::findOrFail(55)->makeVisible(['organization_id']);
-// $role = $user->getRoleNames();
-// $role_price = json_decode(DB::table('roles')->where('name', $role[0])->get(['fee', 'id']), true);
-// $arr = json_decode($role_price, true);
-$str = strtoupper(Str::random(5));
-return $str;
+    $result = DB::table('users')
+        ->join('service_user','users.id','=','service_user.user_id')
+        ->join('services','service_user.service_id','=','services.id')
+        // ->join('package_service','packages.id','=','package_service.package_id')
+        // ->join('services','package_service.service_id','=','services.id')
+        ->select('services.*')->where('users.id','=',55)
+        // ->where('services.id','=',22)
+        ->get();
+    // echo $result;
+return $result;
 });
 
 
