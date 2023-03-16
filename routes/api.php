@@ -33,7 +33,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+Route::middleware(['auth:api'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
@@ -42,7 +42,7 @@ Route::post('users/otp', [UserController::class, 'otp']);
 Route::post('users/verify-otp', [UserController::class, 'verifyOtp']);
 Route::get('services', [Controller::class, 'index']);
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:api'])->group(function () {
     /*------------------------USER------------------------*/
     Route::post('user/update', [ProfileController::class, 'update']);
     Route::post('user/info', [ProfileController::class, 'info']);
