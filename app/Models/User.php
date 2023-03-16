@@ -10,6 +10,7 @@ use App\Models\PackageService;
 use App\Models\KYCVerification;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\PermissionRegistrar;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
@@ -220,7 +221,7 @@ class User extends Authenticatable
      */
     public function parentsRoles(): BelongsToMany
     {
-        return $this->belongsToMany(self::class, 'user_parent', 'user_id', 'parent_id')->with(['roles' => function($q){
+        return $this->belongsToMany(self::class, 'user_parent', 'user_id', 'parent_id')->with(['roles' => function ($q) {
             $q->select('role_id', 'model_id', 'name');
         }]);
     }
@@ -263,5 +264,25 @@ class User extends Authenticatable
     public function funds(): BelongsToMany
     {
         return $this->belongsToMany(self::class, 'funds', 'parent_id', 'user_id')->withPivot(['amount', 'bank_name', 'transaction_type', 'transaction_id', 'transaction_date', 'receipt', 'approved', 'status', 'remarks', 'admin_remarks', 'created_at', 'updated_at']);
+    }
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
