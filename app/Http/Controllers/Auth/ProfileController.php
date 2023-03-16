@@ -166,7 +166,7 @@ class ProfileController extends AgentManagementController
         $result = DB::table('users')
             ->join('service_user', 'users.id', '=', 'service_user.user_id')
             ->join('services', 'service_user.service_id', '=', 'services.id')
-            ->select('services.type', 'services.service_name', 'services.image_url', 'services.price')->where('users.id', '=', 55)->where('service_user.pesa24_active', '=', 1)->get(['type', 'service_name', 'image_url', 'price']);
+            ->select('services.type', 'services.service_name', 'services.image_url', 'services.price')->where('users.id', '=', auth()->user()->id)->where('service_user.pesa24_active', '=', 1)->get(['type', 'service_name', 'image_url', 'price']);
         return $result;
     }
 }
