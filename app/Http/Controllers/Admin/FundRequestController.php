@@ -17,10 +17,10 @@ class FundRequestController extends Controller
             'transactionType' => 'required|string',
             'transactionId' => 'required|string',
             'transactionDate' => 'required|date',
-            'receipt' => 'mimes:jpg,jpeg,png,pdf'
+            'receipt' => 'mimes:jpg,jpeg,png,pdf|max:2048'
         ]);
 
-        $imgPath = $request->file('receipt')->store('image', 'public');
+        $imgPath = $request->file('receipt')->store('receipt');
 
         DB::table('funds')->insert([
             'user_id' => auth()->user()->id,
