@@ -41,6 +41,7 @@ class RegisteredUserController extends Controller
 
         $code = Session::put('organization_code', $request['organization_code']);
         $org_id = DB::table('organizations')->where('code', $request['organization_code'])->pluck('id');
+        return $org_id;
 
         $email = $request['email'];
         $phone = $request['phone'];
