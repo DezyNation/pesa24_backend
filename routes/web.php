@@ -72,15 +72,21 @@ Route::get('admin', function () {
     // ->get();
     // echo $result;
 
-    // $result = DB::table('users')
-    //     ->join('service_user', 'users.id', '=', 'service_user.user_id')
-    //     ->join('services', 'service_user.service_id', '=', 'services.id')
-    //     ->select('services.type', 'services.service_name', 'services.image_url', 'services.price')->where('users.id', '=', 55)->where('service_user.pesa24_active', '=', 1)->get(['type', 'service_name', 'image_url', 'price']);
-    // return $result;
-    $test = json_decode(json_encode(response(["test" => true], 200), true), true);
+    $service_id = 23;
+    $result = DB::table('users')
+    ->join('package_user', 'users.id', '=', 'package_user.user_id')
+    ->join('packages', 'package_user.package_id', '=', 'packages.id')
+    ->join('package_service', 'packages.id', '=', 'package_service.package_id')
+    ->join('service_user', 'users.id',  '=', 'service_user.user_id')
+    ->join('services', 'package_service.service_id', '=', 'services.id')
+    ->select('package_service.*')
+    ->where(['service_user.user_id'=> 55, 'service_user.service_id' => $service_id, 'package_service.service_id' => $service_id, 'package_user.user_id' => 55])
+    ->get();
+    $array = json_decode($result, true);
+    // $test = json_decode(json_encode(response(["test" => true], 200), true), true);
     // $a = json_encode($test, true);
     // $b = json_decode($a, true);
-    return $test['original']['test'];
+    return $array;
 });
 
 

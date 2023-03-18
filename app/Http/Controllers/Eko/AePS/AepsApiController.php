@@ -103,14 +103,11 @@ class AepsApiController extends Controller
             ]
         );
 
-        $id = DB::insertGetId(
-            'insert into transactions (user_id, transaction_for, credit_amount, debit_amount, opening_balance, balance_left, commission, transaction_id, is_flat, created_at, updated_at) values [?,?,?,?,?,?,?,?,?,?,?]',
-            [
-                auth()->user()->id, 'AePS: Money Transfer', $data['amount'],
-            ]
-        );
+        $wallet = auth()->user()->wallet;
+        $closing_balance = $wallet-$amount;
+        $transaction_id = "AEP".strtoupper(Str::random(5));
 
-        $this->commission('aeps', $data['amount'], $id);
+        $this->aepsTransaction($amount, 'AePS: Withdrawwal', 'banking', auth()->user()->id, $transaction_id);
 
         return $response;
     }
@@ -500,6 +497,32 @@ class AepsApiController extends Controller
 
 
         $db = DB::table('transactions')->where('id', $transaction_id)->update([]);
+    }
+    public function aepsTransaction(int $amount, string $service, string $service_type, int $user_id, string $transaction_id, int $credit = null)
+    {
+            $wallet = auth()->user()->wallet;
+            $closing_balance = $wallet-$amount;
+            DB::table('users')->where('id', $user_id)->update([
+                'wallet' => $closing_balance,
+                'updated_at' => now()
+            ]);
+        DB::table('transactions')->insert([
+            'debit_amount' => $amount,
+            'transaction_for' => $service,
+            'user_id' => $user_id,
+            'credit_amount' => $credit,
+            'opening_balance' => $opening_balance,
+            'closing_balance' => $closing_balance,
+            'service_type' => $service_type,
+            'transaction_id' => $transaction_id,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+    
+        if (auth()->user()->has_parnt) {
+            
+        }
+        return response()->json(['message' => 'Transaction successful.']);
     }
 }
 
