@@ -72,11 +72,15 @@ Route::get('admin', function () {
     // ->get();
     // echo $result;
 
-    $result = DB::table('users')
-        ->join('service_user', 'users.id', '=', 'service_user.user_id')
-        ->join('services', 'service_user.service_id', '=', 'services.id')
-        ->select('services.type', 'services.service_name', 'services.image_url', 'services.price')->where('users.id', '=', 55)->where('service_user.pesa24_active', '=', 1)->get(['type', 'service_name', 'image_url', 'price']);
-    return $result;
+    // $result = DB::table('users')
+    //     ->join('service_user', 'users.id', '=', 'service_user.user_id')
+    //     ->join('services', 'service_user.service_id', '=', 'services.id')
+    //     ->select('services.type', 'services.service_name', 'services.image_url', 'services.price')->where('users.id', '=', 55)->where('service_user.pesa24_active', '=', 1)->get(['type', 'service_name', 'image_url', 'price']);
+    // return $result;
+    $test = json_decode(json_encode(response(["test" => true], 200), true), true);
+    // $a = json_encode($test, true);
+    // $b = json_decode($a, true);
+    return $test['original']['test'];
 });
 
 

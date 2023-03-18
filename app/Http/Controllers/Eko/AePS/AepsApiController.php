@@ -502,3 +502,14 @@ class AepsApiController extends Controller
         $db = DB::table('transactions')->where('id', $transaction_id)->update([]);
     }
 }
+
+
+/**
+ * initiate transaction.
+ * charge the fixed amount
+ * check role and make a transaction of commission
+ * check if parent exists
+ * assign commission to parents recursively
+ * 
+ */
+
