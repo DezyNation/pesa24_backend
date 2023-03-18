@@ -103,11 +103,10 @@ class KycVerificationController extends Controller
         $opening_balance = $user->wallet;
         $final_amount = $user->wallet - $role_details[0]['fee'];
 
-        $paysprint = $this->onboard();
-        $eko = $this->userOnboard();
-        if (!$eko['orginal']['message']) {
-            return response("Could not implement", 501);
-        }
+            $eko = $this->userOnboard();
+            if (!$eko['orginal']['message']) {
+                return response("Could not implement", 501);
+            }
 
         $attach_user = DB::table('package_user')->insert([
             'user_id' => auth()->user()->id,
@@ -153,7 +152,7 @@ class KycVerificationController extends Controller
 
         $residence_address['line'] = strval(auth()->user()->line);
         $residence_address['city'] = strval(auth()->user()->city);
-        $residence_address['state'] = strval(auth()->user()->state);
+        $residence_address['state'] = strval('Haryana');
         $residence_address['pincode'] = strval(auth()->user()->pincode);
 
         $data = [

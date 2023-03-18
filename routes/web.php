@@ -72,17 +72,21 @@ Route::get('admin', function () {
     // ->get();
     // echo $result;
 
-    $service_id = 23;
+    $service_id = 22;
+    $amount = 10000;
     $result = DB::table('users')
     ->join('package_user', 'users.id', '=', 'package_user.user_id')
     ->join('packages', 'package_user.package_id', '=', 'packages.id')
     ->join('package_service', 'packages.id', '=', 'package_service.package_id')
     ->join('service_user', 'users.id',  '=', 'service_user.user_id')
     ->join('services', 'package_service.service_id', '=', 'services.id')
-    ->select('package_service.*')
+    ->select('package_service.*', 'services.service_name')
     ->where(['service_user.user_id'=> 55, 'service_user.service_id' => $service_id, 'package_service.service_id' => $service_id, 'package_user.user_id' => 55])
+    ->where('from', '<', $amount)
+    ->where('to', '>=', $amount)
     ->get();
-    $array = json_decode($result, true);
+    $array = $result->toArray();
+    $user = User::findOrFail(55);
     // $test = json_decode(json_encode(response(["test" => true], 200), true), true);
     // $a = json_encode($test, true);
     // $b = json_decode($a, true);
