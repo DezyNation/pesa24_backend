@@ -69,7 +69,9 @@ class User extends Authenticatable implements JWTSubject
         'pincode',
         'profile',
         'organization_id',
-        'paysprint_onboard'
+        'paysprint_onboard',
+        'device_number',
+        'model_name'
     ];
 
     /**k

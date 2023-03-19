@@ -22,6 +22,8 @@ use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\Agent\AgentManagementController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -92,6 +94,13 @@ Route::get('admin', function () {
     // $b = json_decode($a, true);
     return $array;
 });
+
+Route::get('file', function(){
+    $file = Storage::disk('local')->get('pan\sa3Pf61R2AOEdCqT60ohrf3TPx1Tm0qvPD4wYVQ6.jpg');
+    return $file;
+});
+
+Route::get('test-aeps', [PaysprintAeps::class, 'enquiry']);
 
 
 
