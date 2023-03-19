@@ -40,7 +40,7 @@ class AttachServiceController extends Controller
         $service = Service::findOrFail($id);
         if ($id == 45) {
             $this->aepsEnroll($request);
-            $this->paysprintOnboard();  
+            $this->paysprintOnboard();
         } else {
             $this->generalService($id);
         }
@@ -73,7 +73,10 @@ class AttachServiceController extends Controller
             'secret-key-timestamp' => $secret_key_timestamp,
             'secret-key' => $secret_key,
         ])->put('https://staging.eko.in:25004/ekoapi/v1/user/service/activate', $data);
+        Log::channel('response')->info($response);
+        return $response;
     }
+
 
     public function paysprintOnboard()
     {
@@ -115,5 +118,6 @@ class AttachServiceController extends Controller
             'secret-key-timestamp' => $secret_key_timestamp,
             'secret-key' => $secret_key,
         ])->put('https://staging.eko.in:25004/ekoapi/v1/user/service/activate', $data);
+        Log::channel('response')->info($response);
     }
 }
