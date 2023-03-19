@@ -81,42 +81,42 @@ Route::middleware(['auth:api'])->group(function () {
 
 Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function () {
     /*------------------------EKO AEPS------------------------*/
-    Route::get('user-service-inquiry', [AepsApiController::class, 'userServiceInquiry']);
-    Route::post('aeps-inquiry', [AepsApiController::class, 'aepsInquiry']);
-    Route::post('fund-settlement', [AepsApiController::class, 'fundSettlement']);
-    Route::post('eko/aeps/money-transfer', [AepsApiController::class, 'moneyTransfer']);
+    Route::get('user-service-inquiry/{service_id}', [AepsApiController::class, 'userServiceInquiry']);
+    Route::post('aeps-inquiry/{service_id}', [AepsApiController::class, 'aepsInquiry']);
+    Route::post('fund-settlement/{service_id}', [AepsApiController::class, 'fundSettlement']);
+    Route::post('eko/aeps/money-transfer/{service_id}', [AepsApiController::class, 'moneyTransfer']);
 
     /*------------------------EKO BBPS------------------------*/
-    Route::get('eko/bbps/operators/categories', [BBPSController::class, 'operatorCategoryList']);
-    Route::get('eko/bbps/operators/{category_id?}', [BBPSController::class, 'operators']);
-    Route::get('eko/bbps/operators/fields/{operator_id}', [BBPSController::class, 'operatorField']);
-    Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill']);
+    Route::get('eko/bbps/operators/categories/{service_id}', [BBPSController::class, 'operatorCategoryList']);
+    Route::get('eko/bbps/operators/{category_id?}/{service_id}', [BBPSController::class, 'operators']);
+    Route::get('eko/bbps/operators/fields/{operator_id}/{service_id}', [BBPSController::class, 'operatorField']);
+    Route::post('eko/bbps/fetch-bill/{service_id}', [BBPSController::class, 'fetchBill']);
 
     /*------------------------EKO DMT------------------------*/
 
-    Route::post('eko/dmt/customer-info', [CustomerRecipientController::class, 'customerInfo']);
-    Route::post('eko/dmt/create-customer', [CustomerRecipientController::class, 'createCustomer']);
-    Route::post('eko/dmt/resend-otp', [CustomerRecipientController::class, 'resendOtp']);
-    Route::post('eko/dmt/verify-customer', [CustomerRecipientController::class, 'verifyCustomerIdentity']);
+    Route::post('eko/dmt/customer-info/{service_id}', [CustomerRecipientController::class, 'customerInfo']);
+    Route::post('eko/dmt/create-customer/{service_id}', [CustomerRecipientController::class, 'createCustomer']);
+    Route::post('eko/dmt/resend-otp/{service_id}', [CustomerRecipientController::class, 'resendOtp']);
+    Route::post('eko/dmt/verify-customer/{service_id}', [CustomerRecipientController::class, 'verifyCustomerIdentity']);
 
-    Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill']);
+    Route::post('eko/bbps/fetch-bill/{service_id}', [BBPSController::class, 'fetchBill']);
 
-    Route::get('eko/dmt/recipient-list', [CustomerRecipientController::class, 'recipientList']);
-    Route::get('eko/dmt/recipient-details', [CustomerRecipientController::class, 'recipientDetails']);
-    Route::post('eko/dmt/add-recipient', [CustomerRecipientController::class, 'addRecipient']);
+    Route::get('eko/dmt/recipient-list/{service_id}', [CustomerRecipientController::class, 'recipientList']);
+    Route::get('eko/dmt/recipient-details/{service_id}', [CustomerRecipientController::class, 'recipientDetails']);
+    Route::post('eko/dmt/add-recipient/{service_id}', [CustomerRecipientController::class, 'addRecipient']);
 
-    Route::get('eko/dmt/customer-info', [CustomerRecipientController::class, 'customerInfo']);
-    Route::get('eko/dmt/register-agent', [AgentCustomerController::class, 'dmtRegistration']);
-    Route::get('eko/dmt/fetch-agent', [AgentCustomerController::class, 'fetchAgent']);
+    Route::get('eko/dmt/customer-info/{service_id}', [CustomerRecipientController::class, 'customerInfo']);
+    Route::get('eko/dmt/register-agent/{service_id}', [AgentCustomerController::class, 'dmtRegistration']);
+    Route::get('eko/dmt/fetch-agent/{service_id}', [AgentCustomerController::class, 'fetchAgent']);
 
-    Route::post('eko/dmt/initiate-payment', [TransactionController::class, 'initiatePayment']);
-    Route::get('eko/dmt/transaction-inquiry/{transactionid}', [TransactionController::class, 'transactionInquiry']);
-    Route::post('eko/dmt/transaction-refund/{tid}', [TransactionController::class, 'refund']);
-    Route::post('eko/dmt/transaction-refund-otp/{tid}', [TransactionController::class, 'refund']);
+    Route::post('eko/dmt/initiate-payment/{service_id}', [TransactionController::class, 'initiatePayment']);
+    Route::get('eko/dmt/transaction-inquiry/{transactionid}/{service_id}', [TransactionController::class, 'transactionInquiry']);
+    Route::post('eko/dmt/transaction-refund/{tid}/{service_id}', [TransactionController::class, 'refund']);
+    Route::post('eko/dmt/transaction-refund-otp/{tid}/{service_id}', [TransactionController::class, 'refund']);
 
     /*-----------------------Razorpay Payout-----------------------*/
-    Route::post('razorpay/contacts/create-contact', [FundAccountController::class, 'createFundAcc']);
-    Route::post('razorpay/contacts/create-contact', [PayoutController::class, 'fetchPayoutAdmin']);
+    Route::post('razorpay/contacts/create-contact/{service_id}', [FundAccountController::class, 'createFundAcc']);
+    Route::post('razorpay/contacts/create-contact/{service_id}', [PayoutController::class, 'fetchPayoutAdmin']);
 
     /*-----------------------Paysprint Recharge-----------------------*/
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
@@ -142,8 +142,3 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     
 
 });
-
-//Line 78 'api/fund/request-fund' --> for fund request
-//Line 93 'api/admin/fetch-fund-requests' --> get all fund requests
-//Line 94 'api/admin/fetch-fund-requests/{if}' --> get specific fund request
-//Line 94 'api/admin/update-fund-requests' --> update-fund-request
