@@ -73,6 +73,8 @@ class ProfileController extends AgentManagementController
             'values.aadhaarFront' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
             'values.aadhaarBack' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
             'values.panCard' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'values.deviceNumber' => ['required', 'string'],
+            'values.modelName' => ['required', 'string'],
         ]);
 
         $aadhaar_front = $request->file('values.aadhaarFront')->store('aadhar_front');
@@ -95,6 +97,8 @@ class ProfileController extends AgentManagementController
             'aadhar_front' => $aadhaar_front,
             'aadhar_back' => $aadhaar_back,
             'pan_photo' => $pan_card,
+            'device_number' => $request['values']['deviceNumber'],
+            'model_name' => $request['values']['modelName'],
         ]);
 
         return new UserResource(User::findOrFail(Auth::id()));

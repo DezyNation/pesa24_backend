@@ -102,7 +102,7 @@ class UserController extends Controller
             'aadhar_front' => $aadhar_front,
             'aadhar_back' => $aadhar_back,
             'pan' => $pan,
-            'profile_pic' => $profile
+            'profile_pic' => $profile,
         ])->assignRole($request['userType']);
 
         if ($request['hasParent']) {

@@ -18,6 +18,12 @@ use Illuminate\Support\Facades\Session;
 
 class AuthenticatedSessionController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['sendOtp', 'store']]);
+    }
+
     /**
      * Handle an OTP API.
      *
@@ -64,61 +70,93 @@ class AuthenticatedSessionController extends Controller
      * @param  \App\Http\Requests\Auth\LoginRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(LoginRequest $request)
+    public function store(Request $request)
     {
         Session::put('organization_code', $request['organization_code']);
-        
+
         if ($request->has('mpin')) {
             if ($request['authMethod'] == 'email') {
+                $creds = $request->only(['email', 'password']);
                 $user = User::where('email', $request['email'])->first();
-                if (!$user || !Hash::check($request['mpin'], $user->mpin) ||!Hash::check($request['password'], $user->password)) {
+                if (!$user || !Hash::check($request['mpin'], $user->mpin) || !Hash::check($request['password'], $user->password)) {
                     throw ValidationException::withMessages([
                         'error' => ['Email and password does not match our records.']
                     ]);
                 }
-                $request->authenticateEmail();
+                $token = auth()->attempt($creds);
+                if (!$token) {
+                    return response()->json(['error' => 'Unauthorized'], 401);
+                }
 
-                $request->session()->regenerate();
+                // return $this->respondWithToken($token);
+                // $request->authenticateEmail();
 
-                return response(['id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name], 200);
+                // $request->session()->regenerate();
+
+                return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name], 200);
             } else {
+                $creds = $request->only(['phone_number', 'password']);
                 $user = User::where('phone_number', $request['phone_number'])->first();
                 if (!$user || !Hash::check($request['mpin'], $user->mpin) || !Hash::check($request['password'], $user->password)) {
                     throw ValidationException::withMessages([
                         'error' => ['Phone and password does not match our records.'],
                     ]);
                 }
-                $request->authenticatePhone();
 
-                $request->session()->regenerate();
+                $token = auth()->attempt($creds);
+                if (!$token) {
+                    return response()->json(['error' => 'Unauthorized'], 401);
+                }
 
-                return response(['id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name], 200);
+                // return $this->respondWithToken($token);
+                // $request->authenticatePhone();
+
+                // $request->session()->regenerate();
+
+                return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name], 200);
             }
         } else {
             if ($request['authMethod'] == 'email') {
+                $creds = $request->only(['email', 'password']);
                 $user = User::where('email', $request['email'])->first();
                 if (!$user || !Hash::check($request['otp'], $user->otp)) {
                     throw ValidationException::withMessages([
                         'error' => ['Email and password does not match our records.'],
                     ]);
                 }
-                $request->authenticateEmail();
 
-                $request->session()->regenerate();
+                $token = auth()->attempt($creds);
+                if (!$token) {
+                    return response()->json(['error' => 'Unauthorized'], 401);
+                }
 
-                return response(['id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'wallet' => auth()->user()->wallet], 200);
+                // return $this->respondWithToken($token);
+                // $request->authenticateEmail();
+
+                // $request->session()->regenerate();
+
+                return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'wallet' => auth()->user()->wallet], 200);
             } else {
+                $creds = $request->only(['phone_number', 'password']);
                 $user = User::where('phone_number', $request['phone_number'])->first();
                 if (!$user || !Hash::check($request['otp'], $user->otp)) {
                     throw ValidationException::withMessages([
                         'error' => ['Email and password does not match our records.'],
                     ]);
                 }
-                $request->authenticatePhone();
 
-                $request->session()->regenerate();
+                $token = auth()->attempt($creds);
+                if (!$token) {
+                    return response()->json(['error' => 'Unauthorized'], 401);
+                }
 
-                return response(['id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name], 200);
+                // return $this->respondWithToken($token);
+
+                // $request->authenticatePhone();
+
+                // $request->session()->regenerate();
+
+                return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name], 200);
             }
         }
 
@@ -141,5 +179,14 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return response()->noContent();
+    }
+
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
     }
 }

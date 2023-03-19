@@ -50,7 +50,7 @@ class KycVerificationController extends Controller
             'Referer' => 'docs.apiclub.in',
             'content-type' => 'application/json'
         ])->post('https://api.apiclub.in/api/v1/aadhaar_v2/submit_otp', $data);
-        
+
         if ($response->json($key = 'code') == 200) {
 
             DB::table('k_y_c_verifications')->updateOrInsert(
@@ -103,8 +103,11 @@ class KycVerificationController extends Controller
         $opening_balance = $user->wallet;
         $final_amount = $user->wallet - $role_details[0]['fee'];
 
-        $this->userOnboard();
-        
+            $eko = $this->userOnboard();
+            if (!$eko['orginal']['message']) {
+                return response("Could not implement", 501);
+            }
+
         $attach_user = DB::table('package_user')->insert([
             'user_id' => auth()->user()->id,
             'package_id' => $id[0]['id'],
@@ -113,12 +116,12 @@ class KycVerificationController extends Controller
         ]);
 
         DB::table('users')->where('id', auth()->user()->id)->update([
-           'wallet' => $final_amount,
-           'onboard_fee' => 1,
-           'updated_at' => now()
+            'wallet' => $final_amount,
+            'onboard_fee' => 1,
+            'updated_at' => now()
         ]);
 
-        $transaction_id = "ONB".strtoupper(Str::random(5));
+        $transaction_id = "ONB" . strtoupper(Str::random(5));
 
         $this->transaction($role_details[0]['fee'], 'Onboard and Package fee', 'onboarding', auth()->user()->id, $opening_balance, $transaction_id, $final_amount, 0);
 
@@ -133,7 +136,7 @@ class KycVerificationController extends Controller
             'partnerId' => 'PS001',
             'reqid' => abs(crc32(uniqid()))
         ];
-        
+
         $jwt = JWT::encode($payload, $key, 'HS256');
         return $jwt;
     }
@@ -149,7 +152,7 @@ class KycVerificationController extends Controller
 
         $residence_address['line'] = strval(auth()->user()->line);
         $residence_address['city'] = strval(auth()->user()->city);
-        $residence_address['state'] = strval(auth()->user()->state);
+        $residence_address['state'] = strval('Haryana');
         $residence_address['pincode'] = strval(auth()->user()->pincode);
 
         $data = [
@@ -178,11 +181,9 @@ class KycVerificationController extends Controller
                 'user_code' => $response->json($key = 'data')['user_code']
             ]);
 
-            $this->onboard();
-
-            return response(new UserResource(User::findOrFail(Auth::id())), 200);
+            return json_decode(json_encode(response(['message' => 1], 200), true), true);
         }
-        return response($response, 400);
+        return json_decode(json_encode(response(['message' => 0], 400), true), true);
     }
 
     public function onboard()
@@ -190,7 +191,7 @@ class KycVerificationController extends Controller
         $token = $this->token();
 
         $data = [
-            'merchantcode' => 554477,
+            'merchantcode' => auth()->user()->user_code,
             'mobile' => auth()->user()->phone_number,
             'is_new' => 0,
             'email' => auth()->user()->email,
@@ -203,7 +204,7 @@ class KycVerificationController extends Controller
             'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'Content-Type: application/json'
         ])->post('https://api.paysprint.in/api/v1/service/onboard/onboard/getonboardurl', $data);
-            Log::channel('response')->info($response);
+        Log::channel('response')->info($response);
         return $response;
     }
 }

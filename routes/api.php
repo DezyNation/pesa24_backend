@@ -33,7 +33,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+Route::middleware(['auth:api'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
@@ -42,7 +42,7 @@ Route::post('users/otp', [UserController::class, 'otp']);
 Route::post('users/verify-otp', [UserController::class, 'verifyOtp']);
 Route::get('services', [Controller::class, 'index']);
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:api'])->group(function () {
     /*------------------------USER------------------------*/
     Route::post('user/update', [ProfileController::class, 'update']);
     Route::post('user/info', [ProfileController::class, 'info']);
@@ -79,7 +79,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('fund/fetch-fund', [FundRequestController::class, 'fetchFundUser']);
 });
 
-Route::middleware(['auth:sanctum', 'onboard', 'minimum_balance'])->group(function () {
+Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function () {
     /*------------------------EKO AEPS------------------------*/
     Route::get('user-service-inquiry', [AepsApiController::class, 'userServiceInquiry']);
     Route::post('aeps-inquiry', [AepsApiController::class, 'aepsInquiry']);
@@ -125,7 +125,7 @@ Route::middleware(['auth:sanctum', 'onboard', 'minimum_balance'])->group(functio
     Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge']);
 });
 
-Route::group(['middleware' => ['auth:sanctum', 'role:admin'], 'prefix' => 'admin'], function () {
+Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
     Route::get('users', [UserController::class, 'index']);
     Route::get('users/{id}', [UserController::class, 'show']);
     Route::post('create/user', [UserController::class, 'store']);
@@ -139,6 +139,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:admin'], 'prefix' => 'admin
     Route::get('fetch-fund-requests', [FundRequestController::class, 'fetchFund']);
     Route::get('fetch-fund-requests/{id}', [FundRequestController::class, 'fetchFundId']);
     Route::post('update-fund-requests', [FundRequestController::class, 'updateFund']);
+    
 
 });
 

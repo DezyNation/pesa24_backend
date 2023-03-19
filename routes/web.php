@@ -22,6 +22,8 @@ use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\Agent\AgentManagementController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -72,12 +74,33 @@ Route::get('admin', function () {
     // ->get();
     // echo $result;
 
+    $service_id = 22;
+    $amount = 10000;
     $result = DB::table('users')
-        ->join('service_user', 'users.id', '=', 'service_user.user_id')
-        ->join('services', 'service_user.service_id', '=', 'services.id')
-        ->select('services.type', 'services.service_name', 'services.image_url', 'services.price')->where('users.id', '=', 55)->where('service_user.pesa24_active', '=', 1)->get(['type', 'service_name', 'image_url', 'price']);
-    return $result;
+    ->join('package_user', 'users.id', '=', 'package_user.user_id')
+    ->join('packages', 'package_user.package_id', '=', 'packages.id')
+    ->join('package_service', 'packages.id', '=', 'package_service.package_id')
+    ->join('service_user', 'users.id',  '=', 'service_user.user_id')
+    ->join('services', 'package_service.service_id', '=', 'services.id')
+    ->select('package_service.*', 'services.service_name')
+    ->where(['service_user.user_id'=> 55, 'service_user.service_id' => $service_id, 'package_service.service_id' => $service_id, 'package_user.user_id' => 55])
+    ->where('from', '<', $amount)
+    ->where('to', '>=', $amount)
+    ->get();
+    $array = $result->toArray();
+    $user = User::findOrFail(55);
+    // $test = json_decode(json_encode(response(["test" => true], 200), true), true);
+    // $a = json_encode($test, true);
+    // $b = json_decode($a, true);
+    return $array;
 });
+
+Route::get('file', function(){
+    $file = Storage::disk('local')->get('pan\sa3Pf61R2AOEdCqT60ohrf3TPx1Tm0qvPD4wYVQ6.jpg');
+    return $file;
+});
+
+Route::get('test-aeps', [PaysprintAeps::class, 'enquiry']);
 
 
 
