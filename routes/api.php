@@ -22,6 +22,7 @@ use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Pesa24\AttachServiceController;
+use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
 use App\Http\Controllers\pesa24\Dashboard\UserDashboardController;
 use App\Http\Controllers\Pesa24\GlobalServiceController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -142,6 +143,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('get-users/{role_id}/{parent?}', [UserController::class, 'getUsers']);
     Route::get('users-list/{role}/{id?}', [UserController::class, 'userInfo']);
     Route::get('user/status/{id}/{bool}', [UserController::class, 'active']);
+    Route::post('link-package', [AdminDashboardcontroller::class, 'packageService']);
 
     Route::get('payouts', [PayoutController::class, 'fetchPayoutAdmin']);
 
