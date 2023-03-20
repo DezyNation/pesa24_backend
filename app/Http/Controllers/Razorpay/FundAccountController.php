@@ -14,7 +14,7 @@ class FundAccountController extends PayoutController
 {
     
     
-    public function createFundAcc(Request $request)
+    public function createFundAcc(Request $request, $service_id)
     {
         
         if(!Hash::check($request['mpin'], auth()->user()->mpin)){
@@ -38,7 +38,7 @@ class FundAccountController extends PayoutController
             ->post('https://api.razorpay.com/v1/fund_accounts', $data);
     
             Log::channel('response')->info($response);
-        return $this->bankPayout($response, $request['amount']);
+        return $this->bankPayout($response, $request['amount'], $service_id);
     }
     
 }

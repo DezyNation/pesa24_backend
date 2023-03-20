@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Http;
 
 class PayoutController extends Controller
 {
-    public function bankPayout(Response $request, $amount)
+    public function bankPayout(Response $request, $amount, $service_id)
     {
         $data = [
             'account_number' => '2323230013085171',
@@ -62,6 +62,7 @@ class PayoutController extends Controller
             ]);
             $transaction_id = "PAY".strtoupper(Str::random(5));
             $this->transaction($amount, 'Bank Payout', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left);
+            $this->baseCommission($amount, auth()->user()->id, $service_id);
             return response(['message' => 'Transaction sucessfull', 'payout_id' => $transfer['id'], 'beneficiary_name' => $request['bank_account']['name'], 'amount' => $transfer['amount'], 'bank_account' => $request['bank_account']['account_number'], 'balance_left' => $balance_left], 200);
         }else {
             return response('Transaction failed', 400);
