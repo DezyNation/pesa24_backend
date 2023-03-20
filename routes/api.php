@@ -119,14 +119,14 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     /*-----------------------Razorpay Payout-----------------------*/
     Route::post('razorpay/payout/new-payout/{service_id}', [FundAccountController::class, 'createFundAcc']);
     Route::post('razorpay/contacts/create-contact/{service_id}', [PayoutController::class, 'fetchPayoutAdmin']);
-    Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
-
+    
     /*-----------------------Paysprint Recharge-----------------------*/
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
     Route::get('paysprint/bbps/mobile-operators/parameter/{id}', [RechargeController::class, 'operatorParameter']);
     Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
     Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge']);
 });
+Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
 
 Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
     Route::get('users', [UserController::class, 'index']);
