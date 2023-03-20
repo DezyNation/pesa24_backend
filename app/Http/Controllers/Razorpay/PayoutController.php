@@ -55,7 +55,7 @@ class PayoutController extends Controller
         ]);
         
         $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-        $balance_left = $walletAmt[0] - $transfer['amount'];
+        $balance_left = $walletAmt[0] - $amount;
         if ($transfer->status() == 200) {
             User::where('id', auth()->user()->id)->update([
             'wallet' => $balance_left
