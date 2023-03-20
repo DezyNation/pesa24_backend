@@ -79,7 +79,7 @@ class Controller extends BaseController
         $user = User::findOrFail($user_id);
         $user_role = $user->getRoleNames();
         $role_commission = $user_role[0] . "_" . "commission";
-        $service_name = $result[0]['service_name'];
+        $service_name = $array[0]['service_name'];
         $flat = $array[0]['is_flat'];
         if ($flat) {
             $commission = $amount * $array[0]["$role_commission"] / 100;
