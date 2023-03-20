@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Log;
 
 class Controller extends BaseController
 {
@@ -70,6 +71,7 @@ class Controller extends BaseController
             ->where('to', '>=', $amount)
             ->get();
 
+            Log::channel('response')->info($result);
             if (empty($result)) {
                 return response()->json(['message' => 'No further commission']);
             }
