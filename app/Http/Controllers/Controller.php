@@ -81,19 +81,31 @@ class Controller extends BaseController
         $role_commission = $user_role[0] . "_" . "commission";
         $service_name = $array[0]['service_name'];
         $flat = $array[0]['is_flat'];
+        $surcharge = $array[0]['is_surcharge'];
         if ($flat) {
             $commission = $amount * $array[0]["$role_commission"] / 100;
         } else {
             $commission = $array[0]["$role_commission"];
         }
+
         $opening_balance = $user->wallet;
-        $closing_balance = $opening_balance + $commission;
+        if ($surcharge) {
+          $debit = $commission;
+          $closing_balance = $opening_balance - $debit;
+          $credit = 0;
+        } else {
+            $credit = $commission;
+            $debit = 0;
+            $closing_balance = $opening_balance + $credit;
+        }
+        
+
 
         $user->update([
             'wallet' => $closing_balance
         ]);
         $transaction_id = "COM" . strtoupper(Str::random(5));
-        $this->transaction($commission, "Commission for $service_name", 'commission', $user_id, $opening_balance, $transaction_id, $closing_balance);
+        $this->transaction($debit, "Commission for $service_name", 'commission', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
 
