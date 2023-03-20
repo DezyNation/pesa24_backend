@@ -69,6 +69,10 @@ class Controller extends BaseController
             ->where('from', '<', $amount)
             ->where('to', '>=', $amount)
             ->get();
+
+            if (empty($result)) {
+                return response()->json(['message' => 'No further commission']);
+            }
         $array = $result->toArray();
         $user = User::findOrFail($user_id);
         $user_role = $user->getRoleNames();
