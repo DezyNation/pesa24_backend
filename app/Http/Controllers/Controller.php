@@ -75,7 +75,7 @@ class Controller extends BaseController
             if (empty($result)) {
                 return response()->json(['message' => 'No further commission']);
             }
-        $array = $result->toArray();
+        $array = json_decode($result, true);
         $user = User::findOrFail($user_id);
         $user_role = $user->getRoleNames();
         $role_commission = $user_role[0] . "_" . "commission";
