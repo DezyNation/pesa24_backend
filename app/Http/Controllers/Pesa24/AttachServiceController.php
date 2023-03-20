@@ -52,11 +52,37 @@ class AttachServiceController extends Controller
 
     public function attachService($service_id)
     {
-        if (DB::table('service_user')->where(['service_id'=> $service_id, 'user_id' => auth()->user()->id])->exists()) {
+        if (DB::table('service_user')->where(['service_id' => $service_id, 'user_id' => auth()->user()->id])->exists()) {
             return response(true, 200);
         }
         $user = User::findOrfail(auth()->user()->id);
         $service = Service::findOrFail($service_id);
+        if ($service->api_call == 0) {
+            DB::table('service_user')->updateOrInsert(
+                ['service_id' => $service_id, 'user_id' => auth()->user()->id],
+                [
+                    'paysprint_active' => 1,
+                    'pesa24_active' => 1,
+                    'eko_active' => 1,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]
+            );
+            $opening_balance = $user->wallet;
+            $amount = $service->price;
+            $closing_balance = $opening_balance - $amount;
+            $transaction_id = "SER" . strtoupper(Str::random(5));
+
+            $user->update([
+                'wallet' => $closing_balance
+            ]);
+
+            $this->transaction($amount, 'Service Activation', 'service', auth()->user()->id, $opening_balance, $transaction_id, $closing_balance);
+
+            return response()->json(['message' => 'Service acivated.']);
+        }
+
+
         if ($service_id == 23) {
             // $paysprint = $this->paysprintOnboard();
             $eko = $this->aepsEnroll($service->eko_id);
@@ -74,13 +100,19 @@ class AttachServiceController extends Controller
             [
                 'paysprint_active' => 1,
                 'pesa24_active' => 1,
-                'eko_active' => $eko['response_status_id']
+                'eko_active' => $eko['response_status_id'],
+                'created_at' => now(),
+                'updated_at' => now()
             ]
         );
         $opening_balance = $user->wallet;
         $amount = $service->price;
-        $closing_balance = $opening_balance-$amount;
-        $transaction_id = "SER".strtoupper(Str::random(5));
+        $closing_balance = $opening_balance - $amount;
+        $transaction_id = "SER" . strtoupper(Str::random(5));
+
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
 
         $this->transaction($amount, 'Service Activation', 'service', auth()->user()->id, $opening_balance, $transaction_id, $closing_balance);
 
@@ -95,6 +127,10 @@ class AttachServiceController extends Controller
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
         $secret_key = base64_encode($signature);
 
+        $pan = Storage::download(auth()->user()->pan_photo, 'pancard.jpeg');
+        $aadhar_front = Storage::download(auth()->user()->aadhar_front, 'aadhar_front.jpeg');
+        $aadhar_back = Storage::download(auth()->user()->aadhar_back, 'aadhar_back.jpeg');
+
         $data = [
             'service_code' =>   $service_code,
             'initiator_id' => env('EKO_INITIATOR_ID'),
@@ -102,16 +138,15 @@ class AttachServiceController extends Controller
             'modelname' => auth()->user()->model_name,
             'devicenumber' => auth()->user()->device_number,
             'office_address' => json_encode(['line' => strval(auth()->user()->line), 'city' => strval(auth()->user()->city), 'state' => strval(auth()->user()->state), 'pincode' => strval(auth()->user()->pincode)]),
-            'address_as_per_proof' => json_encode(['line' => strval(auth()->user()->line), 'city' => strval(auth()->user()->city), 'state' => strval(auth()->user()->state), 'pincode' => strval(auth()->user()->pincode)])
+            'address_as_per_proof' => json_encode(['line' => strval(auth()->user()->line), 'city' => strval(auth()->user()->city), 'state' => strval(auth()->user()->state), 'pincode' => strval(auth()->user()->pincode)]),
+            'pancard' => $pan,
+            'aadhar_front' => $aadhar_front,
+            'aadhar_back' => $aadhar_back
         ];
-        $storage = 'storage/app/';
-        $pan = Storage::disk('local')->get(storage_path(auth()->user()->pan_photo));
-        $aadhar_front = Storage::disk('local')->get(storage_path(auth()->user()->aadhar_front));
-        $aadhar_back = Storage::disk('local')->get(storage_path(auth()->user()->aadhar_back));
-        return $aadhar_back;
+
+        Log::channel('response')->info($data['pancard']);
 
         $response = Http::asForm()
-            ->attach('pancard', file_get_contents($pan), 'pan.pdf')->attach('aadhar_front', file_get_contents($aadhar_front), 'aadhar_front.pdf')->attach('aadhar_back', file_get_contents($aadhar_back), 'aadhar_back.pdf')
             ->withHeaders([
                 'developer_key' => env('EKO_DEVELOPER_KEY'),
                 'secret-key-timestamp' => $secret_key_timestamp,

@@ -52,6 +52,8 @@ class PayoutController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        return $transfer;
         
         $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
         $balance_left = $walletAmt[0] - $transfer['amount'];

@@ -22,7 +22,7 @@ class AgentCustomerController extends Controller
             'user_code' => auth()->user()->user_code
         ];
 
-        $response = Http::asForm()->withHeader([
+        $response = Http::asForm()->withHeaders([
             'developer_key'=> 'becbbce45f79c6f5109f848acd540567',
             'secret-key-timestamp'=> $secret_key_timestamp,
             'secret-key'=> $secret_key,

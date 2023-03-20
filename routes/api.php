@@ -108,7 +108,7 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     Route::post('eko/dmt/add-recipient/{service_id}', [CustomerRecipientController::class, 'addRecipient']);
 
     Route::get('eko/dmt/customer-info/{service_id}', [CustomerRecipientController::class, 'customerInfo']);
-    Route::get('eko/dmt/register-agent/{service_id}', [AgentCustomerController::class, 'dmtRegistration']);
+    Route::post('eko/dmt/register-agent/{service_id}', [AgentCustomerController::class, 'dmtRegistration']);
     Route::get('eko/dmt/fetch-agent/{service_id}', [AgentCustomerController::class, 'fetchAgent']);
 
     Route::post('eko/dmt/initiate-payment/{service_id}', [TransactionController::class, 'initiatePayment']);
@@ -117,7 +117,7 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     Route::post('eko/dmt/transaction-refund-otp/{tid}/{service_id}', [TransactionController::class, 'refund']);
 
     /*-----------------------Razorpay Payout-----------------------*/
-    Route::post('razorpay/contacts/create-contact/{service_id}', [FundAccountController::class, 'createFundAcc']);
+    Route::post('razorpay/payout/new-payout/{service_id}', [FundAccountController::class, 'createFundAcc']);
     Route::post('razorpay/contacts/create-contact/{service_id}', [PayoutController::class, 'fetchPayoutAdmin']);
 
     /*-----------------------Paysprint Recharge-----------------------*/

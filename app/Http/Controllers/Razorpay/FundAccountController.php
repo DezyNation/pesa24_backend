@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Razorpay\PayoutController;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class FundAccountController extends PayoutController
 {
@@ -36,6 +37,7 @@ class FundAccountController extends PayoutController
         $response = Http::withBasicAuth('rzp_test_f76VR5UvDUksZJ', 'pCcVlr5pRFcBZxAH4xBqGY62')
             ->post('https://api.razorpay.com/v1/fund_accounts', $data);
     
+            Log::channel('response')->info($response);
         return $this->bankPayout($response, $request['amount']);
     }
     

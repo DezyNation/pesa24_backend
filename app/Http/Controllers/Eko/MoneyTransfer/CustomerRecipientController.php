@@ -90,8 +90,7 @@ class CustomerRecipientController extends Controller
         ])->post("https://staging.eko.in:25004/ekoapi/v2/customers/mobile_number:$customer_id/otp", $data);
 
         if ($response->json($key = 'response_status_id') == 0 && $response->json($key = 'status') == 0) {
-            Session::put('otp_ref_id', $response->json($key = 'data')['otp_ref_id']);
-            return response('OTP Send', 200);
+            return response($response->json($key = 'data')['otp_ref_id'], 200);
         } elseif ($response->json($key = 'response_status_id') == -1 && $response->json($key = 'status') == 0) {
             return response('Customer already registered', 204);
         }
@@ -114,7 +113,7 @@ class CustomerRecipientController extends Controller
             'customer_id_type' => 'mobile_number',
             'customer_id' => $request['customerId'],
             'pipe' => 9,
-            'otp_ref_id' => Session::get('otp_ref_id')
+            'otp_ref_id' => $request['otp_ref_id'],
         ];
         Session::forget('otp_ref_id');
 
