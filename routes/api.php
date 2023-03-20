@@ -22,6 +22,7 @@ use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Pesa24\AttachServiceController;
+use App\Http\Controllers\Pesa24\GlobalServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -144,4 +145,8 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('update-fund-requests', [FundRequestController::class, 'updateFund']);
     
 
+});
+
+Route::group(['middleware' => ['auth:api', 'role:super_admin'], 'prefix' => 'super-admin'], function(){
+    Route::get('service-chage/{service_id}/{active}', [GlobalServiceController::class, 'manageService']);
 });

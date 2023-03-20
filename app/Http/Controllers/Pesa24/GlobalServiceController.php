@@ -8,9 +8,9 @@ use App\Http\Controllers\Controller;
 
 class GlobalServiceController extends Controller
 {
-    public function manageService($id, $active)
+    public function manageService($service_id, $active)
     {
-        $table = DB::table('services')->where('id', $id)->update([
+        $table = DB::table('services')->where('id', $service_id)->update([
             'is_active' => $active
         ]);
 
