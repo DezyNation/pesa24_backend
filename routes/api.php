@@ -119,6 +119,7 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     /*-----------------------Razorpay Payout-----------------------*/
     Route::post('razorpay/payout/new-payout/{service_id}', [FundAccountController::class, 'createFundAcc']);
     Route::post('razorpay/contacts/create-contact/{service_id}', [PayoutController::class, 'fetchPayoutAdmin']);
+    Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
 
     /*-----------------------Paysprint Recharge-----------------------*/
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
