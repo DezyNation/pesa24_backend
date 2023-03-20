@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Razorpay;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Client\Response;
 use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Http;
 
 class PayoutController extends Controller
 {
@@ -52,8 +53,6 @@ class PayoutController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-
-        return $transfer;
         
         $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
         $balance_left = $walletAmt[0] - $transfer['amount'];
@@ -61,6 +60,8 @@ class PayoutController extends Controller
             User::where('id', auth()->user()->id)->update([
             'wallet' => $balance_left
             ]);
+            $transaction_id = "PAY".strtoupper(Str::random(5));
+            $this->transaction($amount, 'Bank Payout', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left);
             return response(['message' => 'Transaction sucessfull', 'payout_id' => $transfer['id'], 'beneficiary_name' => $request['bank_account']['name'], 'amount' => $transfer['amount'], 'bank_account' => $request['bank_account']['account_number'], 'balance_left' => $balance_left], 200);
         }else {
             return response('Transaction failed', 400);
