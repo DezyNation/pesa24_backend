@@ -226,7 +226,7 @@ class UserController extends Controller
     public function userInfo(string $role, $id = null)
     {
 
-        $org = Session::get('organization_code');
+        $org = 'DEZ45';
         $org_id = DB::table('organizations')->where('code', $org)->pluck('id');
         if (is_null($id)) {
             $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->get();
