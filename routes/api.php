@@ -22,6 +22,10 @@ use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Pesa24\AttachServiceController;
+use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
+use App\Http\Controllers\pesa24\Dashboard\UserDashboardController;
+use App\Http\Controllers\Pesa24\GlobalServiceController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,10 +78,13 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('user/new-mpin', [ProfileController::class, 'newMpin']);
     Route::post('user/new-password', [ProfileController::class, 'newPass']);
     /*-----------------------Fund Requests-----------------------*/
-
+    
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
     Route::get('fund/fetch-parents', [FundController::class, 'parents']);
     Route::get('fund/fetch-fund', [FundRequestController::class, 'fetchFundUser']);
+    
+    /*-----------------------Fund Requests-----------------------*/
+    Route::get('transaction/{type}', [UserDashboardController::class, 'sunTransaction']);
 });
 
 Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function () {
@@ -136,6 +143,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('get-users/{role_id}/{parent?}', [UserController::class, 'getUsers']);
     Route::get('users-list/{role}/{id?}', [UserController::class, 'userInfo']);
     Route::get('user/status/{id}/{bool}', [UserController::class, 'active']);
+    Route::post('link-package', [AdminDashboardcontroller::class, 'packageService']);
 
     Route::get('payouts', [PayoutController::class, 'fetchPayoutAdmin']);
 
@@ -144,4 +152,8 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('update-fund-requests', [FundRequestController::class, 'updateFund']);
     
 
+});
+
+Route::group(['middleware' => ['auth:api', 'role:super_admin'], 'prefix' => 'super-admin'], function(){
+    Route::get('service-chage/{service_id}/{active}', [GlobalServiceController::class, 'manageService']);
 });
