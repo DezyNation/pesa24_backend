@@ -47,7 +47,6 @@ class CustomerRecipientController extends Controller
             'initiator_id' => 9962981729,
             'user_code' => auth()->user()->user_code,
             'dob' => $request['values.dob'],
-            'pipe' => 9,
             'residence_address' => json_encode(['street' => strval($request['values.street']), 'city' => strval($request['values.city']), 'state' => strval($request['values.state']), 'pincode' => strval($request['values.pincode'])])
         ];
 
@@ -80,7 +79,6 @@ class CustomerRecipientController extends Controller
         $data = [
             'initiator_id' => 9962981729,
             'user_code' => auth()->user()->user_code,
-            'pipe' => 9
         ];
 
         $response = Http::asForm()->withHeaders([
@@ -112,7 +110,6 @@ class CustomerRecipientController extends Controller
             'user_code' => auth()->user()->user_code,
             'customer_id_type' => 'mobile_number',
             'customer_id' => $request['customerId'],
-            'pipe' => 9,
             'otp_ref_id' => $request['otp_ref_id'],
         ];
         Session::forget('otp_ref_id');
