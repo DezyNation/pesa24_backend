@@ -61,7 +61,7 @@ Route::get('/', function () {
 //     }
 // });
 
-// Route::get('paysprint-test', [PaysprintAeps::class, 'onBoard']);
+Route::get('paysprint-test', [PaysprintAeps::class, 'enquiry']);
 
 Route::get('admin', function () {
 
@@ -71,34 +71,6 @@ Route::get('admin', function () {
         ->get();
 
     return $table;
-});
-
-Route::get('file', function () {
-    $file = Storage::disk('local')->get('pan\sa3Pf61R2AOEdCqT60ohrf3TPx1Tm0qvPD4wYVQ6.jpg');
-    return $file;
-});
-
-Route::get('test-aeps', function () {
-    $usercode = 99099211;
-    $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
-    $encodedKey = base64_encode($key);
-    $secret_key_timestamp = round(microtime(true) * 1000);
-    $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
-    $secret_key = base64_encode($signature);
-
-    $initiator_id = 9962981729;
-
-    $response = Http::accept('*/*')->withHeaders([
-        'Accept-Encoding' => 'gzip, deflate',
-        'Connection' => 'keep-alive',
-        'Host' => 'staging.eko.in:25004',
-        'Cache-Control' => 'no-cache',
-        'developer_key' => 'becbbce45f79c6f5109f848acd540567',
-        'secret-key-timestamp' => $secret_key_timestamp,
-        'secret-key' => $secret_key,
-    ])->get("https://staging.eko.in:25004/ekoapi/v1/user/services/user_code:$usercode?initiator_id:$initiator_id", ['initiator_id' => $initiator_id]);
-
-    return $response;
 });
 
 
