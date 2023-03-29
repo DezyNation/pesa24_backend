@@ -217,5 +217,42 @@ class DMTController extends Controller
 
         return $response;
     }
+
+    public function refundOtp(Request $request)
+    {
+        $token = $this->token();
+
+        $data = [
+            'refernceid' => $request['refernceId'],
+            'ackno' => $request['ackno']
+        ];
+
+        $response = Http::acceptJson()->withHeaders([
+            'Token' => $token,
+            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'content-type' => 'application/json',
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact/querytransact', $data);
+
+        return $response;
+    }
+
+    public function claimRefund(Request $request)
+    {
+        $token = $this->token();
+
+        $data = [
+            'refernceid' => $request['refernceId'],
+            'ackno' => $request['ackno'],
+            'otp' => $request['otp']
+        ];
+
+        $response = Http::acceptJson()->withHeaders([
+            'Token' => $token,
+            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'content-type' => 'application/json',
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/refund/refund/', $data);
+
+        return $response;
+    }
     
 }
