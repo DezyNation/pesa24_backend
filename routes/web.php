@@ -64,43 +64,21 @@ Route::get('/', function () {
 // Route::get('paysprint-test', [PaysprintAeps::class, 'onBoard']);
 
 Route::get('admin', function () {
-    // $result = DB::table('users')
-    // ->join('service_user','users.id','=','service_user.user_id')
-    // ->join('services','service_user.service_id','=','services.id')
-    // ->join('package_service','packages.id','=','package_service.package_id')
-    // ->join('services','package_service.service_id','=','services.id')
-    // ->select('services.*')->where('users.id','=',55)
-    // ->where('services.id','=',22)
-    // ->get();
-    // echo $result;
 
-    $service_id = 22;
-    $amount = 10000;
-    $result = DB::table('users')
-    ->join('package_user', 'users.id', '=', 'package_user.user_id')
-    ->join('packages', 'package_user.package_id', '=', 'packages.id')
-    ->join('package_service', 'packages.id', '=', 'package_service.package_id')
-    ->join('service_user', 'users.id',  '=', 'service_user.user_id')
-    ->join('services', 'package_service.service_id', '=', 'services.id')
-    ->select('package_service.*', 'services.service_name')
-    ->where(['service_user.user_id'=> 55, 'service_user.service_id' => $service_id, 'package_service.service_id' => $service_id, 'package_user.user_id' => 55])
-    ->where('from', '<', $amount)
-    ->where('to', '>=', $amount)
-    ->get();
-    $array = $result->toArray();
-    $user = User::findOrFail(55);
-    // $test = json_decode(json_encode(response(["test" => true], 200), true), true);
-    // $a = json_encode($test, true);
-    // $b = json_decode($a, true);
-    return $array;
+    $table = DB::table('a_e_p_s')
+        ->join('package_user', 'package_user.package_id', '=', 'a_e_p_s.package_id')
+        ->where('package_user.user_id', 74)->where('from', '<', 857)->where('to', '>=', 857)
+        ->get();
+
+    return $table;
 });
 
-Route::get('file', function(){
+Route::get('file', function () {
     $file = Storage::disk('local')->get('pan\sa3Pf61R2AOEdCqT60ohrf3TPx1Tm0qvPD4wYVQ6.jpg');
     return $file;
 });
 
-Route::get('test-aeps', function(){
+Route::get('test-aeps', function () {
     $usercode = 99099211;
     $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
     $encodedKey = base64_encode($key);
