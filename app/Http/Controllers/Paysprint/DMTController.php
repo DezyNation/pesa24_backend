@@ -214,6 +214,8 @@ class DMTController extends Controller
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact/querytransact', $data);
+
+        return $response;
     }
     
 }
