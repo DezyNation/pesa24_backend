@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Paysprint;
 
 use Firebase\JWT\JWT;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Http\Controllers\CommissionController;
 use Illuminate\Support\Facades\Http;
 
-class DMTController extends Controller
+class DMTController extends CommissionController
 {
 
     public function token()
@@ -199,6 +202,17 @@ class DMTController extends Controller
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact', $data);
+
+        if ($response->json($key = 'status') == true) {
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $balance_left = $walletAmt[0] - $request['amount'];
+            User::where('id', auth()->user()->id)->update([
+                'wallet' => $balance_left
+            ]);
+            $transaction_id = "DMT".strtoupper(Str::random(9));
+            $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt, $transaction_id, $balance_left);
+            $this->dmtCommission(auth()->user()->id, 'paysprint-dmt', $request['amount']);
+        }
 
         return $response;
     }
