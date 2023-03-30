@@ -29,7 +29,7 @@ class PayoutController extends CommissionController
     {
         $token = $this->token();
 
-        $data = ['111111'];
+        $data = ['merchant_code' => '2222222'];
 
         $response = Http::withHeaders([
             'Token' => $token,
@@ -47,7 +47,7 @@ class PayoutController extends CommissionController
         $data = [
             'bankid'=> $request['bankCode'],
             'merchant_code' => 1122,
-            'account' => 00002,
+            'account' => $request['accountNumber'],
             'ifsc' => $request['ifsc'],
             'name' => $request['name'],
             'account_type' => 'PRIMARY',
@@ -124,6 +124,8 @@ class PayoutController extends CommissionController
             'Content-Type: application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/dotransaction', $data);
 
+        return $response;
+        
         if ($response->json($key = 'status') == true) {
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $balance_left = $walletAmt[0] - $request['amount'];
