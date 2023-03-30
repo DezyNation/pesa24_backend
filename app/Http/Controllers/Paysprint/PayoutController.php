@@ -37,7 +37,7 @@ class PayoutController extends CommissionController
             'Content-Type: application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/list', $data);
 
-        return $data;
+        return $response;
     }
 
     public function addAccount(Request $request)
@@ -131,7 +131,7 @@ class PayoutController extends CommissionController
                 'wallet' => $balance_left
             ]);
             $transaction_id = "PAY".strtoupper(Str::random(9));
-            $this->transaction($request['amount'], 'Payout Transaction', 'payout', auth()->user()->id, $walletAmt, $transaction_id, $balance_left);
+            $this->transaction($request['amount'], 'Payout Transaction', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left);
             $this->payoutCommission(auth()->user()->id, $request['amount']);
         }
 

@@ -31,7 +31,7 @@ class DMTController extends CommissionController
         $token = $this->token();
 
         $data = [
-            'mobile' => $request['mobile'],
+            'mobile' => $request['customerId'],
             'bank3_flag' => 'NO'
         ];
 
@@ -39,7 +39,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'content-type' => 'application/json',
-        ]);
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/remitter/queryremitter', $data);
 
         return $response;
     }
@@ -49,14 +49,15 @@ class DMTController extends CommissionController
         $token = $this->token();
 
         $data = [
-            'mobile' => $request['mobileNo'],
-            'firstname' => $request['firstName'],
-            'lastname' => $request['lastName'],
+            'mobile' => $request['customerId'],
+            'firstname' => $request['customerName'],
+            'lastname' => $request['customerName'],
+            'address' => $request['street'],
             'otp' => $request['otp'],
-            'pincode' => $request['pinCode'],
+            'pincode' => $request['pincode'],
             'stateresp' => $request['stateresp'],
             'bank3_flag' => 'NO',
-            'dob'=> $request['dob'],
+            'dob'=> $request['customerDob'],
             'gst_state' => 07
         ];
 
@@ -65,6 +66,8 @@ class DMTController extends CommissionController
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/remitter/registerremitter', $data);
+
+        return $response;
     }
 
     /*--------------------------------------Benificiary--------------------------------------*/
@@ -119,7 +122,7 @@ class DMTController extends CommissionController
         $token = $this->token();
 
         $data = [
-            'mobile' => $request['mobile']
+            'mobile' => $request['customerId']
         ];
 
         $response = Http::acceptJson()->withHeaders([
@@ -182,19 +185,19 @@ class DMTController extends CommissionController
         $token = $this->token();
 
         $data = [
-            'mobile' => $request['mobileNo'],
-            'accno' => $request['accountNo'],
-            'benename' => $request['beneName'],
+            'mobile' => $request['customerId'],
+            'accno' => $request['accountNumber'],
+            'benename' => $request['beneficiaryName'],
             'referenceid' => uniqid(),
-            'pincode' => $request['pinCode'],
-            'address' => $request['address'],
-            'bankid' => $request['bankId'],
+            'pincode' => auth()->user()->pincode,
+            'address' => auth()->user()->line,
+            'bankid' => $request['selectedBankCode'],
             'gst_state' => 07,
-            'dob' => $request['dob'],
+            'dob' => auth()->user()->dob,
             'amount' => $request['amount'],
             'pipe' => 'bank1',
-            'txntype' => $request['txnType'],
-            'bene_id' => $request['beneId']
+            'txntype' => $request['transactionType'],
+            'bene_id' => $request['beneficiaryId']
         ];
 
         $response = Http::acceptJson()->withHeaders([
@@ -203,6 +206,7 @@ class DMTController extends CommissionController
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact', $data);
 
+        return $response;
         if ($response->json($key = 'status') == true) {
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $balance_left = $walletAmt[0] - $request['amount'];
@@ -210,7 +214,7 @@ class DMTController extends CommissionController
                 'wallet' => $balance_left
             ]);
             $transaction_id = "DMT".strtoupper(Str::random(9));
-            $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt, $transaction_id, $balance_left);
+            $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left);
             $this->dmtCommission(auth()->user()->id, 'paysprint-dmt', $request['amount']);
         }
 

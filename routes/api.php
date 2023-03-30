@@ -26,6 +26,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\pesa24\Dashboard\UserDashboardController;
 use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
+use App\Http\Controllers\Paysprint\DMTController;
 
 /*
 |--------------------------------------------------------------------------
@@ -136,6 +137,15 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     Route::post('paysprint/payout/transaction-status/{service_id}', [PaysprintPayout::class, 'status']);
     /*-----------------------Paysprint Payout-----------------------*/
 
+    /*-----------------------Paysprint DMT-----------------------*/
+    Route::post('paysprint/dmt/customer-info/{service_id}', [DMTController::class, 'remiterQuery']);
+    Route::post('paysprint/dmt/create-customer/{service_id}', [DMTController::class, 'registerRemiter']);
+
+    Route::post('paysprint/dmt/initiate-payment/{service_id}', [DMTController::class, 'newTransaction']);
+
+    Route::post('paysprint/dmt/recipient-list/{service_id}', [DMTController::class, 'fetchBeneficiary']);
+    Route::post('paysprint/dmt/add-recipient/{service_id}', [DMTController::class, 'registerBeneficiary']);
+    Route::post('paysprint/dmt/delete-recipient/{service_id}', [DMTController::class, 'deleteBeneficiary']);
     /*-----------------------Paysprint DMT-----------------------*/
     
 
