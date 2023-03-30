@@ -95,7 +95,7 @@ class DMTController extends Controller
 
     public function deleteBeneficiary(Request $request)
     {
-        $token = $this->token;
+        $token = $this->token();
 
         $data = [
             'mobile' => $request['mobile'],
@@ -128,7 +128,7 @@ class DMTController extends Controller
         return $response;
     }
 
-    public function beneficiaryById()
+    public function beneficiaryById(Request $request)
     {
         $token = $this->token();
 
@@ -174,7 +174,7 @@ class DMTController extends Controller
         return $response;
     }
 
-    public function transaction(Request $request)
+    public function newTransaction(Request $request)
     {
         $token = $this->token();
 
