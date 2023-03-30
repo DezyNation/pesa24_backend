@@ -86,7 +86,7 @@ class PayoutController extends Controller
         return $response;
     }
 
-    public function accountStaus(Request $request)
+    public function accountStatus(Request $request)
     {
         $token = $this->token();
 

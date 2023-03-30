@@ -3,7 +3,6 @@
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\Admin\UserController;
@@ -13,19 +12,20 @@ use App\Http\Controllers\Eko\BBPS\BBPSController;
 use App\Http\Controllers\Pesa24\TicketController;
 use App\Http\Controllers\Razorpay\PayoutController;
 use App\Http\Controllers\Eko\AePS\AepsApiController;
+use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Controllers\Razorpay\ContactController;
 use App\Http\Controllers\Admin\FundRequestController;
+use App\Http\Controllers\Pesa24\AttachServiceController;
+use App\Http\Controllers\Pesa24\GlobalServiceController;
 use App\Http\Controllers\Razorpay\FundAccountController;
 use App\Http\Controllers\Eko\DMT\AgentCustomerController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Pesa24\KycVerificationController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
-use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
-use App\Http\Controllers\Pesa24\AttachServiceController;
-use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
 use App\Http\Controllers\pesa24\Dashboard\UserDashboardController;
-use App\Http\Controllers\Pesa24\GlobalServiceController;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
+use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,11 +78,11 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('user/new-mpin', [ProfileController::class, 'newMpin']);
     Route::post('user/new-password', [ProfileController::class, 'newPass']);
     /*-----------------------Fund Requests-----------------------*/
-    
+
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
     Route::get('fund/fetch-parents', [FundController::class, 'parents']);
     Route::get('fund/fetch-fund', [FundRequestController::class, 'fetchFundUser']);
-    
+
     /*-----------------------Fund Requests-----------------------*/
     Route::get('transaction/{type}', [UserDashboardController::class, 'sunTransaction']);
 });
@@ -126,12 +126,25 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     /*-----------------------Razorpay Payout-----------------------*/
     Route::post('razorpay/payout/new-payout/{service_id}', [FundAccountController::class, 'createFundAcc']);
     Route::post('razorpay/contacts/create-contact/{service_id}', [PayoutController::class, 'fetchPayoutAdmin']);
+    /*-----------------------Razorpay Payout-----------------------*/
+
+    /*-----------------------Paysprint Payout-----------------------*/
+    Route::post('paysprint/payout/add-account/{service_id}', [PaysprintPayout::class, 'addAccount']);
+    Route::post('paysprint/payout/upload-documents/{service_id}', [PaysprintPayout::class, 'documents']);
+    Route::post('paysprint/payout/account-status/{service_id}', [PaysprintPayout::class, 'accountStatus']);
+    Route::post('paysprint/payout/transaction/{service_id}', [PaysprintPayout::class, 'doTransaction']);
+    Route::post('paysprint/payout/transaction-status/{service_id}', [PaysprintPayout::class, 'status']);
+    /*-----------------------Paysprint Payout-----------------------*/
+
+    /*-----------------------Paysprint DMT-----------------------*/
     
+
     /*-----------------------Paysprint Recharge-----------------------*/
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
     Route::get('paysprint/bbps/mobile-operators/parameter/{id}', [RechargeController::class, 'operatorParameter']);
     Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
     Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge']);
+    /*-----------------------Paysprint Recharge-----------------------*/
 });
 
 Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
@@ -150,10 +163,8 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('fetch-fund-requests', [FundRequestController::class, 'fetchFund']);
     Route::get('fetch-fund-requests/{id}', [FundRequestController::class, 'fetchFundId']);
     Route::post('update-fund-requests', [FundRequestController::class, 'updateFund']);
-    
-
 });
 
-Route::group(['middleware' => ['auth:api', 'role:super_admin'], 'prefix' => 'super-admin'], function(){
+Route::group(['middleware' => ['auth:api', 'role:super_admin'], 'prefix' => 'super-admin'], function () {
     Route::get('service-chage/{service_id}/{active}', [GlobalServiceController::class, 'manageService']);
 });
