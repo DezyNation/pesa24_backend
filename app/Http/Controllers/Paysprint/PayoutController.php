@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Paysprint;
 
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\CommissionController;
+use Illuminate\Support\Str;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
-class PayoutController extends Controller
+class PayoutController extends CommissionController
 {
     public function token()
     {
@@ -118,7 +121,19 @@ class PayoutController extends Controller
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Content-Type: application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/dotransaction', $data);
+
+        if ($response->json($key = 'status') == true) {
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $balance_left = $walletAmt[0] - $request['amount'];
+            User::where('id', auth()->user()->id)->update([
+                'wallet' => $balance_left
+            ]);
+            $transaction_id = "PAY".strtoupper(Str::random(9));
+            $this->transaction($request['amount'], 'Payout Transaction', 'payout', auth()->user()->id, $walletAmt, $transaction_id, $balance_left);
+            $this->payoutCommission(auth()->user()->id, $request['amount']);
+        }
 
         return $response;
     }
