@@ -183,7 +183,7 @@ class ProfileController extends AgentManagementController
             'paysprintBankcode' => 'required',
             'passbook' => 'required'
         ]);
-
+        $passbook = $request->file('passbook')->store('passbook');
         DB::table('users')->where('id', auth()->user()->id)->update([
             'account_number' => $request['accountNumber'],
             'ifsc' => $request['ifsc'],
