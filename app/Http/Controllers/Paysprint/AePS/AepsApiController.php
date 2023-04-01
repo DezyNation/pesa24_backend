@@ -124,9 +124,10 @@ class AepsApiController extends CommissionController
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
         ])->post('https://paysprint.in/service-api/api/v1/service/aeps/cashwithdraw/index', ['body' => $body]);
 
+        return $response;
+        
         $this->aepsCommssion($data['amount'], auth()->user()->id);
 
-        return $response;
 
 
     }

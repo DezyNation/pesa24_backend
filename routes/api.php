@@ -11,7 +11,7 @@ use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Eko\BBPS\BBPSController;
 use App\Http\Controllers\Pesa24\TicketController;
 use App\Http\Controllers\Razorpay\PayoutController;
-use App\Http\Controllers\Eko\AePS\AepsApiController;
+use App\Http\Controllers\Paysprint\AePS\AepsApiController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Controllers\Razorpay\ContactController;
 use App\Http\Controllers\Admin\FundRequestController;
@@ -131,11 +131,15 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     Route::post('razorpay/contacts/create-contact/{service_id}', [PayoutController::class, 'fetchPayoutAdmin']);
     /*-----------------------Razorpay Payout-----------------------*/
 
+    /*-----------------------Pysprint AePS-----------------------*/
+    Route::post('paysprint/aeps/money-transfer/{service_id}', [AepsApiController::class, 'withdrwal']);
+    /*-----------------------Pysprint AePS-----------------------*/
+
     /*-----------------------Paysprint Payout-----------------------*/
     Route::post('paysprint/payout/add-account/{service_id}', [PaysprintPayout::class, 'addAccount']);
     Route::post('paysprint/payout/upload-documents/{service_id}', [PaysprintPayout::class, 'documents']);
     Route::post('paysprint/payout/account-status/{service_id}', [PaysprintPayout::class, 'accountStatus']);
-    Route::post('paysprint/payout/new-payout/{service_id}', [PaysprintPayout::class, 'doTransaction'])->middleware('bank', 'mpin');
+    Route::post('paysprint/payout/new-payout', [PaysprintPayout::class, 'doTransaction'])->middleware('bank', 'mpin');
     Route::post('paysprint/payout/transaction-status/{service_id}', [PaysprintPayout::class, 'status']);
     /*-----------------------Paysprint Payout-----------------------*/
 
