@@ -68,7 +68,7 @@ class AdminController extends Controller
 
     public function packages()
     {
-        $data = DB::table('packages')->paginate(20);
+        $data = DB::table('packages')->where('organization_id', auth()->user()->organization_id)->paginate(20);
         return $data;
     }
 
