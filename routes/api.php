@@ -167,41 +167,15 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
 });
 
 Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
-    // Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
-    // Route::get('users', [UserController::class, 'index']);
-    // Route::get('users/{id}', [UserController::class, 'show']);
-    // Route::post('create/user', [UserController::class, 'store']);
-    // Route::get('packages/{id}', [PackageController::class, 'parentPackage']);
-    // Route::get('get-users/{role_id}/{parent?}', [UserController::class, 'getUsers']);
-    // Route::get('users-list/{role}/{id?}', [UserController::class, 'userInfo']);
-    // Route::get('user/status/{id}/{bool}', [UserController::class, 'active']);
-    // Route::post('link-package', [AdminDashboardcontroller::class, 'packageService']);
-
-    // Route::get('payouts', [PayoutController::class, 'fetchPayoutAdmin']);
-
-    // Route::get('fetch-fund-requests', [FundRequestController::class, 'fetchFund']);
-    // Route::get('fetch-fund-requests/{id}', [FundRequestController::class, 'fetchFundId']);
-    // Route::post('update-fund-requests', [FundRequestController::class, 'updateFund']);
-
-    Route::post('razorpay/fetch-payout', [PayoutController::class, 'fetchPayoutAdmin']);
-    Route::post('user/info/{id}', [ProfileController::class, 'adminUser']);
-    Route::get('fetch-fund-requests', [FundController::class, 'fetchFund']);
-    Route::get('users-list/{role}', [AdminController::class, 'roleUser']);
-    Route::get('logins/{count?}', [AdminController::class, 'logins']);
-
-    Route::get('fetch-fund-requests/{id}', [FundController::class, 'fetchFundId']);
-    Route::get('fetch-admin-funds', [FundController::class, 'reversalAndTransferFunds']);
-    Route::post('update-fund-requests', [FundController::class, 'updateFund'])->middleware('permission:fund-request-edit');
-    Route::post('new-fund', [FundController::class, 'newFund'])->middleware('permission:fund-transfer-create');
-
-
-    Route::post('file', function (Request $address) {
-        return Storage::download($address['address']);
-    });
-    Route::get('transactions', [AdminTransactionController::class, 'index']);
-    Route::get('transactions/{id}', [AdminTransactionController::class, 'view']);
-    Route::get('transactions-user/{id}', [AdminTransactionController::class, 'userTransction']);
-    Route::get('transactions-period', [AdminTransactionController::class, 'transactionPeriod']);
+    Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
+    Route::get('users', [UserController::class, 'index']);
+    Route::get('users/{id}', [UserController::class, 'show']);
+    Route::post('create/user', [UserController::class, 'store']);
+    Route::get('packages/{id}', [PackageController::class, 'parentPackage']);
+    Route::get('get-users/{role_id}/{parent?}', [UserController::class, 'getUsers']);
+    Route::get('users-list/{role}/{id?}', [UserController::class, 'userInfo']);
+    Route::get('user/status/{id}/{bool}', [UserController::class, 'active']);
+    Route::post('link-package', [AdminDashboardcontroller::class, 'packageService']);
 
     Route::get('user/status/{id}/{bool}', [AdminController::class, 'active'])->middleware('permission:user-edit');
     Route::get('all-admins', [AdminController::class, 'admins'])->middleware('permission:assign-permission');
