@@ -53,6 +53,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('user/update', [ProfileController::class, 'update']);
     Route::post('user/add-bank', [ProfileController::class, 'addBank']);
     Route::post('user/info', [ProfileController::class, 'info']);
+    Route::post('user/bank', [ProfileController::class, 'bank']);
     Route::get('user/services', [ProfileController::class, 'userServices']);
     Route::post('user/wallet', [ProfileController::class, 'wallet']);
     Route::post('user/verify/aadhaar/send-otp', [KycVerificationController::class, 'sendOtpAadhaar']);
@@ -134,7 +135,7 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     Route::post('paysprint/payout/add-account/{service_id}', [PaysprintPayout::class, 'addAccount']);
     Route::post('paysprint/payout/upload-documents/{service_id}', [PaysprintPayout::class, 'documents']);
     Route::post('paysprint/payout/account-status/{service_id}', [PaysprintPayout::class, 'accountStatus']);
-    Route::post('paysprint/payout/transaction/{service_id}', [PaysprintPayout::class, 'doTransaction']);
+    Route::post('paysprint/payout/transaction/{service_id}', [PaysprintPayout::class, 'doTransaction'])->middleware('bank');
     Route::post('paysprint/payout/transaction-status/{service_id}', [PaysprintPayout::class, 'status']);
     /*-----------------------Paysprint Payout-----------------------*/
 

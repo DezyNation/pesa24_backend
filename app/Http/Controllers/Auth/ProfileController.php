@@ -182,7 +182,7 @@ class ProfileController extends AgentManagementController
             'paysprintBankCode' => 'required',
             'passbook' => 'required'
         ]);
-
+        $passbook = $request->file('passbook')->store('passbook');
         DB::table('users')->where('id', auth()->user()->id)->update([
             'account_number' => $request['accountNumber'],
             'ifsc' => $request['ifsc'],
@@ -193,5 +193,12 @@ class ProfileController extends AgentManagementController
         ]);
 
         return response()->noContent();
+    }
+
+    public function bank()
+    {
+        $data = DB::table('users')->where('user_id', auth()->user()->id)->get(['paysprint_bank_code', 'ifsc', 'account_number']);
+
+        return $data;
     }
 }
