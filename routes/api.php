@@ -164,7 +164,7 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
 });
 
 Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
-    Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
+    Route::get('razorpay/fetch-payout', [PayoutController::class, 'fetchPayoutUserAll']);
     Route::get('users', [UserController::class, 'index']);
     Route::get('users/{id}', [UserController::class, 'show']);
     Route::post('create/user', [UserController::class, 'store']);
