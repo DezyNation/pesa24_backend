@@ -188,7 +188,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('fetch-fund-requests', [FundController::class, 'fetchFund']);
     Route::get('users-list/{role}', [AdminController::class, 'roleUser']);
     Route::get('logins/{count?}', [AdminController::class, 'logins']);
-
+ 
     Route::get('fetch-fund-requests/{id}', [FundController::class, 'fetchFundId']);
     Route::get('fetch-admin-funds', [FundController::class, 'reversalAndTransferFunds']);
     Route::post('update-fund-requests', [FundController::class, 'updateFund'])->middleware('permission:fund-request-edit');
@@ -214,7 +214,6 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('packages/{id}', [AdminController::class, 'packagesId']);
     Route::get('commissions/{id}', [AdminController::class, 'commissionsPackage']);
     Route::post('create-package', [AdminController::class, 'packageCreate']);
-    Route::post('update-commission', [AdminController::class, 'updateCommissions']);
 });
 
 Route::group(['middleware' => ['auth:api', 'role:super_admin'], 'prefix' => 'super-admin'], function () {

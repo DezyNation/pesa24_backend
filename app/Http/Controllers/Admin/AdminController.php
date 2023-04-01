@@ -66,16 +66,6 @@ class AdminController extends Controller
         return $data;
     }
 
-    public function updateCommissions(Request $request)
-    {
-        $data = DB::table('commissions')->updateOrInsert(
-            ['from' => $request['from'], 'package_id' => $request['package_id']],
-            ['commission' => $request['commission'], 'gst' => $request['gst'], 'to' => $request['to'], 'fixed_charge' => $request['fixed_charge'], 'is_flat' => $request['is_flat'], 'created_at' => now(), 'updated_at' => now()]
-        );
-
-        return response()->noContent();
-    }
-
     public function packages()
     {
         $data = DB::table('packages')->paginate(20);
