@@ -201,4 +201,14 @@ class ProfileController extends AgentManagementController
 
         return $data;
     }
+
+    public function adminUser($id)
+    {
+        $user = User::with(['roles','permissions'])->where('id', $id)->orWhere('phone_number', $id)->get();
+        if (!$user) {
+            return response("User not found.", 404);
+        }
+
+        return new UserResource($user[0]);
+    }
 }

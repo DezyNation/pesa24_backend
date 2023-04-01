@@ -27,4 +27,6 @@ class AdminDashboardcontroller extends Controller
 
         return response()->json(['message' => 'Package linked']);
     }
+
+    
 }

@@ -5,16 +5,17 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use App\Mail\SendOtp;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Support\Facades\Session;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Session;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -72,6 +73,9 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'latlong' => 'required'
+        ]);
         Session::put('organization_code', $request['organization_code']);
 
         if ($request->has('mpin')) {
@@ -93,6 +97,14 @@ class AuthenticatedSessionController extends Controller
 
                 // $request->session()->regenerate();
 
+                DB::table('logins')->insert([
+                    'user_id' => auth()->user()->id,
+                    'ip' => $request->ip(),
+                    'latlong' => $request['latlong'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
                 return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name], 200);
             } else {
                 $creds = $request->only(['phone_number', 'password']);
@@ -112,6 +124,13 @@ class AuthenticatedSessionController extends Controller
                 // $request->authenticatePhone();
 
                 // $request->session()->regenerate();
+                DB::table('logins')->insert([
+                    'user_id' => auth()->user()->id,
+                    'ip' => $request->ip(),
+                    'latlong' => $request['latlong'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
                 return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name], 200);
             }
@@ -135,6 +154,14 @@ class AuthenticatedSessionController extends Controller
 
                 // $request->session()->regenerate();
 
+                DB::table('logins')->insert([
+                    'user_id' => auth()->user()->id,
+                    'ip' => $request->ip(),
+                    'latlong' => $request['latlong'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
                 return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'wallet' => auth()->user()->wallet], 200);
             } else {
                 $creds = $request->only(['phone_number', 'password']);
@@ -151,10 +178,16 @@ class AuthenticatedSessionController extends Controller
                 }
 
                 // return $this->respondWithToken($token);
-
                 // $request->authenticatePhone();
-
                 // $request->session()->regenerate();
+
+                DB::table('logins')->insert([
+                    'user_id' => auth()->user()->id,
+                    'ip' => $request->ip(),
+                    'latlong' => $request['latlong'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
                 return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name], 200);
             }
