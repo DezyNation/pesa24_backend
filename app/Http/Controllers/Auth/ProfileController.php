@@ -179,8 +179,7 @@ class ProfileController extends AgentManagementController
         $request->validate([
             'accountNumber' => 'required',
             'ifsc' => 'required',
-            'bankName' => 'required',
-            'paysprintBankcode' => 'required',
+            'paysprintBankCode' => 'required',
             'passbook' => 'required'
         ]);
 
@@ -188,9 +187,8 @@ class ProfileController extends AgentManagementController
             'account_number' => $request['accountNumber'],
             'ifsc' => $request['ifsc'],
             'passbook' => $request['passbook'],
-            'bank_name' => $request['bankName'],
-            'paysprint_bank_code' => $request['paysprintBankcode'],
-            'eko_bank_code' => $request['ekoBankcode'],
+            'paysprint_bank_code' => $request['paysprintBankCode'],
+            'eko_bank_code' => $request['ekoBankCode'],
             'updated_at' => now()
         ]);
 
