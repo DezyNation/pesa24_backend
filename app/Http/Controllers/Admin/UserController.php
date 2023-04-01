@@ -206,7 +206,7 @@ class UserController extends Controller
     public function getUsers(string $role, int $parent = null)
     {
         $org = Session::get('organization_code');
-        $org_id = DB::table('organizations')->where('code', $org)->pluck('id');
+        $org_id = auth()->user()->organization_id;
         if (is_null($parent)) {
             $user = User::role($role)->with(['children' => function ($query) use ($role) {
                 $query->select('user_id', 'parent_id', 'name')->role($role);
@@ -225,9 +225,7 @@ class UserController extends Controller
 
     public function userInfo(string $role, $id = null)
     {
-
-        $org = 'DEZ45';
-        $org_id = DB::table('organizations')->where('code', $org)->pluck('id');
+        $org_id = auth()->user()->organization_id;
         if (is_null($id)) {
             $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->get();
             return $user;
