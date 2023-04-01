@@ -47,7 +47,6 @@ class UserController extends Controller
             'alternativePhone' => ['digits:10'],
             'dob' => ['required', 'date'],
             'gender' => ['required', 'alpha'],
-            'companyType' => ['required', 'alpha'],
             'aadhaarNum' => ['required', 'digits:12'],
             'panNum' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')],
             'capAmount' => ['required', 'integer'],
@@ -61,7 +60,7 @@ class UserController extends Controller
             'isActive' => ['required', 'boolean'],
             'gst' => 'string',
         ]);
-        $id = DB::table('organizations')->where('code', Session::get('organization_code'))->pluck('id');
+        $id = auth()->user()->organization_id;
 
         $pan = $request->file('pan')->store('pan');
         $aadhar_front = $request->file('aadhaarFront')->store('aadhar_front');
@@ -78,7 +77,7 @@ class UserController extends Controller
             'last_name' => $request['lastName'],
             'name' => $request['firstName'] . " " . $request['lastName'],
             'has_parent' => $request['hasParent'],
-            'phone_number' => $request['phoneNumber'],
+            'phone_number' => $request['userPhone'],
             'email' => $request['userEmail'],
             'alternate_phone' => $request['alternativePhone'],
             'user_code' => $request['user_code'],
@@ -101,9 +100,11 @@ class UserController extends Controller
             'profile' => 0,
             'aadhar_front' => $aadhar_front,
             'aadhar_back' => $aadhar_back,
+            'minimum_balance' => $request['capAmount'],
             'pan' => $pan,
             'profile_pic' => $profile,
-        ])->assignRole($request['userType']);
+            'organization_id' => $id
+        ])->assignRole($request['userRole']);
 
         if ($request['hasParent']) {
             DB::table('user_parent')->insert([
@@ -205,7 +206,6 @@ class UserController extends Controller
 
     public function getUsers(string $role, int $parent = null)
     {
-        $org = Session::get('organization_code');
         $org_id = auth()->user()->organization_id;
         if (is_null($parent)) {
             $user = User::role($role)->with(['children' => function ($query) use ($role) {
@@ -227,11 +227,11 @@ class UserController extends Controller
     {
         $org_id = auth()->user()->organization_id;
         if (is_null($id)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->get();
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->paginate(20);
             return $user;
         }
 
-        $user = User::role($role)->with('packages:name')->where(['id' => $id, 'organization_id' => $org_id])->get();
+        $user = User::role($role)->with('packages:name')->where(['id' => $id, 'organization_id' => $org_id])->paginate(20);
         return $user;
     }
 
