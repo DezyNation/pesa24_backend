@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\Paysprint\LICController;
 use App\Http\Controllers\Paysprint\LPGController;
 use App\Http\Controllers\Razorpay\PayoutController;
+use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Controllers\Eko\AePS\AepsApiController;
 use App\Http\Controllers\Razorpay\ContactController;
 use App\Http\Controllers\Pesa24\KycVerificationController;
@@ -62,6 +63,7 @@ Route::get('/', function () {
 // });
 
 Route::get('paysprint-test', [PaysprintAeps::class, 'enquiry']);
+Route::get('paysprint-test1', [PaysprintPayout::class, 'doTransaction']);
 
 Route::get('admin', function () {
 

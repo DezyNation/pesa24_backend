@@ -112,8 +112,8 @@ class PayoutController extends CommissionController
         $token = $this->token();
 
         $data = [
-            'bene_id' => $request['beneId'],
-            'amount' => $request['amount'],
+            'bene_id' => $request['beneId'] ?? '2043',
+            'amount' => $request['amount'] ?? 1000,
             'refid' => uniqid(),
             'mode' => 'IMPS'
         ];
