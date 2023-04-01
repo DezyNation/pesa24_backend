@@ -235,6 +235,18 @@ class UserController extends Controller
         return $user;
     }
 
+    public function userInfoPackage(string $role, $id = null)
+    {
+        $org_id = auth()->user()->organization_id;
+        if (is_null($id)) {
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->get();
+            return $user;
+        }
+
+        $user = User::role($role)->with('packages:name')->where(['id' => $id, 'organization_id' => $org_id])->get();
+        return $user;
+    }
+
     public function active($id, $bool)
     {
         User::where('id', $id)->update([
