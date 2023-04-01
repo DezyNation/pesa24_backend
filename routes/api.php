@@ -51,6 +51,7 @@ Route::get('services', [Controller::class, 'index']);
 Route::middleware(['auth:api'])->group(function () {
     /*------------------------USER------------------------*/
     Route::post('user/update', [ProfileController::class, 'update']);
+    Route::post('user/add-bank', [ProfileController::class, 'addBank']);
     Route::post('user/info', [ProfileController::class, 'info']);
     Route::get('user/services', [ProfileController::class, 'userServices']);
     Route::post('user/wallet', [ProfileController::class, 'wallet']);

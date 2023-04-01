@@ -173,4 +173,27 @@ class ProfileController extends AgentManagementController
             ->select('services.type', 'services.service_name', 'services.image_url', 'services.price')->where('users.id', '=', auth()->user()->id)->where('service_user.pesa24_active', '=', 1)->get(['type', 'service_name', 'image_url', 'price']);
         return $result;
     }
+
+    public function addBank(Request $request)
+    {
+        $request->validate([
+            'accountNumber' => 'required',
+            'ifsc' => 'required',
+            'bankName' => 'required',
+            'paysprintBankcode' => 'required',
+            'passbook' => 'required'
+        ]);
+
+        DB::table('users')->where('id', auth()->user()->id)->update([
+            'account_number' => $request['accountNumber'],
+            'ifsc' => $request['ifsc'],
+            'passbook' => $request['passbook'],
+            'bank_name' => $request['bankName'],
+            'paysprint_bank_code' => $request['paysprintBankcode'],
+            'eko_bank_code' => $request['ekoBankcode'],
+            'updated_at' => now()
+        ]);
+
+        return response()->noContent();
+    }
 }
