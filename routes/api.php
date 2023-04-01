@@ -53,7 +53,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('user/update', [ProfileController::class, 'update']);
     Route::post('user/add-bank', [ProfileController::class, 'addBank']);
     Route::post('user/info', [ProfileController::class, 'info']);
-    Route::post('user/bank', [ProfileController::class, 'bank']);
+    Route::get('user/bank', [ProfileController::class, 'bank']);
     Route::get('user/services', [ProfileController::class, 'userServices']);
     Route::post('user/wallet', [ProfileController::class, 'wallet']);
     Route::post('user/verify/aadhaar/send-otp', [KycVerificationController::class, 'sendOtpAadhaar']);
