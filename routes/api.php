@@ -135,7 +135,7 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     Route::post('paysprint/payout/add-account/{service_id}', [PaysprintPayout::class, 'addAccount']);
     Route::post('paysprint/payout/upload-documents/{service_id}', [PaysprintPayout::class, 'documents']);
     Route::post('paysprint/payout/account-status/{service_id}', [PaysprintPayout::class, 'accountStatus']);
-    Route::post('paysprint/payout/transaction/{service_id}', [PaysprintPayout::class, 'doTransaction'])->middleware('bank', 'mpin');
+    Route::post('paysprint/payout/new-payout/{service_id}', [PaysprintPayout::class, 'doTransaction'])->middleware('bank', 'mpin');
     Route::post('paysprint/payout/transaction-status/{service_id}', [PaysprintPayout::class, 'status']);
     /*-----------------------Paysprint Payout-----------------------*/
 
