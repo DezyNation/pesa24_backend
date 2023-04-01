@@ -2,12 +2,13 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use App\Models\User;
+use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 
-class BankVerified
+class MPIN
 {
     /**
      * Handle an incoming request.
@@ -17,8 +18,8 @@ class BankVerified
     public function handle(Request $request, Closure $next): Response
     {
         $user = User::findOrFail(auth()->user()->id);
-        if (!$user->is_verified) {
-            return response("Bank not verified yet.", 400);
+        if (!Hash::check($request['mpin'], $user->mpin)) {
+            return response("MPIN is wrong!", 406);
         }
         return $next($request);
     }

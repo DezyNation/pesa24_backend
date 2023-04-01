@@ -69,6 +69,7 @@ class Kernel extends HttpKernel
         'minimum_balance' => \App\Http\Middleware\MinimumBalance::class,
         'onboard' => \App\Http\Middleware\OnboardFee::class,
         'subscribe' => \App\Http\Middleware\SubscribeService::class,
-        'bank' => \App\Http\Middleware\BankVerified::class
+        'bank' => \App\Http\Middleware\BankVerified::class,
+        'mpin' => \App\Http\Middleware\MPIN::class
     ];
 }
