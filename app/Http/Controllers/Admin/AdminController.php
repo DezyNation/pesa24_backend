@@ -162,16 +162,6 @@ class AdminController extends Controller
                 break;
 
             case 'dmt':
-                $request->validate([
-                    'from' => 'required|numeric',
-                    'to' => 'required|numeric',
-                    'gst' => 'required|numeric',
-                    'is_flat' => 'required|boolean',
-                    'fixed_charge' => 'required|numeric',
-                    'super_distributor_commission' => 'required|numeric',
-                    'distributor_commission' => 'required|numeric',
-                    'retailer_commission' => 'required|numeric',
-                ]);
                 $data = DB::table('d_m_t_s')->where('id', $request['id'])
                     ->update([
                         'from' => $request['from'],
@@ -187,17 +177,6 @@ class AdminController extends Controller
                 break;
 
             case 'payout':
-                $request->validate([
-                    'from' => 'required|numeric',
-                    'to' => 'required|numeric',
-                    'gst' => 'required|numeric',
-                    'is_flat' => 'required|boolean',
-                    'fixed_charge' => 'required|numeric',
-                    'super_distributor_commission' => 'required|numeric',
-                    'distributor_commission' => 'required|numeric',
-                    'retailer_commission' => 'required|numeric',
-                    'name' => 'required'
-                ]);
                 $data = DB::table('payoutcommissions')->where('id', $request['id'])
                     ->update([
                         'from' => $request['from'],
