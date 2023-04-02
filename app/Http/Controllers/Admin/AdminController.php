@@ -163,17 +163,7 @@ class AdminController extends Controller
 
             case 'dmt':
                 $data = DB::table('d_m_t_s')->where('id', $request['id'])
-                    ->update([
-                        'from' => $request['from'],
-                        'to' => $request['to'],
-                        'gst' => $request['gst'],
-                        'is_flat' => $request['is_flat'],
-                        'fixed_charge' => $request['fixed_charge'],
-                        'super_distributor_commission' => $request['super_distributor_commission'],
-                        'distributor_commission' => $request['distributor_commission'],
-                        'retailer_commission' => $request['retailer_commission'],
-                        'updated_at' => now()
-                    ]);
+                    ->update($request->all());
                 break;
 
             case 'payout':
