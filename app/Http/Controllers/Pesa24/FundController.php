@@ -45,7 +45,7 @@ class FundController extends Controller
             'status' => 'required',
         ]);
 
-        $data = DB::table('funds')->where('id', $request['id'])->update([
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id])->update([
             'user_id' => $request['user_id'],
             'amount' => $request['amount'],
             'admin_remarks' => $request['admin_remarks'] ?? null,
