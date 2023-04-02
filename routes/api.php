@@ -214,6 +214,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('packages', [AdminController::class, 'packages']);
     Route::post('packages/{id}', [AdminController::class, 'packagesId']);
     Route::get('commissions/{name}', [AdminController::class, 'commissionsPackage']);
+    Route::post('commissions/{name}', [AdminController::class, 'updateCommission']);
     Route::post('create-package', [AdminController::class, 'packageCreate']);
 });
 

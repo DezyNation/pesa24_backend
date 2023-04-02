@@ -151,4 +151,73 @@ class AdminController extends Controller
 
         return response()->noContent();
     }
+
+    public function updateCommission(Request $request, $name)
+    {
+        switch ($name) {
+            case 'aeps':
+                $request->validate([]);
+                $data = DB::table('a_e_p_s')
+                    ->update([]);
+                break;
+
+            case 'dmt':
+                $request->validate([
+                    'from' => 'required|numeric',
+                    'to' => 'required|numeric',
+                    'gst' => 'required|numeric',
+                    'isFlat' => 'required|boolean',
+                    'fixedCharge' => 'required|numeric',
+                    'superDistributorCommission' => 'required|numeric',
+                    'distributorCommission' => 'required|numeric',
+                    'retailerCommission' => 'required|numeric',
+                ]);
+                $data = DB::table('d_m_t_s')
+                    ->update([
+                        'from' => $request['from'],
+                        'to' => $request['to'],
+                        'gst' => $request['gst'],
+                        'is_flat' => $request['isFlat'],
+                        'fixed_charge' => $request['fixedCharge'],
+                        'super_distributor_commission' => $request['superDistributorCommission'],
+                        'distributor_commission' => $request['distributorCommission'],
+                        'retailer_commission' => $request['retailerCommission'],
+                        'updated_at' => now()
+                    ]);
+                break;
+
+            case 'payout':
+                $request->validate([
+                    'from' => 'required|numeric',
+                    'to' => 'required|numeric',
+                    'gst' => 'required|numeric',
+                    'isFlat' => 'required|boolean',
+                    'fixedCharge' => 'required|numeric',
+                    'superDistributorCommission' => 'required|numeric',
+                    'distributorCommission' => 'required|numeric',
+                    'retailerCommission' => 'required|numeric',
+                    'name' => 'required'
+                ]);
+                $data = DB::table('payoutcommissions')
+                    ->update([
+                        'from' => $request['from'],
+                        'to' => $request['to'],
+                        'name' => $request['name'],
+                        'gst' => $request['gst'],
+                        'is_flat' => $request['isFlat'],
+                        'fixed_charge' => $request['fixedCharge'],
+                        'super_distributor_commission' => $request['superDistributorCommission'],
+                        'distributor_commission' => $request['distributorCommission'],
+                        'retailer_commission' => $request['retailerCommission'],
+                        'updated_at' => now()
+                    ]);
+                break;
+
+            default:
+                $data = response("Invalid parameter was sent.", 404);
+                break;
+        }
+
+        return $data;
+    }
 }
