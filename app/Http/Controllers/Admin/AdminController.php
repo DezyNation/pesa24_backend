@@ -193,4 +193,10 @@ class AdminController extends Controller
 
         return $data;
     }
+
+    public function packageDefault($id, $bool)
+    {
+        $data = DB::table('packages')->where('id', $id)->update(['is_default' => $bool]);
+        return $data;
+    }
 }
