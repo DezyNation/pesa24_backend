@@ -191,11 +191,11 @@ class AdminController extends Controller
                     'from' => 'required|numeric',
                     'to' => 'required|numeric',
                     'gst' => 'required|numeric',
-                    'isFlat' => 'required|boolean',
-                    'fixedCharge' => 'required|numeric',
-                    'superDistributorCommission' => 'required|numeric',
-                    'distributorCommission' => 'required|numeric',
-                    'retailerCommission' => 'required|numeric',
+                    'is_flat' => 'required|boolean',
+                    'fixed_charge' => 'required|numeric',
+                    'super_distributor_commission' => 'required|numeric',
+                    'distributor_commission' => 'required|numeric',
+                    'retailer_commission' => 'required|numeric',
                     'name' => 'required'
                 ]);
                 $data = DB::table('payoutcommissions')
@@ -204,11 +204,11 @@ class AdminController extends Controller
                         'to' => $request['to'],
                         'name' => $request['name'],
                         'gst' => $request['gst'],
-                        'is_flat' => $request['isFlat'],
-                        'fixed_charge' => $request['fixedCharge'],
-                        'super_distributor_commission' => $request['superDistributorCommission'],
-                        'distributor_commission' => $request['distributorCommission'],
-                        'retailer_commission' => $request['retailerCommission'],
+                        'is_flat' => $request['is_flat'],
+                        'fixed_charge' => $request['fixed_charge'],
+                        'super_distributor_commission' => $request['super_distributor_commission'],
+                        'distributor_commission' => $request['distributor_commission'],
+                        'retailer_commission' => $request['retailer_commission'],
                         'updated_at' => now()
                     ]);
                 break;
