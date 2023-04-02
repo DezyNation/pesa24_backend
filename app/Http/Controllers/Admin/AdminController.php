@@ -163,7 +163,7 @@ class AdminController extends Controller
 
             case 'dmt':
                 $data = DB::table('d_m_t_s')->where('id', $request['id'])
-                    ->update($request->all());
+                    ->updateOrInsert(['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']], $request->all());
                 break;
 
             case 'payout':
