@@ -105,6 +105,7 @@ class KycVerificationController extends Controller
         $opening_balance = $user->wallet;
         $final_amount = $user->wallet - $role_details[0]['fee'];
 
+            $paysprint = $this->onboard();
             $eko = $this->userOnboard();
             // return $eko;
             if (!$eko['original']['message']) {
