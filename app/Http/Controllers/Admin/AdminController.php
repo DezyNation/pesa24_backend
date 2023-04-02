@@ -172,7 +172,7 @@ class AdminController extends Controller
                     'distributor_commission' => 'required|numeric',
                     'retailer_commission' => 'required|numeric',
                 ]);
-                $data = DB::table('d_m_t_s')
+                $data = DB::table('d_m_t_s')->where('id', $request['id'])
                     ->update([
                         'from' => $request['from'],
                         'to' => $request['to'],
@@ -198,7 +198,7 @@ class AdminController extends Controller
                     'retailer_commission' => 'required|numeric',
                     'name' => 'required'
                 ]);
-                $data = DB::table('payoutcommissions')
+                $data = DB::table('payoutcommissions')->where('id', $request['id'])
                     ->update([
                         'from' => $request['from'],
                         'to' => $request['to'],
