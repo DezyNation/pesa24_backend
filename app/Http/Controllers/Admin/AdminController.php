@@ -55,20 +55,50 @@ class AdminController extends Controller
         return $data;
     }
 
-    public function commissionsPackage($id)
+    public function commissionsPackage($name)
     {
-        $data = DB::table('commissions')
-            ->join('packages', 'packages.id', '=', 'commissions.package_id')
-            ->where('commissions.package_id', $id)
-            ->latest('commissions.created_at')
-            ->get();
+
+        switch ($name) {
+            case 'aeps':
+                $data = DB::table('a_e_p_s')
+                    ->join('packages', 'packages.id', '=', 'a_e_p_s.package_id')
+                    ->select('a_e_p_s.*')
+                    ->latest('a_e_p_s.created_at')
+                    ->get();
+                break;
+
+            case 'dmt':
+                $data = DB::table('d_m_t_s')
+                    ->join('packages', 'packages.id', '=', 'd_m_t_s.package_id')
+                    ->select('d_m_t_s.*')
+                    ->latest('d_m_t_s.created_at')
+                    ->get();
+                break;
+
+            case 'payout':
+                $data = DB::table('payoutcommissions')
+                    ->join('packages', 'packages.id', '=', 'payoutcommissions.package_id')
+                    ->select('payoutcommissions.*')
+                    ->latest('payoutcommissions.created_at')
+                    ->get();
+                break;
+
+            default:
+                $data = response("Invalid parameter was sent.", 404);
+                break;
+        }
 
         return $data;
     }
 
-    public function packages()
+    public function packages(Request $request)
     {
-        $data = DB::table('packages')->where('organization_id', auth()->user()->organization_id)->get();
+
+        if (is_null($request->page)) {
+            $data = DB::table('packages')->where('organization_id', auth()->user()->organization_id)->get();
+        } else {
+            $data = DB::table('packages')->where('organization_id', auth()->user()->organization_id)->paginate(20);
+        }
         return $data;
     }
 

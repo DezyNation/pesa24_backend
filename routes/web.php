@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommissionController;
 use App\Models\User;
 use App\Models\Package;
 use App\Models\ParentUser;
@@ -63,7 +64,7 @@ Route::get('/', function () {
 // });
 
 Route::get('paysprint-test', [PaysprintAeps::class, 'enquiry']);
-Route::get('paysprint-test1', [PaysprintPayout::class, 'doTransaction']);
+Route::get('paysprint-test1/{amount}/{user_id}', [CommissionController::class, 'aepsCommssion']);
 
 Route::get('admin', function () {
 

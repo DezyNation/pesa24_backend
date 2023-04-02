@@ -213,7 +213,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('commissions', [AdminController::class, 'commissions']);
     Route::get('packages', [AdminController::class, 'packages']);
     Route::post('packages/{id}', [AdminController::class, 'packagesId']);
-    Route::get('commissions/{id}', [AdminController::class, 'commissionsPackage']);
+    Route::get('commissions/{name}', [AdminController::class, 'commissionsPackage']);
     Route::post('create-package', [AdminController::class, 'packageCreate']);
 });
 

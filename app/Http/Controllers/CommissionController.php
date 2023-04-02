@@ -16,6 +16,7 @@ class CommissionController extends Controller
             ->where('package_user.user_id', $user_id)->where('a_e_p_s.from', '<', $amount)->where('a_e_p_s.to', '>=', $amount)
             ->get()[0];
 
+        // return $table->fixed_charge;
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
 
@@ -23,22 +24,27 @@ class CommissionController extends Controller
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
-        $role_commission = $table->pluck($role_commission_name);
-
+        $role_commission = $table->{$role_commission_name};
+        // return $role_commission;
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
-            $debit = $amount + $fixed_charge;
+            $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         } elseif (!$is_flat) {
-            $debit = $amount + $amount * $fixed_charge / 100;
+            $debit = $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
+        // return $opening_balance;
+
         $transaction_id = "COM" . strtoupper(Str::random(9));
-        $this->transaction($amount, 'Commission AePS', 'withdrawal', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
+        $this->transaction($debit, 'Commission AePS', 'withdrawal', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
 
         if (empty($table)) {
             return response()->json(['message' => 'No further commission']);
@@ -48,7 +54,58 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->aepsCommssion($amount, $parent_id[0]);
+            $this->parentCommission($amount, $parent_id[0]);
+        }
+
+        return $table;
+    }
+
+    public function parentCommission($amount, $user_id)
+    {
+        $table = DB::table('a_e_p_s')
+            ->join('package_user', 'package_user.package_id', '=', 'a_e_p_s.package_id')
+            ->where('package_user.user_id', $user_id)->where('a_e_p_s.from', '<', $amount)->where('a_e_p_s.to', '>=', $amount)
+            ->get()[0];
+
+        // return $table->fixed_charge;
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = $table->fixed_charge;
+        $is_flat = $table->is_flat;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->{$role_commission_name};
+        // return $role_commission;
+        $opening_balance = $user->wallet;
+
+        if ($is_flat) {
+            $debit = 0;
+            $credit = $role_commission - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        } elseif (!$is_flat) {
+            $debit = 0;
+            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        }
+
+        // return $opening_balance;
+
+        $transaction_id = "COM" . strtoupper(Str::random(9));
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
+        $this->transaction($debit, 'Commission AePS', 'withdrawal', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+
+        if (empty($table)) {
+            return response()->json(['message' => 'No further commission']);
+        }
+
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+
+        if ($parent->exists()) {
+            $parent_id = $parent->pluck('parent_id');
+            $this->parentCommission($amount, $parent_id[0]);
         }
 
         return $table;
