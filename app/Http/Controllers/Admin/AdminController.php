@@ -86,9 +86,9 @@ class AdminController extends Controller
     {
         $data = Package::create([
             'name' => $request['package_name'],
-            'user_id' => auth()->user()->id,
+            'organization_id' => auth()->user()->organization_id,
             'is_default' => $request['is_default'],
-            'is_active' => $request['is_active']
+            'role_id' => $request['roleId']
         ]);
 
         return $data;

@@ -61,6 +61,10 @@ class CommissionController extends Controller
             ->where('package_user.user_id', $user_id)->where('p_a_n_s.name', $name)
             ->get()[0];
 
+        if (empty($table)) {
+            return response()->json(['message' => 'No further commission']);
+        }
+
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
 
@@ -85,9 +89,6 @@ class CommissionController extends Controller
         $transaction_id = "PAN" . strtoupper(Str::random(9));
         $this->transaction($amount, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
 
-        if (empty($table)) {
-            return response()->json(['message' => 'No further commission']);
-        }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
 
@@ -151,40 +152,40 @@ class CommissionController extends Controller
             ->where('payoutcommissions.to', '>=', $amount)
             ->get()[0];
 
-            $user = User::findOrFail($user_id);
-            $role = $user->getRoleNames()[0];
-    
-            $fixed_charge = $table->fixed_charge;
-            $is_flat = $table->is_flat;
-            $gst = $table->gst;
-            $role_commission_name = $role . "_commission";
-            $role_commission = $table->pluck($role_commission_name);
-            $opening_balance = $user->wallet;
-    
-            if ($is_flat) {
-                $debit = $amount + $fixed_charge;
-                $credit = $role_commission - $role_commission * $gst / 100;
-                $closing_balance = $opening_balance - $debit + $credit;
-            } elseif (!$is_flat) {
-                $debit = $amount + $amount * $fixed_charge / 100;
-                $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
-                $closing_balance = $opening_balance - $debit + $credit;
-            }
-    
-            $transaction_id = "PAN" . strtoupper(Str::random(9));
-            $this->transaction($amount, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
-    
-            if (empty($table)) {
-                return response()->json(['message' => 'No further commission']);
-            }
-    
-            $parent = DB::table('user_parent')->where('user_id', $user_id);
-    
-            if ($parent->exists()) {
-                $parent_id = $parent->pluck('parent_id');
-                $this->payotCommission($parent_id, $amount);
-            }
-    
-            return $table;
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = $table->fixed_charge;
+        $is_flat = $table->is_flat;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->pluck($role_commission_name);
+        $opening_balance = $user->wallet;
+
+        if ($is_flat) {
+            $debit = $amount + $fixed_charge;
+            $credit = $role_commission - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        } elseif (!$is_flat) {
+            $debit = $amount + $amount * $fixed_charge / 100;
+            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        }
+
+        $transaction_id = "PAN" . strtoupper(Str::random(9));
+        $this->transaction($amount, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+
+        if (empty($table)) {
+            return response()->json(['message' => 'No further commission']);
+        }
+
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+
+        if ($parent->exists()) {
+            $parent_id = $parent->pluck('parent_id');
+            $this->payotCommission($parent_id, $amount);
+        }
+
+        return $table;
     }
 }
