@@ -63,7 +63,6 @@ class AdminController extends Controller
                 $data = DB::table('a_e_p_s')
                     ->join('packages', 'packages.id', '=', 'a_e_p_s.package_id')
                     ->select('a_e_p_s.*')
-                    ->latest('a_e_p_s.created_at')
                     ->get();
                 break;
 
@@ -71,7 +70,6 @@ class AdminController extends Controller
                 $data = DB::table('d_m_t_s')
                     ->join('packages', 'packages.id', '=', 'd_m_t_s.package_id')
                     ->select('d_m_t_s.*')
-                    ->latest('d_m_t_s.created_at')
                     ->get();
                 break;
 
@@ -79,7 +77,6 @@ class AdminController extends Controller
                 $data = DB::table('payoutcommissions')
                     ->join('packages', 'packages.id', '=', 'payoutcommissions.package_id')
                     ->select('payoutcommissions.*')
-                    ->latest('payoutcommissions.created_at')
                     ->get();
                 break;
 
