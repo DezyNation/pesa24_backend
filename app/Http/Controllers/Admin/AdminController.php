@@ -162,7 +162,7 @@ class AdminController extends Controller
                 break;
 
             case 'dmt':
-                $data = DB::table('d_m_t_s')->where('id', $request['id'])
+                $data = DB::table('d_m_t_s')
                     ->updateOrInsert(['from' => $request['from'], 'to' => $request['to']], $request->all());
                 break;
 
