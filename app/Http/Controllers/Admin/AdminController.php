@@ -166,22 +166,22 @@ class AdminController extends Controller
                     'from' => 'required|numeric',
                     'to' => 'required|numeric',
                     'gst' => 'required|numeric',
-                    'isFlat' => 'required|boolean',
-                    'fixedCharge' => 'required|numeric',
-                    'superDistributorCommission' => 'required|numeric',
-                    'distributorCommission' => 'required|numeric',
-                    'retailerCommission' => 'required|numeric',
+                    'is_flat' => 'required|boolean',
+                    'fixed_charge' => 'required|numeric',
+                    'super_distributor_commission' => 'required|numeric',
+                    'distributor_commission' => 'required|numeric',
+                    'retailer_commission' => 'required|numeric',
                 ]);
                 $data = DB::table('d_m_t_s')
                     ->update([
                         'from' => $request['from'],
                         'to' => $request['to'],
                         'gst' => $request['gst'],
-                        'is_flat' => $request['isFlat'],
-                        'fixed_charge' => $request['fixedCharge'],
-                        'super_distributor_commission' => $request['superDistributorCommission'],
-                        'distributor_commission' => $request['distributorCommission'],
-                        'retailer_commission' => $request['retailerCommission'],
+                        'is_flat' => $request['is_flat'],
+                        'fixed_charge' => $request['fixed_charge'],
+                        'super_distributor_commission' => $request['super_distributor_commission'],
+                        'distributor_commission' => $request['distributor_commission'],
+                        'retailer_commission' => $request['retailer_commission'],
                         'updated_at' => now()
                     ]);
                 break;
