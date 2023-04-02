@@ -67,9 +67,9 @@ class AdminController extends Controller
                 break;
 
             case 'aeps-statement':
-                $data = DB::table('a_e_p_s')
-                    ->join('packages', 'packages.id', '=', 'a_e_p_s.package_id')
-                    ->select('a_e_p_s.*')
+                $data = DB::table('ae_p_s_mini_statements')
+                    ->join('packages', 'packages.id', '=', 'ae_p_s_mini_statements.package_id')
+                    ->select('ae_p_s_mini_statements.*')
                     ->get();
                 break;
 
