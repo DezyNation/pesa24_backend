@@ -66,6 +66,13 @@ class AdminController extends Controller
                     ->get();
                 break;
 
+            case 'aeps-statement':
+                $data = DB::table('a_e_p_s')
+                    ->join('packages', 'packages.id', '=', 'a_e_p_s.package_id')
+                    ->select('a_e_p_s.*')
+                    ->get();
+                break;
+
             case 'dmt':
                 $data = DB::table('d_m_t_s')
                     ->join('packages', 'packages.id', '=', 'd_m_t_s.package_id')
