@@ -15,10 +15,10 @@ class DMTController extends CommissionController
 
     public function token()
     {
-        $key = 'UFMwMDEyNGQ2NTliODUzYmViM2I1OWRjMDc2YWNhMTE2M2I1NQ==';
+        $key = env('JWT_KEY');
         $payload = [
-            'timestamp' => now(),
-            'partnerId' => 'PS001',
+            'timestamp' => time(),
+            'partnerId' => env('PAYSPRINT_PARTNERID'),
             'reqid' => abs(crc32(uniqid()))
         ];
         
@@ -63,7 +63,7 @@ class DMTController extends CommissionController
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/remitter/registerremitter', $data);
 
@@ -92,7 +92,7 @@ class DMTController extends CommissionController
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/beneficiary/registerbeneficiary', $data);
 
@@ -110,7 +110,7 @@ class DMTController extends CommissionController
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/beneficiary/registerbeneficiary/deletebeneficiary', $data);
 
@@ -127,7 +127,7 @@ class DMTController extends CommissionController
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/beneficiary/registerbeneficiary/fetchbeneficiary', $data);
 
@@ -145,7 +145,7 @@ class DMTController extends CommissionController
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/beneficiary/registerbeneficiary/fetchbeneficiarybybeneid', $data);
 
@@ -173,7 +173,7 @@ class DMTController extends CommissionController
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/beneficiary/registerbeneficiary/benenameverify', $data);
 
@@ -202,7 +202,7 @@ class DMTController extends CommissionController
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact', $data);
 
@@ -231,7 +231,7 @@ class DMTController extends CommissionController
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact/querytransact', $data);
 
@@ -249,7 +249,7 @@ class DMTController extends CommissionController
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact/querytransact', $data);
 
@@ -268,7 +268,7 @@ class DMTController extends CommissionController
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/refund/refund/', $data);
 
