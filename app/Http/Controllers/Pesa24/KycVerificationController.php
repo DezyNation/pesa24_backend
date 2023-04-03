@@ -20,8 +20,8 @@ class KycVerificationController extends Controller
 
     protected $otp_ref_id;
 
-    function __construct () {
-
+    function __construct()
+    {
     }
     /*--------------------------------Aadhar Verification--------------------------------*/
     public function sendOtpAadhaar(Request $request)
@@ -105,12 +105,11 @@ class KycVerificationController extends Controller
         $opening_balance = $user->wallet;
         $final_amount = $user->wallet - $role_details[0]['fee'];
 
-            $paysprint = $this->onboard();
-            $eko = $this->userOnboard();
-            // return $eko;
-            if (!$eko['original']['message']) {
-                return response("Could not implement", 501);
-            }
+        $eko = $this->userOnboard();
+        $paysprint = $this->onboard();
+        if (!$eko['original']['message']) {
+            return response("Could not implement", 501);
+        }
 
         $attach_user = DB::table('package_user')->insert([
             'user_id' => auth()->user()->id,
@@ -129,7 +128,7 @@ class KycVerificationController extends Controller
 
         $this->transaction($role_details[0]['fee'], 'Onboard and Package fee', 'onboarding', auth()->user()->id, $opening_balance, $transaction_id, $final_amount, 0);
 
-        return response()->json(['message' => 'User onboarded successfully.']);
+        return redirect($paysprint->json($key = 'redirecturl'));
     }
 
     public function token()
