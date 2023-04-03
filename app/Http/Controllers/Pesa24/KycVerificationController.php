@@ -134,10 +134,10 @@ class KycVerificationController extends Controller
 
     public function token()
     {
-        $key = 'UFMwMDkxNDNmZmM0OWRhZGE5NDdlZGZlMmEzNGU0ZWNhYWRlOGQ4';
+        $key = env('JWT_KEY');
         $payload = [
             'timestamp' => time(),
-            'partnerId' => 'PS001',
+            'partnerId' => env('PAYSPRINT_PARTNERID'),
             'reqid' => abs(crc32(uniqid()))
         ];
 
