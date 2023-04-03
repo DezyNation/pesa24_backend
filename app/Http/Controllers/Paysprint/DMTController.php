@@ -18,7 +18,7 @@ class DMTController extends CommissionController
         $key = "UFMwMDkxNDNmZmM0OWRhZGE5NDdlZGZlMmEzNGU0ZWNhYWRlOGQ4";
         $payload = [
             'timestamp' => time(),
-            'partnerId' => env('PAYSPRINT_PARTNERID'),
+            'partnerId' => "PS00914",
             'reqid' => abs(crc32(uniqid()))
         ];
         
