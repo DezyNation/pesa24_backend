@@ -135,7 +135,7 @@ class KycVerificationController extends Controller
     {
         $key = 'UFMwMDkxNDNmZmM0OWRhZGE5NDdlZGZlMmEzNGU0ZWNhYWRlOGQ4';
         $payload = [
-            'timestamp' => now(),
+            'timestamp' => time(),
             'partnerId' => 'PS001',
             'reqid' => abs(crc32(uniqid()))
         ];
