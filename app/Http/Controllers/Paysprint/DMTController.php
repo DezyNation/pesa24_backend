@@ -39,7 +39,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/remitter/queryremitter', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/dmt/remitter/queryremitter', $data);
 
         return $response;
     }
@@ -65,7 +65,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/remitter/registerremitter', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/dmt/remitter/registerremitter', $data);
 
         return $response;
     }
@@ -75,26 +75,26 @@ class DMTController extends CommissionController
     public function registerBeneficiary(Request $request)
     {
         $token = $this->token();
-
+        
         $data = [
-            'mobile' => $request['mobileNo'],
-            'benename' => $request['beneName'],
-            'bankid' => $request['bankId'],
-            'accno' => $request['accountNo'],
-            'ifsccode' => $request['ifsc'],
+            'mobile' => $request['customerId'],
+            'benename' => $request['values.beneficiaryName'],
+            'bankid' => $request['values.bankCode'],
+            'accno' => $request['values.accountNumber'],
+            'ifsccode' => $request['values.ifsc'],
             'verified' => 0,
             'bank3_flag' => 'NO',
-            'dob'=> $request['dob'],
+            'dob'=> auth()->user()->dob,
             'gst_state' => 07,
-            'pincode' => $request['pinCode'],
-            'address' => $request['address']
+            'pincode' => $request['values.pinCode'],
+            'address' => $request['values.address']
         ];
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/beneficiary/registerbeneficiary', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/dmt/beneficiary/registerbeneficiary', $data);
 
         return $response;
     }
@@ -129,7 +129,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/beneficiary/registerbeneficiary/fetchbeneficiary', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/dmt/beneficiary/registerbeneficiary/fetchbeneficiary', $data);
 
         return $response;
     }
@@ -204,7 +204,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/dmt/transact/transact', $data);
 
         return $response;
         if ($response->json($key = 'status') == true) {
