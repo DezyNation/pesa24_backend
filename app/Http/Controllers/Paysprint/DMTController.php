@@ -37,7 +37,7 @@ class DMTController extends CommissionController
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/remitter/queryremitter', $data);
 
