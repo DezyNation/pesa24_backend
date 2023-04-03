@@ -142,7 +142,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        return new UserResource(User::with('roles')->findOrFail($id));
+        return new UserResource(User::with('roles')->where('organization_id', auth()->user()->organization_id)->findOrFail($id));
     }
 
     /**
