@@ -23,6 +23,9 @@ return new class extends Migration
         Schema::table('fund_settlements', function (Blueprint $table) {
             $table->boolean('parents')->after('package_id')->default(true);
         });
+        Schema::table('recharges', function (Blueprint $table) {
+            $table->boolean('parents')->after('package_id')->default(true);
+        });
         Schema::table('ae_p_s_mini_statements', function (Blueprint $table) {
             $table->boolean('parents')->after('package_id')->default(true);
         });

@@ -422,6 +422,9 @@ class CommissionController extends Controller
 
         $transaction_id = "PAN" . strtoupper(Str::random(9));
         $this->transaction($amount, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
 
         if (empty($table)) {
             return response()->json(['message' => 'No further commission']);
@@ -467,6 +470,9 @@ class CommissionController extends Controller
 
         $transaction_id = "PAN" . strtoupper(Str::random(9));
         $this->transaction($amount, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
 
         if (empty($table)) {
             return response()->json(['message' => 'No further commission']);
@@ -483,6 +489,8 @@ class CommissionController extends Controller
     }
 
     /*-------------------------------------Payout Commissions-------------------------------------*/
+
+    /*-------------------------------------Fund Settlement Commissions-------------------------------------*/
 
     public function fundSettlementCommission($user_id, $amount)
     {
@@ -586,4 +594,106 @@ class CommissionController extends Controller
 
         return $table;
     }
+
+    /*-------------------------------------Fund Settlement Commissions-------------------------------------*/
+
+
+    /*-------------------------------------Recharge Commissions-------------------------------------*/
+
+    public function rechargeCommission($user_id, $amount, $type, $operator)
+    {
+        $table = DB::table('recharges')
+            ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
+            ->where(['package_user.user_id' => $user_id, 'recharges.type' => $type, 'recharges.operator' => $operator])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
+            ->get()[0];
+
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = $table->fixed_charge;
+        $is_flat = $table->is_flat;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->{$role_commission_name};
+        $opening_balance = $user->wallet;
+
+        if ($is_flat) {
+            $debit = $fixed_charge;
+            $credit = $role_commission - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        } elseif (!$is_flat) {
+            $debit = $amount * $fixed_charge / 100;
+            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        }
+
+        $transaction_id = "RECHARGE" . strtoupper(Str::random(9));
+        $this->transaction($debit, 'Recharge Commissions', 'fund', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
+
+        if (empty($table)) {
+            return response()->json(['message' => 'No further commission']);
+        }
+
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+
+        if ($parent->exists()) {
+            $parent_id = $parent->pluck('parent_id');
+            $this->rechargeParentCommission($parent_id[0], $amount, $type, $operator);
+        }
+
+        return $table;
+    }
+
+    public function rechargeParentCommission($user_id, $amount, $type, $operator)
+    {
+        $table = DB::table('recharges')
+            ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
+            ->where(['package_user.user_id' => $user_id, 'recharges.type' => $type, 'recharges.operator' => $operator])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
+            ->get()[0];
+
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = 0;
+        $is_flat = $table->is_flat;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->{$role_commission_name};
+        $opening_balance = $user->wallet;
+
+        if ($is_flat) {
+            $debit = $fixed_charge;
+            $credit = $role_commission - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        } elseif (!$is_flat) {
+            $debit = $amount * $fixed_charge / 100;
+            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        }
+
+        $transaction_id = "RECHRGE" . strtoupper(Str::random(9));
+        $this->transaction($debit, 'Recharge Commissions', 'fund', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
+
+
+        if (empty($table)) {
+            return response()->json(['message' => 'No further commission']);
+        }
+
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+
+        if ($parent->exists()) {
+            $parent_id = $parent->pluck('parent_id');
+            $this->rechargeParentCommission($parent_id[0], $amount, $type, $operator);
+        }
+
+        return $table;
+    }
+
+    /*-------------------------------------Recharge Commissions-------------------------------------*/
 }
