@@ -47,11 +47,11 @@ class DMTController extends CommissionController
     public function registerRemiter(Request $request)
     {
         $token = $this->token();
-
+        $name = explode(" ", $request['customerName']);
         $data = [
             'mobile' => $request['customerId'],
-            'firstname' => $request['customerName'],
-            'lastname' => $request['customerName'],
+            'firstname' => $name[0],
+            'lastname' => $name[1],
             'address' => $request['street'],
             'otp' => $request['otp'],
             'pincode' => $request['pincode'],
