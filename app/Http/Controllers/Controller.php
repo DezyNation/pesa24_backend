@@ -57,61 +57,61 @@ class Controller extends BaseController
         return response()->json(['message' => 'Transaction successful.']);
     }
 
-    public function baseCommission(int $amount, int $user_id, int $service_id)
-    {
-        $result = DB::table('users')
-            ->join('package_user', 'users.id', '=', 'package_user.user_id')
-            ->join('packages', 'package_user.package_id', '=', 'packages.id')
-            ->join('package_service', 'packages.id', '=', 'package_service.package_id')
-            ->join('service_user', 'users.id',  '=', 'service_user.user_id')
-            ->join('services', 'package_service.service_id', '=', 'services.id')
-            ->select('package_service.*', 'services.service_name')
-            ->where(['service_user.user_id' => $user_id, 'service_user.service_id' => $service_id, 'package_service.service_id' => $service_id, 'package_user.user_id' => $user_id])
-            ->where('from', '<', $amount)
-            ->where('to', '>=', $amount)
-            ->get();
+    // public function baseCommission(int $amount, int $user_id, int $service_id)
+    // {
+    //     $result = DB::table('users')
+    //         ->join('package_user', 'users.id', '=', 'package_user.user_id')
+    //         ->join('packages', 'package_user.package_id', '=', 'packages.id')
+    //         ->join('package_service', 'packages.id', '=', 'package_service.package_id')
+    //         ->join('service_user', 'users.id',  '=', 'service_user.user_id')
+    //         ->join('services', 'package_service.service_id', '=', 'services.id')
+    //         ->select('package_service.*', 'services.service_name')
+    //         ->where(['service_user.user_id' => $user_id, 'service_user.service_id' => $service_id, 'package_service.service_id' => $service_id, 'package_user.user_id' => $user_id])
+    //         ->where('from', '<', $amount)
+    //         ->where('to', '>=', $amount)
+    //         ->get();
 
-            Log::channel('response')->info($result);
-            if (empty($result)) {
-                return response()->json(['message' => 'No further commission']);
-            }
-        $array = json_decode($result, true);
-        $user = User::findOrFail($user_id);
-        $user_role = $user->getRoleNames();
-        $role_commission = $user_role[0] . "_" . "commission";
-        $service_name = $array[0]['service_name'];
-        $flat = $array[0]['is_flat'];
-        $surcharge = $array[0]['is_surcharge'];
-        if ($flat) {
-            $commission = $amount * $array[0]["$role_commission"] / 100;
-        } else {
-            $commission = $array[0]["$role_commission"];
-        }
+    //         Log::channel('response')->info($result);
+    //         if (empty($result)) {
+    //             return response()->json(['message' => 'No further commission']);
+    //         }
+    //     $array = json_decode($result, true);
+    //     $user = User::findOrFail($user_id);
+    //     $user_role = $user->getRoleNames();
+    //     $role_commission = $user_role[0] . "_" . "commission";
+    //     $service_name = $array[0]['service_name'];
+    //     $flat = $array[0]['is_flat'];
+    //     $surcharge = $array[0]['is_surcharge'];
+    //     if ($flat) {
+    //         $commission = $amount * $array[0]["$role_commission"] / 100;
+    //     } else {
+    //         $commission = $array[0]["$role_commission"];
+    //     }
 
-        $opening_balance = $user->wallet;
-        if ($surcharge) {
-          $debit = $commission;
-          $closing_balance = $opening_balance - $debit;
-          $credit = 0;
-        } else {
-            $credit = $commission;
-            $debit = 0;
-            $closing_balance = $opening_balance + $credit;
-        }
+    //     $opening_balance = $user->wallet;
+    //     if ($surcharge) {
+    //       $debit = $commission;
+    //       $closing_balance = $opening_balance - $debit;
+    //       $credit = 0;
+    //     } else {
+    //         $credit = $commission;
+    //         $debit = 0;
+    //         $closing_balance = $opening_balance + $credit;
+    //     }
         
 
 
-        $user->update([
-            'wallet' => $closing_balance
-        ]);
-        $transaction_id = "COM" . strtoupper(Str::random(5));
-        $this->transaction($debit, "Commission for $service_name", 'commission', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+    //     $user->update([
+    //         'wallet' => $closing_balance
+    //     ]);
+    //     $transaction_id = "COM" . strtoupper(Str::random(5));
+    //     $this->transaction($debit, "Commission for $service_name", 'commission', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
 
-        $parent = DB::table('user_parent')->where('user_id', $user_id);
+    //     $parent = DB::table('user_parent')->where('user_id', $user_id);
 
-        if ($parent->exists()) {
-            $parent_id = $parent->pluck('parent_id');
-            $this->baseCommission($amount, $parent_id[0], $service_id);
-        }
-    }
+    //     if ($parent->exists()) {
+    //         $parent_id = $parent->pluck('parent_id');
+    //         $this->baseCommission($amount, $parent_id[0], $service_id);
+    //     }
+    // }
 }

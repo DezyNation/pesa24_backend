@@ -66,6 +66,13 @@ class AdminController extends Controller
                     ->get();
                 break;
 
+            case 'aeps-statement':
+                $data = DB::table('ae_p_s_mini_statements')
+                    ->join('packages', 'packages.id', '=', 'ae_p_s_mini_statements.package_id')
+                    ->select('ae_p_s_mini_statements.*')
+                    ->get();
+                break;
+
             case 'dmt':
                 $data = DB::table('d_m_t_s')
                     ->join('packages', 'packages.id', '=', 'd_m_t_s.package_id')
@@ -184,6 +191,12 @@ class AdminController extends Controller
                 break;
         }
 
+        return $data;
+    }
+
+    public function packageDefault($id, $bool)
+    {
+        $data = DB::table('packages')->where('id', $id)->update(['is_default' => $bool]);
         return $data;
     }
 }

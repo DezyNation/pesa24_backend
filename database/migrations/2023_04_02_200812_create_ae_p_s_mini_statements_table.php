@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('recharges', function (Blueprint $table) {
+        Schema::create('ae_p_s_mini_statements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('package_id')->nullable()->constrained()->nullOnDelete()->cascadeOnUpdate();
-            $table->string('type');
-            $table->string('operator');
-            $table->integer('from');
-            $table->integer('to');
+            $table->foreignId('package_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->integer('fixed_charge');
             $table->integer('is_flat');
             $table->integer('gst');
@@ -33,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('recharges');
+        Schema::dropIfExists('ae_p_s_mini_statements');
     }
 };

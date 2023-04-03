@@ -20,9 +20,9 @@ return new class extends Migration
             $table->integer('gst');
             $table->integer('fixed_charge');
             $table->integer('is_flat');
-            $table->integer('retailer_commssion');
-            $table->integer('distributor_commssion');
-            $table->integer('super_distributor_commssion');
+            $table->integer('retailer_commission');
+            $table->integer('distributor_commission');
+            $table->integer('super_distributor_commission');
             $table->timestamps();
         });
     }
