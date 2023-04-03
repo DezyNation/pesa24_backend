@@ -39,7 +39,7 @@ class Controller extends BaseController
         ]);
     }
 
-    public function transaction(int $amount, string $service, string $service_type, int $user_id, int $opening_balance, string $transaction_id, int $closing_balance, int $credit = 0)
+    public function transaction(float $amount, string $service, string $service_type, float $user_id, float $opening_balance, string $transaction_id, float $closing_balance, float $credit = 0)
     {
         DB::table('transactions')->insert([
             'debit_amount' => $amount,

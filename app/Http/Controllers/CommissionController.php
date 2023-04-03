@@ -301,7 +301,7 @@ class CommissionController extends Controller
 
     public function dmtCommission($user_id, $name, $amount)
     {
-        $table = DB::table('p_a_n_s')
+        $table = DB::table('d_m_t_s')
             ->join('package_user', 'package_user.package_id', '=', 'd_m_t_s.package_id')
             ->where('package_user.user_id', $user_id)->where('d_m_t_s.name', $name)
             ->get()[0];
@@ -313,21 +313,21 @@ class CommissionController extends Controller
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
-        $role_commission = $table->pluck($role_commission_name);
+        $role_commission = $table->{$role_commission_name};
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
-            $debit = $amount + $fixed_charge;
+            $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         } elseif (!$is_flat) {
-            $debit = $amount + $amount * $fixed_charge / 100;
+            $debit = $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
-        $transaction_id = "PAN" . strtoupper(Str::random(9));
-        $this->transaction($amount, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $transaction_id = "DMT" . strtoupper(Str::random(9));
+        $this->transaction($debit, 'DMT Commissions', 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
 
         if (empty($table)) {
             return response()->json(['message' => 'No further commission']);
@@ -337,7 +337,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->dmtParentCommission($parent_id, $name, $amount);
+            $this->dmtParentCommission($parent_id[0], $name, $amount);
         }
 
         return $table;
@@ -345,7 +345,7 @@ class CommissionController extends Controller
 
     public function dmtParentCommission($user_id, $name, $amount)
     {
-        $table = DB::table('p_a_n_s')
+        $table = DB::table('d_m_t_s')
             ->join('package_user', 'package_user.package_id', '=', 'd_m_t_s.package_id')
             ->where('package_user.user_id', $user_id)->where('d_m_t_s.name', $name)
             ->get()[0];
@@ -353,25 +353,25 @@ class CommissionController extends Controller
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
 
-        $fixed_charge = $table->fixed_charge;
+        $fixed_charge = 0;
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
-        $role_commission = $table->pluck($role_commission_name);
+        $role_commission = $table->{$role_commission_name};
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
-            $debit = 0;
+            $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         } elseif (!$is_flat) {
-            $debit = 0;
+            $debit = $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
-        $transaction_id = "PAN" . strtoupper(Str::random(9));
-        $this->transaction($amount, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $transaction_id = "DMT" . strtoupper(Str::random(9));
+        $this->transaction($debit, 'DMT Commissions', 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
 
         if (empty($table)) {
             return response()->json(['message' => 'No further commission']);
@@ -381,7 +381,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->dmtParentCommission($parent_id, $name, $amount);
+            $this->dmtParentCommission($parent_id[0], $name, $amount);
         }
 
         return $table;
@@ -436,7 +436,7 @@ class CommissionController extends Controller
 
         return $table;
     }
-    
+
     public function payoutParentCommission($user_id, $amount)
     {
         $table = DB::table('p_a_n_s')

@@ -64,7 +64,7 @@ Route::get('/', function () {
 // });
 
 Route::get('paysprint-test', [PaysprintAeps::class, 'enquiry']);
-Route::get('paysprint-test1/{amount}/{user_id}', [CommissionController::class, 'aepsCommssion']);
+Route::get('paysprint-test1/{user_id}/{name}/{amount}', [CommissionController::class, 'dmtCommission']);
 
 Route::get('admin', function () {
 
