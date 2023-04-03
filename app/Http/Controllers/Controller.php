@@ -45,6 +45,7 @@ class Controller extends BaseController
             'debit_amount' => $amount,
             'transaction_for' => $service,
             'user_id' => $user_id,
+            'trigered_by' => auth()->user()->id ?? 77,
             'credit_amount' => $credit,
             'opening_balance' => $opening_balance,
             'closing_balance' => $closing_balance,

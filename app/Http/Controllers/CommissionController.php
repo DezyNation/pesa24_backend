@@ -299,11 +299,11 @@ class CommissionController extends Controller
 
     /*-------------------------------------DMT Commissions-------------------------------------*/
 
-    public function dmtCommission($user_id, $name, $amount)
+    public function dmtCommission($user_id, $amount)
     {
         $table = DB::table('d_m_t_s')
             ->join('package_user', 'package_user.package_id', '=', 'd_m_t_s.package_id')
-            ->where('package_user.user_id', $user_id)->where('d_m_t_s.name', $name)
+            ->where('package_user.user_id', $user_id)->where('d_m_t_s.from', '<', $amount)->where('d_m_t_s.to', '>=', $amount)
             ->get()[0];
 
         $user = User::findOrFail($user_id);
@@ -337,17 +337,17 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->dmtParentCommission($parent_id[0], $name, $amount);
+            $this->dmtParentCommission($parent_id[0], $amount);
         }
 
         return $table;
     }
 
-    public function dmtParentCommission($user_id, $name, $amount)
+    public function dmtParentCommission($user_id, $amount)
     {
         $table = DB::table('d_m_t_s')
             ->join('package_user', 'package_user.package_id', '=', 'd_m_t_s.package_id')
-            ->where('package_user.user_id', $user_id)->where('d_m_t_s.name', $name)
+            ->where('package_user.user_id', $user_id)->where('d_m_t_s.from', '<', $amount)->where('d_m_t_s.to', '>=', $amount)
             ->get()[0];
 
         $user = User::findOrFail($user_id);
@@ -381,7 +381,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->dmtParentCommission($parent_id[0], $name, $amount);
+            $this->dmtParentCommission($parent_id[0], $amount);
         }
 
         return $table;
@@ -483,4 +483,107 @@ class CommissionController extends Controller
     }
 
     /*-------------------------------------Payout Commissions-------------------------------------*/
+
+    public function fundSettlementCommission($user_id, $amount)
+    {
+        $table = DB::table('fund_settlements')
+            ->join('package_user', 'package_user.package_id', '=', 'fund_settlements.package_id')
+            ->where('package_user.user_id', $user_id)->where('fund_settlements.from', '<', $amount)->where('fund_settlements.to', '>=', $amount)
+            ->get()[0];
+
+        if (empty($table)) {
+            return response()->json(['message' => 'No further commission']);
+        }
+
+        // return $table;
+
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = $table->fixed_charge;
+        $is_flat = $table->is_flat;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->{$role_commission_name};
+        $opening_balance = $user->wallet;
+
+        if ($is_flat) {
+            $debit = $fixed_charge;
+            $credit = $role_commission - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        } elseif (!$is_flat) {
+            $debit = $amount * $fixed_charge / 100;
+            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        }
+
+        $transaction_id = "FUNDSET" . strtoupper(Str::random(9));
+        $this->transaction($debit, 'Fund Settlement Commissions', 'fund', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
+        if (!$table->parents) {
+            return response()->json(["message" => "NO further commissions."]);
+        }
+
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+
+        if ($parent->exists()) {
+            $parent_id = $parent->pluck('parent_id');
+            $this->fundSettlementParentCommission($parent_id[0], $amount);
+        }
+
+        return $table;
+    }
+
+    public function fundSettlementParentCommission($user_id, $amount)
+    {
+        $table = DB::table('fund_settlements')
+            ->join('package_user', 'package_user.package_id', '=', 'fund_settlements.package_id')
+            ->where('package_user.user_id', $user_id)->where('fund_settlements.from', '<', $amount)->where('fund_settlements.to', '>=', $amount)
+            ->get()[0];
+
+        if (empty($table)) {
+            return response()->json(['message' => 'No further commission']);
+        }
+
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = 0;
+        $is_flat = $table->is_flat;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->{$role_commission_name};
+        $opening_balance = $user->wallet;
+
+        if ($is_flat) {
+            $debit = $fixed_charge;
+            $credit = $role_commission - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        } elseif (!$is_flat) {
+            $debit = $amount * $fixed_charge / 100;
+            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        }
+
+        $transaction_id = "FUNDSET" . strtoupper(Str::random(9));
+        $this->transaction($debit, 'Fund Settlement Commissions', 'fund', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
+
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+
+        if (!$table->parents) {
+            return response()->json(["message" => "NO further commissions."]);
+        }
+
+        if ($parent->exists()) {
+            $parent_id = $parent->pluck('parent_id');
+            $this->fundSettlementParentCommission($parent_id[0], $amount);
+        }
+
+        return $table;
+    }
 }
