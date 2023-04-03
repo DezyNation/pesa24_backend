@@ -15,7 +15,7 @@ class DMTController extends CommissionController
 
     public function token()
     {
-        $key = env('JWT_KEY');
+        $key = "UFMwMDkxNDNmZmM0OWRhZGE5NDdlZGZlMmEzNGU0ZWNhYWRlOGQ4";
         $payload = [
             'timestamp' => time(),
             'partnerId' => env('PAYSPRINT_PARTNERID'),
