@@ -129,7 +129,7 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     Route::get('eko/dmt/transaction-inquiry/{transactionid}/{service_id}', [TransactionController::class, 'transactionInquiry']);
     Route::post('eko/dmt/transaction-refund/{tid}/{service_id}', [TransactionController::class, 'refund']);
     Route::post('eko/dmt/transaction-refund-otp/{tid}/{service_id}', [TransactionController::class, 'refund']);
-
+    Route::post('paysprint/bank/bank-verify', [DMTController::class, 'penneyDrop']);
     /*-----------------------Razorpay Payout-----------------------*/
     Route::post('razorpay/payout/new-payout/{service_id}', [FundAccountController::class, 'createFundAcc']);
     Route::post('razorpay/contacts/create-contact/{service_id}', [PayoutController::class, 'fetchPayoutAdmin']);
