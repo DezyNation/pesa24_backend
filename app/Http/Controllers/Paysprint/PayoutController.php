@@ -85,7 +85,7 @@ class PayoutController extends CommissionController
         //     $data['back_image'] = Storage::get($pan);
         // }
 
-        $response = Http::acceptJson()->withHeaders([
+        $response = Http::asForm()->acceptJson()->withHeaders([
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
