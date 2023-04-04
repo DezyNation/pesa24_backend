@@ -169,7 +169,7 @@ class RegisteredUserController extends Controller
             'lastName' => ['required', 'string', 'max:255'],
             'userEmail' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($request['userId'])],
             'userPhone' => ['required', 'digits:10', Rule::unique('users', 'phone_number')->ignore($request['userId'])],
-            'alternatePhone' => ['digits:10', Rule::unique('users', 'alternate_number')->ignore($request['userId'])],
+            'alternatePhone' => ['digits:10', Rule::unique('users', 'alternate_phone')->ignore($request['userId'])],
             'dob' => ['required', 'date'],
             'gender' => ['required', 'string', 'max:255'],
             'firmName' => ['string', 'max:255'],
