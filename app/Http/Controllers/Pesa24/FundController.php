@@ -159,4 +159,10 @@ class FundController extends Controller
 
         return $data;
     }
+    
+    public function deleteFund(Request $request)
+    {
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['users.organization_id' => auth()->user()->organization_id, 'funds.id' => $request['fundId']])->delete();
+        return $data;
+    }
 }

@@ -192,6 +192,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('fetch-admin-funds', [FundController::class, 'reversalAndTransferFunds']);
     Route::post('update-fund-requests', [FundController::class, 'updateFund'])->middleware('permission:fund-request-edit');
     Route::post('new-fund', [FundController::class, 'newFund'])->middleware('permission:fund-transfer-create');
+    Route::post('delete-fund', [FundController::class, 'deleteFund'])->middleware('permission:fund-transfer-create');
 
 
     Route::post('file', function(Request $address){
