@@ -186,7 +186,7 @@ class ProfileController extends AgentManagementController
         DB::table('users')->where('id', auth()->user()->id)->update([
             'account_number' => $request['accountNumber'],
             'ifsc' => $request['ifsc'],
-            'passbook' => $request['passbook'],
+            'passbook' => $passbook,
             'paysprint_bank_code' => $request['paysprintBankCode'],
             'eko_bank_code' => $request['ekoBankCode'],
             'updated_at' => now()
