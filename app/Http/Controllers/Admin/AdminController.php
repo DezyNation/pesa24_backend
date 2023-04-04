@@ -209,14 +209,14 @@ class AdminController extends Controller
     public function updateSettlementAccount(Request $request)
     {
         $request->only([
-            'userId',
-            'isVerified',
-            'bankStatus'
+            'id',
+            'is_verified',
+            'bank_status'
         ]);
-        $data = DB::table('users')->where(['organization_id' => auth()->user()->organization_id, 'id' => $request['userId']])
+        $data = DB::table('users')->where(['organization_id' => auth()->user()->organization_id, 'id' => $request['id']])
             ->update([
-                'is_verified' => $request['isVerified'],
-                'bank_account_remarks' => $request['bankStatus']
+                'is_verified' => $request['is_verified'],
+                'bank_account_remarks' => $request['bank_status']
             ]);
         return $data;
     }
