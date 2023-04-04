@@ -74,11 +74,12 @@ class PayoutController extends CommissionController
         $passbook = $user[0]->passbook;
         $token = $this->token();
 
-        $doctype = $request['doctype'];
+        $doctype = 'PAN';
         $data = [
             'doctype' => $doctype,
             'passbook' => Storage::get($passbook),
-            'panimage' => Storage::get($pan)
+            'panimage' => Storage::get($pan),
+            'bene_id' => $user[0]->paysprint_bene_id
         ];
 
         // if ($doctype == 'PAN') {
