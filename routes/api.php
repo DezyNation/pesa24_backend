@@ -180,10 +180,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('link-package', [AdminDashboardcontroller::class, 'packageService']);
 
     Route::get('payouts', [PayoutController::class, 'fetchPayoutAdmin']);
-
-    Route::get('fetch-fund-requests', [FundRequestController::class, 'fetchFund']);
     Route::get('fetch-fund-requests/{id}', [FundRequestController::class, 'fetchFundId']);
-    // Route::post('update-fund-requests', [FundRequestController::class, 'updateFund']);
 
     Route::post('razorpay/fetch-payout', [PayoutController::class, 'fetchPayoutAdmin']);
     Route::post('user/info/{id}', [ProfileController::class, 'adminUser']);
@@ -207,8 +204,9 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
 
 
     Route::get('user/status/{id}/{bool}', [AdminController::class, 'active'])->middleware('permission:user-edit');
-    Route::get('all-admins', [AdminController::class, 'settlementAccount']);
-    Route::get('settlement-accounts', [AdminController::class, 'admins'])->middleware('permission:assign-permission');
+    Route::get('settlement-accounts', [AdminController::class, 'settlementAccount']);
+    Route::post('settlement-accounts', [AdminController::class, 'updateSettlementAccount']);
+    Route::get('all-admins', [AdminController::class, 'admins'])->middleware('permission:assign-permission');
     Route::post('new-admin', [AdminController::class, 'newAdmin'])->middleware('permission:assign-permission');
     Route::get('all-permissions', [AdminController::class, 'permissions'])->middleware('permission:assign-permission');
     Route::post('assign-permission', [AdminController::class, 'assignPermission'])->middleware('permission:assign-permission');

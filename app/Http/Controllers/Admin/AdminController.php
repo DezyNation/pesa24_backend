@@ -205,4 +205,19 @@ class AdminController extends Controller
         $data = DB::table('users')->where('organization_id', auth()->user()->organization_id)->get(['account_number', 'passbook', 'ifsc', 'bank_name', 'is_verified', 'bank_account_remarks']);
         return $data;
     }
+
+    public function updateSettlementAccount(Request $request)
+    {
+        $request->only([
+            'userId',
+            'isVerified',
+            'bankStatus'
+        ]);
+        $data = DB::table('users')->where(['organization_id' => auth()->user()->organization_id, 'id' => $request['userId']])
+            ->update([
+                'is_verified' => $request['isVerified'],
+                'bank_account_remarks' => $request['bankStatus']
+            ]);
+        return $data;
+    }
 }
