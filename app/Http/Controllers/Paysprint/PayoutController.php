@@ -76,9 +76,9 @@ class PayoutController extends CommissionController
 
         $doctype = 'PAN';
         $data = [
+            'passbook' => Storage::path($passbook),
             'doctype' => $doctype,
-            'passbook' => Storage::get($passbook),
-            'panimage' => Storage::get($pan),
+            'panimage' => Storage::path($pan),
             'bene_id' => $user[0]->paysprint_bene_id
         ];
 
@@ -90,7 +90,7 @@ class PayoutController extends CommissionController
         //     $data['back_image'] = Storage::get($pan);
         // }
 
-        $response = Http::asForm()->acceptJson()->withHeaders([
+        $response = Http::attach('passbook', file_get_contents($data['passbook']), 'passbok.jpg')->attach('panimage', file_get_contents($data['panimage']), 'panimage.jpg')->asForm()->acceptJson()->withHeaders([
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
