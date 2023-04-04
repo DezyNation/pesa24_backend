@@ -140,7 +140,6 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     /*-----------------------Pysprint AePS-----------------------*/
 
     /*-----------------------Paysprint Payout-----------------------*/
-    Route::post('paysprint/payout/add-account/{service_id}', [PaysprintPayout::class, 'addAccount']);
     Route::post('paysprint/payout/account-status/{service_id}', [PaysprintPayout::class, 'accountStatus']);
     Route::post('paysprint/payout/new-payout', [PaysprintPayout::class, 'doTransaction'])->middleware('bank', 'mpin');
     Route::post('paysprint/payout/transaction-status/{service_id}', [PaysprintPayout::class, 'status']);
@@ -203,7 +202,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('transactions-user/{id}', [AdminTransactionController::class, 'userTransction']);
     Route::get('transactions-period', [AdminTransactionController::class, 'transactionPeriod']);
 
-
+    Route::post('paysprint/payout/add-account', [PaysprintPayout::class, 'addAccount']);
     Route::get('user/status/{id}/{bool}', [AdminController::class, 'active'])->middleware('permission:user-edit');
     Route::get('settlement-accounts', [AdminController::class, 'settlementAccount']);
     Route::post('settlement-accounts', [AdminController::class, 'updateSettlementAccount']);
