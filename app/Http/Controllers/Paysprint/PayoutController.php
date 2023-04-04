@@ -43,14 +43,14 @@ class PayoutController extends CommissionController
 
     public function addAccount(Request $request)
     {
+        $user = User::findOrFail($request['id']);
         $token = $this->token();
-        
         $data = [
-            'bankid'=> $request['bankCode'],
+            'bankid'=> $user->paysprint_bank_code,
             'merchant_code' => 1122,
-            'account' => $request['accountNumber'],
-            'ifsc' => $request['ifsc'],
-            'name' => $request['name'],
+            'account' => $user->account_number,
+            'ifsc' => $user->ifsc,
+            'name' => $user->name,
             'account_type' => 'PRIMARY',
         ];
 
