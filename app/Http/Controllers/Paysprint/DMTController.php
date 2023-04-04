@@ -160,22 +160,17 @@ class DMTController extends CommissionController
         $token = $this->token();
         
         $data = [
-            'mobile' => $request['mobileNo'],
-            'accno' => $request['accountNo'],
-            'benename' => $request['beneName'],
-            'referenceid' => uniqid(),
-            'pincode' => $request['pinCode'],
-            'address' => $request['address'],
-            'bankid' => $request['bankId'],
-            'gst_state' => 07,
-            'bene_id' => $request['beneId']
+            'refid' => uniqid().Str::random(10),
+            'account_number' => $request['accountNumber'],
+            'ifsc' => $request['ifsc'],
+            'ifsc_details' => true
         ];
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/beneficiary/registerbeneficiary/benenameverify', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/verification/bank/verify', $data);
 
         return $response;
     }
