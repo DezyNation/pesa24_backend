@@ -141,7 +141,6 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
 
     /*-----------------------Paysprint Payout-----------------------*/
     Route::post('paysprint/payout/add-account/{service_id}', [PaysprintPayout::class, 'addAccount']);
-    Route::post('paysprint/payout/upload-documents/{service_id}', [PaysprintPayout::class, 'documents']);
     Route::post('paysprint/payout/account-status/{service_id}', [PaysprintPayout::class, 'accountStatus']);
     Route::post('paysprint/payout/new-payout', [PaysprintPayout::class, 'doTransaction'])->middleware('bank', 'mpin');
     Route::post('paysprint/payout/transaction-status/{service_id}', [PaysprintPayout::class, 'status']);
@@ -188,6 +187,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('users-list/{role}', [AdminController::class, 'roleUser']);
     Route::get('logins/{count?}', [AdminController::class, 'logins']);
 
+    Route::post('paysprint/payout/upload-documents', [PaysprintPayout::class, 'documents']);
     Route::get('fetch-fund-requests/{id}', [FundController::class, 'fetchFundId']);
     Route::get('fetch-admin-funds', [FundController::class, 'reversalAndTransferFunds']);
     Route::post('update-fund-requests', [FundController::class, 'updateFund'])->middleware('permission:fund-request-edit');

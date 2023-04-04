@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class PayoutController extends CommissionController
 {
@@ -64,21 +65,25 @@ class PayoutController extends CommissionController
 
     public function documents(Request $request)
     {
+        $user = DB::table('users')->where(['id'=> $request['id'], 'organization_id'=> auth()->user()->organization_id])->get();
+        $pan = $user->pan_photo;
+        $passbook = $user->passbook;
         $token = $this->token();
 
         $doctype = $request['doctype'];
         $data = [
             'doctype' => $doctype,
-            'passbook' => $request->file('passbook'),
-            
+            'passbook' => Storage::get($passbook),
+            'panimage' => Storage::get($pan)
         ];
 
-        if ($doctype == 'PAN') {
-            $data['panimage'] = $request->file('panimage');
-        } else {
-            $data['front_image'] = $request->file('front_image');
-            $data['back_image'] = $request->file('back_iamge');
-        }
+        // if ($doctype == 'PAN') {
+        //     $data['panimage'] = Storage::get($pan);
+        // }
+        // } else {
+        //     $data['front_image'] = Storage::get($user);
+        //     $data['back_image'] = Storage::get($pan);
+        // }
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
