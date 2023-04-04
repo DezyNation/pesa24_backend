@@ -66,8 +66,8 @@ class PayoutController extends CommissionController
     public function documents(Request $request)
     {
         $user = DB::table('users')->where(['id'=> $request['id'], 'organization_id'=> auth()->user()->organization_id])->get();
-        $pan = $user->pan_photo;
-        $passbook = $user->passbook;
+        $pan = $user[0]->pan_photo;
+        $passbook = $user[0]->passbook;
         $token = $this->token();
 
         $doctype = $request['doctype'];
