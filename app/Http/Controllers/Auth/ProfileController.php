@@ -197,7 +197,7 @@ class ProfileController extends AgentManagementController
 
     public function bank()
     {
-        $data = DB::table('users')->where('id', auth()->user()->id)->get(['paysprint_bank_code', 'ifsc', 'account_number', 'bank_account_remarks']);
+        $data = DB::table('users')->where('id', auth()->user()->id)->get(['paysprint_bank_code', 'ifsc', 'account_number', 'bank_account_remarks', 'is_verified']);
 
         return $data;
     }
