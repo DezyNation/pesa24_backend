@@ -129,11 +129,11 @@ class PayoutController extends CommissionController
         if ($response->json($key = 'status') == true) {
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $balance_left = $walletAmt[0] - $request['amount'];
+            $transaction_id = "PAY".strtoupper(Str::random(9));
+            $this->transaction($request['amount'], 'Payout Transaction', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left);
             User::where('id', auth()->user()->id)->update([
                 'wallet' => $balance_left
             ]);
-            $transaction_id = "PAY".strtoupper(Str::random(9));
-            $this->transaction($request['amount'], 'Payout Transaction', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left);
             $this->payoutCommission(auth()->user()->id, $request['amount']);
         }
 
