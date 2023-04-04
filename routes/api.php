@@ -157,7 +157,7 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     Route::post('paysprint/dmt/add-recipient/{service_id}', [DMTController::class, 'registerBeneficiary']);
     Route::post('paysprint/dmt/delete-recipient/{service_id}', [DMTController::class, 'deleteBeneficiary']);
     /*-----------------------Paysprint DMT-----------------------*/
-    
+
 
     /*-----------------------Paysprint Recharge-----------------------*/
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
@@ -187,7 +187,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('fetch-fund-requests', [FundController::class, 'fetchFund']);
     Route::get('users-list/{role}', [AdminController::class, 'roleUser']);
     Route::get('logins/{count?}', [AdminController::class, 'logins']);
- 
+
     Route::get('fetch-fund-requests/{id}', [FundController::class, 'fetchFundId']);
     Route::get('fetch-admin-funds', [FundController::class, 'reversalAndTransferFunds']);
     Route::post('update-fund-requests', [FundController::class, 'updateFund'])->middleware('permission:fund-request-edit');
@@ -195,7 +195,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('delete-fund', [FundController::class, 'deleteFund'])->middleware('permission:fund-transfer-create');
 
 
-    Route::post('file', function(Request $address){
+    Route::post('file', function (Request $address) {
         return Storage::download($address['address']);
     });
     Route::get('transactions', [AdminTransactionController::class, 'index']);

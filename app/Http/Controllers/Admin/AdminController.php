@@ -211,12 +211,12 @@ class AdminController extends Controller
         $request->only([
             'id',
             'is_verified',
-            'bank_status'
+            'bank_account_remarks'
         ]);
         $data = DB::table('users')->where(['organization_id' => auth()->user()->organization_id, 'id' => $request['id']])
             ->update([
                 'is_verified' => $request['is_verified'],
-                'bank_account_remarks' => $request['bank_status']
+                'bank_account_remarks' => $request['bank_account_remarks']
             ]);
         return $data;
     }
