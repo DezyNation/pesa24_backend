@@ -59,6 +59,10 @@ class PayoutController extends CommissionController
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/add', $data);
+            
+        if ($response->json($key = 'bene_id')) {
+            $user->update(['paysprint_bene_id' => $response->json($key = 'bene_id')]);
+        }
 
         return $response;
     }

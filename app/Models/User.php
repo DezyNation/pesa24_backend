@@ -52,6 +52,7 @@ class User extends Authenticatable implements JWTSubject
         'dob',
         'portal',
         'pan_number',
+        'paysprint_bene_id',
         'aadhaar',
         'pan_photo',
         'aadhar_front',
