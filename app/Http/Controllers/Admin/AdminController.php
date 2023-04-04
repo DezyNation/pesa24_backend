@@ -199,4 +199,10 @@ class AdminController extends Controller
         $data = DB::table('packages')->where('id', $id)->update(['is_default' => $bool]);
         return $data;
     }
+
+    public function settlementAccount()
+    {
+        $data = DB::table('users')->where('organization_id', auth()->user()->organization_id)->get(['account_number', 'passbook', 'ifsc', 'bank_name', 'is_verified', 'bank_account_remarks']);
+        return $data;
+    }
 }
