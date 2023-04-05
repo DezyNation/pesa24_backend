@@ -3,7 +3,6 @@
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\PackageController;
@@ -57,6 +56,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('user/update', [ProfileController::class, 'update']);
     Route::post('user/add-bank', [ProfileController::class, 'addBank']);
     Route::post('user/info', [ProfileController::class, 'info']);
+    Route::post('money-transfer', [PaysprintPayout::class, 'moneyTransfer']);
     Route::get('user/bank', [ProfileController::class, 'bank']);
     Route::get('user/services', [ProfileController::class, 'userServices']);
     Route::post('user/wallet', [ProfileController::class, 'wallet']);
@@ -92,6 +92,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     /*-----------------------Fund Requests-----------------------*/
     Route::get('transaction/{type}', [UserDashboardController::class, 'sunTransaction']);
+
 });
 
 Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function () {
