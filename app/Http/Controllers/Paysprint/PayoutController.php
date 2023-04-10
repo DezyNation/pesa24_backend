@@ -90,7 +90,7 @@ class PayoutController extends CommissionController
         //     $data['back_image'] = Storage::get($pan);
         // }
 
-        $response = Http::attach('passbook', file_get_contents($data['passbook']), 'passbok.jpg')->attach('panimage', file_get_contents($data['panimage']), 'panimage.jpg')->asForm()->acceptJson()->withHeaders([
+        $response = Http::asForm()->acceptJson()->withHeaders([
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
@@ -186,5 +186,44 @@ class PayoutController extends CommissionController
         DB::table('users')->where('id', $request['recieverId'])->update(['wallet' => $final_amount, 'updated_at' => now()]);
 
         return response()->json(['message' => "Successfull"]);
+    }
+
+    public function testdocuments()
+    {
+        // $user = DB::table('users')->where(['id' => $request['id'], 'organization_id' => auth()->user()->organization_id])->get();
+        // $pan = $user[0]->pan_photo;
+        // $passbook = $user[0]->passbook;
+        $token = $this->token();
+
+        $doctype = 'PAN';
+        $data = [
+            // 'passbook' => fopen(Storage::path('pan/16SsPkgJeJNUNgss40ZLEp6AUiEJuDdEzEPqnd9D.jpg'), 'r'),
+            'doctype' => $doctype,
+            // 'bene_id' => $user[0]->paysprint_bene_id
+            'bene_id' => 1257304
+        ];
+        $data2 = [
+            'passbook' => file_get_contents(Storage::path('pan/16SsPkgJeJNUNgss40ZLEp6AUiEJuDdEzEPqnd9D.jpg'), 'r'),
+            'panimage' => file_get_contents(Storage::path('pan/16SsPkgJeJNUNgss40ZLEp6AUiEJuDdEzEPqnd9D.jpg'), 'r'),
+        ];
+
+        // return $data['passbook'];
+        // if ($doctype == 'PAN') {
+        //     $data['panimage'] = Storage::get($pan);
+        // }
+        // } else {
+        //     $data['front_image'] = Storage::get($user);
+        //     $data['back_image'] = Storage::get($pan);
+        // }
+
+        $response = Http::asForm()
+        ->attach('passbook', $data2['passbook'], 'passbook.jpg')->attach('panimage', $data2['panimage'], 'panimage.jpg')
+        ->acceptJson()->withHeaders([
+            'Token' => $token,
+            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Content-Type: application/json'
+        ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/uploaddocument', $data);
+
+        return $response;
     }
 }

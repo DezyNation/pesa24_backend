@@ -92,7 +92,6 @@ Route::middleware(['auth:api'])->group(function () {
 
     /*-----------------------Fund Requests-----------------------*/
     Route::get('transaction/{type}', [UserDashboardController::class, 'sunTransaction']);
-
 });
 
 Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function () {
