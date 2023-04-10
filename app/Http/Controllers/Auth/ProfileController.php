@@ -211,4 +211,14 @@ class ProfileController extends AgentManagementController
 
         return new UserResource($user[0]);
     }
+
+    public function findUser($id)
+    {
+        $user = User::where('id', $id)->orWhere('phone_number', $id)->get();
+        if (!$user) {
+            return response("User not found.", 404);
+        }
+
+        return new UserResource($user[0]);
+    }
 }

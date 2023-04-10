@@ -99,7 +99,7 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     Route::post('eko/aeps/aeps-inquiry/{service_id}', [AepsApiController::class, 'aepsInquiry']);
     Route::post('fund-settlement/{service_id}', [AepsApiController::class, 'fundSettlement']);
     Route::post('eko/aeps/money-transfer/{service_id}', [AepsApiController::class, 'moneyTransfer']);
-    Route::get('users/{id}', [UserController::class, 'show']);
+    Route::get('users/{id}', [ProfileController::class, 'findUser']);
 
     Route::post('activate-service/{service_id}', [AttachServiceController::class, 'attachService'])->middleware('subscribe');
 
