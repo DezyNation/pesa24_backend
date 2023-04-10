@@ -10,8 +10,8 @@ class UserDashboardController extends Controller
 {
     public function sunTransaction($service)
     {
-        $credit_sum = DB::table('transactions')->where(['user_id' => auth()->user()->id, 'service_type'=> $service])->sum('credit_amount');
-        $debit_sum = DB::table('transactions')->where(['user_id' => auth()->user()->id, 'service_type'=> $service])->sum('debit_amount');
+        $credit_sum = DB::table('transactions')->where(['user_id' => auth()->user()->id, 'service_type'=> $service])->get();
+        $debit_sum = DB::table('transactions')->where(['user_id' => auth()->user()->id, 'service_type'=> $service])->get();
         return ['credit_amount' => $credit_sum, 'debit_amount' > $debit_sum];
     }
 }
