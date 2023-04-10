@@ -173,7 +173,7 @@ class PayoutController extends CommissionController
         $transaction_id = strtoupper(uniqid() . Str::random(8));
         $data = DB::table('money_transfers')->insert([
             'sender_id' => auth()->user()->id,
-            'reciever_id' => $request['recieverId'],
+            'reciever_id' => $request['beneficiaryId'],
             'amount' => $request['amount'],
             'transaction_id' => $transaction_id,
             'created_at' => now(),
