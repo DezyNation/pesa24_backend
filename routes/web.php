@@ -24,6 +24,7 @@ use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\Agent\AgentManagementController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
+use App\Http\Controllers\Paysprint\BBPS\BillController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -64,6 +65,7 @@ Route::get('/', function () {
 // });
 
 Route::get('paysprint-test', [PaysprintPayout::class, 'testdocuments']);
+Route::get('bill-test/{id?}', [BillController::class, 'operatorParameter']);
 Route::get('paysprint-test1/{user_id}/{amount}/{prepaid}/{operator}', [CommissionController::class, 'rechargeCommission']);
 
 Route::get('admin', function () {
