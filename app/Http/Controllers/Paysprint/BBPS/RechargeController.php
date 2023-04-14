@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Paysprint\BBPS;
 
+use App\Models\User;
 use Firebase\JWT\JWT;
 use GuzzleHttp\Client;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -93,8 +95,14 @@ class RechargeController extends CommissionController
         ])->post('https://paysprint.in/service-api/api/v1/service/recharge/recharge/dorecharge', $data);
 
         if ($response->json('status') == true) {
-            DB::table('operators')->where('paysprint_id', $data['operator'])->get();
-
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $balance_left = $walletAmt[0] - $request['amount'];
+            User::where('id', auth()->user()->id)->update([
+                'wallet' => $balance_left
+            ]);
+            $transaction_id = "RECH" . strtoupper(Str::random(9));
+            $this->transaction($request['amount'], 'Mobile Recharge', 'recharge', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left);
+            $this->rechargeCommissionPaysprint(auth()->user()->id, $data['operator'],  $request['amount']);
         }
 
         return $response;
