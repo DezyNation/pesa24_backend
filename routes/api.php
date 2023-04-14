@@ -150,7 +150,7 @@ Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function ()
     Route::post('paysprint/dmt/customer-info/{service_id}', [DMTController::class, 'remiterQuery']);
     Route::post('paysprint/dmt/create-customer/{service_id}', [DMTController::class, 'registerRemiter']);
 
-    Route::post('paysprint/dmt/initiate-payment/{service_id}', [DMTController::class, 'newTransaction']);
+    Route::post('paysprint/dmt/initiate-payment/{service_id}', [DMTController::class, 'newTransaction'])->middleware('mpin');
 
     Route::post('paysprint/dmt/recipient-list/{service_id}', [DMTController::class, 'fetchBeneficiary']);
     Route::post('paysprint/dmt/add-recipient/{service_id}', [DMTController::class, 'registerBeneficiary']);

@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Paysprint\BBPS;
 use Firebase\JWT\JWT;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\CommissionController;
 
-class RechargeController extends Controller
+class RechargeController extends CommissionController
 {
 
     public function token()
@@ -89,6 +91,11 @@ class RechargeController extends Controller
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/recharge/recharge/dorecharge', $data);
+
+        if ($response->json('status') == true) {
+            DB::table('operators')->where('paysprint_id', $data['operator'])->get();
+
+        }
 
         return $response;
     }

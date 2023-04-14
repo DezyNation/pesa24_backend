@@ -37,7 +37,7 @@ class BillController extends Controller
 
         is_null($id) ?
             $response = $response
-         : $response =  collect($response->json($key = 'data'))->whereIn('id', $id);
+            : $response =  collect($response->json($key = 'data'))->whereIn('id', $id);
         return $response;
         // return collect($response->json($key = 'data'))->whereIn('id', $id);
     }
@@ -82,6 +82,8 @@ class BillController extends Controller
             'token' => $token,
             'content-type' => 'application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paybill', $data);
+
+        
 
         return $response;
     }

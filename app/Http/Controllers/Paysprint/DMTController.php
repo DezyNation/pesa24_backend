@@ -21,7 +21,7 @@ class DMTController extends CommissionController
             'partnerId' => env('PAYSPRINT_PARTNERID'),
             'reqid' => abs(crc32(uniqid()))
         ];
-        
+
         $jwt = JWT::encode($payload, $key, 'HS256');
         return $jwt;
     }
@@ -57,7 +57,7 @@ class DMTController extends CommissionController
             'pincode' => $request['pincode'],
             'stateresp' => $request['stateresp'],
             'bank3_flag' => 'NO',
-            'dob'=> $request['customerDob'],
+            'dob' => $request['customerDob'],
             'gst_state' => 07
         ];
 
@@ -75,7 +75,7 @@ class DMTController extends CommissionController
     public function registerBeneficiary(Request $request)
     {
         $token = $this->token();
-        
+
         $data = [
             'mobile' => $request['customerId'],
             'benename' => $request['beneficiaryName'],
@@ -84,7 +84,7 @@ class DMTController extends CommissionController
             'ifsccode' => $request['ifsc'],
             'verified' => 0,
             'bank3_flag' => 'NO',
-            'dob'=> auth()->user()->dob,
+            'dob' => auth()->user()->dob,
             'gst_state' => 07,
             'pincode' => $request['pinCode'],
             'address' => $request['address']
@@ -158,9 +158,9 @@ class DMTController extends CommissionController
     public function penneyDrop(Request $request)
     {
         $token = $this->token();
-        
+
         $data = [
-            'refid' => uniqid().Str::random(10),
+            'refid' => uniqid() . Str::random(10),
             'account_number' => $request['accountNumber'],
             'ifsc' => $request['ifsc'],
             'ifsc_details' => true
@@ -201,16 +201,15 @@ class DMTController extends CommissionController
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact', $data);
 
-        return $response;
         if ($response->json($key = 'status') == true) {
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $balance_left = $walletAmt[0] - $request['amount'];
             User::where('id', auth()->user()->id)->update([
                 'wallet' => $balance_left
             ]);
-            $transaction_id = "DMT".strtoupper(Str::random(9));
+            $transaction_id = "DMT" . strtoupper(Str::random(9));
             $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left);
-            $this->dmtCommission(auth()->user()->id, 'paysprint-dmt', $request['amount']);
+            $this->dmtCommission(auth()->user()->id, $request['amount']);
         }
 
         return $response;
@@ -269,5 +268,4 @@ class DMTController extends CommissionController
 
         return $response;
     }
-    
 }
