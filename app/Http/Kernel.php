@@ -73,5 +73,6 @@ class Kernel extends HttpKernel
         'mpin' => \App\Http\Middleware\MPIN::class,
         'normal' => \App\Http\Middleware\NormalLogin::class,
         'admin' => \App\Http\Middleware\AdminLogin::class,
+        'profile' => \App\Http\Middleware\EnsureProfileIsCompleted::class
     ];
 }
