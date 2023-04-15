@@ -68,7 +68,7 @@ class ProfileController extends AgentManagementController
             'values.pincode' => ['required', 'digits:6', 'integer'],
             'values.state' => ['required', 'string', 'max:255'],
             'values.phone' => ['required', Rule::unique('users', 'phone_number')->ignore(auth()->user()->id)],
-            'values.pan' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')->ignore(auth()->user()->id)],
+            'values.pan' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')->ignore(auth()->user()->pan_number)],
             'values.firmName' => ['max:255'],
             'values.aadhaarFront' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
             'values.aadhaarBack' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
