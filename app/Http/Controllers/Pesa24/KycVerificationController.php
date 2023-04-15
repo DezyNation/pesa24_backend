@@ -175,7 +175,7 @@ class KycVerificationController extends Controller
 
         $response = Http::withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
+            'Authorisedkey' => env('AUTHORISED_KEY'),
             'Content-Type: application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/onboard/onboardnew/getonboardurl', $data);
         Log::channel('response')->info($response);
