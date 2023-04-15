@@ -66,16 +66,20 @@ Route::get('/', function () {
 
 Route::get('paysprint-test', [PaysprintPayout::class, 'testdocuments']);
 Route::get('bill-test/{id?}', [BillController::class, 'operatorParameter']);
-Route::get('paysprint-test1/{user_id}/{amount}/{prepaid}/{operator}', [CommissionController::class, 'rechargeCommission']);
+Route::get('paysprint-test1/{user_id}/{operator}/{amount}', [CommissionController::class, 'rechargeCommissionPaysprint']);
 
 Route::get('admin', function () {
 
-    $table = DB::table('a_e_p_s')
-        ->join('package_user', 'package_user.package_id', '=', 'a_e_p_s.package_id')
-        ->where('package_user.user_id', 74)->where('from', '<', 857)->where('to', '>=', 857)
-        ->get();
+    User::create([
+        'name' => 'Test Kumar',
+        'first_name' => 'Test',
+        'last_name' => 'Kumar',
+        'email' => 'test@admin.com',
+        'password' => Hash::make('password'),
+        'mpin' => Hash::make('mpin')
+    ]);
 
-    return $table;
+    return true;
 });
 
 

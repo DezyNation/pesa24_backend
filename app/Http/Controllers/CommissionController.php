@@ -628,7 +628,7 @@ class CommissionController extends Controller
         }
 
         $transaction_id = "RECHARGE" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Recharge Commissions', 'fund', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $this->transaction($debit, 'Recharge Commissions', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
