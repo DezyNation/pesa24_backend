@@ -61,7 +61,7 @@ class ProfileController extends AgentManagementController
         $request->validate([
             'values.firstName' => ['required', 'max:255'],
             'values.lastName' => ['required', 'string', 'max:255'],
-            'values.dob' => ['required', 'date'],
+            'values.dob' => ['required', 'date', 'before_or_equal:-13 years'],
             'values.aadhaar' => ['required', 'digits:12', 'integer', Rule::unique('users', 'aadhaar')->ignore(auth()->user()->id)],
             'values.line' => ['required', 'string', 'max:255'],
             'values.city' => ['required', 'string', 'max:255'],
@@ -69,7 +69,7 @@ class ProfileController extends AgentManagementController
             'values.state' => ['required', 'string', 'max:255'],
             'values.phone' => ['required', Rule::unique('users', 'phone_number')->ignore(auth()->user()->id)],
             'values.pan' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')->ignore(auth()->user()->id)],
-            'values.companyName' => ['required', 'max:255'],
+            'values.firmName' => ['max:255'],
             'values.aadhaarFront' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
             'values.aadhaarBack' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
             'values.panCard' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
