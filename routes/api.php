@@ -72,7 +72,7 @@ Route::middleware(['auth:api'])->group(function () {
         $arr = array_merge($data, $role_details);
         return $arr;
     });
-    Route::get('user/pay/onboard-fee', [KycVerificationController::class, 'onboardFee'])->middleware('minimum_balance');
+    Route::post('user/pay/onboard-fee', [KycVerificationController::class, 'onboardFee'])->middleware('minimum_balance');
 
     /*-----------------------Tickets-----------------------*/
     Route::post('tickets', [TicketController::class, 'store']);
