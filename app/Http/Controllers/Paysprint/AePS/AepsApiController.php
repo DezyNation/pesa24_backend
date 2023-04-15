@@ -53,7 +53,7 @@ class AepsApiController extends CommissionController
             'nationalbankidentification' => 652294,
             'requestremarks' => 'AePS enquiry',
             'data' => $pid,
-            'pipe' => 'bank2',
+            'pipe' => 'bank3',
             'timestamp' => now(),
             'submerchantid' => 1,
             'transactiontype' => 'BE',
@@ -80,7 +80,7 @@ class AepsApiController extends CommissionController
         $key = '060e37d1f82cde00';
         $iv = '788a4b959058271e';
 
-        $pid = '<PidData>
+        $pid = $request['piddata'] ?? '<PidData>
         <Resp errCode="0" errInfo="Success." fCount="1" fType="0" nmPoints="29" qScore="61" />
         <DeviceInfo dpId="MANTRA.MSIPL" rdsId="MANTRA.WIN.001" rdsVer="1.0.6" mi="MFS100" mc="MIIEGDCCAwCgAwIBAgIEAQNmQDANBgkqhkiG9w0BAQsFADCB6jEqMCgGA1UEAxMhRFMgTWFudHJhIFNvZnRlY2ggSW5kaWEgUHZ0IEx0ZCA3MUMwQQYDVQQzEzpCIDIwMyBTaGFwYXRoIEhleGEgb3Bwb3NpdGUgR3VqYXJhdCBIaWdoIENvdXJ0IFMgRyBIaWdod2F5MRIwEAYDVQQJEwlBaG1lZGFiYWQxEDAOBgNVBAgTB0d1amFyYXQxHTAbBgNVBAsTFFRlY2huaWNhbCBEZXBhcnRtZW50MSUwIwYDVQQKExxNYW50cmEgU29mdGVjaCBJbmRpYSBQdnQgTHRkMQswCQYDVQQGEwJJTjAeFw0yMjEyMjkwNjIxMTlaFw0yMzAxMjgwNjM2MTdaMIGwMSUwIwYDVQQDExxNYW50cmEgU29mdGVjaCBJbmRpYSBQdnQgTHRkMR4wHAYDVQQLExVCaW9tZXRyaWMgTWFudWZhY3R1cmUxDjAMBgNVBAoTBU1TSVBMMRIwEAYDVQQHEwlBSE1FREFCQUQxEDAOBgNVBAgTB0dVSkFSQVQxCzAJBgNVBAYTAklOMSQwIgYJKoZIhvcNAQkBFhVzdXBwb3J0QG1hbnRyYXRlYy5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDFJQAaWua0qcD6YpL25Xdqfbuj5Nn59tLKr0ESkTyLdxLDjOo6xF93tj8APbjyBIK3lhjx+/VX6wnfTa4X3t+0MieX4mX6i7wbrXtEXr3X8c9+yX6En0dgFOFxeKwdJRiv6Fq0cf+N2X4bzPG+7IRFqsO0NoDqJXV8jhBVNqErau12H+X9uSUmuL+G+9znd+OtOGzk73kQhbpD5uGFaz70yg/Atvi/HuN0OJ5rj71VWcr67BRlrwR89lJg2mKZLEmuEezCqj/dJpg6nvQwSRrCQHoNO6v8A+kO7gPzCBRqjN6+zolKY92QRQDd6N0agP0jlFOVXxbkvfkG8NTOeevBAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAIJfUxB+jRPYULnMqZxpWkNXMbdlwy4NB9X/WqtvnB0uJLHopnQFmKCLOivnpxl7vwbaKgfvcrrt/y+2hOodrMfvnQhiTWyVsbD10Gc0DHro6oATTA3CItCCwmgQU0yHYzC1IaRAZnA3vKq4FNTQg1eAg76ZouIQ2HNRl6niTcrJszmcOBMQPAWRA+oIZkBWmUJsC7uU0c375atwluELAJ9ZIHVAKBDUk/tCdIX78gpvP9rKWctT21hxzlcuY0I7JumcAMfxJhZ3X5VlUd8ecXMtOuJgO7xKd4N0jQS4texZkc5GegD2DMMlWfsW/07Osx1SxcOeBWfbU0WCf64f4Sc=" dc="4da240d5-fb80-492c-9fa2-7493a8868466">
         <additional_info>
@@ -95,20 +95,20 @@ class AepsApiController extends CommissionController
         </PidData>';
 
         $data = [
-            'latitude' => '22.44543',
-            'longitude' => '77.434',
-            'mobilenumber' => '9900000099',
+            'latitude' => $request['latitude'] ?? 22.78,
+            'longitude' => $request['longitude'] ?? 19.45,
+            'mobilenumber' => $request['mobileNumber'] ?? 9971412064,
             'referenceno' => uniqid(),
             'ipaddress' => $request->ip(),
-            'adhaarnumber' => '715547838073',
+            'adhaarnumber' => $request['aadhaarNumber'] ?? 715547838073,
             'accessmodetype' => 'SITE',
             'nationalbankidentification' => 652294,
-            'requestremarks' => 'AePS enquiry',
+            'requestremarks' => 'AePS Withdrwal',
             'data' => $pid,
             'pipe' => 'bank2',
             'timestamp' => now(),
-            'amount' => $request['amount'],
-            'submerchantid' => 1,
+            'amount' => $request['amount'] ?? 1000,
+            'submerchantid' => 9971412064,
             'transactiontype' => 'BE',
             'is_iris' => 'No'
         ];
@@ -124,12 +124,8 @@ class AepsApiController extends CommissionController
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
         ])->post('https://paysprint.in/service-api/api/v1/service/aeps/cashwithdraw/index', ['body' => $body]);
 
+        // $this->aepsCommssion($data['amount'], auth()->user()->id);
         return $response;
-        
-        $this->aepsCommssion($data['amount'], auth()->user()->id);
-
-
-
     }
 
     public function bankList()
@@ -140,7 +136,7 @@ class AepsApiController extends CommissionController
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
         ])->post('https://paysprint.in/service-api/api/v1/service/aeps/banklist/index', []);
 
-        return $response;
+        return json_decode($response);
     }
 
     public function transactionStatus()
@@ -162,6 +158,8 @@ class AepsApiController extends CommissionController
             'accept' => 'application/json',
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
         ]);
+
+        return $response;
     }
 
     public function onBoard(Request $request)

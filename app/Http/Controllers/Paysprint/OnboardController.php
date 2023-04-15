@@ -22,15 +22,15 @@ class OnboardController extends Controller
         return $jwt;
     }
 
-    public function onboard(Request $request)
+    public function onboard()
     {
         $token = $this->token();
 
         $data = [
-            'merchantcode' => auth()->user()->user_code,
-            'mobile' => auth()->user()->phone_number,
+            'merchantcode' => auth()->user()->phone_number ?? 9971412064,
+            'mobile' => auth()->user()->phone_number ?? 9971412064,
             'is_new' => 0,
-            'email' => auth()->user()->email,
+            'email' => auth()->user()->email ?? 'rk3141508@gmail.com',
             'firm' => auth()->user()->company_name ?? 'PAYMONEY',
             'callback' => 'https://pesa24.in/appsapinew/dashboard/home.php',
         ];
@@ -39,8 +39,8 @@ class OnboardController extends Controller
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
-        ])->post('https://api.paysprint.in/api/v1/service/onboard/onboard/getonboardurl', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/onboard/onboardnew/getonboardurl', $data);
 
-        return $response;
+        return redirect($response->json($key = 'redirecturl'));
     }
 }
