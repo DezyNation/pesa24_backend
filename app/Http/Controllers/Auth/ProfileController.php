@@ -75,6 +75,7 @@ class ProfileController extends AgentManagementController
             'values.panCard' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
             'values.deviceNumber' => ['required', 'string'],
             'values.modelName' => ['required', 'string'],
+            'values.gst' => ['string']
         ]);
 
         $aadhaar_front = $request->file('values.aadhaarFront')->store('aadhar_front');
@@ -89,10 +90,12 @@ class ProfileController extends AgentManagementController
             'line' => $request['values']['line'],
             'city' => $request['values']['city'],
             'pincode' => $request['values']['pincode'],
+            'gst' => $request['values']['gst'],
             'state' => $request['values']['state'],
             'phone_number' => $request['values']['phone'],
             'pan_number' => $request['values']['pan'],
-            'company_name' => $request['values']['companyName'],
+            'company_name' => $request['values']['firmName'],
+            'firm_type' => $request['values']['companyType'],
             'profile' => 1,
             'aadhar_front' => $aadhaar_front,
             'aadhar_back' => $aadhaar_back,
