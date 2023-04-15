@@ -62,7 +62,7 @@ class ProfileController extends AgentManagementController
             'values.firstName' => ['required', 'max:255'],
             'values.lastName' => ['required', 'string', 'max:255'],
             'values.dob' => ['required', 'date', 'before_or_equal:-13 years'],
-            'values.aadhaar' => ['required', 'digits:12', 'integer', Rule::unique('users', 'aadhaar')->ignore(auth()->user()->id)],
+            'values.aadhaar' => ['required', 'digits:12', 'integer', Rule::unique('users', 'aadhaar')->ignore(auth()->user()->aadhaar)],
             'values.line' => ['required', 'string', 'max:255'],
             'values.city' => ['required', 'string', 'max:255'],
             'values.pincode' => ['required', 'digits:6', 'integer'],
