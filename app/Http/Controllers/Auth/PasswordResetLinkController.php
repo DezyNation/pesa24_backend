@@ -41,21 +41,21 @@ class PasswordResetLinkController extends Controller
         //     ]);
         // }
         $user = User::where('email', $request['email'])->first();
-            $password = Str::random(8);
-            if (!$user || !Hash::check($request['mpin'], $user->mpin)) {
-                throw ValidationException::withMessages([
-                    'error' => 'Email and MPIN did not match'
-                ]);
-            }
-            User::where('email', $request['email'])->update([
-                'password' => Hash::make($password)
+        $password = Str::random(8);
+        if (!$user || !Hash::check($request['mpin'], $user->mpin)) {
+            throw ValidationException::withMessages([
+                'error' => 'Email and MPIN did not match'
             ]);
-            Mail::raw("Dear User, Your new password for Login to Pesa24 is $password", function($message) use ($request){
-                $message->from('info@pesa24.co.in', 'Pesa24');
-                $message->to($request['email'], 'User');
-                $message->subject('Password reset');
-                $message->priority(1);
-            });
+        }
+        User::where('email', $request['email'])->update([
+            'password' => Hash::make($password)
+        ]);
+        Mail::raw("Dear User, Your new password for Login to Pesa24 is $password", function ($message) use ($request) {
+            $message->from('info@pesa24.co.in', 'Pesa24');
+            $message->to($request['email'], 'User');
+            $message->subject('Password reset');
+            $message->priority(1);
+        });
 
 
         return response()->json(['status' => 'Check your email for password']);
