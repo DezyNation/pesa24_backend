@@ -72,7 +72,7 @@ Route::middleware(['auth:api'])->group(function () {
         $arr = array_merge($data, $role_details);
         return $arr;
     });
-    Route::post('user/pay/onboard-fee', [KycVerificationController::class, 'onboardFee'])->middleware('minimum_balance');
+    Route::post('user/pay/onboard-fee', [KycVerificationController::class, 'onboardFee'])->middleware(['minimum_balance', 'profile']);
 
     /*-----------------------Tickets-----------------------*/
     Route::post('tickets', [TicketController::class, 'store']);
@@ -95,7 +95,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('transaction/{type}', [UserDashboardController::class, 'sunTransaction']);
 });
 
-Route::middleware(['auth:api', 'onboard', 'minimum_balance'])->group(function () {
+Route::middleware(['auth:api', 'profile', 'minimum_balance', 'onboard'])->group(function () {
     /*------------------------EKO AEPS------------------------*/
     Route::post('eko/aeps/aeps-inquiry/{service_id}', [AepsApiController::class, 'aepsInquiry']);
     Route::post('fund-settlement/{service_id}', [AepsApiController::class, 'fundSettlement']);
