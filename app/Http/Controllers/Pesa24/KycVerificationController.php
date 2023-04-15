@@ -98,9 +98,7 @@ class KycVerificationController extends Controller
 
     public function onboardFee()
     {
-        $paysprint = $this->onboard();
-        
-        return $paysprint;
+        return $this->onboard();
     }
 
     public function token()
