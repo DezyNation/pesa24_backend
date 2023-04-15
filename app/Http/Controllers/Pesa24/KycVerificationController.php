@@ -48,7 +48,7 @@ class KycVerificationController extends Controller
         ];
         // return $data['ref_id'];
         $response = Http::acceptJson()->withHeaders([
-            'API-KEY' => env('API_CLUB_KEY'),
+            'API-KEY' => env('APICLUB_KEY'),
             'Referer' => 'docs.apiclub.in',
             'content-type' => 'application/json'
         ])->post('https://api.apiclub.in/api/v1/aadhaar_v2/submit_otp', $data);
