@@ -97,7 +97,6 @@ class User extends Authenticatable implements JWTSubject
         'has_parent',
         'user_code',
         'alternate_phone',
-        'aadhaar',
         'kyc',
         'organization_id',
     ];
