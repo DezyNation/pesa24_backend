@@ -185,6 +185,9 @@ class UserController extends Controller
 
     public function otp(Request $request)
     {
+        $request->validate([
+            'newNumber' => [Rule::unique('users', 'phone_number')->ignore(auth()->user()->phone_number)]
+        ]);
         $otp = rand(1000, 9999);
         $user = User::find(Auth::id());
         $user->update(['otp' => Hash::make($otp)]);
