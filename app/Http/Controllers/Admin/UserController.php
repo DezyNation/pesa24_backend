@@ -45,7 +45,7 @@ class UserController extends Controller
             'userEmail' => ['required', 'email'],
             'userPhone' => ['required', 'digits:10'],
             'alternativePhone' => ['digits:10'],
-            'dob' => ['required', 'date', 'before_or_equal:-13 years'],
+            'dob' => ['required', 'date', 'before_or_equal:-18 years'],
             'gender' => ['required', 'alpha'],
             'aadhaarNum' => ['required', 'digits:12'],
             'panNum' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')],
