@@ -98,37 +98,9 @@ class KycVerificationController extends Controller
 
     public function onboardFee()
     {
-        $user = User::findOrFail(auth()->user()->id)->makeVisible(['organization_id', 'wallet']);
-        $role = $user->getRoleNames();
-        $role_details = json_decode(DB::table('roles')->where('name', $role[0])->get(['id', 'fee']), true);
-        $id = json_decode(DB::table('packages')->where(['role_id' => $role_details[0]['id'], 'organization_id' => $user->organization_id, 'is_default' => 1])->get('id'), true);
-        $opening_balance = $user->wallet;
-        $final_amount = $user->wallet - $role_details[0]['fee'];
-
-        $eko = $this->userOnboard();
         $paysprint = $this->onboard();
-        if (!$eko['original']['message']) {
-            return response("Could not implement", 501);
-        }
-
-        $attach_user = DB::table('package_user')->insert([
-            'user_id' => auth()->user()->id,
-            'package_id' => $id[0]['id'],
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-
-        DB::table('users')->where('id', auth()->user()->id)->update([
-            'wallet' => $final_amount,
-            'onboard_fee' => 1,
-            'updated_at' => now()
-        ]);
-
-        $transaction_id = "ONB" . strtoupper(Str::random(5));
-
-        $this->transaction($role_details[0]['fee'], 'Onboard and Package fee', 'onboarding', auth()->user()->id, $opening_balance, $transaction_id, $final_amount, 0);
-
-        return redirect($paysprint->json($key = 'redirecturl'));
+        
+        return $paysprint;
     }
 
     public function token()
@@ -194,7 +166,7 @@ class KycVerificationController extends Controller
         $token = $this->token();
 
         $data = [
-            'merchantcode' => auth()->user()->user_code,
+            'merchantcode' => auth()->user()->phone_number,
             'mobile' => auth()->user()->phone_number,
             'is_new' => 0,
             'email' => auth()->user()->email,
@@ -208,6 +180,6 @@ class KycVerificationController extends Controller
             'Content-Type: application/json'
         ])->post('https://api.paysprint.in/api/v1/service/onboard/onboard/getonboardurl', $data);
         Log::channel('response')->info($response);
-        return $response;
+        return redirect($response->json($key = 'redirecturl'));
     }
 }
