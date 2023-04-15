@@ -178,7 +178,7 @@ class KycVerificationController extends Controller
             'Token' => $token,
             'Authorisedkey' => 'ZTU2ZjlmYTBkOWFkMjVmM2VlNjE5MDUwMDUzYjhiOGU=',
             'Content-Type: application/json'
-        ])->post('https://api.paysprint.in/api/v1/service/onboard/onboard/getonboardurl', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/onboard/onboardnew/getonboardurl', $data);
         Log::channel('response')->info($response);
         return redirect($response->json($key = 'redirecturl'));
     }
