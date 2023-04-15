@@ -70,6 +70,8 @@ class Kernel extends HttpKernel
         'onboard' => \App\Http\Middleware\OnboardFee::class,
         'subscribe' => \App\Http\Middleware\SubscribeService::class,
         'bank' => \App\Http\Middleware\BankVerified::class,
-        'mpin' => \App\Http\Middleware\MPIN::class
+        'mpin' => \App\Http\Middleware\MPIN::class,
+        'normal' => \App\Http\Middleware\NormalLogin::class,
+        'admin' => \App\Http\Middleware\AdminLogin::class,
     ];
 }

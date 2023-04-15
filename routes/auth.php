@@ -13,7 +13,11 @@ Route::post('/register', [RegisteredUserController::class, 'store'])
     ->name('register');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-    ->middleware('guest')
+    ->middleware(['guest', 'normal'])
+    ->name('login');
+    
+Route::post('admin/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware(['guest', 'admin'])
     ->name('login');
 
 Route::post('/send-otp', [AuthenticatedSessionController::class, 'sendOtp'])
