@@ -76,7 +76,7 @@ class KycVerificationController extends Controller
         ];
 
         $response = Http::acceptJson()->withHeaders([
-            'API-KEY' => env('API_CLUB_KEY'),
+            'API-KEY' => env('APICLUB_KEY'),
             'Referer' => 'docs.apiclub.in',
             'content-type' => 'application/json'
         ])->post('https://api.apiclub.in/api/v1/verify_pan', $data);
