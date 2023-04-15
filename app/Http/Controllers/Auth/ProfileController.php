@@ -90,7 +90,7 @@ class ProfileController extends AgentManagementController
             'line' => $request['values']['line'],
             'city' => $request['values']['city'],
             'pincode' => $request['values']['pincode'],
-            'gst' => $request['values']['gst'],
+            'gst_number' => $request['values']['gst'],
             'state' => $request['values']['state'],
             'phone_number' => $request['values']['phone'],
             'pan_number' => $request['values']['pan'],
