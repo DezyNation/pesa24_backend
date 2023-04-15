@@ -98,7 +98,8 @@ class KycVerificationController extends Controller
 
     public function onboardFee()
     {
-        $this->onboard();
+        $paysprint = $this->onboard();
+        return $paysprint;
     }
 
     public function token()
@@ -178,6 +179,6 @@ class KycVerificationController extends Controller
             'Content-Type: application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/onboard/onboardnew/getonboardurl', $data);
         Log::channel('response')->info($response);
-        return redirect($response->json($key = 'redirecturl'));
+        return $response->json($key = 'redirecturl');
     }
 }
