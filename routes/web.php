@@ -65,22 +65,22 @@ Route::get('/', function () {
 // });
 
 Route::get('paysprint-test', [PaysprintPayout::class, 'testdocuments']);
-Route::get('bill-test/{id?}', [BillController::class, 'operatorParameter']);
+Route::get('bill-test', [RechargeController::class, 'doRecharge']);
 Route::get('paysprint-test1/{user_id}/{operator}/{amount}', [CommissionController::class, 'rechargeCommissionPaysprint']);
 
-Route::get('admin', function () {
+// Route::get('admin', function () {
 
-    User::create([
-        'name' => 'Test Kumar',
-        'first_name' => 'Test',
-        'last_name' => 'Kumar',
-        'email' => 'test@admin.com',
-        'password' => Hash::make('password'),
-        'mpin' => Hash::make('mpin')
-    ]);
+//     User::create([
+//         'name' => 'Test Kumar',
+//         'first_name' => 'Test',
+//         'last_name' => 'Kumar',
+//         'email' => 'test@admin.com',
+//         'password' => Hash::make('password'),
+//         'mpin' => Hash::make('mpin')
+//     ]);
 
-    return true;
-});
+//     return true;
+// });
 
 
 

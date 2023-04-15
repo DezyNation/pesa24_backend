@@ -81,9 +81,9 @@ class RechargeController extends CommissionController
     {
         $token = $this->token();
         $data = [
-            'operator' =>  $request['operator'],
-            'canumber' =>  $request['canumber'],
-            'amount' =>  $request['amount'],
+            'operator' =>  $request['operator'] ?? 11,
+            'canumber' =>  $request['canumber'] ?? 9971412064,
+            'amount' =>  $request['amount'] ?? 19,
             'referenceid' => uniqid(),
         ];
 
@@ -94,14 +94,25 @@ class RechargeController extends CommissionController
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/recharge/recharge/dorecharge', $data);
 
+
         if ($response->json('status') == true) {
+            $metadata = [
+                'status' => $response['status'],
+                'mobile_number' => $data['canumber'],
+                'amount' => $data['amount'],
+                'operator' => $response['operatorid'],
+                'reference_id' => $response['refid'],
+                'acknowldgement_number' => $response['ackno'],
+            ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $balance_left = $walletAmt[0] - $request['amount'];
+            $balance_left = $walletAmt[0] - $data['amount'];
             User::where('id', auth()->user()->id)->update([
                 'wallet' => $balance_left
             ]);
+
+
             $transaction_id = "RECH" . strtoupper(Str::random(9));
-            $this->transaction($request['amount'], 'Mobile Recharge', 'recharge', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left);
+            $this->transaction($data['amount'], "Recharge for Mobile {$data['canumber']}", 'recharge', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->rechargeCommissionPaysprint(auth()->user()->id, $data['operator'],  $request['amount']);
         }
 

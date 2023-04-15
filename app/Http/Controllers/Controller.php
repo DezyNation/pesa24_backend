@@ -39,17 +39,18 @@ class Controller extends BaseController
         ]);
     }
 
-    public function transaction(float $amount, string $service, string $service_type, float $user_id, float $opening_balance, string $transaction_id, float $closing_balance, float $credit = 0)
+    public function transaction(float $amount, string $service, string $service_type, float $user_id, float $opening_balance, string $transaction_id, float $closing_balance, string $metadata, float $credit = 0)
     {
         DB::table('transactions')->insert([
             'debit_amount' => $amount,
             'transaction_for' => $service,
             'user_id' => $user_id,
-            'trigered_by' => auth()->user()->id ?? 77,
+            'trigered_by' => auth()->user()->id,
             'credit_amount' => $credit,
             'opening_balance' => $opening_balance,
             'closing_balance' => $closing_balance,
             'service_type' => $service_type,
+            'meta_data' => $metadata,
             'transaction_id' => $transaction_id,
             'created_at' => now(),
             'updated_at' => now()

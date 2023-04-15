@@ -791,4 +791,14 @@ class CommissionController extends Controller
     }
 
     /*-------------------------------------Recharge Commissions-------------------------------------*/
+
+
+    /*-------------------------------------BBPS Commissions-------------------------------------*/
+
+    public function bbpsPaysprintCommission($user_id, $operator, $amount)
+    {
+        # code...
+    }
+
+    /*-------------------------------------BBPS Commissions-------------------------------------*/
 }

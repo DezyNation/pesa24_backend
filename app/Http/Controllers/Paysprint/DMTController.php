@@ -202,13 +202,26 @@ class DMTController extends CommissionController
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact', $data);
 
         if ($response->json($key = 'status') == true) {
+
+            $metadata = [
+                'status' => $response['status'] ?? null,
+                'reference_id' => $data['referenceid'] ?? null,
+                'amount' => $response['txn_amount'] ?? null,
+                'account_number' => $response['account_number'] ?? null,
+                'remitter' => $response['remitter'] ?? null,
+                'beneficiary_name' => $response['benename'] ?? null,
+                'acknowldgement_number' => $response['ackno'] ?? null,
+                'remarks' => $response['remarks'] ?? null,
+                'message' => $response['message'] ?? null
+            ];
+
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $balance_left = $walletAmt[0] - $request['amount'];
             User::where('id', auth()->user()->id)->update([
                 'wallet' => $balance_left
             ]);
             $transaction_id = "DMT" . strtoupper(Str::random(9));
-            $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left);
+            $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->dmtCommission(auth()->user()->id, $request['amount']);
         }
 

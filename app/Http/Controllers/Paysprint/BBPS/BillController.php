@@ -83,7 +83,9 @@ class BillController extends Controller
             'content-type' => 'application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paybill', $data);
 
-        
+        if ($response->json($key = 'status') == true) {
+            
+        }
 
         return $response;
     }
