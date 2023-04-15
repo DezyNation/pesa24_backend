@@ -20,7 +20,7 @@ class MinimumBalance
         $minimumBalance = $user['roles'][0]['pivot']['minimum_balance'];
         $final_amount = $user->wallet - $request['amount'];
         if ($final_amount < $minimumBalance || $final_amount < $user->minimum_balance) {
-            return response("You have not enough balance to make this transaction.", 403);
+            return response("Insufficient Balance.", 403);
         }
         return $next($request);
     }

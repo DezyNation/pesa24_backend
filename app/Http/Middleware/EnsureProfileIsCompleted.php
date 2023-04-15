@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class EnsureProfileIsCompleted
 {
@@ -17,8 +16,9 @@ class EnsureProfileIsCompleted
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::user()->phone_number->isEmpty()) {
-            return ['Error' => 'Complete your profile first'];
+        $user = auth()->user();
+        if ($user->phone_number == null || $user->profile == false) {
+            return response("Profile not completed.", 403);
         }
         return $next($request);
     }
