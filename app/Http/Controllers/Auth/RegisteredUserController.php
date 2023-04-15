@@ -56,9 +56,6 @@ class RegisteredUserController extends Controller
             'mpin' => Hash::make($mpin),
             'organization_id' => $org_id[0]
         ])->assignRole('retailer');
-        Session::forget('organization_code');
-        // $this->email($email, $username, $password);
-        // return ['Login' => true];
         event(new Registered($user));
 
         Mail::raw("Hello Your one time password is $password and Mpin'-$mpin", function ($message) use ($email, $name) {
@@ -70,22 +67,9 @@ class RegisteredUserController extends Controller
 
         $newmsg = "Dear $username , Welcome to Rpay. You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Now you can login https://rpay.live/. From'-P24 Technology Pvt. Ltd";
         // Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
-        // Auth::login($user);
 
         return response()->noContent();
     }
-
-    // public function email($to, $name, $password)
-    // {
-    //         Mail::raw("Hello Your one time password is $password", function ($message, $to, $name) {
-    //         $message->from('info@pesa24.co.in', 'John Doe');
-    //         $message->to($to, $name);
-    //         $message->subject('Welcome to Pesa24');
-    //         $message->priority(1);
-    //     });
-
-    //     return "Mail sent";
-    // }
 
     public function registerAdmin(Request $request)
     {

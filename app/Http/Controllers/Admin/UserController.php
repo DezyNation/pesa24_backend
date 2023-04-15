@@ -45,7 +45,7 @@ class UserController extends Controller
             'userEmail' => ['required', 'email'],
             'userPhone' => ['required', 'digits:10'],
             'alternativePhone' => ['digits:10'],
-            'dob' => ['required', 'date'],
+            'dob' => ['required', 'date', 'before_or_equal:-13 years'],
             'gender' => ['required', 'alpha'],
             'aadhaarNum' => ['required', 'digits:12'],
             'panNum' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')],
@@ -159,6 +159,7 @@ class UserController extends Controller
             'last_name' => 'max:255',
             'aadhaar' => 'integer|max:12|min:12',
             'pan_number' => 'string|max:10|min:10|regex:[A-Z]{5}[0-9]{4}[A-Z]{1}',
+            'dob' => 'required|date|before_or_equal:-13 years'
         ]);
 
         $user =  User::find(Auth::id());
