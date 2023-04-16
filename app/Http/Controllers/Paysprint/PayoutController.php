@@ -192,7 +192,7 @@ class PayoutController extends CommissionController
             'amount' => $request['amount'],
             'from' => auth()->user()->name . " " . auth()->user()->phone_number
         ];
-        $this->transaction(0, 'Money Transfer to your account', 'money-transfer', $request['recieverId'], $user->wallet, $transaction_id, $final_amount, json_encode($metadata), $request['amount']);
+        $this->transaction(0, 'Money Transfer to your account', 'money-transfer', $request['beneficiaryId'], $user->wallet, $transaction_id, $final_amount, json_encode($metadata), $request['amount']);
         $user->update(['wallet' => $final_amount]);
 
         $metadata = [
