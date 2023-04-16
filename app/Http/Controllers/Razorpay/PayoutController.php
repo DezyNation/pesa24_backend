@@ -34,7 +34,7 @@ class PayoutController extends CommissionController
             'payout_id' => $transfer['id'] ?? 0,
             'entity' => $transfer['entity'] ?? 0,
             'fund_account_id' => $transfer['fund_account_id'] ?? 0,
-            'amount' => $transfer['amount'] ?? 0,
+            'amount' => $transfer['amount']/100 ?? 0,
             'currency' => $transfer['currency'] ?? 0,
             'account_number' => $request['bank_account']['account_number'],
             'fees' => $transfer['fees'] ?? 0,
