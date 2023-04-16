@@ -394,12 +394,17 @@ class CommissionController extends Controller
 
     public function payoutCommission($user_id, $amount)
     {
-        $table = DB::table('p_a_n_s')
+        $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
             ->where('package_user.user_id', $user_id)->where('payoutcommissions.from', '<', $amount)
             ->where('payoutcommissions.to', '>=', $amount)
-            ->get()[0];
+            ->get();
 
+        if ($table->isEmpty()) {
+            return response("No commissions for this transactions.");
+        }
+
+        $table = $table[0];
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
 
@@ -426,8 +431,8 @@ class CommissionController extends Controller
             'wallet' => $closing_balance
         ]);
 
-        if (empty($table)) {
-            return response()->json(['message' => 'No further commission']);
+        if (!$table->parents) {
+            return response("No comissions to parent users.");
         }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
@@ -442,12 +447,16 @@ class CommissionController extends Controller
 
     public function payoutParentCommission($user_id, $amount)
     {
-        $table = DB::table('p_a_n_s')
+        $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
             ->where('package_user.user_id', $user_id)->where('payoutcommissions.from', '<', $amount)
             ->where('payoutcommissions.to', '>=', $amount)
             ->get()[0];
 
+        if ($table->isEmpty()) {
+            return response("No commissions for this transactions.");
+        }
+        $table = $table[0];
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
 
@@ -474,8 +483,9 @@ class CommissionController extends Controller
             'wallet' => $closing_balance
         ]);
 
-        if (empty($table)) {
-            return response()->json(['message' => 'No further commission']);
+
+        if (!$table->parents) {
+            return response("No comissions to parent users.");
         }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Razorpay;
 
+use App\Http\Controllers\CommissionController;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -10,7 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
-class PayoutController extends Controller
+class PayoutController extends CommissionController
 {
     public function bankPayout(Response $request, $amount, $service_id)
     {
@@ -61,9 +62,14 @@ class PayoutController extends Controller
                 'wallet' => $balance_left
             ]);
             $transaction_id = "PAY" . strtoupper(Str::random(5));
-            $metadata = [];
+            $metadata = [
+                'status' => true,
+                'amount' => $transfer['amount'],
+                'reference_id' => $data['reference_id'],
+                'to' => $request['bank_account']['name'] ?? null,
+            ];
             $this->transaction($amount, 'Bank Payout', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
-            $this->baseCommission($amount, auth()->user()->id, $service_id);
+            $this->payoutCommission(auth()->user()->id, $amount);
             return response(['message' => 'Transaction sucessfull', 'payout_id' => $transfer['id'], 'beneficiary_name' => $request['bank_account']['name'], 'amount' => $transfer['amount'], 'bank_account' => $request['bank_account']['account_number'], 'balance_left' => $balance_left], 200);
         } else {
             return response('Transaction failed', 400);
