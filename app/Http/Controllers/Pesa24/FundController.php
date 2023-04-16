@@ -19,13 +19,13 @@ class FundController extends Controller
 
     public function fetchFund()
     {
-        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['users.organization_id'=> auth()->user()->organization_id])->select('funds.*', 'users.name', 'users.phone_number')->paginate(20);
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['users.organization_id' => auth()->user()->organization_id])->select('funds.*', 'users.name', 'users.phone_number')->paginate(20);
         return $data;
     }
 
     public function fetchFundId($id)
     {
-        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id'=> $id, 'users.organization_id'=> auth()->user()->organization_id])->paginate(20);
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $id, 'users.organization_id' => auth()->user()->organization_id])->paginate(20);
         return $data;
     }
 
@@ -46,19 +46,38 @@ class FundController extends Controller
         ]);
 
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id])->update([
-            'funds.amount' => $request['amount'],
-            'funds.admin_remarks' => $request['admin_remarks'] ?? null,
+            'funds.admin_remarks' => $request['remarks'] ?? null,
             'funds.status' => $request['status'],
             'funds.updated_at' => now()
         ]);
 
-        if ($request['status'] == 'processed') {
-            $wallet = DB::table('users')->where('id', $request['user_id'])->pluck('wallet');
+        if ($request['status'] == 'approved') {
+            $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
             $amount = $wallet[0] + $request['amount'];
             $transaction_id = "FUND" . strtoupper(Str::random(5));
-            $this->transaction(0, 'Fund added to user`s wallet', 'funds', $request['userId'], $wallet[0], $transaction_id, $amount, $request['amount'], auth()->user()->id);
+            $metadata = [
+                'status' => true,
+                'amount_added' => $request['amount'],
+                'reference_id' => $transaction_id,
+                'transaction_from' => auth()->user()->name
+            ];
+            $this->transaction(0, 'Fund transfered to user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
             DB::table('users')->where('id', $request['user_id'])->update([
-                'wallet' => $amount
+                'wallet' => $amount,
+                'updated_at' => now()
+            ]);
+            $amount = auth()->user()->wallet - $request['amount'];
+            $transaction_id = "FUND" . strtoupper(Str::random(5));
+            $metadata = [
+                'status' => true,
+                'amount_transfered' => $request['amount'],
+                'reference_id' => $transaction_id,
+                'transaction_from' => auth()->user()->name
+            ];
+            $this->transaction($request['amount'], 'Fund added to user`s wallet', 'funds', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
+            DB::table('users')->where('id', auth()->user()->id)->update([
+                'wallet' => $amount,
+                'updated_at' => now()
             ]);
         }
 
@@ -130,7 +149,7 @@ class FundController extends Controller
             'transaction_id' => $transaction_id,
             'transaction_date' => date('Y-m-d H:i:s'),
             'approved' => 1,
-            'status' => 'done',
+            'status' => 'approved',
             'remarks' => $request['remarks'] ?? null,
             'created_at' => now(),
             'updated_at' => now()
@@ -139,12 +158,34 @@ class FundController extends Controller
         if ($request['transactionType'] == 'transfer') {
             $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
             $amount = $wallet[0] + $request['amount'];
-
             $transaction_id = "FUND" . strtoupper(Str::random(5));
-            $this->transaction(0, 'Fund added to user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, $request['amount'], auth()->user()->id);
+            $metadata = [
+                'status' => true,
+                'amount_added' => $request['amount'],
+                'reference_id' => $transaction_id,
+                'transaction_from' => auth()->user()->name
+            ];
+            $this->transaction(0, 'Fund added to user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
             DB::table('users')->where('id', $request['beneficiaryId'])->update([
-                'wallet' => $amount
+                'wallet' => $amount,
+                'updated_at' => now()
             ]);
+
+            $amount = auth()->user()->wallet - $request['amount'];
+            $transaction_id = "FUND" . strtoupper(Str::random(5));
+            $metadata = [
+                'status' => true,
+                'amount_transfered' => $request['amount'],
+                'reference_id' => $transaction_id,
+                'transaction_from' => auth()->user()->name
+            ];
+
+            DB::table('users')->where('id', auth()->user()->id)->update([
+                'wallet' => $amount,
+                'updated_at' => now()
+            ]);
+
+            $this->transaction($request['amount'], 'Fund added to user`s wallet', 'funds', auth()->user()->id, $wallet[0], $transaction_id, $amount, json_encode($metadata));
         } else {
             $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
             $amount = $wallet[0] - $request['amount'];
@@ -159,7 +200,7 @@ class FundController extends Controller
 
         return $data;
     }
-    
+
     public function deleteFund(Request $request)
     {
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['users.organization_id' => auth()->user()->organization_id, 'funds.id' => $request['fundId']])->delete();

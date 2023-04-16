@@ -17,7 +17,7 @@ class PayoutController extends Controller
         $data = [
             'account_number' => '2323230013085171',
             'fund_account_id' => $request['id'],
-            'amount' => $amount*100,
+            'amount' => $amount * 100,
             'currency' => 'INR',
             'mode' => 'IMPS',
             'purpose' => 'payout',
@@ -49,22 +49,23 @@ class PayoutController extends Controller
             'source' => $transfer['status_details']['source'] ?? 0,
             'reason' => $transfer['status_details']['reason'] ?? 0,
             'added_at' => $transfer['created_at'] ?? 0,
-            'beneficiary_name' => $request['bank_account']['name']?? 0,
+            'beneficiary_name' => $request['bank_account']['name'] ?? 0,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        
+
         $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
         $balance_left = $walletAmt[0] - $amount;
         if ($transfer->status() == 200) {
             User::where('id', auth()->user()->id)->update([
-            'wallet' => $balance_left
+                'wallet' => $balance_left
             ]);
-            $transaction_id = "PAY".strtoupper(Str::random(5));
-            $this->transaction($amount, 'Bank Payout', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left);
+            $transaction_id = "PAY" . strtoupper(Str::random(5));
+            $metadata = [];
+            $this->transaction($amount, 'Bank Payout', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->baseCommission($amount, auth()->user()->id, $service_id);
             return response(['message' => 'Transaction sucessfull', 'payout_id' => $transfer['id'], 'beneficiary_name' => $request['bank_account']['name'], 'amount' => $transfer['amount'], 'bank_account' => $request['bank_account']['account_number'], 'balance_left' => $balance_left], 200);
-        }else {
+        } else {
             return response('Transaction failed', 400);
         }
     }
@@ -82,7 +83,7 @@ class PayoutController extends Controller
 
         return $payout;
     }
-    
+
     public function fetchPayoutUserAll()
     {
         $payout = DB::table('payouts')->where('user_id', auth()->user()->id)->latest()->get([
@@ -99,12 +100,14 @@ class PayoutController extends Controller
 
     public function fetchPayoutAdmin()
     {
-        $payout = DB::table('payouts')->get();
+        $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')->where([
+            'users.organization_id' => auth()->user()->organization_id
+        ])->select('payouts.*', 'users.name')->paginate(20);
 
         return $payout;
     }
-    
-        public function payoutCall()
+
+    public function payoutCall()
     {
         $id = 'pout_00000000000001';
         $transfer =  Http::withBasicAuth('rzp_test_f76VR5UvDUksZJ', 'pCcVlr5pRFcBZxAH4xBqGY62')->withHeaders([
@@ -114,7 +117,7 @@ class PayoutController extends Controller
         DB::table('payouts')->where('payout_id', $id)->update([
             'status' => $transfer['status'],
             'updated_at' => now()
-            ]);
+        ]);
 
         return $transfer['status'];
     }

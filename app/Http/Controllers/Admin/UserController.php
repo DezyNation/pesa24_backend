@@ -80,13 +80,14 @@ class UserController extends Controller
             'phone_number' => $request['userPhone'],
             'email' => $request['userEmail'],
             'alternate_phone' => $request['alternativePhone'],
+            'gender' => $request['gender'],
             'user_code' => $request['user_code'],
             'company_name' => $request['firmName'],
             'firm_type' => $request['companyType'],
             'gst_number' => $request['gst'],
             'dob' => $request['dob'],
             'pan_number' => $request['panNum'],
-            'aadhar' => $request['aadhar'],
+            'aadhaar' => $request['aadhaarNum'],
             'onboard_fee' => 0,
             'referal_code' => $request['referal_code'],
             'email_verified_at' => null,
@@ -102,6 +103,7 @@ class UserController extends Controller
             'aadhar_back' => $aadhar_back,
             'minimum_balance' => $request['capAmount'],
             'pan' => $pan,
+            'is_active' => $request['isActive'],
             'profile_pic' => $profile,
             'organization_id' => $id
         ])->assignRole($request['userRole']);
@@ -243,7 +245,7 @@ class UserController extends Controller
     {
         $org_id = auth()->user()->organization_id;
         if (is_null($id)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->get();
+            $user = User::role($role)->where(['organization_id' => $org_id])->get(['users.id', 'users.name']);
             return $user;
         }
 

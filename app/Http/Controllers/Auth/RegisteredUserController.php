@@ -153,7 +153,7 @@ class RegisteredUserController extends Controller
             'lastName' => ['required', 'string', 'max:255'],
             'userEmail' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($request['userId'])],
             'userPhone' => ['required', 'digits:10', Rule::unique('users', 'phone_number')->ignore($request['userId'])],
-            'alternatePhone' => ['digits:10', Rule::unique('users', 'alternate_phone')->ignore($request['userId'])],
+            // 'alternatePhone' => ['integer'],
             'dob' => ['required', 'date'],
             'gender' => ['required', 'string', 'max:255'],
             'firmName' => ['string', 'max:255'],
@@ -173,13 +173,13 @@ class RegisteredUserController extends Controller
         if ($request->hasFile('aadhaarFront')) {
             $aadhaar_front = $request->file('aadhaarFront')->store('aadhar_front');
         } else {
-            $aadhaar_front = $user->aadhaar_front;
+            $aadhaar_front = $user->aadhar_front;
         }
 
         if ($request->hasFile('aadhaarBack')) {
             $aadhaar_back = $request->file('aadhaarBack')->store('aadhar_back');
         } else {
-            $aadhaar_back = $user->aadhaar_back;
+            $aadhaar_back = $user->aadhar_back;
         }
 
         if ($request->hasFile('pan')) {
@@ -219,8 +219,8 @@ class RegisteredUserController extends Controller
             'firm_type' => $request['companyType'],
             'profile' => 1,
             'profile_pic' => $profile,
-            'aadhaar_front' => $aadhaar_front,
-            'aadhaar_back' => $aadhaar_back,
+            'aadhar_front' => $aadhaar_front,
+            'aadhar_back' => $aadhaar_back,
             'pan_photo' => $pan_card,
         ]);
 

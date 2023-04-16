@@ -31,6 +31,7 @@ use App\Http\Controllers\pesa24\Dashboard\UserDashboardController;
 use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
+use App\Http\Middleware\AdminLogin;
 
 /*
 |--------------------------------------------------------------------------
@@ -193,15 +194,15 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('paysprint/payout/upload-documents', [PaysprintPayout::class, 'documents']);
     Route::get('fetch-fund-requests/{id}', [FundController::class, 'fetchFundId']);
     Route::get('fetch-admin-funds', [FundController::class, 'reversalAndTransferFunds']);
-    Route::post('update-fund-requests', [FundController::class, 'updateFund'])->middleware('permission:fund-request-edit');
-    Route::post('new-fund', [FundController::class, 'newFund'])->middleware('permission:fund-transfer-create');
+    Route::post('update-fund-requests', [FundController::class, 'updateFund'])->middleware(['permission:fund-request-edit', 'minimum_balance']);
+    Route::post('new-fund', [FundController::class, 'newFund'])->middleware(['permission:fund-transfer-create', 'minimum_balance']);
     Route::post('delete-fund', [FundController::class, 'deleteFund'])->middleware('permission:fund-transfer-create');
 
 
     Route::post('file', function (Request $address) {
         return Storage::download($address['address']);
     });
-    Route::get('transactions', [AdminTransactionController::class, 'index']);
+    Route::get('transactions-type/{data}', [AdminTransactionController::class, 'categoryIndex']);
     Route::get('transactions/{id}', [AdminTransactionController::class, 'view']);
     Route::get('transactions-user/{id}', [AdminTransactionController::class, 'userTransction']);
     Route::get('transactions-period', [AdminTransactionController::class, 'transactionPeriod']);
@@ -215,12 +216,15 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('all-permissions', [AdminController::class, 'permissions'])->middleware('permission:assign-permission');
     Route::post('assign-permission', [AdminController::class, 'assignPermission'])->middleware('permission:assign-permission');
 
+    Route::post('add-admin-funds', [AdminController::class, 'addAdminFunds'])->middleware('mpin');
+    Route::get('add-admin-funds', [AdminController::class, 'adminFundsRecords']);
     Route::get('commissions', [AdminController::class, 'commissions']);
     Route::get('packages', [AdminController::class, 'packages']);
     Route::post('packages/{id}', [AdminController::class, 'packagesId']);
-    Route::get('commissions/{name}', [AdminController::class, 'commissionsPackage']);
+    Route::get('commissions/{name}/{id}', [AdminController::class, 'commissionsPackage']);
     Route::post('commissions/{name}', [AdminController::class, 'updateCommission']);
     Route::post('create-package', [AdminController::class, 'packageCreate']);
+    Route::post('update-package-defaults', [AdminController::class, 'packageSwitch']);
 });
 
 Route::group(['middleware' => ['auth:api', 'role:super_admin'], 'prefix' => 'super-admin'], function () {

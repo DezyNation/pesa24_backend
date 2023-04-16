@@ -18,7 +18,8 @@ class Package extends Model
         'name',
         'organization_id',
         'role_id',
-        'is_default'
+        'is_default',
+        'user_id'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
