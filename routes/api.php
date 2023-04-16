@@ -27,7 +27,7 @@ use App\Http\Controllers\Paysprint\AePS\AepsApiController;
 use App\Http\Controllers\Pesa24\KycVerificationController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
-use App\Http\Controllers\pesa24\Dashboard\UserDashboardController;
+use App\Http\Controllers\Pesa24\Dashboard\UserDashboardController;
 use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Paysprint\CallbackController;

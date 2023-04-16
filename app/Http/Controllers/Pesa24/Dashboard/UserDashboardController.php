@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\pesa24\Dashboard;
+namespace App\Http\Controllers\Pesa24\Dashboard;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
