@@ -69,7 +69,6 @@ class PayoutController extends CommissionController
                 'to' => $request['bank_account']['name'] ?? null,
             ];
             $this->transaction($amount, 'Bank Payout', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
-            $this->payoutCommission(auth()->user()->id, $amount);
             return response(['message' => 'Transaction sucessfull', 'payout_id' => $transfer['id'], 'beneficiary_name' => $request['bank_account']['name'], 'amount' => $transfer['amount'], 'bank_account' => $request['bank_account']['account_number'], 'balance_left' => $balance_left], 200);
         } else {
             return response('Transaction failed', 400);

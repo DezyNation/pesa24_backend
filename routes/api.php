@@ -32,6 +32,7 @@ use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Paysprint\CallbackController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
+use App\Http\Controllers\Razorpay\WebhookController;
 use App\Http\Middleware\AdminLogin;
 
 /*
@@ -229,6 +230,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
 });
 
 Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);
+Route::any('payout-callback-paysprint', [WebhookController::class, 'confirmPayout']);
 
 Route::group(['middleware' => ['auth:api', 'role:super_admin'], 'prefix' => 'super-admin'], function () {
     Route::get('service-chage/{service_id}/{active}', [GlobalServiceController::class, 'manageService']);
