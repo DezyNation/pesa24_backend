@@ -64,6 +64,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('money-transfer', [PaysprintPayout::class, 'fetchMoneyTransfer']);
     Route::get('user/bank', [ProfileController::class, 'bank']);
     Route::get('user/services', [ProfileController::class, 'userServices']);
+    Route::get('user/ledger/{name?}', [UserDashboardController::class, 'transactionLedger']);
     Route::post('user/wallet', [ProfileController::class, 'wallet']);
     Route::post('user/verify/aadhaar/send-otp', [KycVerificationController::class, 'sendOtpAadhaar']);
     Route::post('user/verify/aadhaar/verify-otp', [KycVerificationController::class, 'verifyOtpAadhaar']);
