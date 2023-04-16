@@ -607,7 +607,7 @@ class CommissionController extends Controller
             ->where(['package_user.user_id' => $user_id, 'recharges.paysprint_id' => $operator])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
             ->get();
 
-        if (!$table->exists()) {
+        if (!$table->isEmpty()) {
             return response("No commissions.");
         }
 
