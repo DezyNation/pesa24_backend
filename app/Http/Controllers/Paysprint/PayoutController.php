@@ -141,7 +141,7 @@ class PayoutController extends CommissionController
             $balance_left = $walletAmt[0] - $request['amount'];
             $transaction_id = "PAY" . strtoupper(Str::random(9));
             $metadata = [];
-            $this->transaction($request['amount'], 'Payout Transaction', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, json_encode($metadata),$balance_left);
+            $this->transaction($request['amount'], 'Payout Transaction', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, json_encode($metadata), $balance_left);
             User::where('id', auth()->user()->id)->update([
                 'wallet' => $balance_left
             ]);
@@ -169,6 +169,17 @@ class PayoutController extends CommissionController
         return $response;
     }
 
+    public function fetchMoneyTransfer()
+    {
+        $data = DB::table('money_transfers')
+            ->join('users as recievers', 'recievers.id', '=', 'money_transfers.reciever_id')
+            ->where('money_transfers.sender_id', auth()->user()->id)
+            ->select('recievers.name', 'recievers.phone_number', 'recievers.id as reciever_id', 'money_transfers.*')
+            ->paginate(20);
+
+        return $data;
+    }
+
     public function moneyTransfer(Request $request)
     {
         if ($request['beneficiaryId'] == auth()->user()->id) {
@@ -179,6 +190,7 @@ class PayoutController extends CommissionController
             'sender_id' => auth()->user()->id,
             'reciever_id' => $request['beneficiaryId'],
             'amount' => $request['amount'],
+            'remarks' => $request['remarks'],
             'transaction_id' => $transaction_id,
             'created_at' => now(),
             'updated_at' => now()

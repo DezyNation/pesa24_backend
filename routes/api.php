@@ -60,7 +60,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('user/update', [ProfileController::class, 'update']);
     Route::post('user/add-bank', [ProfileController::class, 'addBank']);
     Route::post('user/info', [ProfileController::class, 'info']);
-    Route::post('money-transfer', [PaysprintPayout::class, 'moneyTransfer'])->middleware('mpin');
+    Route::post('money-transfer', [PaysprintPayout::class, 'moneyTransfer'])->middleware(['mpin', 'minimum_balance']);
+    Route::get('money-transfer', [PaysprintPayout::class, 'fetchMoneyTransfer']);
     Route::get('user/bank', [ProfileController::class, 'bank']);
     Route::get('user/services', [ProfileController::class, 'userServices']);
     Route::post('user/wallet', [ProfileController::class, 'wallet']);
