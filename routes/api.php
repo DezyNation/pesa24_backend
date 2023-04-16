@@ -136,7 +136,7 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'onboard'])->group(
     Route::post('paysprint/bank/bank-verify', [DMTController::class, 'penneyDrop']);
     /*-----------------------Razorpay Payout-----------------------*/
     Route::post('razorpay/payout/new-payout/{service_id}', [FundAccountController::class, 'createFundAcc']);
-    Route::post('razorpay/contacts/create-contact/{service_id}', [PayoutController::class, 'fetchPayoutAdmin']);
+    Route::post('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser']);
     /*-----------------------Razorpay Payout-----------------------*/
 
     /*-----------------------Pysprint AePS-----------------------*/
