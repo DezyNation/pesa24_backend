@@ -44,5 +44,10 @@ class CallbackController extends Controller
         $data = $this->transaction($role_details[0]['fee'], 'Onboard and Package fee', 'onboarding', $user_id[0], $opening_balance, $transaction_id, $final_amount, json_encode($metadata));
         Log::info($data);
     }
+
+    public function dmtCallback(Request $request)
+    {
+        
+    }
     
 }
