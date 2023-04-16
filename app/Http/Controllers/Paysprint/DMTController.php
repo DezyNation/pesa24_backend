@@ -228,6 +228,13 @@ class DMTController extends CommissionController
             $this->dmtCommission(auth()->user()->id, $request['amount']);
         }
 
+        if ($response['status'] == false) {
+            if ($response['response_code'] == 13) {
+                return response("Server busy, try later!", 501);
+            }
+            return response($response['message'], 501);
+        }
+
         return $response;
     }
 
