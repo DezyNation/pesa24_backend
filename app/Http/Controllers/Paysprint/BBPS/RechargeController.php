@@ -106,6 +106,7 @@ class RechargeController extends CommissionController
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $balance_left = $walletAmt[0] - $data['amount'];
+            return $balance_left;
             User::where('id', auth()->user()->id)->update([
                 'wallet' => $balance_left
             ]);
