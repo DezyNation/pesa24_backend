@@ -605,7 +605,13 @@ class CommissionController extends Controller
         $table = DB::table('recharges')
             ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
             ->where(['package_user.user_id' => $user_id, 'recharges.paysprint_id' => $operator])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
-            ->get()[0];
+            ->get();
+
+        if (!$table) {
+            return response("No commissions.");
+        }
+
+        $table = $table[0];
 
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
