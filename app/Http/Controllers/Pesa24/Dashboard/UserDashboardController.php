@@ -18,11 +18,11 @@ class UserDashboardController extends Controller
     public function transactionLedger($name = null)
     {
         if (is_null($name)) {
-            $data = DB::table('transactions')->where('trigered_by', auth()->user()->id)->get();
+            $data = DB::table('transactions')->where('trigered_by', auth()->user()->id)->paginate(20);
             return $data;
         }
 
-        $data = DB::table('transactions')->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->get();
+        $data = DB::table('transactions')->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->paginate(20);
         return $data;
     }
 }
