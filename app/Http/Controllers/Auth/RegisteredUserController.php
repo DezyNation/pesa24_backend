@@ -58,7 +58,12 @@ class RegisteredUserController extends Controller
             'organization_id' => $org_id[0]
         ])->assignRole('retailer');
         event(new Registered($user));
-
+        $data = [
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'organisation_code' => $request['organization_code']
+        ];
+        Http::post('https://pesa24-webhooks.vercel.app/api/users', $data);
         Mail::raw("Hello Your one time password is $password and Mpin'-$mpin", function ($message) use ($email, $name) {
             $message->from('info@pesa24.co.in', 'John Doe');
             $message->to($email, $name);
@@ -135,7 +140,12 @@ class RegisteredUserController extends Controller
 
 
         event(new Registered($user));
-
+        $data = [
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'organisation_code' => $request['organization_code']
+        ];
+        Http::post('https://pesa24-webhooks.vercel.app/api/users', $data);
         Mail::raw("Hello Your one time password is $password and Mpin'-$mpin", function ($message) use ($email, $name) {
             $message->from('info@pesa24.co.in', 'RPay');
             $message->to($email, $name);
@@ -148,7 +158,7 @@ class RegisteredUserController extends Controller
 
     public function adminUpdate(Request $request)
     {
-        
+
         $request->validate([
             'firstName' => ['required', 'string', 'max:255'],
             'lastName' => ['required', 'string', 'max:255'],
@@ -169,7 +179,7 @@ class RegisteredUserController extends Controller
             'state' => ['required', 'string'],
             'pincode' => ['required', 'integer'],
         ]);
-        
+
         $user = User::where('organization_id', auth()->user()->organization_id)->findOrFail($request['userId']);
         if ($request->hasFile('aadhaarFront')) {
             $aadhaar_front = $request->file('aadhaarFront')->store('aadhar_front');
