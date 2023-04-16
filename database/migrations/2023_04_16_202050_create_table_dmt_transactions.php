@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('reference_id');
             $table->json('paysprint_metadata')->nullable();
             $table->json('eko_metadata')->nullable();
+            $table->json('callback_metadata')->nullable();
             $table->timestamps();
         });
     }
