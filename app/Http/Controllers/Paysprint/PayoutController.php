@@ -140,7 +140,8 @@ class PayoutController extends CommissionController
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $balance_left = $walletAmt[0] - $request['amount'];
             $transaction_id = "PAY" . strtoupper(Str::random(9));
-            $this->transaction($request['amount'], 'Payout Transaction', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left);
+            $metadata = [];
+            $this->transaction($request['amount'], 'Payout Transaction', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, json_encode($metadata),$balance_left);
             User::where('id', auth()->user()->id)->update([
                 'wallet' => $balance_left
             ]);
@@ -170,6 +171,9 @@ class PayoutController extends CommissionController
 
     public function moneyTransfer(Request $request)
     {
+        if ($request['beneficiaryId'] == auth()->user()->id) {
+            return response("You can not send to money to yourself.", 403);
+        }
         $transaction_id = strtoupper(uniqid() . Str::random(8));
         $data = DB::table('money_transfers')->insert([
             'sender_id' => auth()->user()->id,
@@ -180,11 +184,28 @@ class PayoutController extends CommissionController
             'updated_at' => now()
         ]);
 
-        $user = User::findOrFail($request['recieverId']);
+        $user = User::findOrFail($request['beneficiaryId']);
         $final_amount = $user->wallet + $request['amount'];
-        $this->transaction(0, 'Money Transfer to User account', 'money-transfer', $request['recieverId'], $user->wallet, $transaction_id, $final_amount);
-        DB::table('users')->where('id', $request['recieverId'])->update(['wallet' => $final_amount, 'updated_at' => now()]);
+        $metadata = [
+            'status' => true,
+            'event' => 'money-transfer',
+            'amount' => $request['amount'],
+            'from' => auth()->user()->name . " " . auth()->user()->phone_number
+        ];
+        $this->transaction(0, 'Money Transfer to User account', 'money-transfer', $request['recieverId'], $user->wallet, $transaction_id, $final_amount, json_encode($metadata), $request['amount']);
+        $user->update(['wallet' => $final_amount]);
 
+        $metadata = [
+            'status' => true,
+            'event' => 'money-transfer',
+            'amount' => $request['amount'],
+            'to' => $user->name . " " . $user->phone_number
+        ];
+        $user = User::findOrFail(auth()->user()->id);
+        $final_amount = $user->wallet - $request['amount'];
+        $transaction_id = strtoupper(uniqid() . Str::random(8));
+        $this->transaction($request['amount'], 'Money Transfer to User account', 'money-transfer', auth()->user()->id, $user->wallet, $transaction_id, $final_amount, json_encode($metadata));
+        $user->update(['wallet' => $final_amount]);
         return response()->json(['message' => "Successfull"]);
     }
 
@@ -217,12 +238,12 @@ class PayoutController extends CommissionController
         // }
 
         $response = Http::asForm()
-        ->attach('passbook', $data2['passbook'], 'passbook.jpg')->attach('panimage', $data2['panimage'], 'panimage.jpg')
-        ->acceptJson()->withHeaders([
-            'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
-            'Content-Type: application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/uploaddocument', $data);
+            ->attach('passbook', $data2['passbook'], 'passbook.jpg')->attach('panimage', $data2['panimage'], 'panimage.jpg')
+            ->acceptJson()->withHeaders([
+                'Token' => $token,
+                'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+                'Content-Type: application/json'
+            ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/uploaddocument', $data);
 
         return $response;
     }
