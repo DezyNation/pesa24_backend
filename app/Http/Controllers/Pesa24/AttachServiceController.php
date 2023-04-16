@@ -53,54 +53,16 @@ class AttachServiceController extends Controller
     public function attachService($service_id)
     {
         if (DB::table('service_user')->where(['service_id' => $service_id, 'user_id' => auth()->user()->id])->exists()) {
-            return response(true, 200);
+            return response("Service already activated", 200);
         }
         $user = User::findOrfail(auth()->user()->id);
         $service = Service::findOrFail($service_id);
-        if ($service->api_call == 0) {
-            DB::table('service_user')->updateOrInsert(
-                ['service_id' => $service_id, 'user_id' => auth()->user()->id],
-                [
-                    'paysprint_active' => 1,
-                    'pesa24_active' => 1,
-                    'eko_active' => 1,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]
-            );
-            $opening_balance = $user->wallet;
-            $amount = $service->price;
-            $closing_balance = $opening_balance - $amount;
-            $transaction_id = "SER" . strtoupper(Str::random(5));
-
-            $user->update([
-                'wallet' => $closing_balance
-            ]);
-
-            $this->transaction($amount, 'Service Activation', 'service', auth()->user()->id, $opening_balance, $transaction_id, $closing_balance);
-
-            return response()->json(['message' => 'Service acivated.']);
-        }
-
-
-        if ($service_id == 23) {
-            // $paysprint = $this->paysprintOnboard();
-            $eko = $this->aepsEnroll($service->eko_id);
-            if ($eko->json($key = 'response_status_id') !== -1) {
-                return response('Could not activate this service at he moment.', 501);
-            }
-        } else {
-            $eko = $this->generalService($service->eko_id);
-            if ($eko->json($key = 'response_status_id') !== 1) {
-                return response('Could not activate this service at he moment.', 501);
-            }
-        }
         DB::table('service_user')->updateOrInsert(
             ['service_id' => $service_id, 'user_id' => auth()->user()->id],
             [
                 'paysprint_active' => 1,
                 'pesa24_active' => 1,
-                'eko_active' => $eko['response_status_id'],
+                'eko_active' => 1,
                 'created_at' => now(),
                 'updated_at' => now()
             ]
@@ -114,9 +76,14 @@ class AttachServiceController extends Controller
             'wallet' => $closing_balance
         ]);
 
-        $this->transaction($amount, 'Service Activation', 'service', auth()->user()->id, $opening_balance, $transaction_id, $closing_balance);
+        $metadata = [
+            'status' => true,
+            'amount' => $amount,
+            'refernce_id' => strtoupper(uniqid())
+        ];
+        $this->transaction($amount, 'Service Activation', 'service', auth()->user()->id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata));
 
-        return response('Service will be activated in next 3 hours.');
+        return response('Service acivated.');
     }
 
     public function aepsEnroll($service_code)

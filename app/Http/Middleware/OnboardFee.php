@@ -17,7 +17,7 @@ class OnboardFee
     {
         $user_fee = auth()->user()->onboard_fee;
         if (!$user_fee) {
-            return response()->json(['message' => 'Please add funds to your account and pay the onboarding fee.']);
+            return response('User not onboarded.', 405);
         }
         return $next($request);
     }

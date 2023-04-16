@@ -62,7 +62,7 @@ class FundController extends Controller
                 'transaction_from' => auth()->user()->name
             ];
             $this->transaction(0, 'Fund transfered to user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
-            DB::table('users')->where('id', $request['user_id'])->update([
+            DB::table('users')->where('id', $request['beneficiaryId'])->update([
                 'wallet' => $amount,
                 'updated_at' => now()
             ]);

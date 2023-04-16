@@ -67,6 +67,9 @@ class DMTController extends CommissionController
             'content-type' => 'application/json',
         ])->post('https://paysprint.in/service-api/api/v1/service/dmt/remitter/registerremitter', $data);
 
+        if ($response['status'] == false) {
+            return response($response['message'], 501);
+        }
         return $response;
     }
 
