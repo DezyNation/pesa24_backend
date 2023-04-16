@@ -64,7 +64,7 @@ class PayoutController extends CommissionController
             $transaction_id = "PAY" . strtoupper(Str::random(5));
             $metadata = [
                 'status' => true,
-                'amount' => $transfer['amount'],
+                'amount' => $transfer['amount']/100,
                 'reference_id' => $data['reference_id'],
                 'to' => $request['bank_account']['name'] ?? null,
             ];
