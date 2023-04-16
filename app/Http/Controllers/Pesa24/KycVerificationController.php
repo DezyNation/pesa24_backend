@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Http\Resources\v1\UserResource;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rule;
 
 class KycVerificationController extends Controller
 {
@@ -26,6 +27,10 @@ class KycVerificationController extends Controller
     /*--------------------------------Aadhar Verification--------------------------------*/
     public function sendOtpAadhaar(Request $request)
     {
+        $user_id = auth()->user()->id;
+        $request->validate([
+            'aadhaar_no' => ['required', Rule::unique('users', 'aadhaar')->ignore($user_id)]
+        ]);
         $data = [
             'aadhaar_no' => $request['aadhaar_no']
         ];
@@ -35,6 +40,7 @@ class KycVerificationController extends Controller
             'content-type' => 'application/json'
         ])->post('https://api.apiclub.in/api/v1/aadhaar_v2/send_otp', $data);
         if ($response->json($key = 'status') == 'success') {
+            DB::table('users')->where('id', $user_id)->update(['aadhaar' => $request['aadhaar_no'], 'updated_at' => now()]);
             return response()->json(['message' => $response->json($key = 'response.ref_id')]);
         }
         return response($response->json($key = 'response'), 419);
@@ -42,6 +48,8 @@ class KycVerificationController extends Controller
 
     public function verifyOtpAadhaar(Request $request)
     {
+
+        $user_id = auth()->user()->id;
         $data = [
             'ref_id' => $request['refId'],
             'otp' => $request['otp']
@@ -56,13 +64,12 @@ class KycVerificationController extends Controller
         if ($response->json($key = 'code') == 200) {
 
             DB::table('k_y_c_verifications')->updateOrInsert(
-                ['user_id' => auth()->user()->id],
+                ['user_id' => $user_id],
                 ['aadhar' => 1]
             );
-            session()->forget('otp_ref_id');
             return response()->json(['message' => "OTP Verified"]);
         } else {
-            session()->forget('otp_ref_id');
+            DB::table('users')->where('id', $user_id)->update(['aadhaar' => null]);
             return response($response->json($key = 'response'), 419);
         }
     }
@@ -71,6 +78,11 @@ class KycVerificationController extends Controller
 
     public function panVerification(Request $request)
     {
+        $user_id = auth()->user()->id;
+        $request->validate([
+            'pan_no' => ['required', Rule::unique('users', 'pan_number')->ignore($user_id)]
+        ]);
+
         $data = [
             'pan_no' => $request['pan_no'],
         ];
@@ -87,6 +99,7 @@ class KycVerificationController extends Controller
                     ['user_id' => auth()->user()->id],
                     ['pan' => 1]
                 );
+                DB::table('users')->where('id', $user_id)->update(['pan_number' => $request['pan_no'], 'updated_at' => now()]);
                 return response()->json(['message' => 'PAN Card Verified']);
             } else {
                 return response($response->json($key = 'response'), 419);

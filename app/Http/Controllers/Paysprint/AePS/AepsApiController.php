@@ -161,26 +161,5 @@ class AepsApiController extends CommissionController
 
         return $response;
     }
-
-    public function onBoard(Request $request)
-    {
-        $token = $this->token();
-
-        $data = [
-            'merchantcode' => 120,
-            'mobile' => 9971412064,
-            'is_new' => 0,
-            'email' => 'rk3141508gmail.com',
-            'firm' => 'Dezynation',
-            'callback' => 'https://pesa24.in/appsapinew/dashboard/home.php',
-        ];
-
-        $response = Http::withHeaders([
-            'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
-            'Content-Type: application/json'
-        ])->post('https://api.paysprint.in/api/v1/service/onboard/onboard/getonboardurl', $data);
-
-        return $response;
-    }
+    
 }
