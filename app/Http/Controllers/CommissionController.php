@@ -801,4 +801,45 @@ class CommissionController extends Controller
     }
 
     /*-------------------------------------BBPS Commissions-------------------------------------*/
+
+
+    public function dmtReversal(float $amount, int $user_id)
+    {
+        $data = DB::table('d_m_t_s')
+            ->join('users', 'package_user.user_id', '=', 'users.id')
+            ->join('d_m_t_s', 'd_m_t_s.package_id', '=', 'package_user.package_id')
+            ->select('commissions.*')
+            ->where('package_user.user_id', $user_id)->where('d_m_t_s.from', '<', $amount)->where('d_m_t_s.to', '>=', $amount)
+            ->get();
+
+        if (!$data) {
+            return response()->json(['message' > 'Transaction was done but no commission was given.']);
+        }
+        $user = User::findOrFail($user_id);
+        $opening_balance = $user->wallet;
+        if ($data[0]->is_flat) {
+            $commission = $data[0]->commission;
+            $debit = $data[0]->fixed_charge + $data[0]->fixed_charge * $data[0]->gst / 100;
+            $credit = $commission - $commission * $data[0]->gst / 100;
+            $closing_balance = $user->wallet - $credit + $debit;
+        } else {
+            $commission = $data[0]->commission * $amount / 100;
+            $debit = $amount * $data[0]->fixed_charge / 100 + $amount * $data[0]->fixed_charge * $data[0]->gst / 10000;
+            $credit = $commission - $commission * $data[0]->gst / 100;
+            $closing_balance = $user->wallet - $credit + $debit;
+        }
+
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
+
+        $transaction_id = "REVCOM" . strtoupper(Str::random(5));
+        $metadata = [
+            'starus' => true,
+            'event' => 'refund'
+        ];
+        $this->transaction($credit, "Commission reversal for DMT", 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+
+        return response()->json(['message' => 'True']);
+    }
 }

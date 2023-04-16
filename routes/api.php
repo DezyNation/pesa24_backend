@@ -30,6 +30,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\pesa24\Dashboard\UserDashboardController;
 use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
+use App\Http\Controllers\Paysprint\CallbackController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Middleware\AdminLogin;
 
@@ -226,6 +227,8 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('create-package', [AdminController::class, 'packageCreate']);
     Route::post('update-package-defaults', [AdminController::class, 'packageSwitch']);
 });
+
+Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);
 
 Route::group(['middleware' => ['auth:api', 'role:super_admin'], 'prefix' => 'super-admin'], function () {
     Route::get('service-chage/{service_id}/{active}', [GlobalServiceController::class, 'manageService']);
