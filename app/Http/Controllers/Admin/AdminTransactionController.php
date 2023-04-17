@@ -58,4 +58,14 @@ class AdminTransactionController extends Controller
             ->latest()->paginate(20);
         return $data;
     }
+
+    
+    public function dailySales(Request $request)
+    {
+        $data = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->join('users as beneficiaries', 'beneficiaries.id', '=', 'transactions.user_id')
+            ->select('transactions.*', 'users.name as trigered_by', 'users.phone_number as trigered_by_phone', 'beneficiaries.name', 'beneficiaries.phone_number')
+            ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()]);
+    }
 }

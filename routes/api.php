@@ -209,7 +209,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('transactions-type/{data}', [AdminTransactionController::class, 'categoryIndex']);
     Route::get('transactions/{id}', [AdminTransactionController::class, 'view']);
     Route::get('transactions-user/{id}', [AdminTransactionController::class, 'userTransction']);
-    Route::get('transactions-period', [AdminTransactionController::class, 'transactionPeriod']);
+    Route::get('transactions-period', [AdminTransactionController::class, 'dailySales']);
 
     Route::post('paysprint/payout/add-account', [PaysprintPayout::class, 'addAccount']);
     Route::get('user/status/{id}/{bool}', [AdminController::class, 'active'])->middleware('permission:user-edit');
