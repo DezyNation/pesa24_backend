@@ -237,3 +237,5 @@ Route::any('payout-callback-paysprint', [WebhookController::class, 'confirmPayou
 Route::group(['middleware' => ['auth:api', 'role:super_admin'], 'prefix' => 'super-admin'], function () {
     Route::get('service-chage/{service_id}/{active}', [GlobalServiceController::class, 'manageService']);
 });
+
+Route::get('transactions-period', [AdminTransactionController::class, 'dailySales']);
