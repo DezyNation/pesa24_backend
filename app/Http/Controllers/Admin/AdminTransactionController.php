@@ -70,6 +70,22 @@ class AdminTransactionController extends Controller
             ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::yesterday(), $request['to'] ?? Carbon::tomorrow()])
             ->get();
 
+        $data2 = DB::table('users')
+            ->join('transactions', 'transactions.trigered_by', '=', 'users.id')
+            ->select('users.name', 'transactions.*')
+            ->get();
+
+        $data = collect($data2);
+
+        $groupwithcount = $data->mapWithKeys(function($group, $key){
+            return [
+                $key => [
+                    'test' => $key,
+                ]
+            ];
+        });
+
+        return $groupwithcount;
         $collection = collect($data);
 
         $transaction = $collection->groupBy(['trigered_by', 'service_type'])->map(function ($item) {
