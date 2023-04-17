@@ -74,7 +74,7 @@ class AdminTransactionController extends Controller
 
         $transaction = $collection->groupBy(['trigered_by', 'service_type'])->map(function ($item) {
             return $item->map(function ($key) {
-                return ['trigered_by' => $key, 'debit_amount' => $key->sum('debit_amount'), 'credit_amount' => $key->sum('credit_amount')];
+                return ['transactions' => $key, 'debit_amount' => $key->sum('debit_amount'), 'credit_amount' => $key->sum('credit_amount')];
             });
         });
 
