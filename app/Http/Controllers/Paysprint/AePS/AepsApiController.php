@@ -134,6 +134,7 @@ class AepsApiController extends CommissionController
 
             $transaction_id = "AEPSW" . strtoupper(Str::random(9));
             $this->transaction($data['amount'], "AePS withdrawal for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->aepsComission($data['amount'], auth()->user()->id);
         }
         // $this->aepsCommssion($data['amount'], auth()->user()->id);
         return $response;
@@ -206,7 +207,7 @@ class AepsApiController extends CommissionController
             'data' => $pid,
             'pipe' => 'bank3',
             'timestamp' => now(),
-            'submerchantid' => 1,
+            'submerchantid' => auth()->user()->phone_number,
             'transactiontype' => 'BE',
             'is_iris' => 'No'
         ];
@@ -223,6 +224,89 @@ class AepsApiController extends CommissionController
             'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://paysprint.in/service-api/api/v1/service/aeps/ministatement/index', ['body' => $body]);
 
+        if ($response['status'] == true && $response['response_code'] == 1) {
+            $metadata = [
+                'status' => $response['status'],
+                'message' => $data['message'],
+                'amount' => $data['amount'],
+                'bankrrn' => $response['bankrrn'],
+                'reference_id' => $data['referenceno'],
+                'acknowldgement_number' => $response['ackno'],
+            ];
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $balance_left = $walletAmt[0] - $data['amount'];
+            User::where('id', auth()->user()->id)->update([
+                'wallet' => $balance_left
+            ]);
+
+            $transaction_id = "AEPSW" . strtoupper(Str::random(9));
+            $this->transaction($data['amount'], "AePS Mini Statement for {$data['mobilenumber']}", 'mini-statement', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->aepsMiniComission($data['amount'], auth()->user()->id);
+        }
+
+        return $response;
+    }
+
+    public function aadhaarPay(Request $request)
+    {
+        $key = '060e37d1f82cde00';
+        $iv = '788a4b959058271e';
+
+        $pid = $request['pid'];
+
+        $latlong = explode(",", $request['latlong']);
+
+        $data = [
+            'latitude' => $latlong[0] ?? 22.78,
+            'longitude' => $latlong[1] ?? 19.45,
+            'mobilenumber' => $request['customerId'],
+            'referenceno' => uniqid(),
+            'ipaddress' => $request->ip(),
+            'amount' => $request['amount'],
+            'adhaarnumber' => $request['aadhaarNo'],
+            'accessmodetype' => 'SITE',
+            'nationalbankidentification' => 652294,
+            'requestremarks' => 'AePS Withdrwal',
+            'data' => $pid,
+            'pipe' => 'bank2',
+            'timestamp' => now(),
+            'submerchantid' => 9971412064,
+            'transactiontype' => 'BE',
+            'is_iris' => 'No'
+        ];
+
+        $cipher = openssl_encrypt(json_encode($data, true), 'AES-128-CBC', $key, $options = OPENSSL_RAW_DATA, $iv);
+        $body = base64_encode($cipher);
+
+        $token = $this->token();
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Token' => $token,
+            'accept' => 'application/json',
+            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+        ])->post('https://paysprint.in/service-api/api/v1/service/aadharpay/aadharpay/index', ['body' => $body]);
+
+        if ($response['status'] == true && $response['response_code'] == 1) {
+            $metadata = [
+                'status' => $response['status'],
+                'message' => $data['message'],
+                'amount' => $data['amount'],
+                'bankrrn' => $response['bankrrn'],
+                'bankiin' => $response['bankiin'],
+                'reference_id' => $data['referenceno'],
+                'acknowldgement_number' => $response['ackno'],
+            ];
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $balance_left = $walletAmt[0] - $data['amount'];
+            User::where('id', auth()->user()->id)->update([
+                'wallet' => $balance_left
+            ]);
+
+            $transaction_id = "AAPAY" . strtoupper(Str::random(9));
+            $this->transaction($data['amount'], "Aadhaar Pay {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->aepsComission($data['amount'], auth()->user()->id);
+        }
+        // $this->aepsCommssion($data['amount'], auth()->user()->id);
         return $response;
     }
 }

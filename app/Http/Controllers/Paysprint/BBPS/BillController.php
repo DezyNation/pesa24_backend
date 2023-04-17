@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Paysprint\BBPS;
 
+use App\Http\Controllers\CommissionController;
+use App\Models\User;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 
-class BillController extends Controller
+class BillController extends CommissionController
 {
 
     public function token(): string
@@ -84,7 +87,23 @@ class BillController extends Controller
         ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paybill', $data);
 
         if ($response->json($key = 'status') == true) {
-            
+            $metadata = [
+                'status' => $response['status'],
+                'message' => $data['message'],
+                'amount' => $data['amount'],
+                'operatorid' => $response['operatorid'],
+                'reference_id' => $data['referenceid'],
+                'acknowldgement_number' => $response['ackno'],
+            ];
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $balance_left = $walletAmt[0] - $data['amount'];
+            User::where('id', auth()->user()->id)->update([
+                'wallet' => $balance_left
+            ]);
+
+            $transaction_id = "BBPS" . strtoupper(Str::random(9));
+            $this->transaction($data['amount'], "Bill Payment", 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->bbpsPaysprintCommission(auth()->user()->id, $data['operator'], $data['amount']);
         }
 
         return $response;
