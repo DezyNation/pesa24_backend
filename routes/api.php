@@ -144,6 +144,7 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'onboard'])->group(
 
     /*-----------------------Pysprint AePS-----------------------*/
     Route::post('paysprint/aeps/money-transfer/{service_id}', [AepsApiController::class, 'withdrwal']);
+    Route::post('paysprint/aeps/mini-statement/{service_id}', [AepsApiController::class, 'miniStatement']);
     Route::get('paysprint/aeps/fetch-bank/{service_id}', [AepsApiController::class, 'bankList']);
     Route::get('paysprint/aeps/transaction-status/{service_id}', [AepsApiController::class, 'transactionStatus']);
     /*-----------------------Pysprint AePS-----------------------*/

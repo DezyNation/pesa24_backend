@@ -70,27 +70,30 @@ class AdminTransactionController extends Controller
             ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::yesterday(), $request['to'] ?? Carbon::tomorrow()])
             ->get();
 
-        $data2 = DB::table('users')
-            ->join('transactions', 'transactions.trigered_by', '=', 'users.id')
-            ->select('users.name', 'transactions.*')
-            ->get();
+        // $data2 = DB::table('users')
+        //     ->join('transactions', 'transactions.trigered_by', '=', 'users.id')
+        //     ->select('users.name', 'transactions.*')
+        //     ->get();
 
-        $data = collect($data2);
+        // $data = collect($data2);
 
-        $groupwithcount = $data->mapWithKeys(function($group, $key){
-            return [
-                $key => [
-                    'test' => $key,
-                ]
-            ];
-        });
+        // $groupwithcount = $data->map(function ($group) {
+        //     return [
+        //         [
+        //             'test' => $group->name,
+        //             'transaction_id' => $group->transaction_id,
+        //             'debit_amount' => $group->debit_amount,
+        //             'credit_amount' => $group->credit_amount,
+        //         ]
+        //     ];
+        // });
 
-        return $groupwithcount;
+        // return $groupwithcount;
         $collection = collect($data);
 
         $transaction = $collection->groupBy(['trigered_by', 'service_type'])->map(function ($item) {
             return $item->map(function ($key) {
-                return [$key, 'debit_amount' => $key->sum('debit_amount'), 'credit_amount' => $key->sum('credit_amount')];
+                return ['transactions' => $key, 'debit_amount' => $key->sum('debit_amount'), 'credit_amount' => $key->sum('credit_amount')];
             });
         });
 
