@@ -202,7 +202,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://api.paysprint.in/api/v1/service/dmt/transact/transact', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact', $data);
 
         if ($response->json($key = 'status') == true) {
             $metadata = [
