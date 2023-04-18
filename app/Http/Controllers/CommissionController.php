@@ -850,7 +850,7 @@ class CommissionController extends Controller
     public function bbpsPaysprintCommission($user_id, $operator, $amount)
     {
         $table = DB::table('b_b_p_s')
-            ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
+            ->join('package_user', 'package_user.package_id', '=', 'b_b_p_s.package_id')
             ->where(['package_user.user_id' => $user_id, 'b_b_p_s.paysprint_id' => $operator])->where('b_b_p_s.from', '<', $amount)->where('b_b_p_s.to', '>=', $amount)
             ->get();
 
@@ -902,7 +902,7 @@ class CommissionController extends Controller
     public function bbpsParentPaysprintCommission($user_id, $operator, $amount)
     {
         $table = DB::table('b_b_p_s')
-            ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
+            ->join('package_user', 'package_user.package_id', '=', 'b_b_p_s.package_id')
             ->where(['package_user.user_id' => $user_id, 'b_b_p_s.paysprint_id' => $operator])->where('b_b_p_s.from', '<', $amount)->where('b_b_p_s.to', '>=', $amount)
             ->get();
 

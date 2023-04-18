@@ -78,7 +78,7 @@ class BillController extends CommissionController
             'latitude' => $request['latitude'],
             'longitude' => $request['longitude'],
             'mode' => 'online',
-            'bill_fetch' => json_decode($request['bill'], true)
+            'bill_fetch' => json_encode($request['bill'], true)
         ];
 
         $response = Http::acceptJson()->withHeaders([
@@ -87,10 +87,11 @@ class BillController extends CommissionController
             'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paybill', $data);
 
-        if ($response->json($key = 'status') == true) {
+        return $response;
+        if ($response->json($key = 'response_code') == 1 || $response->json($key = 'response_code') == 0) {
             $metadata = [
                 'status' => $response['status'],
-                'message' => $data['message'],
+                'message' => $response['message'],
                 'amount' => $data['amount'],
                 'operatorid' => $response['operatorid'],
                 'reference_id' => $data['referenceid'],
@@ -105,10 +106,16 @@ class BillController extends CommissionController
             $transaction_id = "BBPS" . strtoupper(Str::random(9));
             $this->transaction($data['amount'], "Bill Payment", 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->bbpsPaysprintCommission(auth()->user()->id, $data['operator'], $data['amount']);
+
+            return response($response['message']);
         }
 
-        return $response;
+        if ($response->json($key = 'response_code') == 16 || $response->json($key = 'response_code') == 6 || $response->json($key = 'response_code') == 12) {
+            return response("Server Busy pleasy try later!", 501);
+        }
+        return response($response['message'], 400);
     }
+
 
     public function statusEnquiry(Request $request)
     {
