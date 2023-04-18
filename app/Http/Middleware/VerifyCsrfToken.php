@@ -20,7 +20,8 @@ class VerifyCsrfToken extends Middleware
         'send-otp',
         'forgot-password',
         'reset-password',
-        'logout'
+        'logout',
+        'admin/login'
     ];
 
 
