@@ -70,15 +70,17 @@ class BillController extends CommissionController
     {
         $token = $this->token();
 
+        $latlong = explode(",", $request['latlong']);
+
         $data = [
             'operator' => $request['operator_id'],
             'canumber' => $request['canumber'],
             'amount' => $request['amount'],
             'referenceid' => uniqid() . Str::random(12),
-            'latitude' => $request['latitude'],
-            'longitude' => $request['longitude'],
+            'latitude' => $latlong[0],
+            'longitude' => $latlong[1],
             'mode' => 'online',
-            'bill_fetch' => $request['bill']
+            'bill_fetch' => json_decode($request['bill'], true)
         ];
 
         $response = Http::acceptJson()->withHeaders([
