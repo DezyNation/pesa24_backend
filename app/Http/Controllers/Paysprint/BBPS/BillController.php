@@ -78,7 +78,7 @@ class BillController extends CommissionController
             'latitude' => $request['latitude'],
             'longitude' => $request['longitude'],
             'mode' => 'online',
-            'bill' => $request['bill']
+            'bill_fetch' => $request['bill']
         ];
 
         $response = Http::acceptJson()->withHeaders([
