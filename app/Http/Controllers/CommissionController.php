@@ -340,7 +340,13 @@ class CommissionController extends Controller
         $table = DB::table('d_m_t_s')
             ->join('package_user', 'package_user.package_id', '=', 'd_m_t_s.package_id')
             ->where('package_user.user_id', $user_id)->where('d_m_t_s.from', '<', $amount)->where('d_m_t_s.to', '>=', $amount)
-            ->get()[0];
+            ->get();
+
+            if ($table->isEmpty()) {
+                return response("No comissions.");
+            }
+
+            $table = $table[0];
 
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
