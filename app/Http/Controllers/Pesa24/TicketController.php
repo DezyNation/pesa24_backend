@@ -11,12 +11,16 @@ class TicketController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->hasFile('attachments')) {
+            $ticket = $request->file('attachments')->store('tickets');
+        }
         $ticket = DB::table('tickets')->insert([
             'user_id' => auth()->user()->id,
             'title' => $request['title'],
+            'transaction_id' => $request['linkedTransactionId'],
             'body' => $request['body'],
             'status' => 'created',
-            'organization_id' => auth()->user()->organization_id,
+            'document' => $ticket ?? null,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -26,8 +30,7 @@ class TicketController extends Controller
 
     public function index()
     {
-        $org_id = DB::table('organizations')->where('code', session()->get('organization_code'))->pluck('id');
-        $data = DB::table('tickets')->where('organization_id', $org_id)->get();
+        $data = DB::table('tickets')->where('user_id', auth()->user()->id)->get();
         return $data;
     }
 

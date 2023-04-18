@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\CommissionController;
 use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -185,6 +186,10 @@ class PayoutController extends CommissionController
         if ($request['beneficiaryId'] == auth()->user()->id) {
             return response("You can not send to money to yourself.", 403);
         }
+        $user = User::find($request['beneficiaryId']);
+        if (!$user) {
+            return response("User not found!", 404);
+        }
         $transaction_id = strtoupper(uniqid() . Str::random(8));
         $data = DB::table('money_transfers')->insert([
             'sender_id' => auth()->user()->id,
@@ -196,7 +201,6 @@ class PayoutController extends CommissionController
             'updated_at' => now()
         ]);
 
-        $user = User::findOrFail($request['beneficiaryId']);
         $final_amount = $user->wallet + $request['amount'];
         $metadata = [
             'status' => true,

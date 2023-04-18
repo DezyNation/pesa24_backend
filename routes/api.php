@@ -82,7 +82,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     /*-----------------------Tickets-----------------------*/
     Route::post('tickets', [TicketController::class, 'store']);
-    Route::get('tickets', [TicketController::class, 'index']);
+    Route::get('user/tickets', [TicketController::class, 'index']);
     Route::get('tickets/user/{id}', [TicketController::class, 'userTicket']);
     Route::get('tickets/{id}', [TicketController::class, 'ticket']);
     Route::post('tickets/{id}', [TicketController::class, 'update']);
@@ -178,7 +178,7 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'onboard'])->group(
     /*-----------------------Paysprint Recharge-----------------------*/
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
     Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
-    Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge']);
+    Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge'])->middleware('mpin');
     /*-----------------------Paysprint Recharge-----------------------*/
 });
 

@@ -17,6 +17,9 @@ class MPIN
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $request->validate([
+            'mpin' => 'required'
+        ]);
         $user = User::findOrFail(auth()->user()->id);
         if (!Hash::check($request['mpin'], $user->mpin)) {
             return response("MPIN is wrong!", 406);

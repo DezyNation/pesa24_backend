@@ -15,7 +15,7 @@ class FundRequestController extends Controller
             'amount' => 'required|integer',
             'bankName' => 'required|string',
             'transactionType' => 'required|string',
-            'transactionId' => 'required|string',
+            'transactionId' => 'required|string|unique:funds,transaction_id',
             'transactionDate' => 'required|date',
             'receipt' => 'mimes:jpg,jpeg,png,pdf|max:2048'
         ]);
@@ -87,7 +87,7 @@ class FundRequestController extends Controller
 
     public function fetchFundUser()
     {
-        $data = DB::table('funds')->where('user_id', auth()->user()->id)->get([
+        $data = DB::table('funds')->where('user_id', auth()->user()->id)->select(
             'amount',
             'bank_name',
             'transaction_id',
@@ -96,8 +96,9 @@ class FundRequestController extends Controller
             'transaction_date',
             'receipt',
             'remarks',
-            'admin_remarks'
-        ]);
+            'admin_remarks',
+            'created_at'
+        )->paginate(20);
 
         return $data;
     }
