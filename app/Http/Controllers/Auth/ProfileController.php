@@ -70,9 +70,9 @@ class ProfileController extends AgentManagementController
             'values.phone' => ['required', Rule::unique('users', 'phone_number')->ignore(auth()->user()->id)],
             'values.pan' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')->ignore(auth()->user()->id)],
             'values.firmName' => ['max:255'],
-            'values.aadhaarFront' => ['exists:users,aadhar_front', 'max:2048'],
-            'values.aadhaarBack' => ['exists:users,aadhar_back', 'max:2048'],
-            'values.panCard' => ['exists:users,pan_photo', 'max:2048'],
+            'values.aadhaarFront' => ['file', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'values.aadhaarBack' => ['file', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'values.panCard' => ['file', 'mimes:jpg,jpeg,png', 'max:2048'],
             'values.deviceNumber' => ['required', 'string'],
             'values.modelName' => ['required', 'string'],
         ]);
