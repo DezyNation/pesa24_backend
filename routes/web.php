@@ -66,7 +66,7 @@ Route::get('/', function () {
 // });
 
 Route::get('paysprint-test', [PaysprintPayout::class, 'testdocuments']);
-Route::get('bill-test', [OnboardController::class, 'onboard']);
+Route::get('bill-test/{id?}', [BillController::class, 'operatorParameter']);
 Route::get('paysprint-test1/{user_id}/{operator}/{amount}', [CommissionController::class, 'rechargeCommissionPaysprint']);
 
 Route::get('admin', function () {

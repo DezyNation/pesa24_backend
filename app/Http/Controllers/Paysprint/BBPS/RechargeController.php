@@ -145,24 +145,6 @@ class RechargeController extends CommissionController
     }
     /*------------------------------------------Recharge v2------------------------------------------*/
 
-
-    public function operatorParameter($id)
-    {
-        $token  = $this->token();
-
-        $data = [
-            "mode" => "online",
-        ];
-        $response = Http::acceptJson()->withHeaders([
-            'Token' => $token,
-            'accept' => 'application/json',
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
-            'content-type' => 'application/json',
-        ])->post("https://paysprint.in/service-api/api/v1/service/bill-payment/bill/getoperator", []);
-
-        return collect($response->json($key = 'data'))->whereIn('id', $id);
-    }
-
     public function parameter()
     {
         $token  = $this->token();

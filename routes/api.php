@@ -30,6 +30,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Pesa24\Dashboard\UserDashboardController;
 use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
+use App\Http\Controllers\Paysprint\BBPS\BillController;
 use App\Http\Controllers\Paysprint\CallbackController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Controllers\Razorpay\WebhookController;
@@ -145,6 +146,8 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'onboard'])->group(
     /*-----------------------Pysprint AePS-----------------------*/
     Route::post('paysprint/aeps/money-transfer/{service_id}', [AepsApiController::class, 'withdrwal']);
     Route::post('paysprint/aeps/mini-statement/{service_id}', [AepsApiController::class, 'miniStatement']);
+    Route::post('paysprint/aeps/balance-enquiry/{service_id}', [AepsApiController::class, 'enquiry']);
+    Route::post('paysprint/aeps/aadhaar-pay/{service_id}', [AepsApiController::class, 'aadhaarPay']);
     Route::get('paysprint/aeps/fetch-bank/{service_id}', [AepsApiController::class, 'bankList']);
     Route::get('paysprint/aeps/transaction-status/{service_id}', [AepsApiController::class, 'transactionStatus']);
     /*-----------------------Pysprint AePS-----------------------*/
@@ -167,9 +170,13 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'onboard'])->group(
     /*-----------------------Paysprint DMT-----------------------*/
 
 
+    /*-----------------------Paysprint BBPS-----------------------*/
+    Route::get('paysprint/bbps/operators/categories/{id?}', [BillController::class, 'operatorParameter']);
+    Route::post('paysprint/bbps/fetch-bill', [BillController::class, 'fetchBill']);
+    Route::post('paysprint/bbps/pay-bill', [BillController::class, 'payBill']);
+    /*-----------------------Paysprint BBPS-----------------------*/
     /*-----------------------Paysprint Recharge-----------------------*/
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
-    Route::get('paysprint/bbps/mobile-operators/parameter/{id}', [RechargeController::class, 'operatorParameter']);
     Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
     Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge']);
     /*-----------------------Paysprint Recharge-----------------------*/

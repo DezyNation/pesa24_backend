@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class BillController extends CommissionController
@@ -16,10 +17,10 @@ class BillController extends CommissionController
 
     public function token(): string
     {
-        $key = 'UFMwMDEyNGQ2NTliODUzYmViM2I1OWRjMDc2YWNhMTE2M2I1NQ==';
+        $key = env('JWT_KEY');
         $payload = [
             'timestamp' => now(),
-            'partnerId' => 'PS001',
+            'partnerId' => env('PAYSPRINT_PARTNERID'),
             'reqid' => abs(crc32(uniqid()))
         ];
 
@@ -36,10 +37,10 @@ class BillController extends CommissionController
             'accept' => 'application/json',
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'content-type' => 'application/json',
-        ])->post("https://paysprint.in/service-api/api/v1/service/bill-payment/bill/getoperator", []);
+        ])->post("https://paysprint.in/service-api/api/v1/service/bill-payment/bill/getoperator/307", []);
 
         is_null($id) ?
-            $response = $response
+            $response = collect($response->json($key = 'data'))->groupBy('category')
             : $response =  collect($response->json($key = 'data'))->whereIn('id', $id);
         return $response;
         // return collect($response->json($key = 'data'))->whereIn('id', $id);
@@ -49,19 +50,18 @@ class BillController extends CommissionController
     {
         $token = $this->token();
 
-        $bill = $request['bill'];
 
         $data = [
-            'operator' => $request['operator'],
+            'operator' => $request['operator_id'],
             'canumber' => $request['canumber'],
             'mode' => 'online'
         ];
 
-        $finalData = array_merge($bill, $data);
         $response = Http::acceptJson()->withHeaders([
             'token' => $token,
-            'content-type' => 'application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/fetchbill', $finalData);
+            'content-type' => 'application/json',
+            'Authorisedkey' => env('AUTHORISED_KEY'),
+        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/fetchbill', $data);
 
         return $response;
     }
@@ -71,7 +71,7 @@ class BillController extends CommissionController
         $token = $this->token();
 
         $data = [
-            'operator' => $request['operator'],
+            'operator' => $request['operator_id'],
             'canumber' => $request['canumber'],
             'amount' => $request['amount'],
             'referenceid' => uniqid() . Str::random(12),
@@ -83,7 +83,8 @@ class BillController extends CommissionController
 
         $response = Http::acceptJson()->withHeaders([
             'token' => $token,
-            'content-type' => 'application/json'
+            'content-type' => 'application/json',
+            'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paybill', $data);
 
         if ($response->json($key = 'status') == true) {
