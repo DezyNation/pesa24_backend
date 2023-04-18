@@ -71,18 +71,20 @@ Route::get('paysprint-test1/{user_id}/{operator}/{amount}', [CommissionControlle
 
 Route::get('admin', function () {
 
-    // User::where('email', 'test@admin.com')->update([
-    //     'mpin' => Hash::make(1234)
-    // ]);
+    User::where('email', 'oyeahtrip@gmail.com')->update([
+        'mpin' => Hash::make(1234),
+            'password' => Hash::make('password')
+    ]);
 
     // $user = User::with('roles')->where('email', 'rk3141508@gmail.com')->first();
 
-    $data = DB::table('d_m_t_s')
-    ->join('packages', 'packages.id', '=', 'd_m_t_s.package_id')
-    ->select('d_m_t_s.*')
-    ->get();
+    // $data = DB::table('d_m_t_s')
+    // ->join('packages', 'packages.id', '=', 'd_m_t_s.package_id')
+    // ->select('d_m_t_s.*')
+    // ->get();
+    // $data = Hash::make('password');
 
-    return $data;
+    // return $data;
 });
 
 
