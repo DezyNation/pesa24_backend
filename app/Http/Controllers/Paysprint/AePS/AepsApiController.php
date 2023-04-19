@@ -141,7 +141,7 @@ class AepsApiController extends CommissionController
             $this->transaction(0, "AePS withdrawal for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
         // $this->aepsCommssion($data['amount'], auth()->user()->id);
-        return ['message' => $response[0], 'metadata' => $metadata];
+        return ['message' => $response->object(), 'metadata' => $metadata];
     }
 
     public function bankList()
@@ -250,7 +250,7 @@ class AepsApiController extends CommissionController
             $this->transaction(0, "Mini Statement for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
 
-        return ['message' => $response[0], 'metadata' => $metadata];
+        return ['message' => $response->object(), 'metadata' => $metadata];
     }
 
     public function aadhaarPay(Request $request)
@@ -263,8 +263,8 @@ class AepsApiController extends CommissionController
         $latlong = explode(",", $request['latlong']);
 
         $data = [
-            'latitude' => $latlong[0] ?? 22.78,
-            'longitude' => $latlong[1] ?? 19.45,
+            'latitude' => $latlong[0],
+            'longitude' => $latlong[1],
             'mobilenumber' => $request['customerId'],
             'referenceno' => uniqid(),
             'ipaddress' => $request->ip(),
@@ -276,7 +276,7 @@ class AepsApiController extends CommissionController
             'data' => $pid,
             'pipe' => 'bank2',
             'timestamp' => now(),
-            'submerchantid' => 9971412064,
+            'submerchantid' => auth()->user()->phone_number,
             'transactiontype' => 'BE',
             'is_iris' => 'No'
         ];
@@ -328,6 +328,6 @@ class AepsApiController extends CommissionController
             $this->transaction(0, "Aadhaar Pay {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
         // $this->aepsCommssion($data['amount'], auth()->user()->id);
-        return ['message' => $response[0], 'metadata' => $metadata];
+        return ['message' => $response->object(), 'metadata' => $metadata];
     }
 }

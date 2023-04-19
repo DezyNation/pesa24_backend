@@ -65,7 +65,7 @@ Route::get('/', function () {
 //     }
 // });
 
-Route::get('paysprint-test', [PaysprintPayout::class, 'testdocuments']);
+Route::get('paysprint-test', [PaysprintAeps::class, 'aadhaarPay']);
 Route::get('bill-test/{id?}', [BillController::class, 'operatorParameter']);
 Route::get('paysprint-test1/{user_id}/{operator}/{amount}', [CommissionController::class, 'rechargeCommissionPaysprint']);
 
