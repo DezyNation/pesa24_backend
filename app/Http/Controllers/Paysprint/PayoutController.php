@@ -201,7 +201,7 @@ class PayoutController extends CommissionController
             'status' => true,
             'event' => 'money-transfer',
             'transaction_id' => $transaction_id,
-            'created_at' => Carbon::now()[0],
+            'created_at' => now(),
             'amount' => $request['amount'],
             'from' => auth()->user()->name . " " . auth()->user()->phone_number
         ];
@@ -226,7 +226,7 @@ class PayoutController extends CommissionController
             'amount' => $request['amount'],
             'to' => $user->name . " " . $user->phone_number,
             'transaction_id' => $transaction_id,
-            'created_at' => Carbon::now()[0],
+            'created_at' => now(),
         ];
         $user = User::findOrFail(auth()->user()->id);
         $final_amount = $user->wallet - $request['amount'];
