@@ -224,7 +224,6 @@ class PayoutController extends CommissionController
             'status' => true,
             'event' => 'money-transfer',
             'amount' => $request['amount'],
-            'to' => $user->name . " " . $user->phone_number,
             'transaction_id' => $transaction_id,
             'created_at' => now(),
         ];
