@@ -176,6 +176,7 @@ class PayoutController extends CommissionController
             ->join('users as recievers', 'recievers.id', '=', 'money_transfers.reciever_id')
             ->where('money_transfers.sender_id', auth()->user()->id)
             ->select('recievers.name', 'recievers.phone_number', 'recievers.id as reciever_id', 'money_transfers.*')
+            ->latest()
             ->paginate(20);
 
         return $data;
@@ -186,6 +187,10 @@ class PayoutController extends CommissionController
         if ($request['beneficiaryId'] == auth()->user()->id) {
             return response("You can not send to money to yourself.", 403);
         }
+
+        $request->validate([
+            'amount' => 'min:1|numeric'
+        ]);
         $user = User::find($request['beneficiaryId']);
         if (!$user) {
             return response("User not found!", 404);
@@ -222,7 +227,7 @@ class PayoutController extends CommissionController
         $transaction_id = strtoupper(uniqid() . Str::random(8));
         $this->transaction($request['amount'], 'Money Transfer to User account', 'money-transfer', auth()->user()->id, $user->wallet, $transaction_id, $final_amount, json_encode($metadata));
         $user->update(['wallet' => $final_amount]);
-        return response()->json(['message' => "Successfull"]);
+        return response()->json(['message' => "Successfull", 'metadata' => $metadata]);
     }
 
     public function testdocuments()
