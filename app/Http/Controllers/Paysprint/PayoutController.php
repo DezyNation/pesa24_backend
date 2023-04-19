@@ -211,7 +211,7 @@ class PayoutController extends CommissionController
             'amount' => $request['amount'],
             'remarks' => $request['remarks'],
             'transaction_id' => $transaction_id,
-            'metadata' => $metadata,
+            'metadata' => json_encode($metadata),
             'created_at' => now(),
             'updated_at' => now()
         ]);

@@ -83,7 +83,8 @@ Route::get('admin', function () {
     // ->select('d_m_t_s.*')
     // ->get();
     // $data = Hash::make('password');
-
+    $transaction_id = strtoupper(uniqid() . Str::random(8));
+    return $transaction_id;
     // return $data;
 });
 
