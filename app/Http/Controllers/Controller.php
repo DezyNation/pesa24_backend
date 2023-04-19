@@ -50,7 +50,7 @@ class Controller extends BaseController
             'opening_balance' => $opening_balance,
             'closing_balance' => $closing_balance,
             'service_type' => $service_type,
-            'meta_data' => $metadata,
+            'metadata' => $metadata,
             'transaction_id' => $transaction_id,
             'created_at' => now(),
             'updated_at' => now()
