@@ -225,7 +225,7 @@ class PayoutController extends CommissionController
             'event' => 'money-transfer',
             'amount' => $request['amount'],
             'transaction_id' => $transaction_id,
-            'created_at' => date("F j, Y, g:i a");,
+            'created_at' => date("F j, Y, g:i a"),
         ];
         $user = User::findOrFail(auth()->user()->id);
         $final_amount = $user->wallet - $request['amount'];
