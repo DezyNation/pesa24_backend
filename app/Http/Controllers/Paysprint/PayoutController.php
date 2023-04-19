@@ -210,6 +210,8 @@ class PayoutController extends CommissionController
         $metadata = [
             'status' => true,
             'event' => 'money-transfer',
+            'transaction_id' => $transaction_id,
+            'created_at' => time(),
             'amount' => $request['amount'],
             'from' => auth()->user()->name . " " . auth()->user()->phone_number
         ];
@@ -221,6 +223,7 @@ class PayoutController extends CommissionController
             'event' => 'money-transfer',
             'amount' => $request['amount'],
             'to' => $user->name . " " . $user->phone_number,
+            'transaction_id' => $transaction_id,
             'created_at' => time(),
         ];
         $user = User::findOrFail(auth()->user()->id);
