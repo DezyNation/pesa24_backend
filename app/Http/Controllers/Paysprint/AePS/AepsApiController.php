@@ -107,11 +107,14 @@ class AepsApiController extends CommissionController
         ])->post('https://paysprint.in/service-api/api/v1/service/aeps/cashwithdraw/index', ['body' => $body]);
 
         if ($response['status'] == true && $response['response_code'] == 1) {
+            $transaction_id = "AEPSW" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => $response['status'],
                 'message' => $data['message'],
                 'amount' => $data['amount'],
                 'bankrrn' => $response['bankrrn'],
+                'transaction_id' => $transaction_id,
+                'created_at' => date("F j, Y, g:i a"),
                 'reference_id' => $data['referenceno'],
                 'acknowldgement_number' => $response['ackno'],
             ];
@@ -121,19 +124,20 @@ class AepsApiController extends CommissionController
                 'wallet' => $balance_left
             ]);
 
-            $transaction_id = "AEPSW" . strtoupper(Str::random(9));
             $this->transaction($data['amount'], "AePS withdrawal for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->aepsComission($data['amount'], auth()->user()->id);
         } else {
+            $transaction_id = "AEPS" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => false,
                 'message' => "Trasaction failed",
                 'amount' => $data['amount'],
+                'transaction_id' => $transaction_id,
+                'created_at' => date("F j, Y, g:i a"),
                 'reference_id' => $data['referenceno'],
                 'mobile_number' => $data['mobilenumber'],
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $transaction_id = "AEPS" . strtoupper(Str::random(9));
             $this->transaction(0, "AePS withdrawal for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
         // $this->aepsCommssion($data['amount'], auth()->user()->id);
@@ -213,11 +217,14 @@ class AepsApiController extends CommissionController
         ])->post('https://paysprint.in/service-api/api/v1/service/aeps/ministatement/index', ['body' => $body]);
 
         if ($response['status'] == true && $response['response_code'] == 1) {
+            $transaction_id = "AEPSW" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => $response['status'],
                 'message' => $data['message'],
                 'amount' => $data['amount'],
                 'bankrrn' => $response['bankrrn'],
+                'transaction_id' => $transaction_id,
+                'created_at' => date("F j, Y, g:i a"),
                 'reference_id' => $data['referenceno'],
                 'acknowldgement_number' => $response['ackno'],
             ];
@@ -227,18 +234,19 @@ class AepsApiController extends CommissionController
                 'wallet' => $balance_left
             ]);
 
-            $transaction_id = "AEPSW" . strtoupper(Str::random(9));
             $this->transaction(0, "AePS Mini Statement for {$data['mobilenumber']}", 'mini-statement', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->aepsMiniComission($data['amount'], auth()->user()->id);
         } else {
+            $transaction_id = "MINIS" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => false,
                 'message' => "Trasaction failed",
+                'transaction_id' => $transaction_id,
+                'created_at' => date("F j, Y, g:i a"),
                 'reference_id' => $data['referenceno'],
                 'mobile_number' => $data['mobilenumber'],
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $transaction_id = "MINIS" . strtoupper(Str::random(9));
             $this->transaction(0, "Mini Statement for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
 
@@ -285,12 +293,15 @@ class AepsApiController extends CommissionController
         ])->post('https://paysprint.in/service-api/api/v1/service/aadharpay/aadharpay/index', ['body' => $body]);
 
         if ($response['status'] == true && $response['response_code'] == 1) {
+            $transaction_id = "AAPAY" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => $response['status'],
                 'message' => $data['message'],
                 'amount' => $data['amount'],
                 'bankrrn' => $response['bankrrn'],
                 'bankiin' => $response['bankiin'],
+                'created_at' => date("F j, Y, g:i a"),
+                'transaction_id' => $transaction_id,
                 'reference_id' => $data['referenceno'],
                 'acknowldgement_number' => $response['ackno'],
             ];
@@ -300,11 +311,23 @@ class AepsApiController extends CommissionController
                 'wallet' => $balance_left
             ]);
 
-            $transaction_id = "AAPAY" . strtoupper(Str::random(9));
-            $this->transaction($data['amount'], "Aadhaar Pay {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction($data['amount'], "Aadhaar Pay {$data['mobilenumber']}", 'aadhaar-pay', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->aepsComission($data['amount'], auth()->user()->id);
+        }   else {
+            $transaction_id = "AADHP" . strtoupper(Str::random(9));
+            $metadata = [
+                'status' => false,
+                'transaction_id' => $transaction_id,
+                'created_at' => date("F j, Y, g:i a"),
+                'event' => 'aadhar-pay',
+                'message' => "Trasaction failed",
+                'reference_id' => $data['referenceno'],
+                'mobile_number' => $data['mobilenumber'],
+            ];
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $this->transaction(0, "Aadhaar Pay {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
         // $this->aepsCommssion($data['amount'], auth()->user()->id);
-        return $response;
+        return ['message' => $response, 'metadata' => $metadata];
     }
 }
