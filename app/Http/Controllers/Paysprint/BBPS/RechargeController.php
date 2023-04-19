@@ -81,9 +81,9 @@ class RechargeController extends CommissionController
     {
         $token = $this->token();
         $data = [
-            'operator' =>  $request['operator'] ?? 11,
-            'canumber' =>  $request['canumber'] ?? 9971412064,
-            'amount' =>  $request['amount'] ?? 19,
+            'operator' =>  $request['operator'],
+            'canumber' =>  $request['canumber'],
+            'amount' =>  $request['amount'],
             'referenceid' => uniqid(),
         ];
 
@@ -113,6 +113,17 @@ class RechargeController extends CommissionController
             $transaction_id = "RECH" . strtoupper(Str::random(9));
             $this->transaction($data['amount'], "Recharge for Mobile {$data['canumber']}", 'recharge', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->rechargeCommissionPaysprint(auth()->user()->id, $data['operator'],  $request['amount']);
+        } else {
+            $metadata = [
+                'status' => false,
+                'mobile_number' => $data['canumber'],
+                'amount' => $data['amount'],
+                'refid' => $data['referenceid'],
+                'operator' => $data['operator']
+            ];
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $transaction_id = "RECH" . strtoupper(Str::random(9));
+            $this->transaction($data['amount'], "Recharge for Mobile {$data['canumber']}", 'recharge', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
 
         return $response;

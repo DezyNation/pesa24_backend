@@ -210,6 +210,7 @@ class DMTController extends CommissionController
                 'reference_id' => $data['referenceid'] ?? null,
                 'amount' => $response['txn_amount'] ?? null,
                 'account_number' => $response['account_number'] ?? null,
+                'mobile' => $data['mobile'],
                 'remitter' => $response['remitter'] ?? null,
                 'beneficiary_name' => $response['benename'] ?? null,
                 'acknowldgement_number' => $response['ackno'] ?? null,
@@ -237,6 +238,19 @@ class DMTController extends CommissionController
             ]);
             $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->dmtCommission(auth()->user()->id, $request['amount']);
+        } else {
+            $metadata = [
+                'status' => false,
+                'account_number' => $data['account_number'],
+                'amount' => $data['amount'],
+                'mobile' => $data['mobile'],
+                'reference_id' => $data['referenceid'] ?? null,
+                'operator' => $data['operator'],
+                'beneficiary_name' => $data['beneficiary_name']
+            ];
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $transaction_id = "DMT" . strtoupper(Str::random(9));
+            $this->transaction($data['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
 
         if ($response['status'] == false) {
