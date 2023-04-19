@@ -108,10 +108,17 @@ class BillController extends CommissionController
             $this->bbpsPaysprintCommission(auth()->user()->id, $data['operator'], $data['amount']);
 
             return response($response['message']);
-        }
-
-        if ($response->json($key = 'response_code') == 16 || $response->json($key = 'response_code') == 6 || $response->json($key = 'response_code') == 12) {
+        } elseif ($response->json($key = 'response_code') == 16 || $response->json($key = 'response_code') == 6 || $response->json($key = 'response_code') == 12) {
             return response("Server Busy pleasy try later!", 501);
+        } else {
+            $metadata = [
+                'status' => false,
+                'canumber' => $data['canumber'],
+                'amount' => $data['amount'],
+            ];
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $transaction_id = "DMT" . strtoupper(Str::random(9));
+            $this->transaction($data['amount'], 'Bill payment', 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
         return response($response['message'], 400);
     }
