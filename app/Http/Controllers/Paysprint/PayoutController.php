@@ -201,7 +201,7 @@ class PayoutController extends CommissionController
             'status' => true,
             'event' => 'money-transfer',
             'transaction_id' => $transaction_id,
-            'created_at' => date("F j, Y, g:i a");,
+            'created_at' => date("F j, Y, g:i a"),
             'amount' => $request['amount'],
             'from' => auth()->user()->name . " " . auth()->user()->phone_number
         ];
