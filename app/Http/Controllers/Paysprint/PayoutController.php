@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\CommissionController;
 use Illuminate\Support\Str;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -224,7 +225,7 @@ class PayoutController extends CommissionController
             'amount' => $request['amount'],
             'to' => $user->name . " " . $user->phone_number,
             'transaction_id' => $transaction_id,
-            'created_at' => time(),
+            'created_at' => Carbon::now(),
         ];
         $user = User::findOrFail(auth()->user()->id);
         $final_amount = $user->wallet - $request['amount'];
