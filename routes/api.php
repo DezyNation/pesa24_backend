@@ -241,6 +241,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
 
 Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);
 Route::any('payout-callback-paysprint', [WebhookController::class, 'confirmPayout']);
+Route::any('onboard-callback-paysprint', [WebhookController::class, 'confirmPayout']);
 
 Route::group(['middleware' => ['auth:api', 'role:super_admin'], 'prefix' => 'super-admin'], function () {
     Route::get('service-chage/{service_id}/{active}', [GlobalServiceController::class, 'manageService']);

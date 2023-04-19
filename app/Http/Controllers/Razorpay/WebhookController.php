@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class WebhookController extends CommissionController
 {
@@ -37,5 +38,11 @@ class WebhookController extends CommissionController
         }
 
         return response()->noContent();
+    }
+
+    public function onboardCallback(Request $request)
+    {
+        Log::channel('response')->info('request', $request->all());
+        return true;
     }
 }
