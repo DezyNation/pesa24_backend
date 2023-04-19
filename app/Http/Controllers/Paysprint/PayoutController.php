@@ -197,25 +197,26 @@ class PayoutController extends CommissionController
             return response("User not found!", 404);
         }
         $transaction_id = strtoupper(uniqid() . Str::random(8));
+        $metadata = [
+            'status' => true,
+            'event' => 'money-transfer',
+            'transaction_id' => $transaction_id,
+            'created_at' => Carbon::now(),
+            'amount' => $request['amount'],
+            'from' => auth()->user()->name . " " . auth()->user()->phone_number
+        ];
         $data = DB::table('money_transfers')->insert([
             'sender_id' => auth()->user()->id,
             'reciever_id' => $request['beneficiaryId'],
             'amount' => $request['amount'],
             'remarks' => $request['remarks'],
             'transaction_id' => $transaction_id,
+            'meta_data' => $metadata,
             'created_at' => now(),
             'updated_at' => now()
         ]);
 
         $final_amount = $user->wallet + $request['amount'];
-        $metadata = [
-            'status' => true,
-            'event' => 'money-transfer',
-            'transaction_id' => $transaction_id,
-            'created_at' => time(),
-            'amount' => $request['amount'],
-            'from' => auth()->user()->name . " " . auth()->user()->phone_number
-        ];
         $this->transaction(0, 'Money Transfer to your account', 'money-transfer', $request['beneficiaryId'], $user->wallet, $transaction_id, $final_amount, json_encode($metadata), $request['amount']);
         $user->update(['wallet' => $final_amount]);
 
