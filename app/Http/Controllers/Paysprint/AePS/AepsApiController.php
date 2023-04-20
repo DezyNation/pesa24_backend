@@ -35,8 +35,8 @@ class AepsApiController extends CommissionController
         $latlong = explode(",", $request['latlong']);
 
         $data = [
-            'latitude' => $latlong[0] ?? 22.78,
-            'longitude' => $latlong[1] ?? 19.45,
+            'latitude' => $latlong[0],
+            'longitude' => $latlong[1],
             'referenceno' => uniqid(),
             'ipaddress' => $request->ip(),
             'mobilenumber' => $request['customerId'],
@@ -63,7 +63,7 @@ class AepsApiController extends CommissionController
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
         ])->post('https://paysprint.in/service-api/api/v1/service/aeps/balanceenquiry/index', ['body' => $body]);
 
-        return $response;
+        return ['metadata' => $response];
     }
 
     public function withdrwal(Request $request)
