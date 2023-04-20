@@ -269,7 +269,7 @@ class DMTController extends CommissionController
             return response([$response['message'], 'metadata' => $metadata], 501);
         }
 
-        return [$response, 'metadata' => $metadata];
+        return [$response->body(), 'metadata' => $metadata];
     }
 
     public function transactionStatus(Request $request)
