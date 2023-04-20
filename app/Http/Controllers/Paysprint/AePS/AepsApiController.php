@@ -141,7 +141,7 @@ class AepsApiController extends CommissionController
             $this->transaction(0, "AePS withdrawal for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
         // $this->aepsCommssion($data['amount'], auth()->user()->id);
-        return ['metadata' => $metadata];
+        return [$response->object(), 'metadata' => $metadata];
     }
 
     public function bankList()
