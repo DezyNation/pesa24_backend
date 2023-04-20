@@ -63,7 +63,7 @@ class AepsApiController extends CommissionController
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
         ])->post('https://paysprint.in/service-api/api/v1/service/aeps/balanceenquiry/index', ['body' => $body]);
 
-        return ['metadata' => $response];
+        return ['metadata' => $response->object()];
     }
 
     public function withdrwal(Request $request)
