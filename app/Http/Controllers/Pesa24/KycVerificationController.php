@@ -183,14 +183,14 @@ class KycVerificationController extends Controller
             'is_new' => 0,
             'email' => auth()->user()->email,
             'firm' => auth()->user()->company_name ?? 'PAYMONEY',
-            'callback' => 'https://pesa24.in/api/apiservice/paysprint-onboarding-callbackurl.php',
+            'callback' => 'https://api.pesa24.in/api/onboard-callback-paysprint',
         ];
 
         $response = Http::withHeaders([
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'Content-Type: application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/onboard/onboardnew/getonboardurl', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/onboard/onboard/getonboardurl', $data);
         Log::channel('response')->info($response);
         if ($response['status'] == false) {
             return response($response['message'], 400);
