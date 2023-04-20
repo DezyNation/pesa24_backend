@@ -183,7 +183,7 @@ class AdminController extends Controller
     public function updateCommission(Request $request, $name)
     {
         $package_id = DB::table('packages')->where('id', $request['package_id'])->get();
-        if ($package_id[0]->organization_id !== $request['package_id']) {
+        if ($package_id[0]->organization_id !== auth()->user()->organization_id) {
             return response("Unauthorized action.", 403);
         }
         switch ($name) {
