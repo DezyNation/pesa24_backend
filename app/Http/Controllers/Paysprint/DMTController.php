@@ -250,14 +250,23 @@ class DMTController extends CommissionController
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $transaction_id = "DMT" . strtoupper(Str::random(9));
-            $this->transaction($data['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+            $this->transaction(0, 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+            return ['response' => $response->body(), 'metadata' => $metadata];
         }
 
         if ($response['status'] == false) {
             if ($response['response_code'] == 13) {
-                return response("Server busy, try later!", 501);
+                $metadata = [
+                    'status' => false,
+                    'amount' => $data['amount'],
+                ];
+                return response(["Server busy, try later!", 'metadata' => $metadata], 501);
             }
-            return response($response['message'], 501);
+            $metadata = [
+                'status' => false,
+                'amount' => $data['amount'],
+            ];
+            return response([$response['message'], 'metadata' => $metadata], 501);
         }
 
         return $response;
