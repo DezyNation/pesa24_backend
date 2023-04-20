@@ -126,7 +126,7 @@ class RechargeController extends CommissionController
             $this->transaction($data['amount'], "Recharge for Mobile {$data['canumber']}", 'recharge', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
 
-        return $response;
+        return [$response, 'metadata' => $metadata];
     }
 
     /*------------------------------------------Recharge v1------------------------------------------*/
