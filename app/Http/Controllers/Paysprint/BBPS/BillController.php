@@ -87,7 +87,6 @@ class BillController extends CommissionController
             'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paybill', $data);
 
-        return $response;
         if ($response->json($key = 'response_code') == 1 || $response->json($key = 'response_code') == 0) {
             $metadata = [
                 'status' => $response['status'],
