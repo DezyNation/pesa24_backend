@@ -232,7 +232,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('add-admin-funds', [AdminController::class, 'adminFundsRecords']);
     Route::get('commissions', [AdminController::class, 'commissions']);
     Route::get('packages', [AdminController::class, 'packages']);
-    Route::post('packages/{id}', [AdminController::class, 'packagesId']);
+    Route::post('packages/delete/{id}', [AdminController::class, 'packagesId'])->middleware('mpin');
     Route::get('commissions/{name}/{id}', [AdminController::class, 'commissionsPackage']);
     Route::post('commissions/{name}', [AdminController::class, 'updateCommission']);
     Route::post('create-package', [AdminController::class, 'packageCreate']);
@@ -243,8 +243,9 @@ Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback'])
 Route::any('payout-callback-paysprint', [WebhookController::class, 'confirmPayout']);
 Route::any('onboard-callback-paysprint', [WebhookController::class, 'onboardCallback']);
 
-Route::group(['middleware' => ['auth:api', 'role:super_admin'], 'prefix' => 'super-admin'], function () {
-    Route::get('service-chage/{service_id}/{active}', [GlobalServiceController::class, 'manageService']);
+Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
+    Route::post('service-status', [GlobalServiceController::class, 'manageService']);
+    Route::get('services', [GlobalServiceController::class, 'getServices']);
 });
 
 Route::get('transactions-period', [AdminTransactionController::class, 'dailySales']);
