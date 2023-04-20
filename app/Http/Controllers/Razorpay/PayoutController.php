@@ -34,7 +34,7 @@ class PayoutController extends CommissionController
             'payout_id' => $transfer['id'] ?? 0,
             'entity' => $transfer['entity'] ?? 0,
             'fund_account_id' => $transfer['fund_account_id'] ?? 0,
-            'amount' => $transfer['amount']/100 ?? 0,
+            'amount' => $transfer['amount'] / 100 ?? 0,
             'currency' => $transfer['currency'] ?? 0,
             'account_number' => $request['bank_account']['account_number'],
             'fees' => $transfer['fees'] ?? 0,
@@ -64,14 +64,20 @@ class PayoutController extends CommissionController
             $transaction_id = "PAY" . strtoupper(Str::random(5));
             $metadata = [
                 'status' => true,
-                'amount' => $transfer['amount']/100,
+                'amount' => $transfer['amount'] / 100,
                 'reference_id' => $data['reference_id'],
                 'to' => $request['bank_account']['name'] ?? null,
             ];
             $this->transaction($amount, 'Bank Payout', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
-            return response(['message' => 'Transaction sucessfull', 'payout_id' => $transfer['id'], 'beneficiary_name' => $request['bank_account']['name'], 'amount' => $transfer['amount'], 'bank_account' => $request['bank_account']['account_number'], 'balance_left' => $balance_left], 200);
+            return response(['Transaction sucessfull', 'metadata' => $metadata], 200);
         } else {
-            return response('Transaction failed', 400);
+            $metadata = [
+                'status' => true,
+                'amount' => $data['amount'] / 100,
+                'reference_id' => $data['reference_id'],
+                'to' => $request['bank_account']['name'] ?? null,
+            ];
+            return response(['Transaction sucessfull', 'metadata' => $metadata], 400);
         }
     }
 
