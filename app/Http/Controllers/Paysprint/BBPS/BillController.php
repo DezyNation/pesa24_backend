@@ -107,9 +107,14 @@ class BillController extends CommissionController
             $this->transaction($data['amount'], "Bill Payment", 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->bbpsPaysprintCommission(auth()->user()->id, $data['operator'], $data['amount']);
 
-            return response($response['message']);
+            return response([$response['message'], 'metadata' => $metadata]);
         } elseif ($response->json($key = 'response_code') == 16 || $response->json($key = 'response_code') == 6 || $response->json($key = 'response_code') == 12) {
-            return response("Server Busy pleasy try later!", 501);
+            $metadata = [
+                'status' => false,
+                'canumber' => $data['canumber'],
+                'amount' => $data['amount'],
+            ];
+            return response(["Server Busy pleasy try later!", 'metadata' => $metadata], 501);
         } else {
             $metadata = [
                 'status' => false,
@@ -119,8 +124,9 @@ class BillController extends CommissionController
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $transaction_id = "DMT" . strtoupper(Str::random(9));
             $this->transaction($data['amount'], 'Bill payment', 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+
+            return response([$response['message'], 'metadata' => $metadata], 400);
         }
-        return response($response['message'], 400);
     }
 
 
