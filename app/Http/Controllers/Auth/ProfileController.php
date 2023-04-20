@@ -211,7 +211,7 @@ class ProfileController extends AgentManagementController
     public function adminUser($id)
     {
         $user = User::with(['roles', 'permissions'])->where('id', $id)->orWhere('phone_number', $id)->get();
-        if (!$user) {
+        if (sizeof($user) == 0) {
             return response("User not found.", 404);
         }
 

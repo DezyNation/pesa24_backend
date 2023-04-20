@@ -34,26 +34,14 @@ class TicketController extends Controller
         return $data;
     }
 
-    public function userTicket($id)
+    public function adminTicket()
     {
-        $org_id = DB::table('organizations')->where('code', session()->get('organization_code'))->pluck('id');
-        $data = DB::table('tickets')->where(['organization_id' => $org_id, 'user_id' => $id])->get();
-        return $data;
-    }
+        $data = DB::table('tickets')
+            ->join('users', 'users.id', '=', 'tickets.user_id')
+            ->where('users.organization_id', auth()->user()->organization_id)
+            ->select('tickets.*', 'users.name', 'users.phone_number', 'users.email')
+            ->get();
 
-    public function ticket($id)
-    {
-        $org_id = DB::table('organizations')->where('code', session()->get('organization_code'))->pluck('id');
-        $data = DB::table('tickets')->where(['organization_id' => $org_id, 'id' => $id])->get();
         return $data;
-    }
-
-    public function update(Request $request, $id)
-    {
-        $org_id = DB::table('organizations')->where('code', session()->get('organization_code'))->pluck('id');
-        $data = DB::table('tickets')->where(['organization_id' => $org_id, 'id' => $id])->update([
-            'status' => $request['status']
-        ]);
-        return response()->json(['message' => 'Status updated.']);
     }
 }

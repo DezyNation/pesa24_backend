@@ -130,14 +130,15 @@ class FundController extends Controller
     public function newFund(Request $request)
     {
 
-        if (!Hash::check($request['mpin'], auth()->user()->mpin)) {
-            return response("MPIN did not match", 403);
-        }
         $request->validate([
             'beneficiaryId' => 'required|integer',
-            'amount' => 'required|integer',
+            'amount' => 'required|min:1|numeric',
             'transactionType' => 'required|string',
         ]);
+
+        if ($request['beneficiaryId'] == auth()->user()->id) {
+            return response("You can not send to money to yourself.", 403);
+        }
 
         $transaction_id = "FUND" . strtoupper(Str::random(5));
 

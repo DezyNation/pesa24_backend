@@ -113,19 +113,19 @@ class AdminController extends Controller
 
         if (is_null($request->page)) {
             $data = DB::table('packages')
-            ->join('users', 'users.id', '=', 'packages.user_id')
-            ->where('organization_id', auth()->user()->organization_id)->select('packages.id', 'packages.name', 'packages.is_default', 'packages.status', 'users.name as user_name')->get();
+                ->join('users', 'users.id', '=', 'packages.user_id')
+                ->where('organization_id', auth()->user()->organization_id)->select('packages.id', 'packages.name', 'packages.is_default', 'packages.status', 'users.name as user_name')->get();
         } else {
             $data = DB::table('packages')
                 ->join('users', 'users.id', '=', 'packages.user_id')
-                ->where('packages.organization_id', auth()->user()->organization_id)->select('packages.name', 'packages.id', 'packages.is_default', 'packages.status','users.name as user_name')->paginate(20);
+                ->where('packages.organization_id', auth()->user()->organization_id)->select('packages.name', 'packages.id', 'packages.is_default', 'packages.status', 'users.name as user_name')->paginate(20);
         }
         return $data;
     }
 
     public function packagesId($id)
     {
-        $data = DB::table('packages')->where(['id'=> $id, 'organization_id' => auth()->user()->organization_id])->delete();
+        $data = DB::table('packages')->where(['id' => $id, 'organization_id' => auth()->user()->organization_id])->delete();
         return $data;
     }
 
@@ -144,7 +144,7 @@ class AdminController extends Controller
 
     public function packageSwitch(Request $request)
     {
-        $data = DB::table('packages')->where(['organization_id'=> auth()->user()->organization_id, 'id' => $request['packageId']])->update([
+        $data = DB::table('packages')->where(['organization_id' => auth()->user()->organization_id, 'id' => $request['packageId']])->update([
             $request['column'] => $request['value'],
             'updated_at' => now()
         ]);
@@ -182,11 +182,15 @@ class AdminController extends Controller
 
     public function updateCommission(Request $request, $name)
     {
+        $package_id = DB::table('packages')->where('id', $request['package_id'])->get();
+        if ($package_id->organization_id !== $request['package_id']) {
+            return response("Unauthorized action.", 403);
+        }
         switch ($name) {
             case 'aeps':
                 $request->validate([]);
                 $data = DB::table('a_e_p_s')
-                    ->update([]);
+                ->updateOrInsert(['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']], $request->except('id'));
                 break;
 
             case 'dmt':
@@ -195,37 +199,52 @@ class AdminController extends Controller
                 break;
 
             case 'payout':
-                $data = DB::table('payoutcommissions')->where('id', $request['id'])
-                    ->update([
-                        'from' => $request['from'],
-                        'to' => $request['to'],
-                        'name' => $request['name'],
-                        'gst' => $request['gst'],
-                        'is_flat' => $request['is_flat'],
-                        'fixed_charge' => $request['fixed_charge'],
-                        'super_distributor_commission' => $request['super_distributor_commission'],
-                        'distributor_commission' => $request['distributor_commission'],
-                        'retailer_commission' => $request['retailer_commission'],
-                        'updated_at' => now()
-                    ]);
+                $data = DB::table('payoutcommissions')
+                    ->updateOrInsert(
+                        [
+                            'from' => $request['from'],
+                            'to' => $request['to'],
+                            'package_id' => $request['package_id']
+                        ],
+                        [
+                            'name' => $request['name'],
+                            'gst' => $request['gst'],
+                            'is_flat' => $request['is_flat'],
+                            'fixed_charge' => $request['fixed_charge'],
+                            'super_distributor_commission' => $request['super_distributor_commission'],
+                            'distributor_commission' => $request['distributor_commission'],
+                            'retailer_commission' => $request['retailer_commission'],
+                            'updated_at' => now()
+                        ]
+                    );
                 break;
 
             case 'recharge':
                 $data = DB::table('recharges')
-                    ->updateOrInsert(['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']], [
-                        'operator' => $request['name'],
-                        'gst' => $request['gst'],
-                        'is_flat' => $request['is_flat'],
-                        'eko_id' => 1,
-                        'paysprint_id' => 1,
-                        'type' => 'prepaid',
-                        'fixed_charge' => $request['fixed_charge'],
-                        'super_distributor_commission' => $request['super_distributor_commission'],
-                        'distributor_commission' => $request['distributor_commission'],
-                        'retailer_commission' => $request['retailer_commission'],
-                        'updated_at' => now()
-                    ]);
+                    ->updateOrInsert(
+                        ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
+                        [
+                            'operator' => $request['name'],
+                            'gst' => $request['gst'],
+                            'is_flat' => $request['is_flat'],
+                            'eko_id' => 1,
+                            'paysprint_id' => 1,
+                            'type' => 'prepaid',
+                            'fixed_charge' => $request['fixed_charge'],
+                            'super_distributor_commission' => $request['super_distributor_commission'],
+                            'distributor_commission' => $request['distributor_commission'],
+                            'retailer_commission' => $request['retailer_commission'],
+                            'updated_at' => now()
+                        ]
+                    );
                 break;
+
+            case 'bbps':
+                $data = DB::table('b_b_p_s')->updateOrInsert(
+                    ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
+                    $request->except('id')
+                );
+
             default:
                 $data = response("Invalid parameter was sent.", 404);
                 break;

@@ -25,8 +25,8 @@ class AdminTransactionController extends Controller
         $data = DB::table('transactions')
             ->join('users', 'users.id', '=', 'transactions.user_id')
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
-            ->where('transactions.service_type', $data)
-            ->select('users.name', 'transactions.*', 'admin.first_name as done_by', 'admin.phone_number as done_by_phone')
+            ->where(['transactions.service_type' => $data, 'admin.organization_id' => auth()->user()->organization_id])
+            ->select('users.name', 'transactions.*', 'admin.organization_id', 'admin.first_name as done_by', 'admin.phone_number as done_by_phone')
             ->latest()
             ->paginate(20);
         return $data;
