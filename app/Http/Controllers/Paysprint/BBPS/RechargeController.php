@@ -123,7 +123,7 @@ class RechargeController extends CommissionController
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $transaction_id = "RECH" . strtoupper(Str::random(9));
-            $this->transaction($data['amount'], "Recharge for Mobile {$data['canumber']}", 'recharge', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+            $this->transaction(0, "Recharge for Mobile {$data['canumber']}", 'recharge', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
 
         return [$response, 'metadata' => $metadata];
