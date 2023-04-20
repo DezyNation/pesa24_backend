@@ -107,7 +107,6 @@ class BillController extends CommissionController
             $this->transaction($data['amount'], "Bill Payment", 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->bbpsPaysprintCommission(auth()->user()->id, $data['operator'], $data['amount']);
 
-            return response([$response['message'], 'metadata' => $metadata]);
         } elseif ($response->json($key = 'response_code') == 16 || $response->json($key = 'response_code') == 6 || $response->json($key = 'response_code') == 12) {
             $metadata = [
                 'status' => false,
@@ -127,6 +126,7 @@ class BillController extends CommissionController
 
             return response([$response['message'], 'metadata' => $metadata], 400);
         }
+        return response([$response['message'], 'metadata' => $metadata]);
     }
 
 
