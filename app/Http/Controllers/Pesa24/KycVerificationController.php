@@ -178,7 +178,7 @@ class KycVerificationController extends Controller
         $token = $this->token();
 
         $data = [
-            'merchantcode' => "PESA240000".auth()->user()->id,
+            'merchantcode' => "PESA24API".auth()->user()->id,
             'mobile' => auth()->user()->phone_number,
             'is_new' => 0,
             'email' => auth()->user()->email,
