@@ -17,7 +17,7 @@ class FundRequestController extends Controller
             'transactionType' => 'required|string',
             'transactionId' => 'required|string|unique:funds,transaction_id',
             'transactionDate' => 'required|date',
-            'receipt' => 'mimes:jpg,jpeg,png,pdf|max:2048'
+            'receipt' => 'required|mimes:jpg,jpeg,png,pdf|max:2048'
         ]);
 
         $imgPath = $request->file('receipt')->store('receipt');
