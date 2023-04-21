@@ -80,6 +80,9 @@ class CallbackController extends CommissionController
 
     public function onboardCallback(Request $request)
     {
+        $arr['status'] = 200;
+        $arr['message'] = 'Transaction Successfull';
         Log::channel('response')->info('request', $request->all());
+        echo json_encode($arr);
     }
 }
