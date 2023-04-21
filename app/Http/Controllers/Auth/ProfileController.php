@@ -109,9 +109,7 @@ class ProfileController extends AgentManagementController
             'model_name' => $request['values']['modelName'],
         ]);
 
-        $user_id = DB::table('users')->where('paysprint_merchant', $request['param.merchant_id'])->pluck('id');
-
-        $user = User::findOrFail($user_id[0])->makeVisible(['organization_id', 'wallet']);
+        $user = User::findOrFail(auth()->user()->id)->makeVisible(['organization_id', 'wallet']);
         $role = $user->getRoleNames();
         $role_details = json_decode(DB::table('roles')->where('name', $role[0])->get(['id', 'fee']), true);
         $id = json_decode(DB::table('packages')->where(['role_id' => $role_details[0]['id'], 'organization_id' => $user->organization_id, 'is_default' => 1])->get('id'), true);
@@ -119,13 +117,13 @@ class ProfileController extends AgentManagementController
         $final_amount = $user->wallet - $role_details[0]['fee'];
 
         $attach_user = DB::table('package_user')->insert([
-            'user_id' => $user_id[0],
+            'user_id' => auth()->user()->id,
             'package_id' => $id[0]['id'],
             'created_at' => now(),
             'updated_at' => now()
         ]);
 
-        DB::table('users')->where('id', $user_id[0])->update([
+        DB::table('users')->where('id', auth()->user()->id)->update([
             'wallet' => $final_amount,
             'onboard_fee' => 1,
             'updated_at' => now()
@@ -138,7 +136,7 @@ class ProfileController extends AgentManagementController
             'message' => 'Transaction Successful'
         ];
 
-        $data = $this->transaction($role_details[0]['fee'], 'Onboard and Package fee', 'onboarding', $user_id[0], $opening_balance, $transaction_id, $final_amount, json_encode($metadata));
+        $data = $this->transaction($role_details[0]['fee'], 'Onboard and Package fee', 'onboarding', auth()->user()->id, $opening_balance, $transaction_id, $final_amount, json_encode($metadata));
         Log::info($data);
         return new UserResource(User::findOrFail(Auth::id()));
     }
