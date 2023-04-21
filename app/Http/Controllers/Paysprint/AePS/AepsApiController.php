@@ -55,7 +55,7 @@ class AepsApiController extends CommissionController
             'data' => $pid,
             'pipe' => 'bank3',
             'timestamp' => now(),
-            'submerchantid' => 1,
+            'submerchantid' => auth()->user()->paysprint_merchant,
             'transactiontype' => 'BE',
             'is_iris' => 'No'
         ];
@@ -107,7 +107,7 @@ class AepsApiController extends CommissionController
             'data' => $pid,
             'pipe' => 'bank2',
             'timestamp' => now(),
-            'submerchantid' => auth()->user()->phone_number,
+            'submerchantid' => auth()->user()->paysprint_merchant,
             'transactiontype' => 'BE',
             'is_iris' => 'No'
         ];
@@ -229,7 +229,7 @@ class AepsApiController extends CommissionController
             'data' => $pid,
             'pipe' => 'bank3',
             'timestamp' => now(),
-            'submerchantid' => auth()->user()->phone_number,
+            'submerchantid' => auth()->user()->paysprint_merchant,
             'transactiontype' => 'BE',
             'is_iris' => 'No'
         ];
@@ -316,7 +316,7 @@ class AepsApiController extends CommissionController
             'data' => $pid,
             'pipe' => 'bank2',
             'timestamp' => now(),
-            'submerchantid' => auth()->user()->phone_number,
+            'submerchantid' => auth()->user()->paysprint_merchant,
             'transactiontype' => 'BE',
             'is_iris' => 'No'
         ];
