@@ -192,6 +192,10 @@ class KycVerificationController extends Controller
             'Content-Type: application/json'
         ])->post('https://api.paysprint.in/api/v1/service/onboard/onboard/getonboardurl', $data);
         Log::channel('response')->info($response);
+        DB::table('users')->where('id', auth()->user()->id)->update([
+            'paysprint_merchant' => $data['merchantcode'],
+            'updated_at' => now()
+        ]);
         if ($response['status'] == false) {
             return response($response['message'], 400);
         }

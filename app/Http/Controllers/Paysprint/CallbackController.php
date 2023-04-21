@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Log;
 
 class CallbackController extends CommissionController
 {
-    public function onboardCallback0(Request $request)
+    public function onboardCallback(Request $request)
     {
-        $user_id = DB::table('users')->where('phone_number', $request['param.merchant_id'])->pluck('id');
+        $user_id = DB::table('users')->where('paysprint_merchant', $request['param.merchant_id'])->pluck('id');
 
         $user = User::findOrFail($user_id[0])->makeVisible(['organization_id', 'wallet']);
         $role = $user->getRoleNames();
@@ -39,11 +39,14 @@ class CallbackController extends CommissionController
         $transaction_id = "ONBO" . strtoupper(Str::random(8));
 
         $metadata = [
-            'status' => true,
+            'status' => 200,
+            'message' => 'Transaction Successful'
         ];
 
         $data = $this->transaction($role_details[0]['fee'], 'Onboard and Package fee', 'onboarding', $user_id[0], $opening_balance, $transaction_id, $final_amount, json_encode($metadata));
         Log::info($data);
+
+        echo json_encode($metadata);
     }
 
     public function dmtCallback(Request $request)
@@ -78,7 +81,7 @@ class CallbackController extends CommissionController
         return true;
     }
 
-    public function onboardCallback(Request $request)
+    public function onboardCallback0(Request $request)
     {
         $arr['status'] = 200;
         $arr['message'] = 'Transaction Successfull';
