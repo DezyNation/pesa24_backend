@@ -68,7 +68,7 @@ class AepsApiController extends CommissionController
             'Content-Type' => 'application/json',
             'Token' => $token,
             'accept' => 'application/json',
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://api.paysprint.in/api/v1/service/aeps/balanceenquiry/index', ['body' => $body]);
 
         return ['metadata' => $response->object()];
