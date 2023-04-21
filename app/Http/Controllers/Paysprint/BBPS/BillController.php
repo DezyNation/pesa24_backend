@@ -19,7 +19,7 @@ class BillController extends CommissionController
     {
         $key = env('JWT_KEY');
         $payload = [
-            'timestamp' => now(),
+            'timestamp' => time(),
             'partnerId' => env('PAYSPRINT_PARTNERID'),
             'reqid' => abs(crc32(uniqid()))
         ];
