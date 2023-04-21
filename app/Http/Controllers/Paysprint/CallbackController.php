@@ -81,6 +81,5 @@ class CallbackController extends CommissionController
     public function onboardCallback(Request $request)
     {
         Log::channel('response')->info('request', $request->all());
-        return response()->json($request->all());
     }
 }
