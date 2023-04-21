@@ -40,9 +40,4 @@ class WebhookController extends CommissionController
         return response()->noContent();
     }
 
-    public function onboardCallback(Request $request)
-    {
-        Log::channel('response')->info('request', $request->all());
-        return true;
-    }
 }

@@ -242,7 +242,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
 
 Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);
 Route::any('payout-callback-paysprint', [WebhookController::class, 'confirmPayout']);
-Route::any('onboard-callback-paysprint', [WebhookController::class, 'onboardCallback']);
+Route::any('onboard-callback-paysprint', [CallbackController::class, 'onboardCallback']);
 
 Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
     Route::post('service-status', [GlobalServiceController::class, 'manageService']);

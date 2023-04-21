@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 class CallbackController extends CommissionController
 {
-    public function onboardCallback(Request $request)
+    public function onboardCallback0(Request $request)
     {
         $user_id = DB::table('users')->where('phone_number', $request['param.merchant_id'])->pluck('id');
 
@@ -76,5 +76,11 @@ class CallbackController extends CommissionController
         }
 
         return true;
+    }
+
+    public function onboardCallback(Request $request)
+    {
+        Log::channel('response')->info('request', $request->all());
+        return response()->json($request->all());
     }
 }
