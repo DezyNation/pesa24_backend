@@ -16,7 +16,7 @@ class AepsApiController extends CommissionController
     {
         $key = env('JWT_KEY');
         $payload = [
-            'timestamp' => now(),
+            'timestamp' => time(),
             'partnerId' => env('PAYSPRINT_PARTNERID'),
             'reqid' => abs(crc32(uniqid()))
         ];
@@ -27,8 +27,16 @@ class AepsApiController extends CommissionController
 
     public function enquiry(Request $request)
     {
-        $key = '060e37d1f82cde00';
-        $iv = '788a4b959058271e';
+        $request->validate([
+            'latlong' => 'required',
+            'customerId' => 'required|digits:10',
+            'aadhaarNo' => 'required|digits:12',
+            'pid' => 'required',
+            'bankCode' => 'required'
+        ]);
+
+        $key = env('AES_ENCRYPTION_KEY');
+        $iv = env('AES_ENCRYPTION_IV');
 
 
         $pid = $request['pid'];
@@ -42,7 +50,7 @@ class AepsApiController extends CommissionController
             'mobilenumber' => $request['customerId'],
             'adhaarnumber' => $request['aadhaarNo'],
             'accessmodetype' => 'SITE',
-            'nationalbankidentification' => 652294,
+            'nationalbankidentification' => $request['bankCode'],
             'requestremarks' => 'AePS enquiry',
             'data' => $pid,
             'pipe' => 'bank3',
@@ -61,7 +69,7 @@ class AepsApiController extends CommissionController
             'Token' => $token,
             'accept' => 'application/json',
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
-        ])->post('https://paysprint.in/service-api/api/v1/service/aeps/balanceenquiry/index', ['body' => $body]);
+        ])->post('https://api.paysprint.in/api/v1/service/aeps/balanceenquiry/index', ['body' => $body]);
 
         return ['metadata' => $response->object()];
     }
@@ -69,28 +77,37 @@ class AepsApiController extends CommissionController
     public function withdrwal(Request $request)
     {
 
-        $key = '060e37d1f82cde00';
-        $iv = '788a4b959058271e';
+        $request->validate([
+            'latlong' => 'required',
+            'customerId' => 'required|digits:10',
+            'amount' => 'required',
+            'aadhaarNo' => 'required|digits:12',
+            'pid' => 'required',
+            'bankCode' => 'required'
+        ]);
+
+        $key = env('AES_ENCRYPTION_KEY');
+        $iv = env('AES_ENCRYPTION_IV');
 
         $pid = $request['pid'];
 
         $latlong = explode(",", $request['latlong']);
 
         $data = [
-            'latitude' => $latlong[0] ?? 22.78,
-            'longitude' => $latlong[1] ?? 19.45,
+            'latitude' => $latlong[0],
+            'longitude' => $latlong[1],
             'mobilenumber' => $request['customerId'],
             'referenceno' => uniqid(),
             'ipaddress' => $request->ip(),
             'amount' => $request['amount'],
             'adhaarnumber' => $request['aadhaarNo'],
             'accessmodetype' => 'SITE',
-            'nationalbankidentification' => 652294,
+            'nationalbankidentification' => $request['bankCode'],
             'requestremarks' => 'AePS Withdrwal',
             'data' => $pid,
             'pipe' => 'bank2',
             'timestamp' => now(),
-            'submerchantid' => 9971412064,
+            'submerchantid' => auth()->user()->phone_number,
             'transactiontype' => 'BE',
             'is_iris' => 'No'
         ];
@@ -103,8 +120,8 @@ class AepsApiController extends CommissionController
             'Content-Type' => 'application/json',
             'Token' => $token,
             'accept' => 'application/json',
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
-        ])->post('https://paysprint.in/service-api/api/v1/service/aeps/cashwithdraw/index', ['body' => $body]);
+            'Authorisedkey' => env('AUTHORISED_KEY'),
+        ])->post('https://api.paysprint.in/api/v1/service/aeps/cashwithdraw/index', ['body' => $body]);
 
         if ($response['status'] == true && $response['response_code'] == 1) {
             $transaction_id = "AEPSW" . strtoupper(Str::random(9));
@@ -155,14 +172,17 @@ class AepsApiController extends CommissionController
         return $response;
     }
 
-    public function transactionStatus()
+    public function transactionStatus(Request $request)
     {
-        $key = '060e37d1f82cde00';
-        $iv = '788a4b959058271e';
+        $request->validate([
+            'reference' => 'required'
+        ]);
+        $key = env('AES_ENCRYPTION_KEY');
+        $iv = env('AES_ENCRYPTION_IV');
 
         $token = $this->token();
         $data = [
-            'reference' => '234234S4433'
+            'reference' => $request['reference']
         ];
 
         $cipher = openssl_encrypt(json_encode($data, true), 'AES-128-CBC', $key, $options = OPENSSL_RAW_DATA, $iv);
@@ -172,7 +192,7 @@ class AepsApiController extends CommissionController
             'Content-Type' => 'application/json',
             'Token' => $token,
             'accept' => 'application/json',
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => env('AUTHORISED_KEY'),
         ]);
 
         return $response;
@@ -180,21 +200,30 @@ class AepsApiController extends CommissionController
 
     public function miniStatement(Request $request)
     {
-        $key = '060e37d1f82cde00';
-        $iv = '788a4b959058271e';
+        $request->validate([
+            'latitude' => 'required',
+            'longitude' => 'required',
+            'customerId' => 'required|digits:10',
+            'aadhaarNo' => 'required|digits:12',
+            'pid' => 'required',
+            'bankCode' => 'required'
+        ]);
+
+        $key = env('AES_ENCRYPTION_KEY');
+        $iv = env('AES_ENCRYPTION_IV');
 
 
         $pid = $request['pid'];
 
         $data = [
-            'latitude' => $request['latitude'] ?? 22.78,
-            'longitude' => $request['longitude'] ?? 19.45,
-            'mobilenumber' => $request['mobileNumber'] ?? 9971412064,
+            'latitude' => $request['latitude'],
+            'longitude' => $request['longitude'],
+            'mobilenumber' => $request['customerId'],
             'referenceno' => uniqid(),
             'ipaddress' => $request->ip(),
-            'adhaarnumber' => $request['aadhaarNumber'] ?? 715547838073,
+            'adhaarnumber' => $request['aadhaarNo'],
             'accessmodetype' => 'SITE',
-            'nationalbankidentification' => 990320,
+            'nationalbankidentification' => $request['bankCode'],
             'requestremarks' => 'AePS mini statement',
             'data' => $pid,
             'pipe' => 'bank3',
@@ -214,7 +243,7 @@ class AepsApiController extends CommissionController
             'Token' => $token,
             'accept' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
-        ])->post('https://paysprint.in/service-api/api/v1/service/aeps/ministatement/index', ['body' => $body]);
+        ])->post('https://api.paysprint.in/api/v1/service/aeps/ministatement/index', ['body' => $body]);
 
         if ($response['status'] == true && $response['response_code'] == 1) {
             $transaction_id = "AEPSW" . strtoupper(Str::random(9));
@@ -255,8 +284,18 @@ class AepsApiController extends CommissionController
 
     public function aadhaarPay(Request $request)
     {
-        $key = '060e37d1f82cde00';
-        $iv = '788a4b959058271e';
+
+        $request->validate([
+            'latlong' => 'required',
+            'customerId' => 'required|digits:10',
+            'amount' => 'required',
+            'aadhaarNo' => 'required|digits:12',
+            'pid' => 'required',
+            'bankCode' => 'required'
+        ]);
+
+        $key = env('AES_ENCRYPTION_KEY');
+        $iv = env('AES_ENCRYPTION_IV');
 
         $pid = $request['pid'];
 
@@ -271,7 +310,7 @@ class AepsApiController extends CommissionController
             'amount' => $request['amount'],
             'adhaarnumber' => $request['aadhaarNo'],
             'accessmodetype' => 'SITE',
-            'nationalbankidentification' => 652294,
+            'nationalbankidentification' => $request['bankCode'],
             'requestremarks' => 'AePS Withdrwal',
             'data' => $pid,
             'pipe' => 'bank2',
@@ -289,8 +328,8 @@ class AepsApiController extends CommissionController
             'Content-Type' => 'application/json',
             'Token' => $token,
             'accept' => 'application/json',
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
-        ])->post('https://paysprint.in/service-api/api/v1/service/aadharpay/aadharpay/index', ['body' => $body]);
+            'Authorisedkey' => env('AUTHORISED_KEY'),
+        ])->post('https://api.paysprint.in/api/v1/service/aadharpay/aadharpay/index', ['body' => $body]);
 
         if ($response['status'] == true && $response['response_code'] == 1) {
             $transaction_id = "AAPAY" . strtoupper(Str::random(9));
