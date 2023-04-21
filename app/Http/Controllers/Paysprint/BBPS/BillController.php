@@ -39,7 +39,6 @@ class BillController extends CommissionController
             'content-type' => 'application/json',
         ])->post("https://api.paysprint.in/api/v1/service/bill-payment/bill/getoperator/307", []);
 
-        return $response;
         is_null($id) ?
             $response = collect($response->json($key = 'data'))->groupBy('category')
             : $response =  collect($response->json($key = 'data'))->whereIn('id', $id);
