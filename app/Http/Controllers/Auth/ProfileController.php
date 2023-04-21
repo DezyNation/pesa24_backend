@@ -125,7 +125,6 @@ class ProfileController extends AgentManagementController
 
         DB::table('users')->where('id', auth()->user()->id)->update([
             'wallet' => $final_amount,
-            'onboard_fee' => 1,
             'updated_at' => now()
         ]);
 
