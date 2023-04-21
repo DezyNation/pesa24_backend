@@ -16,8 +16,9 @@ class CallbackController extends CommissionController
     {
         $metadata = [
             'status' => 200,
-            'message' => 'Transaction Successfull'
+            'message' => "Transaction Done"
         ];
+
         echo json_encode($metadata);
     }
 
