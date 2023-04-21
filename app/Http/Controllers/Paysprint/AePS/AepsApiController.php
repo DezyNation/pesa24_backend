@@ -201,8 +201,7 @@ class AepsApiController extends CommissionController
     public function miniStatement(Request $request)
     {
         $request->validate([
-            'latitude' => 'required',
-            'longitude' => 'required',
+            'latlong' => 'required',
             'customerId' => 'required|digits:10',
             'aadhaarNo' => 'required|digits:12',
             'pid' => 'required',
@@ -215,9 +214,11 @@ class AepsApiController extends CommissionController
 
         $pid = $request['pid'];
 
+        $latlong = explode(",", $request['latlong']);
+
         $data = [
-            'latitude' => $request['latitude'],
-            'longitude' => $request['longitude'],
+            'latitude' => $latlong[0],
+            'longitude' => $latlong[1],
             'mobilenumber' => $request['customerId'],
             'referenceno' => uniqid(),
             'ipaddress' => $request->ip(),
