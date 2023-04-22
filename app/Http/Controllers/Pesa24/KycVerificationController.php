@@ -73,8 +73,8 @@ class KycVerificationController extends Controller
                 'dob' => $response['response']['dob'],
                 'gender' => $response['response']['gender'],
                 'line' => implode(", ", [$request['response']['address']['house'] ?? "", $request['response']['address']['street']?? "", $request['response']['address']['vtc']?? "", $request['response']['address']['subdist']?? "", $request['response']['address']['loc']?? "", $request['response']['address']['po']?? "", $request['response']['address']['subdist']?? "", $request['response']['address']['dist']?? ""]),
-                'city' => $request['response']['address']['loc'],
-                'state' => $request['response']['address']['state']
+                'city' => $request['response']['address']['loc'] ?? "",
+                'state' => $request['response']['address']['state'] ?? ""
             ]);
 
             return response()->json(['message' => "OTP Verified"]);
