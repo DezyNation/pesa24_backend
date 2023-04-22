@@ -250,10 +250,64 @@ class ProfileController extends AgentManagementController
 
     public function findUser($id)
     {
-        $user = User::where(['id'=> $id, 'organization_id' => auth()->user()->organization_id])->orWhere('phone_number', $id)->get();
+        $user = User::where(['id' => $id, 'organization_id' => auth()->user()->organization_id])->orWhere('phone_number', $id)->get();
         if (sizeof($user) == 0) {
             return response("User not found.", 404);
         }
         return new UserResource($user[0]);
+    }
+
+    public function adminUpdatProfile(Request $request)
+    {
+        $request->validate([
+            'values.firstName' => ['required', 'max:255'],
+            'values.lastName' => ['required', 'string', 'max:255'],
+            'values.dob' => ['required', 'date', 'before_or_equal:-13 years'],
+            'values.aadhaar' => ['exists:users,aadhaar', 'digits:12', 'integer', Rule::unique('users', 'aadhaar')->ignore(auth()->user()->id)],
+            'values.line' => ['required', 'string', 'max:255'],
+            'values.city' => ['required', 'string', 'max:255'],
+            'values.pincode' => ['required', 'digits:6', 'integer'],
+            'values.state' => ['required', 'string', 'max:255'],
+            'values.phone' => ['required', Rule::unique('users', 'phone_number')->ignore(auth()->user()->id)],
+            'values.pan' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')->ignore(auth()->user()->id)],
+            'values.firmName' => ['max:255'],
+            'values.aadhaarFront' => ['file', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'values.aadhaarBack' => ['file', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'values.panCard' => ['file', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'values.deviceNumber' => ['required', 'string'],
+            'values.modelName' => ['required', 'string'],
+        ]);
+
+        if ($request->hasFile('values.aadhaarFront')) {
+            $aadhaar_front = $request->file('values.aadhaarFront')->store('aadhar_front');
+        } elseif ($request->hasFile('values.aadhaarBack')) {
+            $aadhaar_back = $request->file('values.aadhaarBack')->store('aadhar_back');
+        } elseif ($request->hasFile('values.panCard')) {
+            $pan_card = $request->file('values.panCard')->store('pan');
+        }
+
+        User::where('id', auth()->user()->id)->update([
+            'first_name' => $request['values']['firstName'],
+            'last_name' => $request['values']['lastName'],
+            'dob' => $request['values']['dob'],
+            'aadhaar' => $request['values']['aadhaar'],
+            'line' => $request['values']['line'],
+            'city' => $request['values']['city'],
+            'pincode' => $request['values']['pincode'],
+            'gst_number' => $request['values']['gst'],
+            'state' => $request['values']['state'],
+            'phone_number' => $request['values']['phone'],
+            'pan_number' => $request['values']['pan'],
+            'company_name' => $request['values']['firmName'],
+            'firm_type' => $request['values']['companyType'],
+            'profile' => 1,
+            'aadhar_front' => $aadhaar_front ?? auth()->user()->aadhar_front,
+            'aadhar_back' => $aadhaar_back ?? auth()->user()->aadhar_back,
+            'pan_photo' => $pan_card ?? auth()->user()->pan_photo,
+            'device_number' => $request['values']['deviceNumber'],
+            'model_name' => $request['values']['modelName'],
+        ]);
+
+        return new UserResource(User::findOrFail(Auth::id()));
     }
 }
