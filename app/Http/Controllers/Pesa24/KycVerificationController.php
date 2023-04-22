@@ -61,12 +61,22 @@ class KycVerificationController extends Controller
             'content-type' => 'application/json'
         ])->post('https://api.apiclub.in/api/v1/aadhaar_v2/submit_otp', $data);
 
+        return $response;
         if ($response->json($key = 'code') == 200) {
 
             DB::table('k_y_c_verifications')->updateOrInsert(
                 ['user_id' => $user_id],
                 ['aadhar' => 1]
             );
+
+            DB::table('users')->where('id', $user_id)->update([
+                'name' => $response['response']['name'],
+                'dob' => $response['response']['dob'],
+                'gender' => $response['response']['gender'],
+                'gender' => $response['response']['gender'],
+                'line' => $request['response']['address']['']
+            ]);
+
             return response()->json(['message' => "OTP Verified"]);
         } else {
             DB::table('users')->where('id', $user_id)->update(['aadhaar' => null]);
