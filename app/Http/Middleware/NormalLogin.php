@@ -22,7 +22,7 @@ class NormalLogin
             $user = User::with('roles')->where('phone_number', $request['phone_number'])->first();
         }
         
-        if (!$user->exists()) {
+        if (empty($user)) {
             return response("User doesn't exists, contact admins.", 404);
         }
 
