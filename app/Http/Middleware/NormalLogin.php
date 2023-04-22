@@ -14,7 +14,7 @@ class NormalLogin
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         if ($request['authMethod'] == 'email') {
             $user = User::with('roles')->where('email', $request['email'])->first();
@@ -22,7 +22,9 @@ class NormalLogin
             $user = User::with('roles')->where('phone_number', $request['phone_number'])->first();
         }
         
-        return $user;
+        if (!$user->exists()) {
+            return response("User doesn't exists, contact admins.", 404);
+        }
 
         $role = $user['roles'];
         if (sizeof($role) == 0) {
