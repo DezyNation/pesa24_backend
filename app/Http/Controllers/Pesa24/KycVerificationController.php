@@ -70,7 +70,7 @@ class KycVerificationController extends Controller
 
             DB::table('users')->where('id', $user_id)->update([
                 'name' => $response['response']['name'],
-                'dob' => $response['response']['dob'],
+                'dob' =>date("Y-m-d", strtotime($response['response']['dob'])),
                 'gender' => $response['response']['gender'],
                 'line' => implode(", ", [$request['response']['address']['house'] ?? "", $request['response']['address']['street']?? "", $request['response']['address']['vtc']?? "", $request['response']['address']['subdist']?? "", $request['response']['address']['loc']?? "", $request['response']['address']['po']?? "", $request['response']['address']['subdist']?? "", $request['response']['address']['dist']?? ""]),
                 'city' => $request['response']['address']['loc'] ?? "",
