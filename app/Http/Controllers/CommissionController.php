@@ -710,7 +710,13 @@ class CommissionController extends Controller
         $table = DB::table('recharges')
             ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
             ->where(['package_user.user_id' => $user_id, 'recharges.paysprint_id' => $operator])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
-            ->get()[0];
+            ->get();
+
+        if ($table->isEmpty()) {
+            return response("No Comissions.");
+        }
+
+        $table = $table[0];
 
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
@@ -921,7 +927,7 @@ class CommissionController extends Controller
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
 
-        $fixed_charge = $table->fixed_charge;
+        $fixed_charge =0;
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
@@ -937,9 +943,11 @@ class CommissionController extends Controller
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
-
+        $metadata = [
+            'status' => true
+        ];
         $transaction_id = "RECHARGE" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Recharge Commissions', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $this->transaction($debit, 'Recharge Commissions', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -952,7 +960,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->rechargeParentCommissionPaysprint($parent_id[0], $operator, $amount);
+            $this->bbpsParentPaysprintCommission($parent_id[0], $operator, $amount);
         }
 
         return $table;
