@@ -14,7 +14,7 @@ class NormalLogin
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
         if ($request['authMethod'] == 'email') {
             $user = User::with('roles')->where('email', $request['email'])->first();
@@ -22,6 +22,8 @@ class NormalLogin
             $user = User::with('roles')->where('phone_number', $request['phone_number'])->first();
         }
         
+        return $user;
+
         $role = $user['roles'];
         if (sizeof($role) == 0) {
             return response("User doesn't have assigned role, contact admins", 400);
