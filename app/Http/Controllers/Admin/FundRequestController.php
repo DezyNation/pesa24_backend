@@ -20,7 +20,9 @@ class FundRequestController extends Controller
             'receipt' => 'required|mimes:jpg,jpeg,png,pdf|max:2048'
         ]);
 
-        $imgPath = $request->file('receipt')->store('receipt');
+        if ($request->hasFile('receipt')) {
+            $imgPath = $request->file('receipt')->store('receipt');
+        }
 
         DB::table('funds')->insert([
             'user_id' => auth()->user()->id,
