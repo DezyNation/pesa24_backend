@@ -22,9 +22,7 @@ class NormalLogin
             $user = User::with('roles')->where('phone_number', $request['phone_number'])->first();
         }
         
-        return $user;
-
-        $role = $user['roles'];
+        $role = $user[0]['roles'];
         if (sizeof($role) == 0) {
             return response("User doesn't have assigned role, contact admins", 400);
         }
