@@ -67,11 +67,10 @@ class KycVerificationController extends Controller
                 ['user_id' => $user_id],
                 ['aadhar' => 1]
             );
-
-            Log::channel('response')->info('dob', [$response['response']['dob']]);
+            
             DB::table('users')->where('id', $user_id)->update([
                 'name' => $response['response']['name'],
-                'dob' =>date("Y-m-d", strtotime($response['response']['dob'])),
+                'dob' =>date("Y-m-d", strtotime(str_replace('/', '-' ,$response['response']['dob']))),
                 'gender' => $response['response']['gender'],
                 'line' => implode(", ", [$response['response']['address']['house'] ?? "", $response['response']['address']['street']?? "", $response['response']['address']['vtc']?? "", $response['response']['address']['subdist']?? "", $response['response']['address']['loc']?? "", $response['response']['address']['po']?? "", $response['response']['address']['subdist']?? "", $response['response']['address']['dist']?? ""]),
                 'city' => $response['response']['address']['loc'] ?? "",
