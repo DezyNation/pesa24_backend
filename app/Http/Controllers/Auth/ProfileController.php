@@ -61,15 +61,15 @@ class ProfileController extends AgentManagementController
     {
         // $data = collect($request->values);
         $request->validate([
-            'values.firstName' => ['required', 'max:255'],
-            'values.lastName' => ['required', 'string', 'max:255'],
-            'values.dob' => ['required', 'date', 'before_or_equal:-13 years'],
+            // 'values.firstName' => ['required', 'max:255'],
+            // 'values.lastName' => ['required', 'string', 'max:255'],
+            // 'values.dob' => ['required', 'date', 'before_or_equal:-13 years'],
             'values.aadhaar' => ['exists:users,aadhaar', 'digits:12', 'integer', Rule::unique('users', 'aadhaar')->ignore(auth()->user()->id)],
-            'values.line' => ['required', 'string', 'max:255'],
-            'values.city' => ['required', 'string', 'max:255'],
+            // 'values.line' => ['required', 'string', 'max:255'],
+            // 'values.city' => ['required', 'string', 'max:255'],
             'values.pincode' => ['required', 'digits:6', 'integer'],
-            'values.state' => ['required', 'string', 'max:255'],
-            'values.phone' => ['required', Rule::unique('users', 'phone_number')->ignore(auth()->user()->id)],
+            // 'values.state' => ['required', 'string', 'max:255'],
+            // 'values.phone' => ['required', Rule::unique('users', 'phone_number')->ignore(auth()->user()->id)],
             'values.pan' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')->ignore(auth()->user()->id)],
             'values.firmName' => ['max:255'],
             'values.aadhaarFront' => ['file', 'mimes:jpg,jpeg,png', 'max:2048'],
@@ -90,16 +90,10 @@ class ProfileController extends AgentManagementController
         }
 
         User::where('id', auth()->user()->id)->update([
-            'first_name' => $request['values']['firstName'],
-            'last_name' => $request['values']['lastName'],
-            'dob' => $request['values']['dob'],
             'aadhaar' => $request['values']['aadhaar'],
-            'line' => $request['values']['line'],
-            'city' => $request['values']['city'],
             'pincode' => $request['values']['pincode'],
             'gst_number' => $request['values']['gst'],
-            'state' => $request['values']['state'],
-            'phone_number' => $request['values']['phone'],
+            // 'phone_number' => $request['values']['phone'],
             'pan_number' => $request['values']['pan'],
             'company_name' => $request['values']['firmName'],
             'firm_type' => $request['values']['companyType'],
