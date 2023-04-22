@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class KycVerification
 {
@@ -17,8 +18,9 @@ class KycVerification
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!Auth::user()->kyc) {
-            return ['Error' => 'KYC is not completed'];
+        $table = DB::table('k_y_c_verifications')->where('user_id', auth()->user()->id)->get();
+        if ($table[0]->adhaar !== true || $table[0]->pan !== true) {
+            return response("KYC is not completed.", 403);
         }
         return $next($request);
     }

@@ -101,7 +101,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('transaction/{type}', [UserDashboardController::class, 'sunTransaction']);
 });
 
-Route::middleware(['auth:api', 'profile', 'minimum_balance', 'onboard'])->group(function () {
+Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(function () {
     /*------------------------EKO AEPS------------------------*/
     Route::post('eko/aeps/aeps-inquiry/{service_id}', [AepsApiController::class, 'aepsInquiry']);
     Route::post('fund-settlement/{service_id}', [AepsApiController::class, 'fundSettlement']);
