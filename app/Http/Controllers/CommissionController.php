@@ -162,7 +162,7 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true,
         ];
-        $this->transaction($debit, 'Comission AePS mini statement', 'aeps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Comission AePS mini statement', 'mini-statement', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -244,11 +244,13 @@ class CommissionController extends Controller
         $table = DB::table('p_a_n_s')
             ->join('package_user', 'package_user.package_id', '=', 'p_a_n_s.package_id')
             ->where('package_user.user_id', $user_id)->where('p_a_n_s.name', $name)
-            ->get()[0];
+            ->get();
 
-        if (empty($table)) {
-            return response()->json(['message' => 'No further commission']);
+        if ($table->isEmpty()) {
+            return response("No commissions for this transactions.");
         }
+
+        $table = $table[0];
 
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
@@ -271,9 +273,16 @@ class CommissionController extends Controller
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
-        $transaction_id = "PAN" . strtoupper(Str::random(9));
-        $this->transaction($amount, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $metadata = [
+            'status' => true
+        ];
 
+        $transaction_id = "PAN" . strtoupper(Str::random(9));
+        $this->transaction($amount, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+
+        if (!$table->parents) {
+            return response("No comission for parents");
+        }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
 
@@ -290,16 +299,18 @@ class CommissionController extends Controller
         $table = DB::table('p_a_n_s')
             ->join('package_user', 'package_user.package_id', '=', 'p_a_n_s.package_id')
             ->where('package_user.user_id', $user_id)->where('p_a_n_s.name', $name)
-            ->get()[0];
+            ->get();
 
-        if (empty($table)) {
-            return response()->json(['message' => 'No further commission']);
+        if ($table->isEmpty()) {
+            return response("No commissions for this transactions.");
         }
+
+        $table = $table[0];
 
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
 
-        $fixed_charge = $table->fixed_charge;
+        $fixed_charge = 0;
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
@@ -308,17 +319,21 @@ class CommissionController extends Controller
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
-            $debit = 0;
+            $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         } elseif (!$is_flat) {
-            $debit = 0;
+            $debit = $fixed_charge;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
+        $metadata = [
+            'status' => true
+        ];
+
         $transaction_id = "PAN" . strtoupper(Str::random(9));
-        $this->transaction($amount, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $this->transaction($amount, 'PAN Commission', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
@@ -342,11 +357,11 @@ class CommissionController extends Controller
             ->where('package_user.user_id', $user_id)->where('d_m_t_s.from', '<', $amount)->where('d_m_t_s.to', '>=', $amount)
             ->get();
 
-            if ($table->isEmpty()) {
-                return response("No comissions.");
-            }
+        if ($table->isEmpty()) {
+            return response("No comissions.");
+        }
 
-            $table = $table[0];
+        $table = $table[0];
 
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
@@ -368,11 +383,15 @@ class CommissionController extends Controller
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
-        $transaction_id = "DMT" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'DMT Commissions', 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $metadata = [
+            'status' => true
+        ];
 
-        if (empty($table)) {
-            return response()->json(['message' => 'No further commission']);
+        $transaction_id = "DMT" . strtoupper(Str::random(9));
+        $this->transaction($debit, 'DMT Commission', 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+
+        if (!$table->parents) {
+            return response("No comission for parents");
         }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
@@ -390,7 +409,13 @@ class CommissionController extends Controller
         $table = DB::table('d_m_t_s')
             ->join('package_user', 'package_user.package_id', '=', 'd_m_t_s.package_id')
             ->where('package_user.user_id', $user_id)->where('d_m_t_s.from', '<', $amount)->where('d_m_t_s.to', '>=', $amount)
-            ->get()[0];
+            ->get();
+
+        if ($table->isEmpty()) {
+            return response("No commissions for this transactions.");
+        }
+
+        $table = $table[0];
 
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
@@ -412,11 +437,15 @@ class CommissionController extends Controller
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
-        $transaction_id = "DMT" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'DMT Commissions', 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $metadata = [
+            'status' => true
+        ];
 
-        if (empty($table)) {
-            return response()->json(['message' => 'No further commission']);
+        $transaction_id = "DMT" . strtoupper(Str::random(9));
+        $this->transaction($debit, 'DMT Commission', 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+
+        if (!$table->parents) {
+            return response("No comission for parents");
         }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
@@ -467,8 +496,12 @@ class CommissionController extends Controller
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
+        $metadata = [
+            'status' => true
+        ];
+
         $transaction_id = "PAN" . strtoupper(Str::random(9));
-        $this->transaction($amount, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $this->transaction($amount, 'Payout Commission', 'money-transfer', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -493,7 +526,7 @@ class CommissionController extends Controller
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
             ->where('package_user.user_id', $user_id)->where('payoutcommissions.from', '<', $amount)
             ->where('payoutcommissions.to', '>=', $amount)
-            ->get()[0];
+            ->get();
 
         if ($table->isEmpty()) {
             return response("No commissions for this transactions.");
@@ -502,7 +535,7 @@ class CommissionController extends Controller
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
 
-        $fixed_charge = $table->fixed_charge;
+        $fixed_charge = 0;
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
@@ -510,17 +543,21 @@ class CommissionController extends Controller
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
-            $debit = 0;
+            $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         } elseif (!$is_flat) {
-            $debit = 0;
+            $debit = $fixed_charge;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
-        $transaction_id = "PAN" . strtoupper(Str::random(9));
-        $this->transaction($amount, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $metadata = [
+            'status' => true
+        ];
+
+        $transaction_id = "PAY" . strtoupper(Str::random(9));
+        $this->transaction($amount, 'Payout Comissions', 'money-transfer', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -549,13 +586,13 @@ class CommissionController extends Controller
         $table = DB::table('fund_settlements')
             ->join('package_user', 'package_user.package_id', '=', 'fund_settlements.package_id')
             ->where('package_user.user_id', $user_id)->where('fund_settlements.from', '<', $amount)->where('fund_settlements.to', '>=', $amount)
-            ->get()[0];
+            ->get();
 
-        if (empty($table)) {
-            return response()->json(['message' => 'No further commission']);
+        if ($table->isEmpty()) {
+            return response("No further Comissions");
         }
 
-        // return $table;
+        $table = $table[0];
 
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
@@ -577,13 +614,17 @@ class CommissionController extends Controller
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
+        $metadata = [
+            'status' => true
+        ];
+
         $transaction_id = "FUNDSET" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Fund Settlement Commissions', 'fund', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $this->transaction($debit, 'Fund Settlement Commissions', 'fund', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
         if (!$table->parents) {
-            return response()->json(["message" => "NO further commissions."]);
+            return response()->json(["message" => "No further commissions."]);
         }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
@@ -601,11 +642,13 @@ class CommissionController extends Controller
         $table = DB::table('fund_settlements')
             ->join('package_user', 'package_user.package_id', '=', 'fund_settlements.package_id')
             ->where('package_user.user_id', $user_id)->where('fund_settlements.from', '<', $amount)->where('fund_settlements.to', '>=', $amount)
-            ->get()[0];
+            ->get();
 
-        if (empty($table)) {
-            return response()->json(['message' => 'No further commission']);
+        if ($table->isEmpty()) {
+            return response('No further commission');
         }
+
+        $table = $table[0];
 
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
@@ -627,18 +670,22 @@ class CommissionController extends Controller
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
+        $metadata = [
+            'status' => true
+        ];
+
         $transaction_id = "FUNDSET" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Fund Settlement Commissions', 'fund', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $this->transaction($debit, 'Fund Settlement Commissions', 'fund', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
-
-        $parent = DB::table('user_parent')->where('user_id', $user_id);
 
         if (!$table->parents) {
             return response()->json(["message" => "NO further commissions."]);
         }
 
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+        
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
             $this->fundSettlementParentCommission($parent_id[0], $amount);
@@ -685,14 +732,18 @@ class CommissionController extends Controller
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
+        $metadata = [
+            'status' => true
+        ];
+
         $transaction_id = "RECHARGE" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Recharge Commissions', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $this->transaction($debit, 'Recharge Commissions', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
 
-        if (empty($table)) {
-            return response()->json(['message' => 'No further commission']);
+        if (!$table->parents) {
+            return response("No comission for parents");
         }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
@@ -738,15 +789,19 @@ class CommissionController extends Controller
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
+        $metadata = [
+            'status' => true
+        ];
+
         $transaction_id = "RECHRGE" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Recharge Commissions', 'fund', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $this->transaction($debit, 'Recharge Commissions', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
 
 
-        if (empty($table)) {
-            return response()->json(['message' => 'No further commission']);
+        if (!$table->parents) {
+            return response("No comission for parents");
         }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
@@ -764,7 +819,13 @@ class CommissionController extends Controller
         $table = DB::table('recharges')
             ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
             ->where(['package_user.user_id' => $user_id, 'recharges.eko_id' => $operator])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
-            ->get()[0];
+            ->get();
+
+        if ($table->isEmpty()) {
+            return response("No commissions.");
+        }
+
+        $table = $table[0];
 
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
@@ -785,15 +846,16 @@ class CommissionController extends Controller
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
-
+        $metadata = [
+            'status' => true
+        ];
         $transaction_id = "RECHARGE" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Recharge Commissions', 'fund', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $this->transaction($debit, 'Recharge Commissions', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
-
-        if (empty($table)) {
-            return response()->json(['message' => 'No further commission']);
+        if (!$table->parents) {
+            return response("No comission for parents");
         }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
@@ -811,7 +873,13 @@ class CommissionController extends Controller
         $table = DB::table('recharges')
             ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
             ->where(['package_user.user_id' => $user_id, 'recharges.eko_id' => $operator])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
-            ->get()[0];
+            ->get();
+
+        if ($table->isEmpty()) {
+            return response("No commissions.");
+        }
+
+        $table = $table[0];
 
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
@@ -832,18 +900,17 @@ class CommissionController extends Controller
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
-
+        $metadata = [
+            'status' => true
+        ];
         $transaction_id = "RECHRGE" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Recharge Commissions', 'fund', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $this->transaction($debit, 'Recharge Commissions', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
-
-
-        if (empty($table)) {
-            return response()->json(['message' => 'No further commission']);
+        if (!$table->parents) {
+            return response("No comission for parents");
         }
-
         $parent = DB::table('user_parent')->where('user_id', $user_id);
 
         if ($parent->exists()) {
@@ -892,8 +959,12 @@ class CommissionController extends Controller
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
+        $metadata = [
+            'status' => true
+        ];
+
         $transaction_id = "RECHARGE" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Recharge Commissions', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, $credit);
+        $this->transaction($debit, 'BBPS bill Comission', 'bbps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -910,7 +981,7 @@ class CommissionController extends Controller
 
         return $table;
     }
-    
+
     public function bbpsParentPaysprintCommission($user_id, $operator, $amount)
     {
         $table = DB::table('b_b_p_s')
@@ -927,7 +998,7 @@ class CommissionController extends Controller
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
 
-        $fixed_charge =0;
+        $fixed_charge = 0;
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
@@ -946,8 +1017,8 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true
         ];
-        $transaction_id = "RECHARGE" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Recharge Commissions', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $transaction_id = "BBPSCOM" . strtoupper(Str::random(9));
+        $this->transaction($debit, 'BBPS Bill COMISSIONS', 'bbps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
