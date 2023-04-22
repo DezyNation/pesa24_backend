@@ -21,6 +21,9 @@ class NormalLogin
         } else {
             $user = User::with('roles')->where('phone_number', $request['phone_number'])->first();
         }
+        if (!$user->exists()) {
+            return response("User doesn't exist in system, contact admins", 400);
+        }
         $role = $user['roles'];
         if (sizeof($role) == 0) {
             return response("User doesn't have assigned role, contact admins", 400);
