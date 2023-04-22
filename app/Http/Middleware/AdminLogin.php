@@ -21,6 +21,12 @@ class AdminLogin
         } else {
             $user = User::with('roles')->where('phone_number', $request['phone_number'])->first();
         }
+
+        $role = $user['roles'];
+        if (sizeof($role) == 0) {
+            return response("User doesn't have assigned role, contact admins", 400);
+        }
+        
         $role = $user['roles'][0]['name'];
 
         if ($role !== 'admin') {
