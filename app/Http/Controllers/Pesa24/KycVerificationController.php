@@ -68,7 +68,7 @@ class KycVerificationController extends Controller
                 ['aadhar' => 1]
             );
 
-            Log::channel('response')->info('dob', $response['response']['dob']);
+            Log::channel('response')->info('dob', [$response['response']['dob']]);
             DB::table('users')->where('id', $user_id)->update([
                 'name' => $response['response']['name'],
                 'dob' =>date("Y-m-d", strtotime($response['response']['dob'])),
