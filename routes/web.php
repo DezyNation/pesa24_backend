@@ -44,48 +44,12 @@ Route::get('/', function () {
     return "Pesa24";
 });
 
-
-// Route::get('logic', function () {
-//     $organization = 'AMV45';
-//     $test = Organization::with(['packages.users' => function ($q) {
-//         $q->paginate(1);
-//     }])->where('code', $organization)->get();
-//     # http://127.0.0.1:8000/logic?page=1
-//     echo $test;
-// });
-
-// Route::get('policy', function () {
-//     $user = User::with('parents')->find(56)->can('view', User::with('parents')->find(55));
-
-//     if ($user) {
-//         return 'True';
-//     } else {
-
-//         return 'False';
-//     }
-// });
-
-Route::get('paysprint-test', [PaysprintAeps::class, 'aadhaarPay']);
-Route::get('bill-test/{id?}', [BillController::class, 'operatorParameter']);
-Route::get('paysprint-test1/{user_id}/{operator}/{amount}', [CommissionController::class, 'rechargeCommissionPaysprint']);
-
-Route::get('admin', function () {
-
-    // User::where('email', 'oyeahtrip@gmail.com')->update([
-    //     'mpin' => Hash::make(1234),
-    //         'password' => Hash::make('password')
-    // ]);
-
-    // $user = User::with('roles')->where('email', 'rk3141508@gmail.com')->first();
-
-    // $data = DB::table('d_m_t_s')
-    // ->join('packages', 'packages.id', '=', 'd_m_t_s.package_id')
-    // ->select('d_m_t_s.*')
-    // ->get();
-    // $data = Hash::make('password');
-    $transaction_id = strtoupper(uniqid() . Str::random(8));
-    return $transaction_id;
-    // return $data;
+Route::prefix('commissions')->group(function () {
+    // Route::get('aeps/{amount}/{user_id}', [CommissionController::class, 'aepsComission']);
+    // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);
+    // Route::get('dmt/{user_id}/{amount}', [CommissionController::class, 'dmtCommission']);
+    // Route::get('recharge/{user_id}/{operator}/{amount}', [CommissionController::class, 'rechargeCommissionPaysprint']);
+    // Route::get('bbps/{user_id}/{operator}/{amount}', [CommissionController::class, 'bbpsPaysprintCommission']);
 });
 
 

@@ -61,7 +61,8 @@ class CommissionController extends Controller
             $this->parentAepsComission($amount, $parent_id[0]);
         }
 
-        return $table;
+
+        return response("Comission Assigned.");
     }
 
     public function parentAepsComission($amount, $user_id)
@@ -116,17 +117,18 @@ class CommissionController extends Controller
             $this->parentAepsComission($amount, $parent_id[0]);
         }
 
-        return $table;
+        return response("Comission Assigned.");
     }
     /*-------------------------------------AePS Withdrawal Commission-------------------------------------*/
 
 
     /*-------------------------------------AePS Mini-statement Commission-------------------------------------*/
 
-    public function aepsMiniComission($amount, $user_id)
+    public function aepsMiniComission($user_id)
     {
         $table = DB::table('ae_p_s_mini_statements')
             ->join('package_user', 'package_user.package_id', '=', 'ae_p_s_mini_statements.package_id')
+            ->where('package_user.user_id', $user_id)
             ->get();
 
         if ($table->isEmpty()) {
@@ -150,8 +152,8 @@ class CommissionController extends Controller
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         } elseif (!$is_flat) {
-            $debit = $amount * $fixed_charge / 100;
-            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $debit = $fixed_charge;
+            $credit = $role_commission  - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
@@ -162,7 +164,7 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true,
         ];
-        $this->transaction($debit, 'Comission AePS mini statement', 'mini-statement', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Commission AePS mini statement', 'mini-statement', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -172,16 +174,17 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->parentAepsMiniComission($amount, $parent_id[0]);
+            $this->parentAepsMiniComission($parent_id[0]);
         }
 
-        return $table;
+        return true;
     }
 
-    public function parentAepsMiniComission($amount, $user_id)
+    public function parentAepsMiniComission($user_id)
     {
         $table = DB::table('ae_p_s_mini_statements')
             ->join('package_user', 'package_user.package_id', '=', 'ae_p_s_mini_statements.package_id')
+            ->where('package_user.user_id', $user_id)
             ->get();
 
         if ($table->isEmpty()) {
@@ -205,7 +208,7 @@ class CommissionController extends Controller
             $closing_balance = $opening_balance - $debit + $credit;
         } elseif (!$is_flat) {
             $debit = 0;
-            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
@@ -218,7 +221,7 @@ class CommissionController extends Controller
             'status' => true,
         ];
 
-        $this->transaction($debit, 'Comission AePS', 'mini-statement', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Commission AePS mini statement', 'mini-statement', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -228,10 +231,10 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->parentAepsComission($amount, $parent_id[0]);
+            $this->parentAepsMiniComission($parent_id[0]);
         }
 
-        return $table;
+        return true;
     }
 
     /*-------------------------------------AePS Mini-statement Commission-------------------------------------*/
@@ -358,7 +361,7 @@ class CommissionController extends Controller
             ->get();
 
         if ($table->isEmpty()) {
-            return response("No comissions.");
+            return response("No commissions.");
         }
 
         $table = $table[0];
@@ -391,7 +394,7 @@ class CommissionController extends Controller
         $this->transaction($debit, 'DMT Commission', 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
-            return response("No comission for parents");
+            return response("No commission for parents");
         }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
@@ -401,7 +404,7 @@ class CommissionController extends Controller
             $this->dmtParentCommission($parent_id[0], $amount);
         }
 
-        return $table;
+        return true;
     }
 
     public function dmtParentCommission($user_id, $amount)
@@ -455,7 +458,7 @@ class CommissionController extends Controller
             $this->dmtParentCommission($parent_id[0], $amount);
         }
 
-        return $table;
+        return true;
     }
 
 
@@ -685,7 +688,7 @@ class CommissionController extends Controller
         }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
-        
+
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
             $this->fundSettlementParentCommission($parent_id[0], $amount);
@@ -737,13 +740,13 @@ class CommissionController extends Controller
         ];
 
         $transaction_id = "RECHARGE" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Recharge Commissions', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Recharge Commission', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
 
         if (!$table->parents) {
-            return response("No comission for parents");
+            return response("No commission for parents");
         }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
@@ -753,7 +756,7 @@ class CommissionController extends Controller
             $this->rechargeParentCommissionPaysprint($parent_id[0], $operator, $amount);
         }
 
-        return $table;
+        return true;
     }
 
     public function rechargeParentCommissionPaysprint($user_id, $operator, $amount)
@@ -794,7 +797,7 @@ class CommissionController extends Controller
         ];
 
         $transaction_id = "RECHRGE" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Recharge Commissions', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Recharge Commission', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -811,7 +814,7 @@ class CommissionController extends Controller
             $this->rechargeParentCommissionPaysprint($parent_id[0], $operator, $amount);
         }
 
-        return $table;
+        return true;
     }
 
     public function rechargeCommissionEko($user_id, $operator, $amount)
@@ -927,7 +930,7 @@ class CommissionController extends Controller
     /*-------------------------------------BBPS Commissions-------------------------------------*/
 
     public function bbpsPaysprintCommission($user_id, $operator, $amount)
-    {
+    { 
         $table = DB::table('b_b_p_s')
             ->join('package_user', 'package_user.package_id', '=', 'b_b_p_s.package_id')
             ->where(['package_user.user_id' => $user_id, 'b_b_p_s.paysprint_id' => $operator])->where('b_b_p_s.from', '<', $amount)->where('b_b_p_s.to', '>=', $amount)
@@ -979,7 +982,7 @@ class CommissionController extends Controller
             $this->bbpsParentPaysprintCommission($parent_id[0], $operator, $amount);
         }
 
-        return $table;
+        return true;
     }
 
     public function bbpsParentPaysprintCommission($user_id, $operator, $amount)
@@ -1024,7 +1027,7 @@ class CommissionController extends Controller
         ]);
 
         if (!$table->parents) {
-            return response("No comission for parents");
+            return response("No commission for parents");
         }
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
@@ -1034,7 +1037,7 @@ class CommissionController extends Controller
             $this->bbpsParentPaysprintCommission($parent_id[0], $operator, $amount);
         }
 
-        return $table;
+        return true;
     }
 
     /*-------------------------------------BBPS Commissions-------------------------------------*/
