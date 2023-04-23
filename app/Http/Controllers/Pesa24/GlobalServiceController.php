@@ -65,4 +65,70 @@ class GlobalServiceController extends Controller
 
         return $data;
     }
+
+    public function getCategories()
+    {
+        $data = DB::table('categories')->get();
+        return $data;
+    }
+
+    public function createCategories(Request $request)
+    {
+        $data = DB::table('categories')->insert([
+            'name' => $request['categoryName'],
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        return $data;
+    }
+
+    public function deleteCategory(Request $request)
+    {
+        DB::table('categories')->where('id', $request['categoryId'])->delete();
+        return true;
+    }
+
+    public function registerOperators(Request $request)
+    {
+
+        $request->validate([
+            'categoryId' => 'required|exists:categories,id',
+            'paysprintId' => 'required|integer',
+            'ekoId' => 'required|integer',
+            'operatorName' => 'required|string',
+        ]);
+
+        DB::table('operators')->updateOrInsert(
+            [
+                'category_id' => $request['categoryId'],
+                'paysprint_id' => $request['paysprintId'],
+                'eko_id' => $request['ekoId'],
+            ],
+            [
+                'type' => $request['type'],
+                'name' => $request['operatorName'],
+                'created_at' => now(),
+                'updated_at' => now()
+            ]
+        );
+
+        return true;
+    }
+
+    public function getOperators()
+    {
+        $data = DB::table('operators')
+            ->join('categories', 'categories.id', '=', 'operators.category_id')
+            ->select('operators.*', 'categories.name as category_name')
+            ->get();
+
+        return $data;
+    }
+
+    public function deleteOperator(Request $request)
+    {
+        DB::table('operators')->where('id', $request['operatorId'])->delete();
+        return true;
+    }
 }

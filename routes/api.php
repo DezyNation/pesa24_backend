@@ -249,6 +249,12 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('service-status', [GlobalServiceController::class, 'manageService']);
     Route::get('services', [GlobalServiceController::class, 'getServices']);
     Route::post('services', [GlobalServiceController::class, 'createService']);
+    Route::post('categories', [GlobalServiceController::class, 'createCategories']);
+    Route::get('categories', [GlobalServiceController::class, 'getCategories']);
+    Route::post('delete-category', [GlobalServiceController::class, 'deleteCategory']);
+    Route::post('operators', [GlobalServiceController::class, 'registerOperators']);
+    Route::get('operators', [GlobalServiceController::class, 'getOperators']);
+    Route::post('delete-operator', [GlobalServiceController::class, 'deleteOperator']);
 });
 
 Route::get('transactions-period', [AdminTransactionController::class, 'dailySales']);
