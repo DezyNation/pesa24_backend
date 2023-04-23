@@ -19,7 +19,7 @@ class KycVerification
     public function handle(Request $request, Closure $next)
     {
         $table = DB::table('k_y_c_verifications')->where('user_id', auth()->user()->id)->get();
-        if ($table[0]->adhaar !== true || $table[0]->pan !== true) {
+        if ($table[0]->aadhar !== true || $table[0]->pan !== true) {
             return response("KYC is not completed.", 403);
         }
         return $next($request);

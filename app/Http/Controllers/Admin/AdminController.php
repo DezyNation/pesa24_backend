@@ -60,7 +60,7 @@ class AdminController extends Controller
     {
 
         switch ($name) {
-            case 'aeps':
+            case 'aeps-cash-withdrawal':
                 $data = DB::table('a_e_p_s')
                     ->join('packages', 'packages.id', '=', 'a_e_p_s.package_id')
                     ->where('a_e_p_s.package_id', $id)
@@ -68,7 +68,7 @@ class AdminController extends Controller
                     ->get();
                 break;
 
-            case 'aeps-statement':
+            case 'aeps-mini-statement':
                 $data = DB::table('ae_p_s_mini_statements')
                     ->join('packages', 'packages.id', '=', 'ae_p_s_mini_statements.package_id')
                     ->where('ae_p_s_mini_statements.package_id', $id)
@@ -100,6 +100,13 @@ class AdminController extends Controller
                     ->get();
                 break;
 
+            case 'bbps':
+                $data = DB::table('b_b_p_s')
+                    ->join('packages', 'packages.id', '=', 'b_b_p_s.package_id')
+                    ->where('b_b_p_s.package_id', $id)
+                    ->select('b_b_p_s.parents', 'b_b_p_s.category', 'b_b_p_s.operator', 'b_b_p_s.from', 'b_b_p_s.to', 'b_b_p_s.fixed_charge', 'b_b_p_s.is_flat', 'b_b_p_s.gst', 'b_b_p_s.retailer_commission', 'b_b_p_s.distributor_commission', 'b_b_p_s.super_distributor_commission', 'b_b_p_s.admin_commission')
+                    ->get();
+                break;  
             default:
                 $data = response("Invalid parameter was sent.", 404);
                 break;
@@ -190,7 +197,7 @@ class AdminController extends Controller
             case 'aeps':
                 $request->validate([]);
                 $data = DB::table('a_e_p_s')
-                ->updateOrInsert(['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']], $request->except('id'));
+                    ->updateOrInsert(['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']], $request->except('id'));
                 break;
 
             case 'dmt':

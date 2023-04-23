@@ -149,7 +149,7 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::post('paysprint/aeps/balance-enquiry/{service_id}', [AepsApiController::class, 'enquiry']);
     Route::post('paysprint/aeps/aadhaar-pay/{service_id}', [AepsApiController::class, 'aadhaarPay']);
     Route::get('paysprint/aeps/fetch-bank/{service_id}', [AepsApiController::class, 'bankList']);
-    Route::get('paysprint/aeps/transaction-status/{service_id}', [AepsApiController::class, 'transactionStatus']);
+    Route::post('paysprint/aeps/transaction-status/{service_id}', [AepsApiController::class, 'transactionStatus']);
     /*-----------------------Pysprint AePS-----------------------*/
 
     /*-----------------------Paysprint Payout-----------------------*/
