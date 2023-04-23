@@ -68,6 +68,15 @@ class AdminController extends Controller
                     ->get();
                 break;
 
+
+            case 'aeps-aadhaar-pay':
+                $data = DB::table('aadhaar_pays')
+                    ->join('packages', 'packages.id', '=', 'aadhaar_pays.package_id')
+                    ->where('aadhaar_pays.package_id', $id)
+                    ->select('aadhaar_pays.*')
+                    ->get();
+                break;
+
             case 'aeps-mini-statement':
                 $data = DB::table('ae_p_s_mini_statements')
                     ->join('packages', 'packages.id', '=', 'ae_p_s_mini_statements.package_id')
@@ -106,7 +115,7 @@ class AdminController extends Controller
                     ->where('b_b_p_s.package_id', $id)
                     ->select('b_b_p_s.parents', 'b_b_p_s.category', 'b_b_p_s.operator', 'b_b_p_s.from', 'b_b_p_s.to', 'b_b_p_s.fixed_charge', 'b_b_p_s.is_flat', 'b_b_p_s.gst', 'b_b_p_s.retailer_commission', 'b_b_p_s.distributor_commission', 'b_b_p_s.super_distributor_commission', 'b_b_p_s.admin_commission')
                     ->get();
-                break;  
+                break;
             default:
                 $data = response("Invalid parameter was sent.", 404);
                 break;

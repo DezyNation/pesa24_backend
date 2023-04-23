@@ -136,12 +136,12 @@ class AepsApiController extends CommissionController
                 'acknowldgement_number' => $response['ackno'],
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $balance_left = $walletAmt[0] - $data['amount'];
+            $balance_left = $walletAmt[0] + $data['amount'];
             User::where('id', auth()->user()->id)->update([
                 'wallet' => $balance_left
             ]);
 
-            $this->transaction($data['amount'], "AePS withdrawal for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction(0, "AePS withdrawal for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata), $data['amount']);
             $this->aepsComission($data['amount'], auth()->user()->id);
         } else {
             $transaction_id = "AEPS" . strtoupper(Str::random(9));
