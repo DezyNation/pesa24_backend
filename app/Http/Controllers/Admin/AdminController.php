@@ -203,13 +203,57 @@ class AdminController extends Controller
             return response("Unauthorized action.", 403);
         }
         switch ($name) {
-            case 'aeps':
-                $request->validate([]);
+            case 'aeps-cash-withdrawal':
+                $request->validate([
+                    'from' => 'required',
+                    'to' => 'required',
+                    'package_id' => 'required',
+                ]);
                 $data = DB::table('a_e_p_s')
                     ->updateOrInsert(['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']], $request->except('id'));
                 break;
 
+            case 'aeps-aadhaar-pay':
+                $request->validate([
+                    'from' => 'required',
+                    'to' => 'required',
+                    'package_id' => 'required',
+                ]);
+                $data = DB::table('aadhaar_pays')
+                    ->updateOrInsert(
+                        ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
+                        $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat', 'fixed_charge'])
+                    );
+                break;
+
+            case 'aeps-mini-statement':
+                $request->validate([
+                    'fixed_charge' => 'required',
+                    'package_id' => 'required'
+                ]);
+                $data = DB::table('ae_p_s_mini_statements')
+                    ->updateOrInsert(['fixed_charge' => $request['fixed_charge'], 'package_id' => $request['package_id']], $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat']));
+                break;
+
+            case 'aeps-aadhaar-pay':
+                $request->validate([
+                    'from' => 'required',
+                    'to' => 'required',
+                    'package_id' => 'required',
+                ]);
+                $data = DB::table('aadhaar_pays')
+                    ->updateOrInsert(
+                        ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
+                        $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat', 'fixed_charge'])
+                    );
+                break;
+
             case 'dmt':
+                $request->validate([
+                    'from' => 'required',
+                    'to' => 'required',
+                    'package_id' => 'required',
+                ]);
                 $data = DB::table('d_m_t_s')
                     ->updateOrInsert(['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']], $request->except('id'));
                 break;
