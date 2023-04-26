@@ -13,10 +13,10 @@ class PANController extends Controller
 
     public function token()
     {
-        $key = 'UFMwMDEyNGQ2NTliODUzYmViM2I1OWRjMDc2YWNhMTE2M2I1NQ==';
+        $key = env('PAYSPRINT_KEY');
         $payload = [
-            'timestamp' => now(),
-            'partnerId' => 'PS001',
+            'timestamp' => time(),
+            'partnerId' => env('PAYSPRINT_PARTNERID'),
             'reqid' => abs(crc32(uniqid()))
         ];
 
@@ -43,7 +43,7 @@ class PANController extends Controller
 
         $response = Http::aaceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => env('AUTHORISED_KEY'),
             'Content-Type: application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/pan/V2/generateurl', $data);
 
@@ -61,7 +61,7 @@ class PANController extends Controller
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://paysprint.in/service-api/api/v1/service/pan/V2/pan_status', $data);
 
         return $response;
