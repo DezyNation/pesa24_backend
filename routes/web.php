@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\CommissionController;
-use App\Http\Controllers\Paysprint\LICController;
+use App\Http\Controllers\Paysprint\BBPS\LICController;
 use App\Http\Controllers\Paysprint\LPGController;
 use App\Http\Controllers\Razorpay\PayoutController;
 use App\Http\Controllers\Eko\AePS\AepsApiController;
@@ -28,6 +28,7 @@ use App\Http\Controllers\Eko\Agent\AgentManagementController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
+use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +46,7 @@ Route::get('/', function () {
 });
 
 Route::post('lic', [LICController::class, 'fetchBill']);
+Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
 Route::prefix('commissions')->group(function () {
     // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);
     // Route::get('dmt/{user_id}/{amount}', [CommissionController::class, 'dmtCommission']);

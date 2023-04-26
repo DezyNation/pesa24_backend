@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Paysprint;
+namespace App\Http\Controllers\Paysprint\BBPS;
 
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
