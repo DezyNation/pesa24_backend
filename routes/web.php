@@ -44,8 +44,8 @@ Route::get('/', function () {
     return "Pesa24";
 });
 
+Route::post('lic', [LICController::class, 'fetchBill']);
 Route::prefix('commissions')->group(function () {
-    // Route::get('aeps/{amount}/{user_id}', [CommissionController::class, 'aepsComission']);
     // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);
     // Route::get('dmt/{user_id}/{amount}', [CommissionController::class, 'dmtCommission']);
     // Route::get('recharge/{user_id}/{operator}/{amount}', [CommissionController::class, 'rechargeCommissionPaysprint']);

@@ -35,10 +35,9 @@ class LICController extends Controller
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'content-type' => 'application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/fetchlicbill', [
-            'body' => json_encode($data)
-        ]);
+            'content-type' => 'application/json',
+            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ='
+        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/fetchlicbill', $data);
 
         return $response;
     }
@@ -53,7 +52,7 @@ class LICController extends Controller
             'ad1' => 'nitesh@rnfiservices.com',
             'ad2' => 'HDC610532',
             'ad3' => 'HDC416601',
-            'referenceid' => '2021052415',
+            'referenceid' => uniqid(),
             'latitude' => '27.2232',
             'longitude' => '78.26535',
             'bill_fetch' => json_encode([
@@ -74,9 +73,8 @@ class LICController extends Controller
         $response = Http::asJson()->withHeaders([
             'token' => $token,
             'content-type' => 'application/json',
-        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paylicbill', [
-            'body' => json_encode($data)
-        ]);
+            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ='
+        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paylicbill', $data);
 
         return $response;
     }
