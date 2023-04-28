@@ -23,7 +23,7 @@ class NormalLogin
         }
         
         if (empty($user)) {
-            return response("User doesn't exists, contact admins.", 404);
+            return response("User doesn't exists, contact admins.", 400);
         }
 
         $role = $user['roles'];
