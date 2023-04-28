@@ -27,7 +27,7 @@ class NormalLogin
         }
 
         $role = $user['roles'];
-        if (sizeof($role) == 0) {
+        if (empty($role)) {
             return response("User doesn't have assigned role, contact admins", 400);
         }
 
