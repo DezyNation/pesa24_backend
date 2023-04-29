@@ -78,6 +78,14 @@ Route::middleware(['auth:api'])->group(function () {
         $arr = array_merge($data, $role_details);
         return $arr;
     });
+
+    Route::get('user/kyc-status', function() {
+        $table = DB::table('k_y_c_verifications')->where('user_id', auth()->user()->id)->get();
+        if (!$table[0]->aadhar || !$table[0]->pan) {
+            return false;
+        }
+        return true;
+    });
     Route::post('user/pay/onboard-fee', [KycVerificationController::class, 'onboardFee'])->middleware(['profile', 'minimum_balance']);
 
     /*-----------------------Tickets-----------------------*/
