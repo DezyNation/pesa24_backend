@@ -73,8 +73,7 @@ class AepsApiController extends CommissionController
         ])->post('https://api.paysprint.in/api/v1/service/aeps/balanceenquiry/index', ['body' => $body]);
 
         if ($response['response_code'] == 24) {
-            $this->onboard();
-            return true;
+            return $this->onboard();
         }
         return ['metadata' => $response->object()];
     }
@@ -129,8 +128,7 @@ class AepsApiController extends CommissionController
         ])->post('https://api.paysprint.in/api/v1/service/aeps/cashwithdraw/index', ['body' => $body]);
 
         if ($response['response_code'] == 24) {
-            $this->onboard();
-            return true;
+            return $this->onboard();
         }
 
         if ($response['status'] == true && $response['response_code'] == 1) {
@@ -257,8 +255,7 @@ class AepsApiController extends CommissionController
         ])->post('https://api.paysprint.in/api/v1/service/aeps/ministatement/index', ['body' => $body]);
 
         if ($response['response_code'] == 24) {
-            $this->onboard();
-            return true;
+            return $this->onboard();
         }
 
         if ($response['status'] == true && $response['response_code'] == 1) {
@@ -348,8 +345,7 @@ class AepsApiController extends CommissionController
         ])->post('https://api.paysprint.in/api/v1/service/aadharpay/aadharpay/index', ['body' => $body]);
 
         if ($response['response_code'] == 24) {
-            $this->onboard();
-            return true;
+            return $this->onboard();
         }
 
         if ($response['status'] == true && $response['response_code'] == 1) {
