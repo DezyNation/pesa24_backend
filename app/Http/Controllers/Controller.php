@@ -3,18 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Firebase\JWT\JWT;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Log;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    public function token()
+    {
+        $key = env('JWT_KEY');
+        $payload = [
+            'timestamp' => time(),
+            'partnerId' => env('PAYSPRINT_PARTNERID'),
+            'reqid' => abs(crc32(uniqid()))
+        ];
+
+        $jwt = JWT::encode($payload, $key, 'HS256');
+        return $jwt;
+    }
 
     public function index()
     {
@@ -57,6 +72,35 @@ class Controller extends BaseController
         ]);
 
         return response()->json(['message' => 'Transaction successful.']);
+    }
+
+    public function onboard()
+    {
+        $token = $this->token();
+
+        $data = [
+            'merchantcode' => "PESA24API".auth()->user()->id,
+            'mobile' => auth()->user()->phone_number,
+            'is_new' => 0,
+            'email' => auth()->user()->email,
+            'firm' => auth()->user()->company_name ?? 'PAYMONEY',
+            'callback' => 'https://api.pesa24.in/api/onboard-callback-paysprint',
+        ];
+
+        $response = Http::withHeaders([
+            'Token' => $token,
+            'Authorisedkey' => env('AUTHORISED_KEY'),
+            'Content-Type: application/json'
+        ])->post('https://api.paysprint.in/api/v1/service/onboard/onboard/getonboardurl', $data);
+        Log::channel('response')->info($response);
+        DB::table('users')->where('id', auth()->user()->id)->update([
+            'paysprint_merchant' => $data['merchantcode'],
+            'updated_at' => now()
+        ]);
+        if ($response['status'] == false) {
+            return response($response['message'], 400);
+        }
+        return $response;
     }
 
     // public function baseCommission(int $amount, int $user_id, int $service_id)

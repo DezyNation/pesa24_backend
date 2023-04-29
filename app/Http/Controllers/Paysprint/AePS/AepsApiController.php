@@ -60,6 +60,7 @@ class AepsApiController extends CommissionController
             'is_iris' => 'No'
         ];
 
+
         $cipher = openssl_encrypt(json_encode($data, true), 'AES-128-CBC', $key, $options = OPENSSL_RAW_DATA, $iv);
         $body = base64_encode($cipher);
 
@@ -71,6 +72,10 @@ class AepsApiController extends CommissionController
             'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://api.paysprint.in/api/v1/service/aeps/balanceenquiry/index', ['body' => $body]);
 
+        if ($response['response_code'] == 24) {
+            $this->onboard();
+            return true;
+        }
         return ['metadata' => $response->object()];
     }
 
@@ -122,6 +127,11 @@ class AepsApiController extends CommissionController
             'accept' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://api.paysprint.in/api/v1/service/aeps/cashwithdraw/index', ['body' => $body]);
+
+        if ($response['response_code'] == 24) {
+            $this->onboard();
+            return true;
+        }
 
         if ($response['status'] == true && $response['response_code'] == 1) {
             $transaction_id = "AEPSW" . strtoupper(Str::random(9));
@@ -246,6 +256,11 @@ class AepsApiController extends CommissionController
             'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://api.paysprint.in/api/v1/service/aeps/ministatement/index', ['body' => $body]);
 
+        if ($response['response_code'] == 24) {
+            $this->onboard();
+            return true;
+        }
+
         if ($response['status'] == true && $response['response_code'] == 1) {
             $transaction_id = "AEPSW" . strtoupper(Str::random(9));
             $metadata = [
@@ -332,6 +347,11 @@ class AepsApiController extends CommissionController
             'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://api.paysprint.in/api/v1/service/aadharpay/aadharpay/index', ['body' => $body]);
 
+        if ($response['response_code'] == 24) {
+            $this->onboard();
+            return true;
+        }
+
         if ($response['status'] == true && $response['response_code'] == 1) {
             $transaction_id = "AAPAY" . strtoupper(Str::random(9));
             $metadata = [
@@ -353,7 +373,7 @@ class AepsApiController extends CommissionController
 
             $this->transaction($data['amount'], "Aadhaar Pay {$data['mobilenumber']}", 'aadhaar-pay', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->aepsComission($data['amount'], auth()->user()->id);
-        }   else {
+        } else {
             $transaction_id = "AADHP" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => false,
