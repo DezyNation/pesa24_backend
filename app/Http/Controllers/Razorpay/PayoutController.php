@@ -29,6 +29,8 @@ class PayoutController extends CommissionController
             'Content-Type' => 'application/json'
         ])->post('https://api.razorpay.com/v1/payouts', $data);
 
+        Log::channel('response')->info($response);
+
         DB::table('payouts')->insert([
             'user_id' => auth()->user()->id,
             'payout_id' => $transfer['id'] ?? 0,
