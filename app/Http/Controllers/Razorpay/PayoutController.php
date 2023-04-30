@@ -76,6 +76,7 @@ class PayoutController extends CommissionController
                 'amount' => $data['amount'] / 100,
                 'reference_id' => $data['reference_id'],
                 'to' => $request['bank_account']['name'] ?? null,
+                'status' => $transfer->status()
             ];
             return response(['Transaction sucessfull', 'metadata' => $metadata], 200);
         }
