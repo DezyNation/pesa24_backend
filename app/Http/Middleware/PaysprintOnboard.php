@@ -15,7 +15,8 @@ class PaysprintOnboard
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (is_null(auth()->user()->paysprint_merchant)) {
+        $merchant_code = auth()->user()->paysprint_merchant;
+        if (is_null($merchant_code) || empty($merchant_code)) {
             return response("AePS onboarding incomplete, go to profile page.", 501);
         }
         return $next($request);
