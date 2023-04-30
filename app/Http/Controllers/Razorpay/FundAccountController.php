@@ -38,7 +38,7 @@ class FundAccountController extends PayoutController
             ->post('https://api.razorpay.com/v1/fund_accounts', $data);
     
             if (!is_null($response['error']['description'])) {
-                return response($response['error']['description'], 400);
+                return response()->json(['message' => $response['error']['description']], 400);
             }
             Log::channel('response')->info($response);
         return $this->bankPayout($response, $request['amount'], $service_id);
