@@ -14,6 +14,7 @@ class CallbackController extends CommissionController
 {
     public function onboardCallback(Request $request)
     {
+        Log::info('request', $request->all());
         $metadata = [
             'status' => 200,
             'message' => "Transaction Done"
