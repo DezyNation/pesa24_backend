@@ -72,12 +72,12 @@ class PayoutController extends CommissionController
             return response(['Transaction sucessfull', 'metadata' => $metadata], 200);
         } else {
             $metadata = [
-                'status' => true,
+                'status' => false,
                 'amount' => $data['amount'] / 100,
                 'reference_id' => $data['reference_id'],
                 'to' => $request['bank_account']['name'] ?? null,
             ];
-            return response(['Transaction sucessfull', 'metadata' => $metadata], 400);
+            return response(['Transaction sucessfull', 'metadata' => $metadata], 200);
         }
     }
 
