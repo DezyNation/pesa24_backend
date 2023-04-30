@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Razorpay;
 
-use App\Http\Controllers\CommissionController;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\CommissionController;
 
 class PayoutController extends CommissionController
 {
@@ -29,7 +30,7 @@ class PayoutController extends CommissionController
             'Content-Type' => 'application/json'
         ])->post('https://api.razorpay.com/v1/payouts', $data);
 
-        Log::channel('response')->info($response);
+        Log::channel('response')->info($transfer);
 
         DB::table('payouts')->insert([
             'user_id' => auth()->user()->id,
