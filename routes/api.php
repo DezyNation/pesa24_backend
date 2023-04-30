@@ -86,7 +86,7 @@ Route::middleware(['auth:api'])->group(function () {
         }
         return true;
     });
-    Route::post('user/pay/onboard-fee', [KycVerificationController::class, 'onboardFee'])->middleware(['profile', 'minimum_balance']);
+    Route::post('user/pay/onboard-fee', [KycVerificationController::class, 'onboardFee'])->middleware(['profile']);
 
     /*-----------------------Tickets-----------------------*/
     Route::post('tickets', [TicketController::class, 'store']);
