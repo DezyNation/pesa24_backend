@@ -14,8 +14,8 @@ class LICController extends Controller
     {
         $key = 'UFMwMDEyNGQ2NTliODUzYmViM2I1OWRjMDc2YWNhMTE2M2I1NQ==';
         $payload = [
-            'timestamp' => now(),
-            'partnerId' => 'PS001',
+            'timestamp' => time(),
+            'partnerId' => env('PAYSPRINT_PARTNERID'),
             'reqid' => abs(crc32(uniqid()))
         ];
         
@@ -23,12 +23,12 @@ class LICController extends Controller
         return $jwt;
     }
 
-    public function fetchBill()
+    public function fetchBill(Request $request)
     {
         $data = [
-            'canumber' => 334489350,
-            'ad1' => 'rk3141508@gmail.com',
-            'mode' => 'online'
+            'canumber' => $request['canumber'],
+            'ad1' => $request['add1'],
+            'mode' => $request['mode']
         ];
 
         $token = $this->token();
@@ -42,32 +42,21 @@ class LICController extends Controller
         return $response;
     }
 
-    public function payLicBill()
+    public function payLicBill(Request $request)
     {
+        $latlong = explode(",", $request['latlong']);
         $token = $this->token();
         $data = [
-            'canumber' => 554984552,
-            'mode' => 'offline',
-            'amount' => 100,
-            'ad1' => 'nitesh@rnfiservices.com',
-            'ad2' => 'HDC610532',
-            'ad3' => 'HDC416601',
-            'referenceid' => uniqid(),
-            'latitude' => '27.2232',
-            'longitude' => '78.26535',
-            'bill_fetch' => json_encode([
-                'billNumber' => 'LICI2122000037468013',
-                'billAmount' => 1548.00,
-                'billnetamount' => 1548.00,
-                'billdate' => '25-05-2021 00:44:29',
-                'acceptPayment' => true,
-                'acceptPartPay' => false,
-                'cellNumber' => 905514651,
-                'dueFrom' => '11/05/2021',
-                'dueTo' => '11/05/2021',
-                'validationId' => 'HGA8V00A110382264047',
-                'billId' => 'HGA8V00A110382264047B'
-            ])
+                'canumber' => $request['canumber'],
+                'mode' => $request['mode'],
+                'amount' => $request['amount'],
+                'ad1' => $request['ad1'],
+                'ad2' => $request['ad2'],
+                'ad3' => $request['ad3'],
+                'referenceid' => uniqid(),
+                'latitude' => $latlong[0],
+                'longitude' => $latlong[1],
+                'bill_fetch' => json_encode($request['bill'], true)
         ];
 
         $response = Http::asJson()->withHeaders([

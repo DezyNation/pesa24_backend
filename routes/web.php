@@ -45,7 +45,7 @@ Route::get('/', function () {
     return "Pesa24";
 });
 
-Route::post('lic', [LICController::class, 'fetchBill']);
+Route::get('lic', [LICController::class, 'payLicBill']);
 Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
 Route::prefix('commissions')->group(function () {
     // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);
