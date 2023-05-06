@@ -24,13 +24,19 @@ class PANController extends Controller
         return $jwt;
     }
 
-
+/*------------------------------PAN NSDL------------------------------*/
     public function generateUrl(Request $request)
     {
-        $token = $this->token();
 
+        $request->validate([
+            'title' => 'required',
+
+        ]);
+
+        $token = $this->token();
+             
         $data = [
-            'refid' => strtoupper(uniqid() . Str::random(12)),
+            'refid' => "PESA24".strtoupper(uniqid() . Str::random(12)),
             'title' => $request['title'],
             'firstname' => $request['firstName'],
             'middlename' => $request['middleName'],
@@ -43,6 +49,7 @@ class PANController extends Controller
 
         $response = Http::aaceptJson()->withHeaders([
             'Token' => $token,
+            
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'Content-Type: application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/pan/V2/generateurl', $data);
@@ -56,7 +63,7 @@ class PANController extends Controller
         $token = $this->token();
 
         $data = [
-            'refid' => 'somerefid',
+            'refid' => $request['refid'],
         ];
 
         $response = Http::acceptJson()->withHeaders([
