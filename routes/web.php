@@ -29,6 +29,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
 use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
+use App\Http\Controllers\Paysprint\PANController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +46,7 @@ Route::get('/', function () {
     return "Pesa24";
 });
 
-Route::get('lic', [LICController::class, 'payLicBill']);
+Route::get('lic', [PANController::class, 'generateUrl']);
 Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
 Route::prefix('commissions')->group(function () {
     // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);

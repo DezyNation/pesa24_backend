@@ -242,7 +242,7 @@ class CommissionController extends Controller
 
     /*-------------------------------------PAN Commissions-------------------------------------*/
 
-    public function panCommission($name, $user_id, $amount)
+    public function panCommission($name, $user_id)
     {
         $table = DB::table('p_a_n_s')
             ->join('package_user', 'package_user.package_id', '=', 'p_a_n_s.package_id')
@@ -267,12 +267,12 @@ class CommissionController extends Controller
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
-            $debit = $amount + $fixed_charge;
+            $debit =  $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         } elseif (!$is_flat) {
-            $debit = $amount + $amount * $fixed_charge / 100;
-            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $debit = $fixed_charge / 100;
+            $credit = $role_commission / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
@@ -281,7 +281,7 @@ class CommissionController extends Controller
         ];
 
         $transaction_id = "PAN" . strtoupper(Str::random(9));
-        $this->transaction($amount, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'PAN Commissions', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -291,13 +291,13 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->panParentCommission($name, $parent_id[0], $amount);
+            $this->panParentCommission($name, $parent_id[0]);
         }
 
         return $table;
     }
 
-    public function panParentCommission($name, $user_id, $amount)
+    public function panParentCommission($name, $user_id)
     {
         $table = DB::table('p_a_n_s')
             ->join('package_user', 'package_user.package_id', '=', 'p_a_n_s.package_id')
@@ -327,7 +327,7 @@ class CommissionController extends Controller
             $closing_balance = $opening_balance - $debit + $credit;
         } elseif (!$is_flat) {
             $debit = $fixed_charge;
-            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $credit = $role_commission / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
@@ -336,14 +336,14 @@ class CommissionController extends Controller
         ];
 
         $transaction_id = "PAN" . strtoupper(Str::random(9));
-        $this->transaction($amount, 'PAN Commission', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'PAN Commission', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
 
         $parent = DB::table('user_parent')->where('user_id', $user_id);
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->panParentCommission($name, $parent_id[0], $amount);
+            $this->panParentCommission($name, $parent_id[0]);
         }
 
         return $table;
