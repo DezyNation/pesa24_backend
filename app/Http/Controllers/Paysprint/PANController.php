@@ -30,14 +30,14 @@ class PANController extends CommissionController
     public function generateUrl(Request $request)
     {
 
-        // $request->validate([
-        //     'title' => 'required',
-        //     'firstName' => 'required',
-        //     'lastName' => 'required',
-        //     'mode' => 'required',
-        //     'gender' => 'required',
-        //     'email' => 'required'
-        // ]);
+        $request->validate([
+            'title' => 'required',
+            'firstName' => 'required',
+            'lastName' => 'required',
+            'mode' => 'required',
+            'gender' => 'required',
+            'email' => 'required'
+        ]);
 
         $token = $this->token();
              
