@@ -73,7 +73,7 @@ class PANController extends CommissionController
             $this->transaction(0, 'PAN Card generation', 'pan', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->panCommission('generation', auth()->user()->id);
 
-            return response(['metadata' => $metadata], 200);
+            return response(['metadata' => $metadata, 'response' => $response->body()], 200);
         }
 
         return $response;
