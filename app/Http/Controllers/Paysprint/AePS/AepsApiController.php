@@ -160,6 +160,7 @@ class AepsApiController extends CommissionController
                 'transaction_id' => $transaction_id,
                 'created_at' => date("F j, Y, g:i a"),
                 'reference_id' => $data['referenceno'],
+                'reason' => $response['message'] ?? "null",
                 'mobile_number' => $data['mobilenumber'],
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
