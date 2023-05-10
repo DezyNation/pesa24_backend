@@ -24,7 +24,7 @@ class UserService
         if (!$db->exists()) {
             return response("Service is not activated.", 404);
         } elseif (!$service_active) {
-            return response("Service is not avaoilable at the moment", 403);
+            return response("Service is not available at the moment", 403);
         }
          elseif (!$pesa24_status) {
             return response("User can not use this service at the momemnt.", 403);

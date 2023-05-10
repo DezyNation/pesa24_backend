@@ -49,7 +49,7 @@ class PayoutController extends CommissionController
         $token = $this->token();
         $data = [
             'bankid' => $user->paysprint_bank_code,
-            'merchant_code' => 1122,
+            'merchant_code' => auth()->user()->paysprint_merchant,
             'account' => $user->account_number,
             'ifsc' => $user->ifsc,
             'name' => $user->name,

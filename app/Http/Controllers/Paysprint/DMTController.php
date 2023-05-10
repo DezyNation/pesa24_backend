@@ -26,6 +26,12 @@ class DMTController extends CommissionController
         return $jwt;
     }
 
+    public function dmtBanks()
+    {
+        $data = DB::table('dmt_banks')->get();
+        return $data;
+    }
+
     public function remiterQuery(Request $request)
     {
         $token = $this->token();

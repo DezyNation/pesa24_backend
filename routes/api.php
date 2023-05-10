@@ -171,6 +171,7 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::post('paysprint/dmt/create-customer/{service_id}', [DMTController::class, 'registerRemiter']);
 
     Route::post('paysprint/dmt/initiate-payment/{service_id}', [DMTController::class, 'newTransaction'])->middleware('mpin');
+    Route::get('paysprint/dmt/banks/{service_id}', [DMTController::class, 'dmtBanks']);
 
     Route::post('paysprint/dmt/recipient-list/{service_id}', [DMTController::class, 'fetchBeneficiary']);
     Route::post('paysprint/dmt/add-recipient/{service_id}', [DMTController::class, 'registerBeneficiary']);
