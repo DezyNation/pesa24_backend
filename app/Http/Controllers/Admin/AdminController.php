@@ -130,7 +130,7 @@ class AdminController extends Controller
         if (is_null($request->page)) {
             $data = DB::table('packages')
                 ->join('users', 'users.id', '=', 'packages.user_id')
-                ->where('organization_id', auth()->user()->organization_id)->select('packages.id', 'packages.name', 'packages.is_default', 'packages.status', 'users.name as user_name')->get();
+                ->where('packages.organization_id', auth()->user()->organization_id)->select('packages.id', 'packages.name', 'packages.is_default', 'packages.status', 'users.name as user_name')->get();
         } else {
             $data = DB::table('packages')
                 ->join('users', 'users.id', '=', 'packages.user_id')
@@ -321,7 +321,7 @@ class AdminController extends Controller
 
     public function settlementAccount()
     {
-        $data = DB::table('users')->where('organization_id', auth()->user()->organization_id)->get(['account_number', 'passbook', 'name', 'ifsc', 'bank_name', 'is_verified', 'bank_account_remarks', 'id']);
+        $data = DB::table('users')->where('organization_id', auth()->user()->organization_id)->get(['account_number', 'passbook', 'name', 'ifsc', 'bank_name', 'is_verified', 'bank_account_remarks', 'id', 'paysprint_bank_code']);
         return $data;
     }
 
@@ -369,5 +369,20 @@ class AdminController extends Controller
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
             ->where(['users.organization_id' => 5, 'transactions.service_type' => 'admin-funds'])->select('transactions.*', 'users.name', 'admin.name as done_by')->get();
         return $data;
+    }
+
+    public function assignPackage(Request $request)
+    {
+        $data = DB::table('package_user')->updateOrInsert(
+            [
+                'user_id' => $request['user_id'],
+            ],
+            [
+                'package_id' => $request['package_id'],
+                'updated_at' => now()
+            ]
+            );
+
+            return $data;
     }
 }

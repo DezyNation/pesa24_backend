@@ -8,6 +8,7 @@ use App\Http\Controllers\CommissionController;
 use Illuminate\Support\Str;
 use App\Models\User;
 use Carbon\Carbon;
+use CURLFile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -49,7 +50,7 @@ class PayoutController extends CommissionController
         $token = $this->token();
         $data = [
             'bankid' => $user->paysprint_bank_code,
-            'merchant_code' => auth()->user()->paysprint_merchant,
+            'merchant_code' => auth()->user()->paysprint_merchant ?? "1234",
             'account' => $user->account_number,
             'ifsc' => $user->ifsc,
             'name' => $user->name,
@@ -78,11 +79,34 @@ class PayoutController extends CommissionController
 
         $doctype = 'PAN';
         $data = [
-            'passbook' => Storage::path($passbook),
+            'passbook' => new CURLFile(Storage::path($passbook)),
             'doctype' => $doctype,
-            'panimage' => Storage::path($pan),
+            'panimage' => new CURLFile(Storage::path($pan)),
             'bene_id' => $user[0]->paysprint_bene_id
         ];
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://api.paysprint.in/api/v1/service/payout/payout/uploaddocument',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => $data,
+        CURLOPT_HTTPHEADER => array(
+            'Token' => $token,
+            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Content-Type' => 'application/json'
+        ),
+        ));
+
+        $response2 = curl_exec($curl);
+        curl_close($curl);
+
+        echo $response2;
 
         // if ($doctype == 'PAN') {
         //     $data['panimage'] = Storage::get($pan);
@@ -95,7 +119,7 @@ class PayoutController extends CommissionController
         $response = Http::asForm()->acceptJson()->withHeaders([
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
-            'Content-Type: application/json'
+            'Content-Type' => 'application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/uploaddocument', $data);
 
         return $response;

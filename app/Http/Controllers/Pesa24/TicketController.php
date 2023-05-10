@@ -44,4 +44,17 @@ class TicketController extends Controller
 
         return $data;
     }
+
+    public function adminUpdateTicket(Request $request)
+    {
+        $data = DB::table('tickets')
+            ->join('users', 'users.id', '=', 'tickets.user_id')
+            ->where(['users.organization_id'=> auth()->user()->organization_id, 'tickets.id' => $request['id']])
+            ->update([
+                'tickets.status' => $request['status'],
+                'tickets.admin_remarks' => $request['admin_remarks']
+            ]);
+
+        return $data;
+    }
 }

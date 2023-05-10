@@ -91,9 +91,6 @@ Route::middleware(['auth:api'])->group(function () {
     /*-----------------------Tickets-----------------------*/
     Route::post('tickets', [TicketController::class, 'store']);
     Route::get('user/tickets', [TicketController::class, 'index']);
-    Route::get('tickets/user/{id}', [TicketController::class, 'userTicket']);
-    Route::get('tickets/{id}', [TicketController::class, 'ticket']);
-    Route::post('tickets/{id}', [TicketController::class, 'update']);
     /*-----------------------Tickets-----------------------*/
 
     /*-----------------------Password and MPIN-----------------------*/
@@ -196,6 +193,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('users', [UserController::class, 'index']);
     Route::get('users/{id}', [UserController::class, 'show']);
     Route::get('tickets', [TicketController::class, 'adminTicket']);
+    Route::post('tickets', [TicketController::class, 'adminUpdateTicket']);
     Route::post('create/user', [UserController::class, 'store']);
     Route::get('packages/{id}', [PackageController::class, 'parentPackage']);
     Route::get('get-users/{role_id}/{parent?}', [UserController::class, 'getUsers']);
@@ -238,6 +236,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('new-admin', [AdminController::class, 'newAdmin'])->middleware('permission:assign-permission');
     Route::get('all-permissions', [AdminController::class, 'permissions'])->middleware('permission:assign-permission');
     Route::post('assign-permission', [AdminController::class, 'assignPermission'])->middleware('permission:assign-permission');
+    Route::post('assign-package', [AdminController::class, 'assignPackage'])->middleware('permission:user-edit');
 
     Route::post('add-admin-funds', [AdminController::class, 'addAdminFunds'])->middleware('mpin');
     Route::get('add-admin-funds', [AdminController::class, 'adminFundsRecords']);
