@@ -188,18 +188,20 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     /*-----------------------Paysprint Recharge-----------------------*/
 });
 
-Route::get('admin/packages', [AdminController::class, 'packages'])->middleware(['auth:api', 'role:distributor']);
+Route::get('admin/packages', [AdminController::class, 'packages'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);
+Route::get('admin/all-users-list/{role}/{id?}', [UserController::class, 'userInfoPackage'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);
+Route::post('admin/create/user', [UserController::class, 'store'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);
+Route::get('parent/users-list/{role}/{id?}', [UserController::class, 'userInfo'])->middleware(['auth:api', 'role:distributor|super_distributor']);
 Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
     Route::get('users', [UserController::class, 'index']);
     Route::get('users/{id}', [UserController::class, 'show']);
     Route::get('tickets', [TicketController::class, 'adminTicket']);
     Route::post('tickets', [TicketController::class, 'adminUpdateTicket']);
-    Route::post('create/user', [UserController::class, 'store']);
     Route::get('packages/{id}', [PackageController::class, 'parentPackage']);
     Route::get('get-users/{role_id}/{parent?}', [UserController::class, 'getUsers']);
     Route::get('users-list/{role}/{id?}', [UserController::class, 'userInfo']);
-    Route::get('all-users-list/{role}/{id?}', [UserController::class, 'userInfoPackage']);
+    // Route::get('all-users-list/{role}/{id?}', [UserController::class, 'userInfoPackage']);
     Route::get('user/status/{id}/{bool}', [UserController::class, 'active']);
     Route::post('link-package', [AdminDashboardcontroller::class, 'packageService']);
 

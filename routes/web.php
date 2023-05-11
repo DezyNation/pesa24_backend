@@ -43,7 +43,14 @@ use App\Http\Controllers\Paysprint\PANController;
 */
 
 Route::get('/', function () {
-    return "Pesa24";
+    $user = DB::table('user_parent')
+        ->join('users', 'users.id', '=', 'user_parent.user_id')
+        ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
+        ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+        ->where('user_parent.parent_id', auth()->user()->id)
+        ->select('users.id', 'users.name', 'users.email', 'users.phone_number', 'users.alternate_phone', 'users.line', 'users.line', 'users.city', 'users.state', 'users.pincode', 'users.wallet', 'users.minimum_balance', 'users.kyc', 'roles.name', 'users.aadhar_front', 'users.aadhar_back', 'users.pan_photo')
+        ->get();
+    return  $user;
 });
 
 Route::get('lic', [PANController::class, 'generateUrl']);
