@@ -294,6 +294,18 @@ class UserController extends Controller
         ->get();
         return $user;
     }
+
+    public function userReport(Request $request)
+    {
+        $bool = DB::table('user_parent')->where(['parent_id' => auth()->user()->id, 'user_id' => $request['user_id']]);
+        if ($bool->exists()) {
+            $data = DB::table('transactions')->where('trigered_by', $request['user_id'])->get();
+            return $data;
+        }
+
+        return response("Forbidden", 403);
+        
+    }
 }
 
 // $user = User::role($role)->with(['children' => function ($query) use ($role) {
