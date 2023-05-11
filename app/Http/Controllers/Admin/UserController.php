@@ -299,7 +299,10 @@ class UserController extends Controller
     {
         $bool = DB::table('user_parent')->where(['parent_id' => auth()->user()->id, 'user_id' => $request['user_id']]);
         if ($bool->exists()) {
-            $data = DB::table('transactions')->where('trigered_by', $request['user_id'])->get();
+            $data = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->where('trigered_by', $request['user_id'])
+            ->select('users.name', 'transactions.*');
             return $data;
         }
 
