@@ -278,7 +278,7 @@ class AepsApiController extends CommissionController
             ]);
 
             $this->transaction(0, "AePS Mini Statement for {$data['mobilenumber']}", 'mini-statement', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
-            $this->aepsMiniComission($data['amount'], auth()->user()->id);
+            $this->aepsMiniComission(auth()->user()->id);
         } else {
             $transaction_id = "MINIS" . strtoupper(Str::random(9));
             $metadata = [
