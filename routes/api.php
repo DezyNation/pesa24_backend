@@ -188,6 +188,7 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     /*-----------------------Paysprint Recharge-----------------------*/
 });
 
+Route::get('admin/packages', [AdminController::class, 'packages'])->middleware(['auth:api', 'role:distributor']);
 Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
     Route::get('users', [UserController::class, 'index']);
@@ -241,7 +242,6 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('add-admin-funds', [AdminController::class, 'addAdminFunds'])->middleware('mpin');
     Route::get('add-admin-funds', [AdminController::class, 'adminFundsRecords']);
     Route::get('commissions', [AdminController::class, 'commissions']);
-    Route::get('packages', [AdminController::class, 'packages']);
     Route::post('packages/delete/{id}', [AdminController::class, 'packagesId'])->middleware('mpin');
     Route::get('commissions/{name}/{id}', [AdminController::class, 'commissionsPackage']);
     Route::post('commissions/{name}', [AdminController::class, 'updateCommission']);
