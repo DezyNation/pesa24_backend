@@ -376,9 +376,9 @@ class AdminController extends Controller
         $data = DB::table('package_user')->updateOrInsert(
             [
                 'user_id' => $request['user_id'],
-                'package_id' => $request['package_id'],
             ],
             [
+                'package_id' => $request['package_id'],
                 'updated_at' => now()
             ]
             );
