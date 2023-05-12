@@ -96,7 +96,7 @@ class ProfileController extends AgentManagementController
             // 'phone_number' => $request['values']['phone'],
             'pan_number' => $request['values']['pan'],
             'company_name' => $request['values']['firmName'] ?? null,
-            'firm_type' => $request['values']['companyType'],
+            'firm_type' => $request['values']['companyType'] ?? null,
             'profile' => 1,
             'profile_pic' => $profile ?? auth()->user()->profile_pic,
             'aadhar_front' => $aadhaar_front ?? auth()->user()->aadhar_front,
