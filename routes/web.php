@@ -43,14 +43,25 @@ use App\Http\Controllers\Paysprint\PANController;
 */
 
 Route::get('/', function () {
-    $user = DB::table('user_parent')
-        ->join('users', 'users.id', '=', 'user_parent.user_id')
-        ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
-        ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
-        ->where(['user_parent.parent_id' => 85, 'roles.name' => 'retailer'])
-        ->select('users.id', 'users.name', 'users.email', 'users.phone_number', 'users.alternate_phone', 'users.line', 'users.line', 'users.city', 'users.state', 'users.pincode', 'users.wallet', 'users.minimum_balance', 'users.kyc', 'roles.name', 'users.aadhar_front', 'users.aadhar_back', 'users.pan_photo')
-        ->get();
-    return  $user;
+    // $request['user_id'] = 98;
+    //     $bool = DB::table('user_parent')->where(['parent_id' => 85, 'user_id' => $request['user_id']]);
+    //     if ($bool->exists()) {
+    //         $data = DB::table('transactions')
+    //         ->join('users', 'users.id', '=', 'transactions.trigered_by')
+    //         ->where('trigered_by', $request['user_id'])
+    //         ->select('users.name', 'transactions.*')
+    //         ->get();
+    //     }
+    // // } else {
+    //     $data = DB::table('transactions')
+    //     ->join('user_parent', 'user_parent.user_id', '=','transactions.trigered_by')
+    //     ->join('users', 'users.id', '=', 'transactions.trigered_by')
+    //     ->where('user_parent.parent_id', 85)
+    //     ->select('users.name', 'transactions.*')
+    //     ->get();
+    // // }
+
+    // return $data;
 });
 
 Route::get('lic', [PANController::class, 'generateUrl']);

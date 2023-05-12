@@ -297,16 +297,23 @@ class UserController extends Controller
 
     public function userReport(Request $request)
     {
-        $bool = DB::table('user_parent')->where(['parent_id' => auth()->user()->id, 'user_id' => $request['user_id']]);
-        if ($bool->exists()) {
+        if ($request->has('user_id')) {
+            $bool = DB::table('user_parent')->where(['parent_id' => auth()->user()->id, 'user_id' => $request['user_id']]);
+            if ($bool->exists()) {
+                $data = DB::table('transactions')
+                ->join('users', 'users.id', '=', 'transactions.trigered_by')
+                ->where('trigered_by', $request['user_id'])
+                ->select('users.name', 'transactions.*');
+            }
+        } else {
             $data = DB::table('transactions')
+            ->join('user_parent', 'user_parent.user_id', '=','transactions.trigered_by')
             ->join('users', 'users.id', '=', 'transactions.trigered_by')
-            ->where('trigered_by', $request['user_id'])
+            ->where('user_parent.parent_id', auth()->user()->id)
             ->select('users.name', 'transactions.*');
-            return $data;
         }
 
-        return response("Forbidden", 403);
+        return $data;
         
     }
 }
