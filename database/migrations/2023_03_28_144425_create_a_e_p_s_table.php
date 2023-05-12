@@ -1,37 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('a_e_p_s', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('package_id')->nullable()->constrained()->nullOnDelete()->cascadeOnUpdate();
-            $table->string('type');
-            $table->integer('from');
-            $table->integer('to');
-            $table->integer('fixed_charge');
-            $table->integer('is_flat');
-            $table->integer('gst');
-            $table->integer('retailer_commssion');
-            $table->integer('distributor_commssion');
-            $table->integer('super_distributor_commssion');
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('a_e_p_s');
-    }
-};
+bolt_decrypt( __FILE__ , 'rqcNqI'); return 0;
+##!!!##WFjDwbNul7q6w7u3vK/Cs6qSr8KvsK/Bs6qbt7XAr8K3vbzBqpu3tcCvwre9vIlYw8Gzbpe6usO7t7yvwrOqkq/Cr7CvwbOqobG2s7uvqpC6w7O+wLe8wolYw8Gzbpe6usO7t7yvwrOqocO+vr3AwqqUr7GvsrPBqqGxtrO7r4lYWMCzwsPAvG68s8VusbqvwcFus8bCs7yywW6bt7XAr8K3vbxYyVhubm5ufXh4WG5ubm5ueG6gw7xuwrazbru3tcCvwre9vMF8WG5ubm5ueH1Ybm5ubr7DsLq3sW60w7yxwre9vG7DvnZ3iG7EvbeyWG5ubm7JWG5ubm5ubm5uobG2s7uviIixwLOvwrN2da+ts62+rcF1em60w7yxwre9vG52kLrDs77At7zCbnLCr7C6s3duyVhubm5ubm5ubm5ubm5ywq+wurN7jLeydneJWG5ubm5ubm5ubm5ubnLCr7C6s3uMtL3As7e1vJeydnW+r7G5r7WzrbeydXd7jLzDurqvsLqzdnd7jLG9vMHCwK+3vLOydnd7jLzDurqdvJKzurPCs3Z3e4yxr8Gxr7KznbyjvrKvwrN2d4lYbm5ubm5ubm5ubm5ucsKvsLqze4zBwsC3vLV2dcLHvrN1d4lYbm5ubm5ubm5ubm5ucsKvsLqze4y3vMKztbPAdnW0wL27dXeJWG5ubm5ubm5ubm5ubnLCr7C6s3uMt7zCs7WzwHZ1wr11d4lYbm5ubm5ubm5ubm5ucsKvsLqze4y3vMKztbPAdnW0t8azsq2xtq/AtbN1d4lYbm5ubm5ubm5ubm5ucsKvsLqze4y3vMKztbPAdnW3wa20uq/CdXeJWG5ubm5ubm5ubm5ubnLCr7C6s3uMt7zCs7WzwHZ1tcHCdXeJWG5ubm5ubm5ubm5ubnLCr7C6s3uMt7zCs7WzwHZ1wLPCr7e6s8Ctsb27u8HBt728dXeJWG5ubm5ubm5ubm5ubnLCr7C6s3uMt7zCs7WzwHZ1srfBwsC3sMPCvcCtsb27u8HBt728dXeJWG5ubm5ubm5ubm5ubnLCr7C6s3uMt7zCs7WzwHZ1wcO+s8CtsrfBwsC3sMPCvcCtsb27u8HBt728dXeJWG5ubm5ubm5ubm5ubnLCr7C6s3uMwre7s8HCr7u+wXZ3iVhubm5ubm5ubst3iVhubm5uy1hYbm5ubn14eFhubm5ubnhuoLPEs8DBs27CtrNuu7e1wK/Ct728wXxYbm5ubm54fVhubm5uvsOwurexbrTDvLHCt728brK9xbx2d4huxL23slhubm5uyVhubm5ubm5ubqGxtrO7r4iIssC9vpe0k8a3wcLBdnWvrbOtvq3BdXeJWG5ubm7LWMuJWA==

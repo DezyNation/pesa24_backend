@@ -1,33 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::table('k_y_c_verifications', function (Blueprint $table) {
-            $table->boolean('eko')->default(0)->after('bank');
-            $table->boolean('paysprint')->default(0)->after('eko');
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::table('k__y_c_verifications', function (Blueprint $table) {
-            //
-        });
-    }
-};
+bolt_decrypt( __FILE__ , 'COMGPN'); return 0;
+##!!!##zs45NynkDTAwOTEtMiU4KSAIJTglJiU3KSARLSs2JTgtMzI3IBEtKzYlOC0zMv/OOTcp5A0wMDkxLTIlOCkgCCU4JSYlNykgFycsKTElIAYwOSk0Ni0yOP/OOTcp5A0wMDkxLTIlOCkgFzk0NDM2OCAKJSclKCk3IBcnLCkxJf/OzjYpODk2MuQyKTvkJzAlNzfkKTw4KTIoN+QRLSs2JTgtMzLOP87k5OTk8+7uzuTk5OTk7uQWOTLkOCwp5DEtKzYlOC0zMjfyzuTk5OTk7s7k5OTk5O7kBDYpODk2MuQ6My0ozuTk5OTk7vPO5OTk5DQ5JjAtJ+QqOTInOC0zMuQ5NOztzuTk5OQ/zuTk5OTk5OTkFycsKTEl/v44JSYwKezrLyM9IycjOik2LSotJyU4LTMyN+vw5Co5Mic4LTMy5OwGMDkpNDYtMjjk6DglJjAp7eQ/zuTk5OTk5OTk5OTk5Og4JSYwKfECJjMzMCklMuzrKS8z6+3xAigpKiU5MDjs9O3xAiUqOCk27OsmJTIv6+3/zuTk5OTk5OTk5OTk5Og4JSYwKfECJjMzMCklMuzrNCU9NzQ2LTI46+3xAigpKiU5MDjs9O3xAiUqOCk27OspLzPr7f/O5OTk5OTk5ORB7f/O5OTk5EHOzuTk5OTz7u7O5OTk5OTu5BYpOik2NynkOCwp5DEtKzYlOC0zMjfyzuTk5OTk7s7k5OTk5O7kBDYpODk2MuQ6My0ozuTk5OTk7vPO5OTk5DQ5JjAtJ+QqOTInOC0zMuQoMzsy7O3O5OTk5D/O5OTk5OTk5OQXJywpMSX+/jglJjAp7OsvIyM9IycjOik2LSotJyU4LTMyN+vw5Co5Mic4LTMy5OwGMDkpNDYtMjjk6DglJjAp7eQ/zuTk5OTk5OTk5OTk5PPzzuTk5OTk5OTkQe3/zuTk5ORBzkH/zg==

@@ -1,23 +1,3 @@
 <?php
-
-namespace App\Models;
-
-use App\Models\Package;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-
-class Commission extends Model
-{
-    use HasFactory;
-
-    /**
-     * The package that belong to the Commission
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function package(): BelongsToMany
-    {
-        return $this->belongsToMany(Package::class);
-    }
-}
+bolt_decrypt( __FILE__ , 'RNdTdk'); return 0;
+##!!!##MTGViJSMmpeIioxHaJeXg3SWi4yTmmIxMZyajEdol5eDdJaLjJOag3eIipKIjoxiMZyajEdwk5OclJCViJuMg2uIm4iJiJqMg2yTlpicjJWbg3SWi4yTYjGcmoxHcJOTnJSQlYibjINriJuIiYiajINsk5aYnIyVm4NtiIqblpmQjJqDb4iabYiKm5aZoGIxnJqMR3CTk5yUkJWIm4yDa4ibiImImoyDbJOWmJyMlZuDeYyTiJuQlpWag2mMk5aVjpp7lnSIlaBiMTGKk4iamkdqlpSUkJqakJaVR4yfm4yVi5pHdJaLjJMxojFHR0dHnJqMR2+Imm2IipuWmaBiMTFHR0dHVlFRMUdHR0dHUUd7j4xHl4iKkoiOjEebj4ibR4mMk5aVjkeblkebj4xHapaUlJCampCWlTFHR0dHR1ExR0dHR0dRR2eZjJucmZVHg3CTk5yUkJWIm4yDa4ibiImImoyDbJOWmJyMlZuDeYyTiJuQlpWag2mMk5aVjpp7lnSIlaAxR0dHR0dRVjFHR0dHl5yJk5CKR42clYqbkJaVR5eIipKIjoxPUGFHaYyTlpWOmnuWdIiVoDFHR0dHojFHR0dHR0dHR5mMm5yZlUdLm4+QmlRliYyTlpWOmnuWdIiVoE93iIqSiI6MYWGKk4iamlBiMUdHR0ekMaQx

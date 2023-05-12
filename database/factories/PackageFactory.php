@@ -1,28 +1,3 @@
 <?php
-
-namespace Database\Factories;
-
-use App\Models\Package;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Package>
- */
-class PackageFactory extends Factory
-{
-    protected $model = Package::class;
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'organization_id' => 1,
-            'role_id' => 2,
-            'name' => 'Gold',
-            'is_default' => 0,
-        ];
-    }
-}
+bolt_decrypt( __FILE__ , 'fVMHH0'); return 0;
+##!!!##09M3KjYuPDkqLC7pDSo9KisqPC4lDyosPTg7Mi48BNPTPjwu6Qo5OSUWOC0uNTwlGSosNCowLgTTPjwu6RI1NT42MjcqPS4lDSo9KisqPC4lDjU4Oj4uNz0lDyosPTg7Mi48JQ8qLD04O0IE09P48/PT6fPpCS5BPS43LTzpJRI1NT42MjcqPS4lDSo9KisqPC4lDjU4Oj4uNz0lDyosPTg7Mi48JQ8qLD04O0IFJQo5OSUWOC0uNTwlGSosNCowLgfT6fP40yw1Kjw86RkqLDQqMC4PKiw9ODtC6S5BPS43LTzpDyosPTg7QtNE0+np6ek5Ozg9Liw9Li3p7TY4LS416QbpGSosNCowLgMDLDUqPDwE0+np6en48/PT6enp6enz6Q0uLzI3Luk9MS7pNjgtLjXwPOktLi8qPjU96Tw9Kj0u99Pp6enp6fPT6enp6enz6Qk7Lj0+OzfpKjs7KkIFPD07Mjcw9ek2MkEuLQfT6enp6enz+NPp6enpOT4rNTIs6S8+Nyw9Mjg36S0uLzI3Mj0yODfx8gPpKjs7KkLT6enp6UTT6enp6enp6ek7Lj0+OzfpJNPp6enp6enp6enp6enwODswKjcyQyo9Mjg3KDIt8OkGB+n69dPp6enp6enp6enp6enwOzg1LigyLfDpBgfp+/XT6enp6enp6enp6enp8DcqNi7w6QYH6fAQODUt8PXT6enp6enp6enp6enp8DI8KC0uLyo+NT3w6QYH6fn10+np6enp6enpJgTT6enp6UbTRtM=

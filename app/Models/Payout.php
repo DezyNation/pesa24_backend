@@ -1,11 +1,3 @@
 <?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class Payout extends Model
-{
-    use HasFactory;
-}
+bolt_decrypt( __FILE__ , 'lTGrac'); return 0;
+##!!!##R0ernqqisK2eoKJdfq2tmYqsoaKpsHhHR7Kwol2GqamyqqarnrGimYGesZ6fnrCimYKprK6yoquxmYOeoLGsr6aisJmFnrCDnqCxrK+2eEeysKJdhqmpsqqmq56xopmBnrGen56wopmCqayusqKrsZmKrKGiqXhHR6CpnrCwXY2etqyysV2itbGiq6GwXYqsoaKpR7hHXV1dXbKwol2FnrCDnqCxrK+2eEe6Rw==

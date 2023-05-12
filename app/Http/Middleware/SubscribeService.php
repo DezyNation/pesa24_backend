@@ -1,26 +1,3 @@
 <?php
-
-namespace App\Http\Middleware;
-
-use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\Response;
-
-class SubscribeService
-{
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
-    {
-        $id = $request->route('service_id');
-        $service_id = DB::table('services')->where(['id' => $id, 'can_subscribe' => 1])->exists();
-        if (!$service_id) {
-            return response("Service not found.", 404);
-        }
-        return $next($request);
-    }
-}
+bolt_decrypt( __FILE__ , 'mybVbr'); return 0;
+##!!!##fHzg09/X5eLT1deSs+Lizrrm5uLOv9vW1t7X6dPk1618fOfl15K13uHl5+TXrXzn5deSu97e59/b4NPm18665ubizsTX4+fX5eatfOfl15K73t7n39vg0+bXzsXn4uLh5ObOuNPV09bX5c62tK185+XXksXr39jh4OvOteHf4uHg1+Dmzrrm5uK44efg1tPm2+HgzsTX5eLh4OXXrXx81d7T5eWSxefU5dXk29TXxdfk6NvV13ztfJKSkpKhnJx8kpKSkpKckrrT4Nbe15LT4JLb4NXh39vg2ZLk1+Pn1+XmoHySkpKSkpx8kpKSkpKckrLi0+TT35KSzrXe4eXn5Neazrve3uff2+DT5tfOuubm4s7E1+Pn1+Xmm6ySms7F69/Y4eDrzrXh3+Lh4Nfg5s665ubiuOHn4NbT5tvh4M7E1+Xi4eDl15uSkpbg1+rmfJKSkpKSnKF8kpKSkuLn1N7b1ZLY5+DV5tvh4JLa0+DW3teaxNfj59fl5pKW5Nfj59fl5p6Std7h5efk15KW4Nfq5pusksTX5eLh4OXXfJKSkpLtfJKSkpKSkpKSltvWkq+SluTX4+fX5eafsOTh5+bXmpnl1+To29XX0dvWmZutfJKSkpKSkpKSluXX5Ojb1dfR29aSr5K2tKys5tPU3teameXX5Ojb1dflmZufsOna1+TXms2Z29aZkq+wkpbb1p6SmdXT4NHl59Tl1eTb1NeZkq+wkqPPm5+w1+rb5eblmputfJKSkpKSkpKS29iSmpOW5dfk6NvV19Hb1puS7XySkpKSkpKSkpKSkpLk1+bn5OCS5Nfl4uHg5dealMXX5Ojb1deS4OHmktjh5+DWoJSekqaipputfJKSkpKSkpKS73ySkpKSkpKSkuTX5ufk4JKW4Nfq5pqW5Nfj59fl5putfJKSkpLvfO98

@@ -1,34 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('package_service', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('package_id')->nullable()->constrained()->nullOnDelete()->cascadeOnUpdate();
-            $table->foreignId('service_id')->nullable()->constrained()->nullOnDelete()->cascadeOnUpdate();
-            $table->integer('from');
-            $table->integer('to');
-            $table->integer('commission');
-            $table->boolean('is_flat');
-            $table->boolean('is_surcharge')->default(false);
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('commission_package');
-    }
-};
+bolt_decrypt( __FILE__ , 'mMcIm2'); return 0;
+##!!!##Dw96eGolTnFxenJuc2Z5amFJZnlmZ2Z4amFSbmx3ZnludHN4YVJubHdmeW50c0APenhqJU5xcXpybnNmeWphSWZ5ZmdmeGphWGhtanJmYUdxemp1d25zeUAPenhqJU5xcXpybnNmeWphWHp1dXR3eWFLZmhmaWp4YVhobWpyZkAPD3dqeXp3cyVzanwlaHFmeHglan15anNpeCVSbmx3ZnludHMPgA8lJSUlNC8vDyUlJSUlLyVXenMleW1qJXJubHdmeW50c3gzDyUlJSUlLzQPJSUlJXV6Z3FuaCVrenNoeW50cyV6dS0uPyV7dG5pDyUlJSWADyUlJSUlJSUlWGhtanJmPz9od2pmeWotLHVmaHBmbGpkeGp3e25oaiwxJWt6c2h5bnRzJS1HcXpqdXduc3klKXlmZ3FqLiWADyUlJSUlJSUlJSUlJSl5ZmdxajJDbmktLkAPJSUlJSUlJSUlJSUlKXlmZ3FqMkNrdHdqbmxzTmktLHVmaHBmbGpkbmksLjJDc3pxcWZncWotLjJDaHRzeHl3Zm5zamktLjJDc3pxcVRzSWpxanlqLS4yQ2hmeGhmaWpUc1p1aWZ5ai0uQA8lJSUlJSUlJSUlJSUpeWZncWoyQ2t0d2pubHNOaS0seGp3e25oamRuaSwuMkNzenFxZmdxai0uMkNodHN4eXdmbnNqaS0uMkNzenFxVHNJanFqeWotLjJDaGZ4aGZpalRzWnVpZnlqLS5ADyUlJSUlJSUlJSUlJSl5ZmdxajJDbnN5amxqdy0sa3d0ciwuQA8lJSUlJSUlJSUlJSUpeWZncWoyQ25zeWpsanctLHl0LC5ADyUlJSUlJSUlJSUlJSl5ZmdxajJDbnN5amxqdy0saHRycm54eG50cywuQA8lJSUlJSUlJSUlJSUpeWZncWoyQ2d0dHFqZnMtLG54ZGtxZnksLkAPJSUlJSUlJSUlJSUlKXlmZ3FqMkNndHRxamZzLSxueGR4endobWZ3bGosLjJDaWprZnpxeS1rZnF4ai5ADyUlJSUlJSUlJSUlJSl5ZmdxajJDeW5yanh5ZnJ1eC0uQA8lJSUlJSUlJYIuQA8lJSUlgg8PJSUlJTQvLw8lJSUlJS8lV2p7and4aiV5bWolcm5sd2Z5bnRzeDMPJSUlJSUvNA8lJSUldXpncW5oJWt6c2h5bnRzJWl0fHMtLj8le3RuaQ8lJSUlgA8lJSUlJSUlJVhobWpyZj8/aXd0dU5rSn1ueHl4LSxodHJybnh4bnRzZHVmaHBmbGosLkAPJSUlJYIPgkAP

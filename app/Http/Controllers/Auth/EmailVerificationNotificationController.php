@@ -1,27 +1,3 @@
 <?php
-
-namespace App\Http\Controllers\Auth;
-
-use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Http\Request;
-
-class EmailVerificationNotificationController extends Controller
-{
-    /**
-     * Send a new email verification notification.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
-     */
-    public function store(Request $request)
-    {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(RouteServiceProvider::HOME);
-        }
-
-        $request->user()->sendEmailVerificationNotification();
-
-        return response()->json(['status' => 'verification-link-sent']);
-    }
-}
+bolt_decrypt( __FILE__ , 'AQ8PvQ'); return 0;
+##!!!##6+tPQk5GVFFCREYBIlFRPSlVVVE9JFBPVVNQTU1GU1Q9IlZVSRzr61ZURgEiUVE9KVVVUT0kUE9VU1BNTUZTVD0kUE9VU1BNTUZTHOtWVEYBIlFRPTFTUFdKRUZTVD0zUFZVRjRGU1dKREYxU1BXSkVGUxzrVlRGASpNTVZOSk9CVUY9KVVVUT0zRlJWRlRVHOvrRE1CVFQBJk5CSk03RlNKR0pEQlVKUE8vUFVKR0pEQlVKUE8kUE9VU1BNTUZTAUZZVUZPRVQBJFBPVVNQTU1GU+tc6wEBAQEQCwvrAQEBAQELATRGT0UBQgFPRlgBRk5CSk0BV0ZTSkdKREJVSlBPAU9QVUpHSkRCVUpQTw/rAQEBAQEL6wEBAQEBCwEhUUJTQk4BAT0qTU1WTkpPQlVGPSlVVVE9M0ZSVkZUVQEBBVNGUlZGVFXrAQEBAQELASFTRlVWU08BPSpNTVZOSk9CVUY9KVVVUT0rVFBPM0ZUUVBPVEZdPSpNTVZOSk9CVUY9KVVVUT0zRkVKU0ZEVTNGVFFQT1RG6wEBAQEBCxDrAQEBAVFWQ01KRAFHVk9EVUpQTwFUVVBTRgkzRlJWRlRVAQVTRlJWRlRVCusBAQEBXOsBAQEBAQEBAUpHAQkFU0ZSVkZUVQ4fVlRGUwkKDh9JQlQ3RlNKR0pGRSZOQkpNCQoKAVzrAQEBAQEBAQEBAQEBU0ZVVlNPAVNGRUpTRkRVCQoOH0pPVUZPRUZFCTNQVlVGNEZTV0pERjFTUFdKRUZTGxspMC4mChzrAQEBAQEBAQFe6+sBAQEBAQEBAQVTRlJWRlRVDh9WVEZTCQoOH1RGT0UmTkJKTTdGU0pHSkRCVUpQTy9QVUpHSkRCVUpQTwkKHOvrAQEBAQEBAQFTRlVWU08BU0ZUUVBPVEYJCg4fS1RQTwk8CFRVQlVWVAgBHh8BCFdGU0pHSkRCVUpQTw5NSk9MDlRGT1UIPgoc6wEBAQFe617r

@@ -1,34 +1,3 @@
 <?php
-
-namespace App\Http\Middleware;
-
-use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\Response;
-
-class UserService
-{
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
-    {
-        $user_id = auth()->user()->id;
-        $service_id = $request->route('service_id');
-        $service_active = DB::table('services')->where('id', $service_id)->pluck('is_active');
-        $db = DB::table('service_user')->where(['user_id' => $user_id, 'service_id' => $service_id]);
-        $pesa24_status = $db->pluck('pesa24_active');
-        if (!$db->exists()) {
-            return response("Service is not activated.", 404);
-        } elseif (!$service_active) {
-            return response("Service is not available at the moment", 403);
-        }
-         elseif (!$pesa24_status) {
-            return response("User can not use this service at the momemnt.", 403);
-        }
-        return $next($request);
-    }
-}
+bolt_decrypt( __FILE__ , 'oeSYNS'); return 0;
+##!!!##KyuPgo6GlJGChIZBYpGRfWmVlZF9boqFhY2GmIKThlwrK5aUhkFkjZCUlpOGXCuWlIZBao2Nlo6Kj4KVhn1plZWRfXOGkpaGlJVcK5aUhkFqjY2WjoqPgpWGfXSWkZGQk5V9Z4KEgoWGlH1lY1wrlpSGQXSajoeQj5p9ZJCOkZCPho+VfWmVlZFnkJaPhYKVipCPfXOGlJGQj5SGXCsrhI2ClJRBdpSGk3SGk5eKhIYrnCtBQUFBUEtLK0FBQUFBS0Fpgo+FjYZBgo9Bio+EkI6Kj4hBk4aSloaUlU8rQUFBQUFLK0FBQUFBS0FhkYKTgo5BQX1kjZCUlpOGSX1qjY2WjoqPgpWGfWmVlZF9c4aSloaUlUpbQUl9dJqOh5CPmn1kkI6RkI+Gj5V9aZWVkWeQlo+FgpWKkI99c4aUkZCPlIZKQUFFj4aZlStBQUFBQUtQK0FBQUGRloONioRBh5aPhJWKkI9BiYKPhY2GSXOGkpaGlJVBRZOGkpaGlJVNQWSNkJSWk4ZBRY+GmZVKW0FzhpSRkI+UhitBQUFBnCtBQUFBQUFBQUWWlIaTgIqFQV5BgpaViUlKTl+WlIaTSUpOX4qFXCtBQUFBQUFBQUWUhpOXioSGgIqFQV5BRZOGkpaGlJVOX5OQlpWGSUiUhpOXioSGgIqFSEpcK0FBQUFBQUFBRZSGk5eKhIaAgoSVipeGQV5BZWNbW5WCg42GSUiUhpOXioSGlEhKTl+YiYaThklIioVITUFFlIaTl4qEhoCKhUpOX5GNloSMSUiKlICChJWKl4ZISlwrQUFBQUFBQUFFhYNBXkFlY1tblYKDjYZJSJSGk5eKhIaAlpSGk0hKTl+YiYaThkl8SJaUhpOAioVIQV5fQUWWlIaTgIqFTUFIlIaTl4qEhoCKhUhBXl9BRZSGk5eKhIaAioV+SlwrQUFBQUFBQUFFkYaUglNVgJSVgpWWlEFeQUWFg05fkY2WhIxJSJGGlIJTVYCChJWKl4ZISlwrQUFBQUFBQUGKh0FJQkWFg05fhpmKlJWUSUpKQZwrQUFBQUFBQUFBQUFBk4aVlpOPQZOGlJGQj5SGSUN0hpOXioSGQYqUQY+QlUGChJWKl4KVhoVPQ01BVVFVSlwrQUFBQUFBQUGeQYaNlIaKh0FJQkWUhpOXioSGgIKElYqXhkpBnCtBQUFBQUFBQUFBQUGThpWWk49Bk4aUkZCPlIZJQ3SGk5eKhIZBipRBj5CVQYKXgoqNgoONhkGClUGViYZBjpCOho+VQ01BVVFUSlwrQUFBQUFBQUGeK0FBQUFBQUFBQYaNlIaKh0FJQkWRhpSCU1WAlJWClZaUSkGcK0FBQUFBQUFBQUFBQZOGlZaTj0GThpSRkI+UhklDdpSGk0GEgo9Bj5CVQZaUhkGViYqUQZSGk5eKhIZBgpVBlYmGQY6QjoaOj5VPQ01BVVFUSlwrQUFBQUFBQUGeK0FBQUFBQUFBk4aVlpOPQUWPhpmVSUWThpKWhpSVSlwrQUFBQZ4rnis=

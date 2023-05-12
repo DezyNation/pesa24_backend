@@ -1,28 +1,3 @@
 <?php
-
-namespace App\Http\Middleware;
-
-use Closure;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-
-class EnsureEmailIsVerified
-{
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  $redirectToRoute
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|null
-     */
-    public function handle($request, Closure $next, $redirectToRoute = null)
-    {
-        if (! $request->user() ||
-            ($request->user() instanceof MustVerifyEmail &&
-            ! $request->user()->hasVerifiedEmail())) {
-            return response()->json(['message' => 'Your email address is not verified.'], 409);
-        }
-
-        return $next($request);
-    }
-}
+bolt_decrypt( __FILE__ , 'ZZrjL1'); return 0;
+##!!!##Fxd7bnpygH1ucHItTn19aVWBgX1pWnZxcXlyhG5/ckgXF4KAci1QeXyAgn9ySBeCgHItVnl5gnp2e26BcmlQfHuBf25wgYBpToKBdWlagoCBY3J/dnOGUnpudnlIFxdweW6AgC1Se4CCf3JSem52eVaAY3J/dnN2cnEXiBctLS0tPDc3Fy0tLS0tNy1VbntxeXItbnstdntwfHp2e3Qtf3J+gnKAgTsXLS0tLS03Fy0tLS0tNy1NfW5/bnotLWlWeXmCenZ7boFyaVWBgX1pX3J+gnKAgS0tMX9yfoJygIEXLS0tLS03LU19bn9uei0taVB5fICCf3ItLTF7coWBFy0tLS0tNy1NfW5/bnotLYCBf3Z7dIl7gnl5LS0xf3Jxdn9ycIFhfF98goFyFy0tLS0tNy1Nf3KBgn97LWlWeXmCenZ7boFyaVWBgX1pV4B8e19ygH18e4ByiWlWeXmCenZ7boFyaVWBgX1pX3Jxdn9ycIFfcoB9fHuAcol7gnl5Fy0tLS0tNzwXLS0tLX2Cb3l2cC1zgntwgXZ8ey11bntxeXI1MX9yfoJygIE5LVB5fICCf3ItMXtyhYE5LTF/cnF2f3JwgWF8X3yCgXItSi17gnl5NhctLS0tiBctLS0tLS0tLXZzLTUuLTF/cn6CcoCBOkuCgHJ/NTYtiYkXLS0tLS0tLS0tLS0tNTF/cn6CcoCBOkuCgHJ/NTYtdnuAgW57cHJ8cy1agoCBY3J/dnOGUnpudnktMzMXLS0tLS0tLS0tLS0tLi0xf3J+gnKAgTpLgoByfzU2Okt1boBjcn92c3ZycVJ6bnZ5NTY2Ni2IFy0tLS0tLS0tLS0tLX9ygYJ/ey1/coB9fHuAcjU2Okt3gHx7NWg0enKAgG50cjQtSkstNGZ8gn8tcnpudnktbnFxf3KAgC12gC17fIEtg3J/dnN2cnE7NGo5LUE9RjZIFy0tLS0tLS0tihcXLS0tLS0tLS1/coGCf3stMXtyhYE1MX9yfoJygIE2SBctLS0tiheKFw==

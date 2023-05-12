@@ -1,36 +1,3 @@
 <?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class AePSTransaction extends Model
-{
-    use HasFactory;
-    protected $fillable = [
-        'shop',
-        'service_tax',
-        'total_fee',
-        'stan',
-        'tid',
-        'client_ref_id',
-        'customer_id',
-        'merchant_code',
-        'merchant_name',
-        'customer_balance',
-        'sender_name',
-        'auth_code',
-        'bank_ref_num',
-        'terminal_id',
-        'amount',
-        'tx_status',
-        'trasaction_date',
-        'aadhar',
-        'response_type_id',
-        'reason',
-        'comment',
-        'message',
-        'status',
-    ];
-}
+bolt_decrypt( __FILE__ , 'YdfD2x'); return 0;
+##!!!##Gxt/cn52hIFydHYxUoGBbV6AdXZ9hEwbG4aEdjFafX2Gfnp/coV2bVVyhXJzcoR2bVZ9gIKGdn+FbVdydIWAg3p2hG1ZcoRXcnSFgIOKTBuGhHYxWn19hn56f3KFdm1VcoVyc3KEdm1WfYCChnZ/hW1egHV2fUwbG3R9coSEMVJ2YWRlg3J/hHJ0hXqAfzF2iYV2f3WEMV6AdXZ9G4wbMTExMYaEdjFZcoRXcnSFgIOKTBsxMTExgYOAhXZ0hXZ1MTV3en19cnN9djFOMWwbMTExMTExMTE4hHmAgTg9GzExMTExMTExOIR2g4d6dHZwhXKJOD0bMTExMTExMTE4hYCFcn1wd3Z2OD0bMTExMTExMTE4hIVyfzg9GzExMTExMTExOIV6dTg9GzExMTExMTExOHR9enZ/hXCDdndwenU4PRsxMTExMTExMTh0hoSFgH52g3B6dTg9GzExMTExMTExOH52g3R5cn+FcHSAdXY4PRsxMTExMTExMTh+doN0eXJ/hXB/cn52OD0bMTExMTExMTE4dIaEhYB+doNwc3J9cn90djg9GzExMTExMTExOIR2f3V2g3B/cn52OD0bMTExMTExMTE4coaFeXB0gHV2OD0bMTExMTExMTE4c3J/fHCDdndwf4Z+OD0bMTExMTExMTE4hXaDfnp/cn1wenU4PRsxMTExMTExMThyfoCGf4U4PRsxMTExMTExMTiFiXCEhXKFhoQ4PRsxMTExMTExMTiFg3KEcnSFeoB/cHVyhXY4PRsxMTExMTExMThycnV5coM4PRsxMTExMTExMTiDdoSBgH+EdnCFioF2cHp1OD0bMTExMTExMTE4g3ZyhIB/OD0bMTExMTExMTE4dIB+fnZ/hTg9GzExMTExMTExOH52hIRyeHY4PRsxMTExMTExMTiEhXKFhoQ4PRsxMTExbkwbjhs=

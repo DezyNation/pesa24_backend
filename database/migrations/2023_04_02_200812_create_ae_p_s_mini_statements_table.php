@@ -1,34 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('ae_p_s_mini_statements', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('package_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->integer('fixed_charge');
-            $table->integer('is_flat');
-            $table->integer('gst');
-            $table->integer('retailer_commission');
-            $table->integer('distributor_commission');
-            $table->integer('super_distributor_commission');
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('ae_p_s_mini_statements');
-    }
-};
+bolt_decrypt( __FILE__ , 'fS05ew'); return 0;
+##!!!##BARvbV8aQ2Zmb2djaFtuX1Y+W25bXFttX1ZHY2FsW25jaWhtVkdjYWxbbmNpaDUEb21fGkNmZm9nY2hbbl9WPltuW1xbbV9WTV1iX2dbVjxmb19qbGNobjUEb21fGkNmZm9nY2hbbl9WTW9qamlsblZAW11bXl9tVk1dYl9nWzUEBGxfbm9saBpoX3EaXWZbbW0aX3JuX2hebRpHY2FsW25jaWgEdQQaGhoaKSQkBBoaGhoaJBpMb2gabmJfGmdjYWxbbmNpaG0oBBoaGhoaJCkEGhoaGmpvXGZjXRpgb2hdbmNpaBpvaiIjNBpwaWNeBBoaGhp1BBoaGhoaGhoaTV1iX2dbNDRdbF9bbl8iIVtfWWpZbVlnY2hjWW1uW25fZ19obm0hJhpgb2hdbmNpaBoiPGZvX2psY2huGh5uW1xmXyMadQQaGhoaGhoaGhoaGhoebltcZl8nOGNeIiM1BBoaGhoaGhoaGhoaGh5uW1xmXyc4YGlsX2NhaENeIiFqW11lW2FfWWNeISMnOGhvZmZbXGZfIiMnOF1paG1ubFtjaF9eIiMnOF1bbV1bXl9JaE9qXltuXyIjJzhob2ZmSWg+X2Zfbl8iIzUEGhoaGhoaGhoaGhoaHm5bXGZfJzhjaG5fYV9sIiFgY3JfXlldYltsYV8hIzUEGhoaGhoaGhoaGhoaHm5bXGZfJzhjaG5fYV9sIiFjbVlgZltuISM1BBoaGhoaGhoaGhoaGh5uW1xmXyc4Y2huX2FfbCIhYW1uISM1BBoaGhoaGhoaGhoaGh5uW1xmXyc4Y2huX2FfbCIhbF9uW2NmX2xZXWlnZ2NtbWNpaCEjNQQaGhoaGhoaGhoaGhoebltcZl8nOGNobl9hX2wiIV5jbW5sY1xvbmlsWV1pZ2djbW1jaWghIzUEGhoaGhoaGhoaGhoaHm5bXGZfJzhjaG5fYV9sIiFtb2pfbFleY21ubGNcb25pbFldaWdnY21tY2loISM1BBoaGhoaGhoaGhoaGh5uW1xmXyc4bmNnX21uW2dqbSIjNQQaGhoaGhoaGncjNQQaGhoadwQEGhoaGikkJAQaGhoaGiQaTF9wX2xtXxpuYl8aZ2NhbFtuY2lobSgEGhoaGhokKQQaGhoaam9cZmNdGmBvaF1uY2loGl5pcWgiIzQacGljXgQaGhoadQQaGhoaGhoaGk1dYl9nWzQ0XmxpakNgP3JjbW5tIiFbX1lqWW1ZZ2NoY1ltbltuX2dfaG5tISM1BBoaGhp3BHc1BA==

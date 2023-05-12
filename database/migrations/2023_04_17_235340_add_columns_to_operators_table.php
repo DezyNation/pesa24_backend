@@ -1,28 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('operators', function (Blueprint $table) {
-            $table->foreignId('category_id')->after('id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('operators', function (Blueprint $table) {
-            //
-        });
-    }
-};
+bolt_decrypt( __FILE__ , 'rjrEKF'); return 0;
+##!!!##Li6Zl4lEbZCQmZGNkoWYiYBohZiFhoWXiYBxjYuWhZiNk5KXgHGNi5aFmI2Tkl8umZeJRG2QkJmRjZKFmImAaIWYhYaFl4mAd4eMiZGFgGaQmYmUlo2SmF8umZeJRG2QkJmRjZKFmImAd5mUlJOWmIBqhYeFiImXgHeHjImRhV8uLpaJmJmWkkSSiZtEh5CFl5dEiZyYiZKIl0RxjYuWhZiNk5Iuny5EREREU05OLkRERERETkR2mZJEmIyJRJGNi5aFmI2TkpdSLkRERERETlMuRERERJSZhpCNh0SKmZKHmI2TkkSZlExNXkSak42ILkRERESfLkREREREREREd4eMiZGFXl6YhYaQiUxLk5SJloWYk5aXS1BEipmSh5iNk5JETGaQmYmUlo2SmERImIWGkIlNRJ8uRERERERERERERERESJiFhpCJUWKKk5aJjYuSbYhMS4eFmImLk5adg42IS01RYoWKmImWTEuNiEtNUWKSmZCQhYaQiUxNUWKHk5KXmJaFjZKJiExNUWKHhZeHhYiJc5J5lIiFmIlMTVFikpmQkHOSaImQiZiJTE1fLkREREREREREoU1fLkREREShLi5EREREU05OLkRERERETkR2iZqJlpeJRJiMiUSRjYuWhZiNk5KXUi5ERERERE5TLkRERESUmYaQjYdEipmSh5iNk5JEiJObkkxNXkSak42ILkRERESfLkREREREREREd4eMiZGFXl6YhYaQiUxLk5SJloWYk5aXS1BEipmSh5iNk5JETGaQmYmUlo2SmERImIWGkIlNRJ8uREREREREREREREREU1MuREREREREREShTV8uRERERKEuoV8u

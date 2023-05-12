@@ -1,27 +1,3 @@
 <?php
-
-namespace App\Http\Middleware;
-
-use Closure;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-
-class MinimumBalance
-{
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
-    {
-        $user = User::with('roles:name')->select('id', 'minimum_balance', 'wallet')->findOrFail(auth()->user()->id)->makeVisible(['wallet', 'minimum_balance']);
-        $minimumBalance = $user['roles'][0]['pivot']['minimum_balance'];
-        $final_amount = $user->wallet - $request['amount'];
-        if ($final_amount < $minimumBalance || $final_amount < $user->minimum_balance) {
-            return response("Insufficient Balance.", 403);
-        }
-        return $next($request);
-    }
-}
+bolt_decrypt( __FILE__ , 'OtPQt6'); return 0;
+##!!!##GBh8b3tzgX5vcXMuT35+alaCgn5qW3dycnpzhW+Ac0kYGIOBcy5Ren2Bg4BzSRiDgXMuT35+alt9cnN6gWpjgXOASRiDgXMuV3p6g3t3fG+Cc2pWgoJ+amBzf4NzgYJJGIOBcy5hh3t0fXyHalF9e359fHN8gmpWgoJ+VH2DfHJvgnd9fGpgc4F+fXyBc0kYGHF6b4GBLlt3fHd7g3tQb3pvfHFzGIkYLi4uLj04OBguLi4uLjguVm98cnpzLm98Lnd8cX17d3x1LoBzf4NzgYI8GC4uLi4uOBguLi4uLjguTn5vgG97Li5qUXp9gYOAczZqV3p6g3t3fG+Cc2pWgoJ+amBzf4NzgYI3SC42amGHe3R9fIdqUX17fn18c3yCalaCgn5UfYN8cm+Cd318amBzgX59fIFzNy4uMnxzhoIYLi4uLi44PRguLi4ufoNwendxLnSDfHGCd318LnZvfHJ6czZgc3+Dc4GCLjKAc3+Dc4GCOi5Ren2Bg4BzLjJ8c4aCN0guYHOBfn18gXMYLi4uLokYLi4uLi4uLi4yg4FzgC5LLmOBc4BISIV3gnY2NYB9enOBSHxve3M1NztMgXN6c3GCNjV3cjU6LjV7d3x3e4N7bXBvem98cXM1Oi41hW96enOCNTc7THR3fHJdgFRvd3o2b4OCdjY3O0yDgXOANjc7THdyNztMe295c2R3gXdwenM2aTWFb3p6c4I1Oi41e3d8d3uDe21wb3pvfHFzNWs3SRguLi4uLi4uLjJ7d3x3e4N7UG96b3xxcy5LLjKDgXOAaTWAfXpzgTVraT5raTV+d4R9gjVraTV7d3x3e4N7bXBvem98cXM1a0kYLi4uLi4uLi4ydHd8b3ptb3t9g3yCLksuMoOBc4A7TIVvenpzgi47LjKAc3+Dc4GCaTVve32DfII1a0kYLi4uLi4uLi53dC42MnR3fG96bW97fYN8gi5KLjJ7d3x3e4N7UG96b3xxcy6Kii4ydHd8b3ptb3t9g3yCLkouMoOBc4A7THt3fHd7g3ttcG96b3xxczcuiRguLi4uLi4uLi4uLi6Ac4KDgHwugHOBfn18gXM2MFd8gYN0dHdxd3N8gi5Qb3pvfHFzPDA6LkI+QTdJGC4uLi4uLi4uixguLi4uLi4uLoBzgoOAfC4yfHOGgjYygHN/g3OBgjdJGC4uLi6LGIsY

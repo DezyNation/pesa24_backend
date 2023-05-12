@@ -1,32 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('service_user', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('service_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->boolean('is_paid')->default(false);
-            $table->integer('price');
-            $table->timestamp('paid_at');
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('service_user');
-    }
-};
+bolt_decrypt( __FILE__ , 'EFl0JR'); return 0;
+##!!!##zc04NijjDC8vODAsMSQ3KB8HJDckJSQ2KB8QLCo1JDcsMjE2HxAsKjUkNywyMf7NODYo4wwvLzgwLDEkNygfByQ3JCUkNigfFiYrKDAkHwUvOCgzNSwxN/7NODYo4wwvLzgwLDEkNygfFjgzMzI1Nx8JJCYkJyg2HxYmKygwJP7NzTUoNzg1MeMxKDrjJi8kNjbjKDs3KDEnNuMQLCo1JDcsMjHNPs3j4+Pj8u3tzePj4+Pj7eMVODHjNyso4zAsKjUkNywyMTbxzePj4+Pj7fLN4+Pj4zM4JS8sJuMpODEmNywyMeM4M+vs/eM5MiwnzePj4+M+zePj4+Pj4+PjFiYrKDAk/f0mNSgkNyjr6jYoNTksJigiODYoNerv4yk4MSY3LDIx4+sFLzgoMzUsMTfj5zckJS8o7OM+zePj4+Pj4+Pj4+Pj4+c3JCUvKPABLCfr7P7N4+Pj4+Pj4+Pj4+Pj5zckJS8o8AEpMjUoLCoxDCfr6jg2KDUiLCfq7PABJjIxNjc1JCwxKCfr7PABJiQ2JiQnKBIxGDMnJDco6+zwASYkNiYkJygSMQcoLyg3KOvs/s3j4+Pj4+Pj4+Pj4+PnNyQlLyjwASkyNSgsKjEMJ+vqNig1OSwmKCIsJ+rs8AEmMjE2NzUkLDEoJ+vs8AEmJDYmJCcoEjEYMyckNyjr7PABJiQ2JiQnKBIxBygvKDco6+z+zePj4+Pj4+Pj4+Pj4+c3JCUvKPABJTIyLygkMevqLDYiMyQsJ+rs8AEnKCkkOC836ykkLzYo7P7N4+Pj4+Pj4+Pj4+Pj5zckJS8o8AEsMTcoKig16+ozNSwmKOrs/s3j4+Pj4+Pj4+Pj4+PnNyQlLyjwATcsMCg2NyQwM+vqMyQsJyIkN+rs/s3j4+Pj4+Pj4+Pj4+PnNyQlLyjwATcsMCg2NyQwMzbr7P7N4+Pj4+Pj4+NA7P7N4+Pj40DNzePj4+Py7e3N4+Pj4+Pt4xUoOSg1NijjNyso4zAsKjUkNywyMTbxzePj4+Pj7fLN4+Pj4zM4JS8sJuMpODEmNywyMeMnMjox6+z94zkyLCfN4+Pj4z7N4+Pj4+Pj4+MWJisoMCT9/Sc1MjMMKQg7LDY3NuvqNig1OSwmKCI4Nig16uz+zePj4+NAzUD+zQ==

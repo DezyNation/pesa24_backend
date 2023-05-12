@@ -1,37 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('personal_access_tokens', function (Blueprint $table) {
-            $table->id();
-            $table->morphs('tokenable');
-            $table->string('name');
-            $table->string('token', 64)->unique();
-            $table->text('abilities')->nullable();
-            $table->timestamp('last_used_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('personal_access_tokens');
-    }
-};
+bolt_decrypt( __FILE__ , 'sckWr3'); return 0;
+##!!!##R0eysKJdhqmpsqqmq56xopmBnrGen56wopmKpqSvnrGmrKuwmYqmpK+esaasq3hHsrCiXYapqbKqpquesaKZgZ6xnp+esKKZkKCloqqemX+psqKtr6arsXhHsrCiXYapqbKqpquesaKZkLKtrayvsZmDnqCeoaKwmZCgpaKqnnhHR6+isbKvq12rorRdoKmesLBdorWxoquhsF2KpqSvnrGmrKtHuEddXV1dbGdnR11dXV1dZ12PsqtdsaWiXaqmpK+esaasq7BrR11dXV1dZ0ddXV1dXWddfa+isbKvq12zrKahR11dXV1dZ2xHXV1dXa2yn6mmoF2jsqugsaasq12yrWVmR11dXV24R11dXV1dXV1dkKCloqqed3egr6KesaJlZK2ir7Csq56pnJ6goKKwsJyxrKiiq7BkaV2jsqugsaasq11lf6myoq2vpquxXWGxnp+pomZduEddXV1dXV1dXV1dXV1hsZ6fqaJqe6ahZWZ4R11dXV1dXV1dXV1dXWGxnp+pomp7qqyvraWwZWSxrKiiq56fqaJkZnhHXV1dXV1dXV1dXV1dYbGen6mianuwsa+mq6RlZKueqqJkZnhHXV1dXV1dXV1dXV1dYbGen6mianuwsa+mq6RlZLGsqKKrZGldc3Fmanuyq6ausqJlZnhHXV1dXV1dXV1dXV1dYbGen6mianuxorWxZWSen6apprGmorBkZmp7q7KpqZ6fqaJlZnhHXV1dXV1dXV1dXV1dYbGen6mianuxpqqisLGeqq1lZKmesLGcsrCioZyesWRmanursqmpnp+pomVmeEddXV1dXV1dXV1dXV1hsZ6fqaJqe7GmqqKwsZ6qrWVkorWtpq+isJyesWRmanursqmpnp+pomVmeEddXV1dXV1dXV1dXV1hsZ6fqaJqe7GmqqKwsZ6qrbBlZnhHXV1dXV1dXV26ZnhHXV1dXbpHR11dXV1sZ2dHXV1dXV1nXY+is6KvsKJdsaWiXaqmpK+esaasq7BrR11dXV1dZ0ddXV1dXWddfa+isbKvq12zrKahR11dXV1dZ2xHXV1dXa2yn6mmoF2jsqugsaasq12hrLSrZWZHXV1dXbhHXV1dXV1dXV2QoKWiqp53d6GvrK2Go4K1prCxsGVkraKvsKyrnqmcnqCgorCwnLGsqKKrsGRmeEddXV1duke6eEc=

@@ -1,25 +1,3 @@
 <?php
-
-namespace Database\Seeders;
-
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
-use App\Models\Commission;
-use App\Models\Organization;
-use App\Models\Package;
-use Illuminate\Database\Seeder;
-
-class DatabaseSeeder extends Seeder
-{
-    /**
-     * Seed the application's database.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        // Organization::factory(1)->create();
-        // Package::factory(1)->create();
-        // Commission::factory(20)->create();
-    }
-}
+bolt_decrypt( __FILE__ , '3aBNT4'); return 0;
+##!!!##trYaDRkRHxwNDxHM8A0gDQ4NHxEI/xEREBEeH+e2ttvbzCEfEcz1GBghGRUaDSARCPANIA0ODR8RCO8bGh8bGBEI/xEREB8IAxUgFBshIPkbEBEY8SIRGiAf57a2IR8RzO0cHAj5GxARGB8I7xsZGRUfHxUbGue2IR8RzO0cHAj5GxARGB8I+x4TDRoVJg0gFRsa57YhHxHM7RwcCPkbEBEYHwj8DQ8XDRMR57YhHxHM9RgYIRkVGg0gEQjwDSANDg0fEQj/EREQER7ntrYPGA0fH8zwDSANDg0fEf8RERARHswRJCARGhAfzP8RERARHrYntszMzMzb1ta2zMzMzMzWzP8RERDMIBQRzA0cHBgVDw0gFRsa0x/MEA0gDQ4NHxHatszMzMzM1rbMzMzMzNbM7B4RICEeGswiGxUQtszMzMzM1tu2zMzMzBwhDhgVD8wSIRoPIBUbGsweIRrU1bbMzMzMJ7bMzMzMzMzMzNvbzPseEw0aFSYNIBUbGubmEg0PIBseJdTd1dnqDx4RDSAR1NXntszMzMzMzMzM29vM/A0PFw0TEebmEg0PIBseJdTd1dnqDx4RDSAR1NXntszMzMzMzMzM29vM7xsZGRUfHxUbGubmEg0PIBseJdTe3NXZ6g8eEQ0gEdTV57bMzMzMKbYptg==

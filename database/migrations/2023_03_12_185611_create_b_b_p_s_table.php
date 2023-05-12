@@ -1,37 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('b_b_p_s', function (Blueprint $table) {
-            $table->id();
-            $table->string('category');
-            $table->string('type');
-            $table->string('operator');
-            $table->integer('eko_id');
-            $table->integer('paysprint_id');
-            $table->boolean('is_surcharge');
-            $table->integer('retailer_commission');
-            $table->integer('distributor_commission');
-            $table->integer('super_distributor_commission');
-            $table->integer('admin_commission');
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('b_b_p_s');
-    }
-};
+bolt_decrypt( __FILE__ , 'WsUQBp'); return 0;
+##!!!##LCyXlYdCa46Ol4+LkIOWh35mg5aDhIOVh35vi4mUg5aLkZCVfm+LiZSDlouRkF0sl5WHQmuOjpePi5CDlod+ZoOWg4SDlYd+dYWKh4+DfmSOl4eSlIuQll0sl5WHQmuOjpePi5CDlod+dZeSkpGUln5og4WDhoeVfnWFioePg10sLJSHlpeUkEKQh5lChY6DlZVCh5qWh5CGlUJvi4mUg5aLkZAsnSxCQkJCUUxMLEJCQkJCTEJ0l5BCloqHQo+LiZSDlouRkJVQLEJCQkJCTFEsQkJCQpKXhI6LhUKIl5CFlouRkEKXkkpLXEKYkYuGLEJCQkKdLEJCQkJCQkJCdYWKh4+DXFyFlIeDlodKSYSBhIGSgZVJTkKIl5CFlouRkEJKZI6Xh5KUi5CWQkaWg4SOh0tCnSxCQkJCQkJCQkJCQkJGloOEjodPYIuGSktdLEJCQkJCQkJCQkJCQkaWg4SOh09glZaUi5CJSkmFg5aHiZGUm0lLXSxCQkJCQkJCQkJCQkJGloOEjodPYJWWlIuQiUpJlpuSh0lLXSxCQkJCQkJCQkJCQkJGloOEjodPYJWWlIuQiUpJkZKHlIOWkZRJS10sQkJCQkJCQkJCQkJCRpaDhI6HT2CLkJaHiYeUSkmHjZGBi4ZJS10sQkJCQkJCQkJCQkJCRpaDhI6HT2CLkJaHiYeUSkmSg5uVkpSLkJaBi4ZJS10sQkJCQkJCQkJCQkJCRpaDhI6HT2CEkZGOh4OQSkmLlYGVl5SFioOUiYdJS10sQkJCQkJCQkJCQkJCRpaDhI6HT2CLkJaHiYeUSkmUh5aDi46HlIGFkY+Pi5WVi5GQSUtdLEJCQkJCQkJCQkJCQkaWg4SOh09gi5CWh4mHlEpJhouVlpSLhJeWkZSBhZGPj4uVlYuRkElLXSxCQkJCQkJCQkJCQkJGloOEjodPYIuQloeJh5RKSZWXkoeUgYaLlZaUi4SXlpGUgYWRj4+LlZWLkZBJS10sQkJCQkJCQkJCQkJCRpaDhI6HT2CLkJaHiYeUSkmDho+LkIGFkY+Pi5WVi5GQSUtdLEJCQkJCQkJCQkJCQkaWg4SOh09glouPh5WWg4+SlUpLXSxCQkJCQkJCQp9LXSxCQkJCnywsQkJCQlFMTCxCQkJCQkxCdIeYh5SVh0KWiodCj4uJlIOWi5GQlVAsQkJCQkJMUSxCQkJCkpeEjouFQoiXkIWWi5GQQoaRmZBKS1xCmJGLhixCQkJCnSxCQkJCQkJCQnWFioePg1xchpSRkmuIZ5qLlZaVSkmEgYSBkoGVSUtdLEJCQkKfLJ9dLA==

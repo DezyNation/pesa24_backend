@@ -1,13 +1,3 @@
 <?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-
-class PackageUser extends Model
-{
-    protected $table = 'package_user';
-    use HasFactory;
-}
+bolt_decrypt( __FILE__ , 'aP4OI2'); return 0;
+##!!!##ubkdEBwUIh8QEhTP8B8fC/weExQbIuq5uSQiFM/4GxskHBgdECMUC/MQIxARECIUC/QbHiAkFB0jC/UQEiMeIRgUIgv3ECL1EBIjHiEo6rkkIhTP+BsbJBwYHRAjFAvzECMQERAiFAv0Gx4gJBQdIwv8HhMUG+q5JCIUz/gbGyQcGB0QIxQL8xAjEBEQIhQL9BseICQUHSMLARQbECMYHh0iC/8YJR4j6rm5EhsQIiLP/xASGhAWFAQiFCHPFCcjFB0TIs/8HhMUG7kquc/Pz88fIR4jFBIjFBPP0yMQERsUz+zP1h8QEhoQFhQOJCIUIdbquc/Pz88kIhTP9xAi9RASIx4hKOq5LLk=

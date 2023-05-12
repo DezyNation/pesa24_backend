@@ -1,11 +1,3 @@
 <?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class FundSettlement extends Model
-{
-    use HasFactory;
-}
+bolt_decrypt( __FILE__ , 'iCUVvk'); return 0;
+##!!!##QkKmmaWdq6iZm51YeaiolIWnnJ2kq3NCQq2rnViBpKStpaGmmaydlHyZrJmamaudlH2kp6mtnaaslH6Zm6ynqqGdq5SAmat+mZusp6qxc0Ktq51YgaSkraWhppmsnZR8mayZmpmrnZR9pKeprZ2mrJSFp5ydpHNCQpukmaurWH6tppyLnayspJ2lnaasWJ2wrJ2mnKtYhaecnaRCs0JYWFhYraudWICZq36Zm6ynqrFzQrVC

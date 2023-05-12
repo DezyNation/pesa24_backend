@@ -1,37 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('aadhaar_pays', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('package_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->decimal('from', 19, 4)->nullable();
-            $table->decimal('to', 19, 4)->nullable();
-            $table->decimal('fixed_charge', 19, 4)->nullable();
-            $table->boolean('is_flat')->nullable()->default(true);
-            $table->decimal('gst', 19, 4)->nullable()->default(0);
-            $table->decimal('retailer_commission', 19, 4)->nullable();
-            $table->decimal('distributor_commission', 19, 4)->nullable();
-            $table->decimal('super_distributor_commission', 19, 4)->nullable();
-            $table->decimal('admin_commission', 19, 4)->nullable();
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('aadhaar_pays');
-    }
-};
+bolt_decrypt( __FILE__ , 'ZjQnyL'); return 0;
+##!!!##UlK9u61okbS0vbWxtqm8raSMqbypqqm7raSVsa+6qbyxt7a7pJWxr7qpvLG3toNSvbutaJG0tL21sbapvK2kjKm8qaqpu62km6uwrbWppIq0va24urG2vINSvbutaJG0tL21sbapvK2km724uLe6vKSOqauprK27pJursK21qYNSUrqtvL26tmi2rb9oq7Spu7torcC8rbasu2iVsa+6qbyxt7ZSw1JoaGhod3JyUmhoaGhocmiavbZovLCtaLWxr7qpvLG3trt2UmhoaGhocndSaGhoaLi9qrSxq2iuvbarvLG3tmi9uHBxgmi+t7GsUmhoaGjDUmhoaGhoaGhom6uwrbWpgoKruq2pvK1wb6mprLCpqbqnuKnBu290aK69tqu8sbe2aHCKtL2tuLqxtrxobLypqrStcWjDUmhoaGhoaGhoaGhoaGy8qaq0rXWGsaxwcYNSaGhoaGhoaGhoaGhobLypqrStdYaut7qtsa+2kaxwb7ipq7Opr62nsaxvcXWGtr20tKmqtK1wcXWGq7e2u7y6qbG2raxwcXWGq6m7q6msrZe2nbisqbytcHF1hra9tLSXtoyttK28rXBxg1JoaGhoaGhoaGhoaGhsvKmqtK11hqytq7G1qbRwb666t7VvdGh5gXRofHF1hra9tLSpqrStcHGDUmhoaGhoaGhoaGhoaGy8qaq0rXWGrK2rsbWptHBvvLdvdGh5gXRofHF1hra9tLSpqrStcHGDUmhoaGhoaGhoaGhoaGy8qaq0rXWGrK2rsbWptHBvrrHAraynq7Cpuq+tb3RoeYF0aHxxdYa2vbS0qaq0rXBxg1JoaGhoaGhoaGhoaGhsvKmqtK11hqq3t7StqbZwb7G7p660qbxvcXWGtr20tKmqtK1wcXWGrK2uqb20vHC8ur2tcYNSaGhoaGhoaGhoaGhobLypqrStdYasrauxtam0cG+vu7xvdGh5gXRofHF1hra9tLSpqrStcHF1hqytrqm9tLxweHGDUmhoaGhoaGhoaGhoaGy8qaq0rXWGrK2rsbWptHBvuq28qbG0rbqnq7e1tbG7u7G3tm90aHmBdGh8cXWGtr20tKmqtK1wcYNSaGhoaGhoaGhoaGhobLypqrStdYasrauxtam0cG+ssbu8urGqvby3uqert7W1sbu7sbe2b3RoeYF0aHxxdYa2vbS0qaq0rXBxg1JoaGhoaGhoaGhoaGhsvKmqtK11hqytq7G1qbRwb7u9uK26p6yxu7y6saq9vLe6p6u3tbWxu7uxt7ZvdGh5gXRofHF1hra9tLSpqrStcHGDUmhoaGhoaGhoaGhoaGy8qaq0rXWGrK2rsbWptHBvqay1sbanq7e1tbG7u7G3tm90aHmBdGh8cXWGtr20tKmqtK1wcYNSaGhoaGhoaGhoaGhobLypqrStdYa8sbWtu7yptbi7cHGDUmhoaGhoaGhoxXGDUmhoaGjFUlJoaGhod3JyUmhoaGhocmiarb6turutaLywrWi1sa+6qbyxt7a7dlJoaGhoaHJ3UmhoaGi4vaq0satorr22q7yxt7ZorLe/tnBxgmi+t7GsUmhoaGjDUmhoaGhoaGhom6uwrbWpgoKsure4ka6NwLG7vLtwb6mprLCpqbqnuKnBu29xg1JoaGhoxVLFg1I=

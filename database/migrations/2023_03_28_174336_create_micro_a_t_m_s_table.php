@@ -1,27 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('micro_a_t_m_s', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('micro_a_t_m_s');
-    }
-};
+bolt_decrypt( __FILE__ , 'mZL3O2'); return 0;
+##!!!##0dE8OiznEDMzPDQwNSg7LCMLKDsoKSg6LCMUMC45KDswNjU6IxQwLjkoOzA2NQLRPDos5xAzMzw0MDUoOywjCyg7KCkoOiwjGiovLDQoIwkzPCw3OTA1OwLRPDos5xAzMzw0MDUoOywjGjw3NzY5OyMNKCooKyw6IxoqLyw0KALR0TksOzw5Nec1LD7nKjMoOjrnLD87LDUrOucUMC45KDswNjXRQtHn5+fn9vHx0efn5+fn8ecZPDXnOy8s5zQwLjkoOzA2NTr10efn5+fn8fbR5+fn5zc8KTMwKuctPDUqOzA2Nec8N+/wAec9NjAr0efn5+dC0efn5+fn5+fnGiovLDQoAQEqOSwoOyzv7jQwKjk2JigmOyY0Jjru8+ctPDUqOzA2NefvCTM8LDc5MDU75+s7KCkzLPDnQtHn5+fn5+fn5+fn5+frOygpMyz0BTAr7/AC0efn5+fn5+fn5+fn5+s7KCkzLPQFOzA0LDo7KDQ3Ou/wAtHn5+fn5+fn50TwAtHn5+fnRNHR5+fn5/bx8dHn5+fn5/HnGSw9LDk6LOc7LyznNDAuOSg7MDY1OvXR5+fn5+fx9tHn5+fnNzwpMzAq5y08NSo7MDY15ys2PjXv8AHnPTYwK9Hn5+fnQtHn5+fn5+fn5xoqLyw0KAEBKzk2NxAtDD8wOjs67+40MCo5NiYoJjsmNCY67vAC0efn5+dE0UQC0Q==

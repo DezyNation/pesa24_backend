@@ -1,19 +1,3 @@
 <?php
-
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
-
-/*
-|--------------------------------------------------------------------------
-| Console Routes
-|--------------------------------------------------------------------------
-|
-| This file is where you may define all of your Closure based console
-| commands. Each Closure is bound to a command instance allowing a
-| simple approach to interacting with each command's IO methods.
-|
-*/
-
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+bolt_decrypt( __FILE__ , 'CMJDMN'); return 0;
+##!!!##w8MuLB7ZAiUlLiYiJxotHhX/KC4nHRotIignFQInLCkiKyInIPTDLiwe2QIlJS4mIicaLR4VDC4pKSgrLRX/GhwaHR4sFforLSIsGif0w8Po48M15ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubDNdn8KCcsKCUe2QsoLi0eLMM15ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubDNcM12Q0hIizZHyIlHtkiLNkwIR4rHtkyKC7ZJhoy2R0eHyInHtkaJSXZKB/ZMiguK9n8JSgsLise2RsaLB4d2RwoJywoJR7DNdkcKCYmGicdLOfZ/hocIdn8JSgsLise2SIs2RsoLicd2S0o2RrZHCgmJhonHdkiJywtGiccHtkaJSUoMCInINkawzXZLCImKSUe2RopKSsoGhwh2S0o2SInLR4rGhwtIicg2TAiLSHZHhocIdkcKCYmGicd4CzZAgjZJh4tISgdLOfDNcPj6MPD+istIiwaJ/PzHCgmJhonHeHgIicsKSIrHuDl2R8uJxwtIign2eHi2TTD2dnZ2d0tISIs5vccKCYmHict4QInLCkiKyInIPPzKi4oLR7h4uL0wzbi5vcpLispKCwe4eD9IiwpJRoy2Ron2SInLCkiKyInINkqLigtHuDi9MM=

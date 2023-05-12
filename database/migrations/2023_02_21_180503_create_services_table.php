@@ -1,35 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('services', function (Blueprint $table) {
-            $table->id();
-            $table->string('provider');
-            $table->string('service');
-            $table->integer('price');
-            $table->integer('admin_commission');
-            $table->integer('super_distributor_commission');
-            $table->integer('distributor_commission');
-            $table->integer('retailer_commission');
-            $table->boolean('is_active')->default(1);
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('services');
-    }
-};
+bolt_decrypt( __FILE__ , 'h39Xu9'); return 0;
+##!!!##5ORPTT/6I0ZGT0dDSDtOPzYeO047PDtNPzYnQ0FMO05DSUhNNidDQUw7TkNJSBXkT00/+iNGRk9HQ0g7Tj82HjtOOzw7TT82LT1CP0c7NhxGTz9KTENIThXkT00/+iNGRk9HQ0g7Tj82LU9KSklMTjYgOz07Pj9NNi09Qj9HOxXk5Ew/Tk9MSPpIP1H6PUY7TU36P1JOP0g+TfonQ0FMO05DSUjkVeT6+vr6CQQE5Pr6+vr6BPosT0j6TkI/+kdDQUw7TkNJSE0I5Pr6+vr6BAnk+vr6+kpPPEZDPfpAT0g9TkNJSPpPSgIDFPpQSUM+5Pr6+vpV5Pr6+vr6+vr6LT1CP0c7FBQ9TD87Tj8CAU0/TFBDPT9NAQb6QE9IPU5DSUj6AhxGTz9KTENITvr+Tjs8Rj8D+lXk+vr6+vr6+vr6+vr6/k47PEY/BxhDPgIDFeT6+vr6+vr6+vr6+vr+Tjs8Rj8HGE1OTENIQQIBSkxJUEM+P0wBAxXk+vr6+vr6+vr6+vr6/k47PEY/BxhNTkxDSEECAU0/TFBDPT8BAxXk+vr6+vr6+vr6+vr6/k47PEY/BxhDSE4/QT9MAgFKTEM9PwEDFeT6+vr6+vr6+vr6+vr+Tjs8Rj8HGENITj9BP0wCATs+R0NIOT1JR0dDTU1DSUgBAxXk+vr6+vr6+vr6+vr6/k47PEY/BxhDSE4/QT9MAgFNT0o/TDk+Q01OTEM8T05JTDk9SUdHQ01NQ0lIAQMV5Pr6+vr6+vr6+vr6+v5OOzxGPwcYQ0hOP0E/TAIBPkNNTkxDPE9OSUw5PUlHR0NNTUNJSAEDFeT6+vr6+vr6+vr6+vr+Tjs8Rj8HGENITj9BP0wCAUw/TjtDRj9MOT1JR0dDTU1DSUgBAxXk+vr6+vr6+vr6+vr6/k47PEY/Bxg8SUlGPztIAgFDTTk7PU5DUD8BAwcYPj9AO09GTgILAxXk+vr6+vr6+vr6+vr6/k47PEY/BxhOQ0c/TU47R0pNAgMV5Pr6+vr6+vr6VwMV5Pr6+vpX5OT6+vr6CQQE5Pr6+vr6BPosP1A/TE0/+k5CP/pHQ0FMO05DSUhNCOT6+vr6+gQJ5Pr6+vpKTzxGQz36QE9IPU5DSUj6PklRSAIDFPpQSUM+5Pr6+vpV5Pr6+vr6+vr6LT1CP0c7FBQ+TElKI0AfUkNNTk0CAU0/TFBDPT9NAQMV5Pr6+vpX5FcV5A==

@@ -1,29 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('tickets', function (Blueprint $table) {
-            $table->string('document')->after('body')->nullable();
-            $table->string('transaction_id')->after('id')->nullable();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('tickets', function (Blueprint $table) {
-            //
-        });
-    }
-};
+bolt_decrypt( __FILE__ , 'oPgoov'); return 0;
+##!!!##hITv7d+aw+bm7+fj6Nvu39a+2+7b3Nvt39bH4+Hs2+7j6ejt1sfj4ezb7uPp6LWE7+3fmsPm5u/n4+jb7t/Wvtvu29zb7d/Wzd3i3+fb1rzm79/q7OPo7rWE7+3fmsPm5u/n4+jb7t/Wze/q6uns7tbA293b3t/t1s3d4t/n27WEhOzf7u/s6Jro3/Ga3ebb7e2a3/Lu3+je7ZrH4+Hs2+7j6eiE9YSampqaqaSkhJqampqapJrM7+ia7uLfmufj4ezb7uPp6O2ohJqampqapKmEmpqamurv3Obj3Zrg7+jd7uPp6Jrv6qKjtJrw6ePehJqampr1hJqampqampqazd3i3+fbtLTu29zm36Kh7uPd5d/u7aGmmuDv6N3u4+nomqK85u/f6uzj6O6anu7b3Obfo5r1hJqampqampqampqamp7u29zm36e47e7s4+jhoqHe6d3v59/o7qGjp7jb4O7f7KKh3One86Gjp7jo7+bm29zm36KjtYSampqampqampqampqe7tvc5t+nuO3u7OPo4aKh7uzb6O3b3e7j6ejZ496ho6e42+Du3+yioePeoaOnuOjv5ubb3ObfoqO1hJqampqampqa96O1hJqampr3hISampqaqaSkhJqampqapJrM3/Df7O3fmu7i35rn4+Hs2+7j6ejtqISampqamqSphJqamprq79zm492a4O/o3e7j6eia3unx6KKjtJrw6ePehJqampr1hJqampqampqazd3i3+fbtLTu29zm36Kh7uPd5d/u7aGmmuDv6N3u4+nomqK85u/f6uzj6O6anu7b3Obfo5r1hJqampqampqampqamqmphJqampqampqa96O1hJqampr3hPe1hA==

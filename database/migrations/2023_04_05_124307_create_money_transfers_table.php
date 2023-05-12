@@ -1,29 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('money_transfers', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('sender_id')->nullable()->constrained('users')->nullOnDelete()->cascadeOnUpdate();
-            $table->foreignId('reciever_id')->nullable()->constrained('users')->nullOnDelete()->cascadeOnUpdate();
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('money_transfers');
-    }
-};
+bolt_decrypt( __FILE__ , 'rTkbzE'); return 0;
+##!!!##XFzHxbdym76+x7+7wLPGt66Ws8aztLPFt66fu7nEs8a7wcDFrp+7ucSzxrvBwI1cx8W3cpu+vse/u8CzxreulrPGs7SzxbeupbW6t7+zrpS+x7fCxLvAxo1cx8W3cpu+vse/u8CzxreupcfCwsHExq6Ys7WztrfFrqW1ure/s41cXMS3xsfEwHLAt8lytb6zxcVyt8rGt8C2xXKfu7nEs8a7wcBczVxycnJygXx8XHJycnJyfHKkx8Byxrq3cr+7ucSzxrvBwMWAXHJycnJyfIFccnJycsLHtL67tXK4x8C1xrvBwHLHwnp7jHLIwbu2XHJycnLNXHJycnJycnJypbW6t7+zjIy1xLezxrd6eb/BwLfLscbEs8DFuLfExXl+crjHwLXGu8HAcnqUvse3wsS7wMZydsaztL63e3LNXHJycnJycnJycnJycnbGs7S+t3+Qu7Z6e41ccnJycnJycnJycnJydsaztL63f5C4wcS3u7nAm7Z6ecW3wLa3xLG7tnl7f5DAx76+s7S+t3p7f5C1wcDFxsSzu8C3tnp5x8W3xMV5e3+QwMe+vqHAlre+t8a3ent/kLWzxbWztrehwKfCtrPGt3p7jVxycnJycnJycnJycnJ2xrO0vrd/kLjBxLe7ucCbtnp5xLe1u7fIt8Sxu7Z5e3+QwMe+vrO0vrd6e3+QtcHAxcbEs7vAt7Z6ecfFt8TFeXt/kMDHvr6hwJa3vrfGt3p7f5C1s8W1s7a3ocCnwrazxrd6e41ccnJycnJycnJycnJydsaztL63f5DGu7+3xcazv8LFenuNXHJycnJycnJyz3uNXHJycnLPXFxycnJygXx8XHJycnJyfHKkt8i3xMW3csa6t3K/u7nEs8a7wcDFgFxycnJycnyBXHJycnLCx7S+u7VyuMfAtca7wcBytsHJwHp7jHLIwbu2XHJycnLNXHJycnJycnJypbW6t7+zjIy2xMHCm7iXyrvFxsV6eb/BwLfLscbEs8DFuLfExXl7jVxycnJyz1zPjVw=

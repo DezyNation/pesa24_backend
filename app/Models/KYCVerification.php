@@ -1,23 +1,3 @@
 <?php
-
-namespace App\Models;
-
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-class KYCVerification extends Model
-{
-    use HasFactory;
-
-    /**
-     * Get the user that owns the KYCVerification
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-}
+bolt_decrypt( __FILE__ , 'CxULS5'); return 0;
+##!!!##7u5SRVFJV1RFR0kEJVRUQDFTSElQVx/u7llXSQQlVFRAMVNISVBXQDlXSVYf7llXSQQtUFBZUU1SRVhJQChFWEVGRVdJQClQU1VZSVJYQDFTSElQH+5ZV0kELVBQWVFNUkVYSUAoRVhFRkVXSUApUFNVWUlSWEA2SVBFWE1TUldAJklQU1JLVzhTH+5ZV0kELVBQWVFNUkVYSUAoRVhFRkVXSUApUFNVWUlSWEAqRUdYU1ZNSVdALEVXKkVHWFNWXR/u7kdQRVdXBC89JzpJVk1KTUdFWE1TUgRJXFhJUkhXBDFTSElQ7l/uBAQEBFlXSQQsRVcqRUdYU1ZdH+7uBAQEBBMODu4EBAQEBA4EK0lYBFhMSQRZV0lWBFhMRVgEU1tSVwRYTEkELz0nOklWTUpNR0VYTVNS7gQEBAQEDu4EBAQEBA4EJFZJWFlWUgRALVBQWVFNUkVYSUAoRVhFRkVXSUApUFNVWUlSWEA2SVBFWE1TUldAJklQU1JLVzhT7gQEBAQEDhPuBAQEBFRZRlBNRwRKWVJHWE1TUgRZV0lWDA0eBCZJUFNSS1c4U+4EBAQEX+4EBAQEBAQEBFZJWFlWUgQIWExNVxEiRklQU1JLVzhTDDlXSVYeHkdQRVdXDR/uBAQEBGHuYe4=

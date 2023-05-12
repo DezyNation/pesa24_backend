@@ -1,33 +1,3 @@
 <?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-
-class Service extends Model
-{
-    use HasFactory;
-    protected $hidden = ['created_at', 'updated_at'];
-    /**
-     * The users that belong to the Service
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function users(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class);
-    }
-
-    /**
-     * Get the package that owns the Service
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function package(): BelongsToMany
-    {
-        return $this->belongsToMany(Package::class);
-    }
-}
+bolt_decrypt( __FILE__ , 'hnbc4j'); return 0;
+##!!!##Q0OnmqaerKmanJ5ZeqmplYaonZ6lrHRDQ66snlmCpaWupqKnmq2elX2arZqbmqyelX6lqKqunqetlYaonZ6ldEOurJ5ZgqWlrqaip5qtnpV9mq2am5qsnpV+paiqrp6nrZWLnqWaraKop6yVe56lqKegrI2odEOurJ5ZgqWlrqaip5qtnpV9mq2am5qsnpV+paiqrp6nrZV/mpytqKuinqyVgZqsf5qcrairsnRDrqyeWYKlpa6moqearZ6VfZqtmpuarJ6VfqWoqq6ep62Vi56lmq2iqKeslXuepainoKyNqIaap7J0Q0OcpZqsrFmMnquvopyeWZ6xrZ6nnaxZhqidnqVDtENZWVlZrqyeWYGarH+anK2oq7J0Q1lZWVmpq6itnpytnp1ZXaGinZ2ep1l2WZRgnKuemq2enZiarWBlWWCuqZ2arZ6dmJqtYJZ0Q1lZWVloY2NDWVlZWVljWY2hnlmurJ6rrFmtoZqtWZuepainoFmtqFmtoZ5ZjJ6rr6KcnkNZWVlZWWNDWVlZWVljWXmrnq2uq6dZlYKlpa6moqearZ6VfZqtmpuarJ6VfqWoqq6ep62Vi56lmq2iqKeslXuepainoKyNqIaap7JDWVlZWVljaENZWVlZqa6bpaKcWZ+up5ytoqinWa6snqusYWJzWXuepainoKyNqIaap7JDWVlZWbRDWVlZWVlZWVmrnq2uq6dZXa2hoqxmd5uepainoKyNqIaap7Jhjqyeq3NznKWarKxidENZWVlZtkNDWVlZWWhjY0NZWVlZWWNZgJ6tWa2hnlmpmpykmqCeWa2hmq1ZqLCnrFmtoZ5ZjJ6rr6KcnkNZWVlZWWNDWVlZWVljWXmrnq2uq6dZlYKlpa6moqearZ6VfZqtmpuarJ6VfqWoqq6ep62Vi56lmq2iqKeslXuepainoKyNqENZWVlZWWNoQ1lZWVmprpulopxZn66nnK2iqKdZqZqcpJqgnmFic1l7nqWop6CsjaiGmqeyQ1lZWVm0Q1lZWVlZWVlZq56trqunWV2toaKsZnebnqWop6CsjaiGmqeyYYmanKSaoJ5zc5ylmqysYnRDWVlZWbZDtkM=

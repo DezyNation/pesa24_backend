@@ -1,19 +1,3 @@
 <?php
-
-namespace App\Http\Resources\v1;
-
-use Illuminate\Http\Resources\Json\JsonResource;
-
-class UserResource extends JsonResource
-{
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
-    public function toArray($request)
-    {
-        return parent::toArray($request);
-    }
-}
+bolt_decrypt( __FILE__ , 'HXqqJv'); return 0;
+##!!!##TEywo6+ntbKjpadig7Kynoq2trKelKe1sbe0pae1nrhzfUxMt7WnYouurrevq7Cjtqeeira2sp6Up7Wxt7Slp7WejLWxsJ6MtbGwlKe1sbe0pad9TEylrqO1tWKXtae0lKe1sbe0padip7q2p7CmtWKMtbGwlKe1sbe0padMvUxiYmJicWxsTGJiYmJibGKWtKOwtaixtK9itqqnYrSntbG3tKWnYquwtrFio7Bio7S0o7twTGJiYmJibExiYmJiYmxigrKjtKOvYmKei66ut6+rsKO2p56KtraynpSns7entbZiYma0p7O3p7W2TGJiYmJibGKCtKe2t7SwYqO0tKO7vp6Lrq63r6uwo7annoWxsLa0o6W2tZ6Vt7KysbS2noO0tKO7o6Sup76ejLWxsJWntKujrqu8o6Sup0xiYmJiYmxxTGJiYmKyt6Suq6ViqLewpbarsbBitrGDtLSju2pmtKezt6e1tmtMYmJiYr1MYmJiYmJiYmK0p7a3tLBisqO0p7C2fHy2sYO0tKO7ama0p7O3p7W2a31MYmJiYr9Mv0w=

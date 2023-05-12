@@ -1,28 +1,3 @@
 <?php
-
-namespace App\Providers;
-
-use Illuminate\Support\ServiceProvider;
-
-class AppServiceProvider extends ServiceProvider
-{
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        //
-    }
-
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        //
-    }
-}
+bolt_decrypt( __FILE__ , 'imng05'); return 0;
+##!!!##Ghp+cX11g4Bxc3UwUYCAbGCCf4Z5dHWCg0saGoWDdTBZfHyFfXl+cYR1bGOFgIB/goRsY3WChnlzdWCCf4Z5dHWCSxoac3xxg4MwUYCAY3WChnlzdWCCf4Z5dHWCMHWIhHV+dIMwY3WChnlzdWCCf4Z5dHWCGosaMDAwMD86OhowMDAwMDowYnV3eYOEdYIwcX6JMHGAgHx5c3GEeX9+MIN1goZ5c3WDPhowMDAwMDoaMDAwMDA6MFCCdYSFgn4whn95dBowMDAwMDo/GjAwMDCAhXJ8eXMwdoV+c4R5f34wgnV3eYOEdYI4ORowMDAwixowMDAwMDAwMD8/GjAwMDCNGhowMDAwPzo6GjAwMDAwOjBSf3+Eg4SCcYAwcX6JMHGAgHx5c3GEeX9+MIN1goZ5c3WDPhowMDAwMDoaMDAwMDA6MFCCdYSFgn4whn95dBowMDAwMDo/GjAwMDCAhXJ8eXMwdoV+c4R5f34wcn9/hDg5GjAwMDCLGjAwMDAwMDAwPz8aMDAwMI0ajRo=

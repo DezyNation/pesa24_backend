@@ -1,35 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('dmt_transactions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->boolean('status');
-            $table->string('transaction_id')->nullable();
-            $table->decimal('amount', 19,4);
-            $table->string('reference_id');
-            $table->json('paysprint_metadata')->nullable();
-            $table->json('eko_metadata')->nullable();
-            $table->json('callback_metadata')->nullable();
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('table_dmt_transactions');
-    }
-};
+bolt_decrypt( __FILE__ , '3ep1wr'); return 0;
+##!!!##LCyXlYdCa46Ol4+LkIOWh35mg5aDhIOVh35vi4mUg5aLkZCVfm+LiZSDlouRkF0sl5WHQmuOjpePi5CDlod+ZoOWg4SDlYd+dYWKh4+DfmSOl4eSlIuQll0sl5WHQmuOjpePi5CDlod+dZeSkpGUln5og4WDhoeVfnWFioePg10sLJSHlpeUkEKQh5lChY6DlZVCh5qWh5CGlUJvi4mUg5aLkZAsnSxCQkJCUUxMLEJCQkJCTEJ0l5BCloqHQo+LiZSDlouRkJVQLEJCQkJCTFEsQkJCQpKXhI6LhUKIl5CFlouRkEKXkkpLXEKYkYuGLEJCQkKdLEJCQkJCQkJCdYWKh4+DXFyFlIeDlodKSYaPloGWlIOQlYOFlouRkJVJTkKIl5CFlouRkEJKZI6Xh5KUi5CWQkaWg4SOh0tCnSxCQkJCQkJCQkJCQkJGloOEjodPYIuGSktdLEJCQkJCQkJCQkJCQkaWg4SOh09giJGUh4uJkGuGSkmXlYeUgYuGSUtPYJCXjo6DhI6HSktPYIWRkJWWlIOLkIeGSktPYIWDlYWDhodxkHeShoOWh0pLT2CQl46OcZBmh46HlodKS10sQkJCQkJCQkJCQkJCRpaDhI6HT2CEkZGOh4OQSkmVloOWl5VJS10sQkJCQkJCQkJCQkJCRpaDhI6HT2CVlpSLkIlKSZaUg5CVg4WWi5GQgYuGSUtPYJCXjo6DhI6HSktdLEJCQkJCQkJCQkJCQkaWg4SOh09ghoeFi4+DjkpJg4+Rl5CWSU5CU1tOVktdLEJCQkJCQkJCQkJCQkaWg4SOh09glZaUi5CJSkmUh4iHlIeQhYeBi4ZJS10sQkJCQkJCQkJCQkJCRpaDhI6HT2CMlZGQSkmSg5uVkpSLkJaBj4eWg4aDloNJS09gkJeOjoOEjodKS10sQkJCQkJCQkJCQkJCRpaDhI6HT2CMlZGQSkmHjZGBj4eWg4aDloNJS09gkJeOjoOEjodKS10sQkJCQkJCQkJCQkJCRpaDhI6HT2CMlZGQSkmFg46OhIOFjYGPh5aDhoOWg0lLT2CQl46Og4SOh0pLXSxCQkJCQkJCQkJCQkJGloOEjodPYJaLj4eVloOPkpVKS10sQkJCQkJCQkKfS10sQkJCQp8sLEJCQkJRTEwsQkJCQkJMQnSHmIeUlYdCloqHQo+LiZSDlouRkJVQLEJCQkJCTFEsQkJCQpKXhI6LhUKIl5CFlouRkEKGkZmQSktcQpiRi4YsQkJCQp0sQkJCQkJCQkJ1hYqHj4NcXIaUkZJriGeai5WWlUpJloOEjoeBho+WgZaUg5CVg4WWi5GQlUlLXSxCQkJCnyyfXSw=

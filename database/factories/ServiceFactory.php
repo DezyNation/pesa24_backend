@@ -1,23 +1,3 @@
 <?php
-
-namespace Database\Factories;
-
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Service>
- */
-class ServiceFactory extends Factory
-{
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            //
-        ];
-    }
-}
+bolt_decrypt( __FILE__ , 'WfRaDq'); return 0;
+##!!!##Ly+ThpKKmJWGiIpFaYaZhoeGmIqBa4aImZSXjoqYYC8vmpiKRW6RkZqSjpOGmYqBaYaZhoeGmIqBapGUlpqKk5mBa4aImZSXjoqYgWuGiJmUl55gLy9UT08vRU9FZYqdmYqTiZhFgW6RkZqSjpOGmYqBaYaZhoeGmIqBapGUlpqKk5mBa4aImZSXjoqYgWuGiJmUl55hgWaVlYFylImKkZiBeIqXm46IimMvRU9UL4iRhpiYRXiKl5uOiIprhoiZlJeeRYqdmYqTiZhFa4aImZSXni+gL0VFRUVUT08vRUVFRUVPRWmKi46TikWZjYpFkpSJipFMmEWJiouGmpGZRZiZhpmKUy9FRUVFRU8vRUVFRUVPRWWXipmal5NFhpeXhp5hmJmXjpOMUUWSjp2KiWMvRUVFRUVPVC9FRUVFlZqHkY6IRYuak4iZjpSTRYmKi46TjpmOlJNNTl9FhpeXhp4vRUVFRaAvRUVFRUVFRUWXipmal5NFgC9FRUVFRUVFRUVFRUVUVC9FRUVFRUVFRYJgL0VFRUWiL6Iv

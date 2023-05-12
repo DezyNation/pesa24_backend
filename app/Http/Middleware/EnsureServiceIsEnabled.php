@@ -1,20 +1,3 @@
 <?php
-
-namespace App\Http\Middleware;
-
-use Closure;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-
-class EnsureServiceIsEnabled
-{
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
-    {
-        return $next($request);
-    }
-}
+bolt_decrypt( __FILE__ , 'tIrDvN'); return 0;
+##!!!##QUGlmKScqqeYmpxXeKenk3+rq6eThKCbm6OcrpipnHJBQayqnFd6o6aqrKmcckGsqpxXgKOjrKSgpZirnJN/q6unk4mcqKycqqtyQayqnFeKsKSdpqWwk3qmpKempZylq5N/q6unfaaspZuYq6CmpZOJnKqnpqWqnHJBQZqjmKqqV3ylqqypnIqcqa2gmpyAqnylmJmjnJtBskFXV1dXZmFhQVdXV1dXYVd/mKWbo5xXmKVXoKWapqSgpZ5XqZyorJyqq2VBV1dXV1dhQVdXV1dXYVd3p5ipmKRXV5N6o6aqrKmcX5OAo6OspKClmKuck3+rq6eTiZyorJyqq2BxV1+TirCknaalsJN6pqSnpqWcpauTf6urp32mrKWbmKugpqWTiZyqp6alqpxgV1dbpZyvq0FXV1dXV2FmQVdXV1enrJmjoJpXnaylmqugpqVXn5ilm6OcX4mcqKycqqtXW6mcqKycqqtjV3qjpqqsqZxXW6Wcr6tgcVeJnKqnpqWqnEFXV1dXskFXV1dXV1dXV6mcq6yppVdbpZyvq19bqZyorJyqq2ByQVdXV1e0QbRB

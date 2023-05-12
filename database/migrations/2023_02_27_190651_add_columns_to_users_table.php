@@ -1,32 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('firm_type')->after('company_name')->nullable();
-            $table->string('alternate_phone')->after('phone_number')->nullable();
-            $table->string('gst_number')->after('firm_type')->nullable();
-            
-
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
-    }
-};
+bolt_decrypt( __FILE__ , 'mlRKSe'); return 0;
+##!!!##ODijoZNOd5qao5uXnI+ik4pyj6KPkI+hk4p7l5Wgj6KXnZyhinuXlaCPopednGk4o6GTTneamqObl5yPopOKco+ij5CPoZOKgZGWk5uPinCao5OeoJecomk4o6GTTneamqObl5yPopOKgaOenp2goop0j5GPkpOhioGRlpObj2k4OKCToqOgnE6ck6VOkZqPoaFOk6aik5ySoU57l5Wgj6KXnZw4qThOTk5OXVhYOE5OTk5OWE6Ao5xOopaTTpuXlaCPopednKFcOE5OTk5OWF04Tk5OTp6jkJqXkU6Uo5yRopednE6jnlZXaE6knZeSOE5OTk6pOE5OTk5OTk5OgZGWk5uPaGiij5Cak1ZVo6GToKFVWk6Uo5yRopednE5WcJqjk56gl5yiTlKij5Cak1dOqThOTk5OTk5OTk5OTk5Soo+QmpNbbKGioJeclVZVlJegm42ip56TVVdbbI+UopOgVlWRnZuej5ynjZyPm5NVV1tsnKOamo+QmpNWV2k4Tk5OTk5OTk5OTk5OUqKPkJqTW2yhoqCXnJVWVY+aopOgnI+ik42elp2ck1VXW2yPlKKToFZVnpadnJONnKObkJOgVVdbbJyjmpqPkJqTVldpOE5OTk5OTk5OTk5OTlKij5Cak1tsoaKgl5yVVlWVoaKNnKObkJOgVVdbbI+UopOgVlWUl6CbjaKnnpNVV1tsnKOamo+QmpNWV2k4Tk5OTk5OTk5OTk5OODhOTk5OTk5OTqtXaThOTk5Oqzg4Tk5OTl1YWDhOTk5OTlhOgJOkk6Chk06ilpNOm5eVoI+il52coVw4Tk5OTk5YXThOTk5OnqOQmpeRTpSjnJGil52cTpKdpZxWV2hOpJ2XkjhOTk5OqThOTk5OTk5OToGRlpObj2hooo+QmpNWVaOhk6ChVVpOlKOckaKXnZxOVnCao5OeoJecok5Soo+QmpNXTqk4Tk5OTk5OTk5OTk5OXV04Tk5OTk5OTk6rV2k4Tk5OTqs4q2k4

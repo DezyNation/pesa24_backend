@@ -1,25 +1,3 @@
 <?php
-
-namespace App\Http\Middleware;
-
-use Closure;
-use Illuminate\Http\Request;
-
-class EnsureProfileIsCompleted
-{
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
-     */
-    public function handle(Request $request, Closure $next)
-    {
-        $user = auth()->user();
-        if ($user->phone_number == null || $user->profile == false) {
-            return response("Profile not completed.", 403);
-        }
-        return $next($request);
-    }
-}
+bolt_decrypt( __FILE__ , 'RfoGZP'); return 0;
+##!!!##IiKGeYV9i4h5e304WYiIdGCMjIh0ZYF8fIR9j3mKfVMiIo2LfThbhIeLjYp9UyKNi304YYSEjYWBhnmMfXRgjIyIdGp9iY19i4xTIiJ7hHmLizhdhouNin1oiod+gYR9YYtbh4WIhH2MfXwikyI4ODg4R0JCIjg4ODg4QjhgeYZ8hH04eYY4gYZ7h4WBhn84in2JjX2LjEYiODg4ODhCIjg4ODg4QjhYiHmKeYU4OHRhhISNhYGGeYx9dGCMjIh0an2JjX2LjDg4PIp9iY19i4wiODg4ODhCOFiIeYp5hTg4dFuEh4uNin1AdGGEhI2FgYZ5jH10YIyMiHRqfYmNfYuMQVI4QHRhhISNhYGGeYx9dGCMjIh0an2LiIeGi32UdGGEhI2FgYZ5jH10YIyMiHRqfXyBin17jGp9i4iHhot9QTg4PIZ9kIwiODg4ODhCOFiKfYyNioY4dGGEhI2FgYZ5jH10YIyMiHRqfYuIh4aLfZR0YYSEjYWBhnmMfXRgjIyIdGp9fIGKfXuMan2LiIeGi30iODg4ODhCRyI4ODg4iI16hIF7OH6NhnuMgYeGOIB5hnyEfUBqfYmNfYuMODyKfYmNfYuMRDhbhIeLjYp9ODyGfZCMQSI4ODg4kyI4ODg4ODg4ODyNi32KOFU4eY2MgEBBRVaNi32KQEFTIjg4ODg4ODg4gX44QDyNi32KRVaIgIeGfXeGjYV6fYo4VVU4ho2EhDiUlDg8jYt9ikVWiIqHfoGEfThVVTh+eYSLfUE4kyI4ODg4ODg4ODg4ODiKfYyNioY4in2LiIeGi31AOmiKh36BhH04hoeMOHuHhYiEfYx9fEY6RDhMSEtBUyI4ODg4ODg4OJUiODg4ODg4ODiKfYyNioY4PIZ9kIxAPIp9iY19i4xBUyI4ODg4lSKVIg==

@@ -1,11 +1,3 @@
 <?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class AePSSettlement extends Model
-{
-    use HasFactory;
-}
+bolt_decrypt( __FILE__ , 'jfBT3A'); return 0;
+##!!!##5ORIO0c/TUo7PT/6G0pKNidJPj9GTRXk5E9NP/ojRkZPR0NIO04/Nh47Tjs8O00/Nh9GSUtPP0hONiA7PU5JTEM/TTYiO00gOz1OSUxTFeRPTT/6I0ZGT0dDSDtOPzYeO047PDtNPzYfRklLTz9ITjYnST4/RhXk5D1GO01N+hs/Ki0tP05ORj9HP0hO+j9STj9IPk36J0k+P0bkVeT6+vr6T00/+iI7TSA7PU5JTFMV5Ffk

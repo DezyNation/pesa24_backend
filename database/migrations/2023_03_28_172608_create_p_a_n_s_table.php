@@ -1,35 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('p_a_n_s', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('package_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->string('name');
-            $table->integer('gst');
-            $table->integer('fixed_charge');
-            $table->integer('is_flat');
-            $table->integer('retailer_commssion');
-            $table->integer('distributor_commssion');
-            $table->integer('super_distributor_commssion');
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('p_a_n_s');
-    }
-};
+bolt_decrypt( __FILE__ , 'ueux8c'); return 0;
+##!!!##bGzX1ceCq87O18/L0MPWx76mw9bDxMPVx76vy8nUw9bL0dDVvq/LydTD1svR0J1s19XHgqvOztfPy9DD1se+psPWw8TD1ce+tcXKx8/DvqTO18fS1MvQ1p1s19XHgqvOztfPy9DD1se+tdfS0tHU1r6ow8XDxsfVvrXFysfPw51sbNTH1tfU0ILQx9mCxc7D1dWCx9rWx9DG1YKvy8nUw9bL0dBs3WyCgoKCkYyMbIKCgoKCjIK019CC1srHgs/LydTD1svR0NWQbIKCgoKCjJFsgoKCgtLXxM7LxYLI19DF1svR0ILX0oqLnILY0cvGbIKCgoLdbIKCgoKCgoKCtcXKx8/DnJzF1MfD1seKidLBw8HQwdWJjoLI19DF1svR0IKKpM7Xx9LUy9DWgobWw8TOx4uC3WyCgoKCgoKCgoKCgoKG1sPEzsePoMvGioudbIKCgoKCgoKCgoKCgobWw8TOx4+gyNHUx8vJ0KvGionSw8XNw8nHwcvGiYuPoNDXzs7DxM7HiouPoMXR0NXW1MPL0MfGiouPoMXD1cXDxsex0LfSxsPWx4qLj6DQ187OsdCmx87H1seKi51sgoKCgoKCgoKCgoKChtbDxM7Hj6DV1tTL0MmKidDDz8eJi51sgoKCgoKCgoKCgoKChtbDxM7Hj6DL0NbHycfUionJ1daJi51sgoKCgoKCgoKCgoKChtbDxM7Hj6DL0NbHycfUionIy9rHxsHFysPUyceJi51sgoKCgoKCgoKCgoKChtbDxM7Hj6DL0NbHycfUionL1cHIzsPWiYudbIKCgoKCgoKCgoKCgobWw8TOx4+gy9DWx8nH1IqJ1MfWw8vOx9TBxdHPz9XVy9HQiYudbIKCgoKCgoKCgoKCgobWw8TOx4+gy9DWx8nH1IqJxsvV1tTLxNfW0dTBxdHPz9XVy9HQiYudbIKCgoKCgoKCgoKCgobWw8TOx4+gy9DWx8nH1IqJ1dfSx9TBxsvV1tTLxNfW0dTBxdHPz9XVy9HQiYudbIKCgoKCgoKCgoKCgobWw8TOx4+g1svPx9XWw8/S1YqLnWyCgoKCgoKCgt+LnWyCgoKC32xsgoKCgpGMjGyCgoKCgoyCtMfYx9TVx4LWyseCz8vJ1MPWy9HQ1ZBsgoKCgoKMkWyCgoKC0tfEzsvFgsjX0MXWy9HQgsbR2dCKi5yC2NHLxmyCgoKC3WyCgoKCgoKCgrXFysfPw5ycxtTR0qvIp9rL1dbVionSwcPB0MHViYudbIKCgoLfbN+dbA==

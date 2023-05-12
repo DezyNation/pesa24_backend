@@ -1,11 +1,3 @@
 <?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class PAN extends Model
-{
-    use HasFactory;
-}
+bolt_decrypt( __FILE__ , 'UhXcfF'); return 0;
+##!!!##Li6ShZGJl5SFh4lEZZSUgHGTiImQl18uLpmXiURtkJCZkY2ShZiJgGiFmIWGhZeJgGmQk5WZiZKYgGqFh5iTlo2Jl4BshZdqhYeYk5adXy6Zl4lEbZCQmZGNkoWYiYBohZiFhoWXiYBpkJOVmYmSmIBxk4iJkF8uLoeQhZeXRHRlckSJnJiJkoiXRHGTiImQLp8uRERERJmXiURshZdqhYeYk5adXy6hLg==

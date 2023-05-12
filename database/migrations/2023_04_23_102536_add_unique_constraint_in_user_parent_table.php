@@ -1,28 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('user_parent', function (Blueprint $table) {
-            $table->unique(['user_id', 'parent_id']);
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('user_parent', function (Blueprint $table) {
-            //
-        });
-    }
-};
+bolt_decrypt( __FILE__ , 'BkK5wk'); return 0;
+##!!!##GRmEgnQvWHt7hHx4fXCDdGtTcINwcXCCdGtceHaBcIN4fn2Ca1x4doFwg3h+fUoZhIJ0L1h7e4R8eH1wg3RrU3CDcHFwgnRrYnJ3dHxwa1F7hHR/gXh9g0oZhIJ0L1h7e4R8eH1wg3RrYoR/f36Bg2tVcHJwc3SCa2Jyd3R8cEoZGYF0g4SBfS99dIYvcntwgoIvdIeDdH1zgi9ceHaBcIN4fn0ZihkvLy8vPjk5GS8vLy8vOS9hhH0vg3d0L3x4doFwg3h+fYI9GS8vLy8vOT4ZLy8vL3+EcXt4ci91hH1yg3h+fS+Efzc4SS+FfnhzGS8vLy+KGS8vLy8vLy8vYnJ3dHxwSUmDcHF7dDc2hIJ0gW5/cIF0fYM2Oy91hH1yg3h+fS83UXuEdH+BeH2DLzODcHF7dDgvihkvLy8vLy8vLy8vLy8zg3Bxe3Q8TYR9eICEdDdqNoSCdIFueHM2Oy82f3CBdH2DbnhzNmw4ShkvLy8vLy8vL4w4ShkvLy8vjBkZLy8vLz45ORkvLy8vLzkvYXSFdIGCdC+Dd3QvfHh2gXCDeH59gj0ZLy8vLy85PhkvLy8vf4Rxe3hyL3WEfXKDeH59L3N+hn03OEkvhX54cxkvLy8vihkvLy8vLy8vL2Jyd3R8cElJg3Bxe3Q3NoSCdIFuf3CBdH2DNjsvdYR9coN4fn0vN1F7hHR/gXh9gy8zg3Bxe3Q4L4oZLy8vLy8vLy8vLy8vPj4ZLy8vLy8vLy+MOEoZLy8vL4wZjEoZ

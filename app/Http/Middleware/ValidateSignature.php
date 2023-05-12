@@ -1,22 +1,3 @@
 <?php
-
-namespace App\Http\Middleware;
-
-use Illuminate\Routing\Middleware\ValidateSignature as Middleware;
-
-class ValidateSignature extends Middleware
-{
-    /**
-     * The names of the query string parameters that should be ignored.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        // 'fbclid',
-        // 'utm_campaign',
-        // 'utm_content',
-        // 'utm_medium',
-        // 'utm_source',
-        // 'utm_term',
-    ];
-}
+bolt_decrypt( __FILE__ , 'I7z44A'); return 0;
+##!!!##ra0RBBAIFhMEBgjD5BMT/+sXFxP/8AwHBw8IGgQVCN6trRgWCMPsDw8YEAwRBBcI//USGBcMEQr/8AwHBw8IGgQVCP/5BA8MBwQXCPYMChEEFxgVCMMEFsPwDAcHDwgaBBUI3q2tBg8EFhbD+QQPDAcEFwj2DAoRBBcYFQjDCBsXCBEHFsPwDAcHDwgaBBUIrR6tw8PDw9LNza3Dw8PDw83D9wsIwxEEEAgWwxIJwxcLCMMUGAgVHMMWFxUMEQrDEwQVBBAIFwgVFsMXCwQXwxYLEhgPB8MFCMMMChESFQgH0a3Dw8PDw82tw8PDw8PNw+MZBBXDBBUVBBzfDBEXz8MWFxUMEQrhrcPDw8PDzdKtw8PDwxMVEhcIBhcIB8PHCBsGCBMXw+DD/q3Dw8PDw8PDw9LSw8oJBQYPDAfKz63Dw8PDw8PDw9LSw8oYFxACBgQQEwQMChHKz63Dw8PDw8PDw9LSw8oYFxACBhIRFwgRF8rPrcPDw8PDw8PD0tLDyhgXEAIQCAcMGBDKz63Dw8PDw8PDw9LSw8oYFxACFhIYFQYIys+tw8PDw8PDw8PS0sPKGBcQAhcIFRDKz63Dw8PDAN6tIK0=

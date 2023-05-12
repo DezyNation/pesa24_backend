@@ -1,26 +1,3 @@
 <?php
-
-namespace Database\Factories;
-
-use App\Models\Organization;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Organization>
- */
-class OrganizationFactory extends Factory
-{
-    protected $model = Organization::class;
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'user_id' => 23,
-            'code' => 'ORG125',
-        ];
-    }
-}
+bolt_decrypt( __FILE__ , 'TqQvGf'); return 0;
+##!!!##Q0OnmqaerKmanJ5ZfZqtmpuarJ6Vf5qcrairop6sdENDrqyeWXqpqZWGqJ2epayViKugmqeis5qtoqindEOurJ5ZgqWlrqaip5qtnpV9mq2am5qsnpV+paiqrp6nrZV/mpytqKuinqyVf5qcrairsnRDQ2hjY0NZY1l5nrGtnqedrFmVgqWlrqaip5qtnpV9mq2am5qsnpV+paiqrp6nrZV/mpytqKuinqyVf5qcrairsnWVeqmplYaonZ6lrJWIq6Cap6Kzmq2iqKd3Q1ljaEOcpZqsrFmIq6Cap6Kzmq2iqKd/mpytqKuyWZ6xrZ6nnaxZf5qcrairskO0Q1lZWVmpq6itnpytnp1ZXaaonZ6lWXZZiKugmqeis5qtoqinc3OcpZqsrHRDWVlZWWhjY0NZWVlZWWNZfZ6foqeeWa2hnlmmqJ2epWCsWZ2en5qupa1ZrK2arZ5nQ1lZWVlZY0NZWVlZWWNZeauera6rp1maq6uasnWsrauip6BlWaaisZ6dd0NZWVlZWWNoQ1lZWVmprpulopxZn66nnK2iqKdZnZ6foqeiraKop2Fic1maq6uaskNZWVlZtENZWVlZWVlZWauera6rp1mUQ1lZWVlZWVlZWVlZWWCurJ6rmKKdYFl2d1lrbGVDWVlZWVlZWVlZWVlZYJyonZ5gWXZ3WWCIi4Bqa25gZUNZWVlZWVlZWZZ0Q1lZWVm2Q7ZD

@@ -1,34 +1,3 @@
 <?php
-
-namespace App\Http\Controllers\Auth;
-
-use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-
-class VerifyEmailController extends Controller
-{
-    /**
-     * Mark the authenticated user's email address as verified.
-     *
-     * @param  \Illuminate\Foundation\Auth\EmailVerificationRequest  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function __invoke(EmailVerificationRequest $request)
-    {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(
-                config('app.frontend_url').RouteServiceProvider::HOME.'?verified=1'
-            );
-        }
-
-        if ($request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
-        }
-
-        return redirect()->intended(
-            config('app.frontend_url').RouteServiceProvider::HOME.'?verified=1'
-        );
-    }
-}
+bolt_decrypt( __FILE__ , 'bz5nuA'); return 0;
+##!!!##Pz+jlqKaqKWWmJpVdqWlkX2pqaWReKSjqaekoaGap6iRdqqpnXA/P6qomlV2paWRfamppZF4pKOpp6ShoZqnqJF4pKOpp6ShoZqncD+qqJpVdqWlkYWnpKuemZqnqJGHpKqpmoiap6uemJqFp6Srnpmap3A/qqiaVX6hoaqinqOWqZqRdqqpnZF6q5qjqaiRi5qnnpuemplwP6qomlV+oaGqop6jlqmakXukqqOZlqmepKORdqqpnZF6opaeoYuap56bnpiWqZ6ko4eapqqaqKlwPz+YoZaoqFWLmqeem656opaeoXiko6mnpKGhmqdVmq2pmqOZqFV4pKOpp6ShoZqnP7A/VVVVVWRfXz9VVVVVVV9VgpanoFWpnZpVlqqpnZqjqZ6YlqmamVWqqJqnXKhVmqKWnqFVlpmZp5qoqFWWqFWrmqeem56amWM/VVVVVVVfP1VVVVVVX1V1pZanlqJVVZF+oaGqop6jlqmakXukqqOZlqmepKORdqqpnZF6opaeoYuap56bnpiWqZ6ko4eapqqaqKlVVVmnmqaqmqipP1VVVVVVX1V1p5qpqqejVZF+oaGqop6jlqmakX2pqaWRh5qZnqeamKmHmqilpKOomj9VVVVVVV9kP1VVVVWlqpehnphVm6qjmKmepKNVlJSeo6ukoJpdeqKWnqGLmqeem56YlqmepKOHmqaqmqipVVmnmqaqmqipXj9VVVVVsD9VVVVVVVVVVZ6bVV1Zp5qmqpqoqWJzqqiap11eYnOdlqiLmqeem56amXqilp6hXV5eVbA/VVVVVVVVVVVVVVVVp5qpqqejVaeamZ6nmpipXV5ic56jqZqjmZqZXT9VVVVVVVVVVVVVVVVVVVVVmKSjm56cXVyWpaVjm6eko6mao5mUqqehXF5jh6SqqZqImqernpiahaekq56Zmqdvb32EgnpjXHSrmqeem56amXJmXD9VVVVVVVVVVVVVVVVecD9VVVVVVVVVVbI/P1VVVVVVVVVVnptVXVmnmqaqmqipYnOqqJqnXV5ic6KWp6B6opaeoXaoi5qnnpuempldXl5VsD9VVVVVVVVVVVVVVVWaq5qjqV2jmqxVi5qnnpuempldWaeapqqaqKlic6qomqddXl5ecD9VVVVVVVVVVbI/P1VVVVVVVVVVp5qpqqejVaeamZ6nmpipXV5ic56jqZqjmZqZXT9VVVVVVVVVVVVVVVWYpKObnpxdXJalpWObp6SjqZqjmZSqp6FcXmOHpKqpmoiap6uemJqFp6Srnpmap29vfYSCemNcdKuap56bnpqZcmZcP1VVVVVVVVVVXnA/VVVVVbI/sj8=

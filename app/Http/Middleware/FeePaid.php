@@ -1,24 +1,3 @@
 <?php
-
-namespace App\Http\Middleware;
-
-use Closure;
-use Illuminate\Http\Request;
-
-class FeePaid
-{
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
-     */
-    public function handle(Request $request, Closure $next)
-    {
-        if (condition) {
-            # code...
-        }
-        return $next($request);
-    }
-}
+bolt_decrypt( __FILE__ , 'GLyv73'); return 0;
+##!!!##9vZaTVlRX1xNT1EMLVxcSDRgYFxIOVVQUFhRY01eUSf29mFfUQwvWFtfYV5RJ/ZhX1EMNVhYYVlVWk1gUUg0YGBcSD5RXWFRX2An9vZPWE1fXwwyUVE8TVVQ9mf2DAwMDBsWFvYMDAwMDBYMNE1aUFhRDE1aDFVaT1tZVVpTDF5RXWFRX2Aa9gwMDAwMFvYMDAwMDBYMLFxNXk1ZDAxINVhYYVlVWk1gUUg0YGBcSD5RXWFRX2AMDBBeUV1hUV9g9gwMDAwMFgwsXE1eTVkMDEgvWFtfYV5RFEg1WFhhWVVaTWBRSDRgYFxIPlFdYVFfYBUmDBRINVhYYVlVWk1gUUg0YGBcSD5RX1xbWl9RaEg1WFhhWVVaTWBRSDRgYFxIPlFQVV5RT2A+UV9cW1pfURUMDBBaUWRg9gwMDAwMFgwsXlFgYV5aDEg1WFhhWVVaTWBRSDRgYFxIPlFfXFtaX1FoSDVYWGFZVVpNYFFINGBgXEg+UVBVXlFPYD5RX1xbWl9R9gwMDAwMFhv2DAwMDFxhTlhVTwxSYVpPYFVbWgxUTVpQWFEUPlFdYVFfYAwQXlFdYVFfYBgML1hbX2FeUQwQWlFkYBX2DAwMDGf2DAwMDAwMDAxVUgwUT1taUFVgVVtaFQxn9gwMDAwMDAwMDAwMDA8MT1tQURoaGvYMDAwMDAwMDGn2DAwMDAwMDAxeUWBhXloMEFpRZGAUEF5RXWFRX2AVJ/YMDAwMafZp9g==

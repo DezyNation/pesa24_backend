@@ -1,27 +1,3 @@
 <?php
-
-namespace App\Http\Middleware;
-
-use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-
-class KycVerification
-{
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
-     */
-    public function handle(Request $request, Closure $next)
-    {
-        $table = DB::table('k_y_c_verifications')->where('user_id', auth()->user()->id)->get();
-        if (!$table[0]->aadhar || !$table[0]->pan) {
-            return response("KYC is not completed.", 403);
-        }
-        return $next($request);
-    }
-}
+bolt_decrypt( __FILE__ , 'QSu7OE'); return 0;
+##!!!##7u5SRVFJV1RFR0kEJVRUQCxYWFRAMU1ISFBJW0VWSR/u7llXSQQnUFNXWVZJH+5ZV0kELVBQWVFNUkVYSUAsWFhUQDZJVVlJV1gf7llXSQQtUFBZUU1SRVhJQDdZVFRTVlhAKkVHRUhJV0AlWVhMH+5ZV0kELVBQWVFNUkVYSUA3WVRUU1ZYQCpFR0VISVdAKCYf7u5HUEVXVwQvXUc6SVZNSk1HRVhNU1LuX+4EBAQEEw4O7gQEBAQEDgQsRVJIUEkERVIETVJHU1FNUksEVklVWUlXWBLuBAQEBAQO7gQEBAQEDgQkVEVWRVEEBEAtUFBZUU1SRVhJQCxYWFRANklVWUlXWAQECFZJVVlJV1juBAQEBAQOBCRURVZFUQQEQCdQU1dZVkkMQC1QUFlRTVJFWElALFhYVEA2SVVZSVdYDR4EDEAtUFBZUU1SRVhJQCxYWFRANklXVFNSV0lgQC1QUFlRTVJFWElALFhYVEA2SUhNVklHWDZJV1RTUldJDQQECFJJXFjuBAQEBAQOBCRWSVhZVlIEQC1QUFlRTVJFWElALFhYVEA2SVdUU1JXSWBALVBQWVFNUkVYSUAsWFhUQDZJSE1WSUdYNklXVFNSV0nuBAQEBAQOE+4EBAQEVFlGUE1HBEpZUkdYTVNSBExFUkhQSQw2SVVZSVdYBAhWSVVZSVdYEAQnUFNXWVZJBAhSSVxYDe4EBAQEX+4EBAQEBAQEBAhYRUZQSQQhBCgmHh5YRUZQSQwLT0NdQ0dDWklWTUpNR0VYTVNSVwsNESJbTElWSQwLWVdJVkNNSAsQBEVZWEwMDREiWVdJVgwNESJNSA0RIktJWAwNH+4EBAQEBAQEBE1KBAwFCFhFRlBJPxRBESJFRUhMRVYEYGAEBQhYRUZQST8UQREiVEVSDQRf7gQEBAQEBAQEBAQEBFZJWFlWUgRWSVdUU1JXSQwGLz0nBE1XBFJTWARHU1FUUElYSUgSBhAEGBQXDR/uBAQEBAQEBARh7gQEBAQEBAQEVklYWVZSBAhSSVxYDAhWSVVZSVdYDR/uBAQEBGHuYe4=

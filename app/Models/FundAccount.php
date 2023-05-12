@@ -1,11 +1,3 @@
 <?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class FundAccount extends Model
-{
-    use HasFactory;
-}
+bolt_decrypt( __FILE__ , 'i5qC1V'); return 0;
+##!!!##4+NHOkY+TEk6PD75GklJNSZIPT5FTBTj405MPvkiRUVORkJHOk0+NR06TTo7Okw+NR5FSEpOPkdNNR86PE1IS0I+TDUhOkwfOjxNSEtSFONOTD75IkVFTkZCRzpNPjUdOk06OzpMPjUeRUhKTj5HTTUmSD0+RRTj4zxFOkxM+R9ORz0aPDxITkdN+T5RTT5HPUz5Jkg9PkXjVOP5+fn5Tkw++SE6TB86PE1IS1IU41bj

@@ -1,35 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('contacts', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('contact_id');
-            $table->string('entity');
-            $table->string('contact');
-            $table->string('email');
-            $table->string('reference_id');
-            $table->string('batch_id')->nullable();
-            $table->bigInteger('added_at');
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('contacts');
-    }
-};
+bolt_decrypt( __FILE__ , 'P4eE8A'); return 0;
+##!!!##sbEcGgzH8BMTHBQQFQgbDAPrCBsICQgaDAP0EA4ZCBsQFhUaA/QQDhkIGxAWFeKxHBoMx/ATExwUEBUIGwwD6wgbCAkIGgwD+goPDBQIA+kTHAwXGRAVG+KxHBoMx/ATExwUEBUIGwwD+hwXFxYZGwPtCAoICwwaA/oKDwwUCOKxsRkMGxwZFccVDB7HChMIGhrHDB8bDBULGsf0EA4ZCBsQFhWxIrHHx8fH1tHRscfHx8fH0cf5HBXHGw8MxxQQDhkIGxAWFRrVscfHx8fH0daxx8fHxxccCRMQCscNHBUKGxAWFcccF8/Q4ccdFhALscfHx8ciscfHx8fHx8fH+goPDBQI4eEKGQwIGwzPzgoWFRsIChsaztPHDRwVChsQFhXHz+kTHAwXGRAVG8fLGwgJEwzQxyKxx8fHx8fHx8fHx8fHyxsICRMM1OUQC8/Q4rHHx8fHx8fHx8fHx8fLGwgJEwzU5Q0WGQwQDhXwC8/OHBoMGQYQC87Q1OUKFhUaGxkIEBUMC8/Q1OUKCBoKCAsM9hXrDBMMGwzP0NTlCggaCggLDPYV/BcLCBsMz9DiscfHx8fHx8fHx8fHx8sbCAkTDNTlGhsZEBUOz84KFhUbCAobBhALztDiscfHx8fHx8fHx8fHx8sbCAkTDNTlGhsZEBUOz84MFRsQGyDO0OKxx8fHx8fHx8fHx8fHyxsICRMM1OUaGxkQFQ7PzgoWFRsIChvO0OKxx8fHx8fHx8fHx8fHyxsICRMM1OUaGxkQFQ7PzgwUCBATztDiscfHx8fHx8fHx8fHx8sbCAkTDNTlGhsZEBUOz84ZDA0MGQwVCgwGEAvO0OKxx8fHx8fHx8fHx8fHyxsICRMM1OUaGxkQFQ7PzgkIGwoPBhALztDU5RUcExMICRMMz9DiscfHx8fHx8fHx8fHx8sbCAkTDNTlCRAO8BUbDA4MGc/OCAsLDAsGCBvO0OKxx8fHx8fHx8fHx8fHyxsICRMM1OUbEBQMGhsIFBcaz9DiscfHx8fHx8fHJNDiscfHx8cksbHHx8fH1tHRscfHx8fH0cf5DB0MGRoMxxsPDMcUEA4ZCBsQFhUa1bHHx8fHx9HWscfHx8cXHAkTEArHDRwVChsQFhXHCxYeFc/Q4ccdFhALscfHx8ciscfHx8fHx8fH+goPDBQI4eELGRYX8A3sHxAaGxrPzgoWFRsIChsaztDiscfHx8cksSTisQ==

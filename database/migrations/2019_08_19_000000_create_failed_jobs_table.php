@@ -1,36 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('failed_jobs', function (Blueprint $table) {
-            $table->id();
-            $table->string('uuid')->unique();
-            $table->text('connection');
-            $table->text('queue');
-            $table->longText('payload');
-            $table->longText('exception');
-            $table->timestamp('failed_at')->useCurrent();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('failed_jobs');
-    }
-};
+bolt_decrypt( __FILE__ , 'LvC6gQ'); return 0;
+##!!!##/f1oZlgTPF9faGBcYVRnWE83VGdUVVRmWE9AXFplVGdcYmFmT0BcWmVUZ1xiYS79aGZYEzxfX2hgXGFUZ1hPN1RnVFVUZlhPRlZbWGBUTzVfaFhjZVxhZy79aGZYEzxfX2hgXGFUZ1hPRmhjY2JlZ085VFZUV1hmT0ZWW1hgVC79/WVYZ2hlYRNhWGoTVl9UZmYTWGtnWGFXZhNAXFplVGdcYmH9bv0TExMTIh0d/RMTExMTHRNFaGETZ1tYE2BcWmVUZ1xiYWYh/RMTExMTHf0TExMTEx0TM2VYZ2hlYRNpYlxX/RMTExMTHSL9ExMTE2NoVV9cVhNZaGFWZ1xiYRNoYxsc/RMTExNu/RMTExMTExMTRlZbWGBULS1WZVhUZ1gbGllUXF9YV1JdYlVmGh8TWWhhVmdcYmETGzVfaFhjZVxhZxMXZ1RVX1gcE279ExMTExMTExMTExMTF2dUVV9YIDFcVxscLv0TExMTExMTExMTExMXZ1RVX1ggMWZnZVxhWhsaaGhcVxocIDFoYVxkaFgbHC79ExMTExMTExMTExMTF2dUVV9YIDFnWGtnGxpWYmFhWFZnXGJhGhwu/RMTExMTExMTExMTExdnVFVfWCAxZ1hrZxsaZGhYaFgaHC79ExMTExMTExMTExMTF2dUVV9YIDFfYmFaR1hrZxsaY1RsX2JUVxocLv0TExMTExMTExMTExMXZ1RVX1ggMV9iYVpHWGtnGxpYa1ZYY2dcYmEaHC79ExMTExMTExMTExMTF2dUVV9YIDFnXGBYZmdUYGMbGllUXF9YV1JUZxocIDFoZlg2aGVlWGFnGxwu/RMTExMTExMTcBwu/RMTExNw/f0TExMTIh0d/RMTExMTHRNFWGlYZWZYE2dbWBNgXFplVGdcYmFmIf0TExMTEx39ExMTExMdEzNlWGdoZWETaWJcV/0TExMTEx0i/RMTExNjaFVfXFYTWWhhVmdcYmETV2JqYRsc/RMTExNu/RMTExMTExMTRlZbWGBULS1XZWJjPFk4a1xmZ2YbGllUXF9YV1JdYlVmGhwu/RMTExNw/XAu/Q==

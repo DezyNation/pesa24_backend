@@ -1,37 +1,3 @@
 <?php
-
-namespace App\Providers;
-
-use App\Models\User;
-use App\Policies\ParentPolicy;
-use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-
-class AuthServiceProvider extends ServiceProvider
-{
-    /**
-     * The policy mappings for the application.
-     *
-     * @var array
-     */
-    protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
-        User::class => ParentPolicy::class
-    ];
-
-    /**
-     * Register any authentication / authorization services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $this->registerPolicies();
-
-        ResetPassword::createUrlUsing(function ($notifiable, $token) {
-            return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
-        });
-
-        //
-    }
-}
+bolt_decrypt( __FILE__ , 'y9w7oX'); return 0;
+##!!!##MTGViJSMmpeIioxHaJeXg3eZlp2Qi4yZmmIxMZyajEdol5eDdJaLjJOag3yajJliMZyajEdol5eDd5aTkIqQjJqDd4iZjJWbd5aTkIqgYjGcmoxHcJOTnJSQlYibjINonJuPg3WWm5CNkIqIm5CWlZqDeYyajJt3iJqanpaZi2IxnJqMR3CTk5yUkJWIm4yDbZaclYuIm5CWlYN6nJeXlpmbg3eZlp2Qi4yZmoNonJuPeoyZnZCKjHeZlp2Qi4yZR4iaR3qMmZ2Qiox3mZadkIuMmWIxMYqTiJqaR2icm496jJmdkIqMd5mWnZCLjJlHjJ+bjJWLmkd6jJmdkIqMd5mWnZCLjJkxojFHR0dHVlFRMUdHR0dHUUd7j4xHl5aTkIqgR5SIl5eQlY6aR42WmUebj4xHiJeXk5CKiJuQlpVVMUdHR0dHUTFHR0dHR1FHZ52ImUeImZmIoDFHR0dHR1FWMUdHR0eXmZabjIqbjItHS5eWk5CKkIyaR2RHgjFHR0dHR0dHR1ZWR05ol5eDdJaLjJOag3SWi4yTTkdkZUdOaJeXg3eWk5CKkIyag3SWi4yTd5aTkIqgTlMxR0dHR0dHR0d8moyZYWGKk4iamkdkZUd3iJmMlZt3lpOQiqBhYYqTiJqaMUdHR0eEYjExR0dHR1ZRUTFHR0dHR1FHeYyOkJqbjJlHiJWgR4icm4+MlZuQioibkJaVR1ZHiJybj5aZkKGIm5CWlUeajJmdkIqMmlUxR0dHR0dRMUdHR0dHUUdnmYybnJmVR52WkIsxR0dHR0dRVjFHR0dHl5yJk5CKR42clYqbkJaVR4mWlptPUDFHR0dHojFHR0dHR0dHR0ubj5CaVGWZjI6QmpuMmXeWk5CKkIyaT1BiMTFHR0dHR0dHR3mMmoybd4iamp6WmYthYYqZjIibjHyZk3yakJWOT42clYqbkJaVR09LlZabkI2QiImTjFNHS5uWkoyVUEeiMUdHR0dHR0dHR0dHR5mMm5yZlUeKlpWNkI5PToiXl1WNmZaVm4yVi4acmZNOUFVJVpeImpqelpmLVJmMmoybVkublpKMlWaMlIiQk2SiS5WWm5CNkIiJk4xUZY6Mm2yUiJCTbZaZd4iamp6WmYt5jJqMm09QpEliMUdHR0dHR0dHpFBiMTFHR0dHR0dHR1ZWMUdHR0ekMaQx

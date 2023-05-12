@@ -1,29 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('logins', function (Blueprint $table) {
-            $table->string('ip');
-            $table->string('latlong');
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('logins', function (Blueprint $table) {
-            //
-        });
-    }
-};
+bolt_decrypt( __FILE__ , 'fPkZmy'); return 0;
+##!!!##a2vW1MaBqs3N1s7Kz8LVxr2lwtXCw8LUxr2uysjTwtXK0M/Uva7KyNPC1crQz5xr1tTGgarNzdbOys/C1ca9pcLVwsPC1Ma9tMTJxs7CvaPN1sbR08rP1Zxr1tTGgarNzdbOys/C1ca9tNbR0dDT1b2nwsTCxcbUvbTEycbOwpxra9PG1dbTz4HPxtiBxM3C1NSBxtnVxs/F1IGuysjTwtXK0M9r3GuBgYGBkIuLa4GBgYGBi4Gz1s+B1cnGgc7KyNPC1crQz9SPa4GBgYGBi5BrgYGBgdHWw83KxIHH1s/E1crQz4HW0YmKm4HX0MrFa4GBgYHca4GBgYGBgYGBtMTJxs7Cm5vVwsPNxomIzdDIys/UiI2Bx9bPxNXK0M+BiaPN1sbR08rP1YGF1cLDzcaKgdxrgYGBgYGBgYGBgYGBhdXCw83Gjp/U1dPKz8iJiMrRiIqca4GBgYGBgYGBgYGBgYXVwsPNxo6f1NXTys/IiYjNwtXN0M/IiIqca4GBgYGBgYGB3oqca4GBgYHea2uBgYGBkIuLa4GBgYGBi4GzxtfG09TGgdXJxoHOysjTwtXK0M/Uj2uBgYGBgYuQa4GBgYHR1sPNysSBx9bPxNXK0M+BxdDYz4mKm4HX0MrFa4GBgYHca4GBgYGBgYGBtMTJxs7Cm5vVwsPNxomIzdDIys/UiI2Bx9bPxNXK0M+BiaPN1sbR08rP1YGF1cLDzcaKgdxrgYGBgYGBgYGBgYGBkJBrgYGBgYGBgYHeipxrgYGBgd5r3pxr

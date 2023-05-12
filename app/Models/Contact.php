@@ -1,22 +1,3 @@
 <?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-class Contact extends Model
-{
-    use HasFactory;
-
-    /**
-     * Get the user that owns the Contact
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-}
+bolt_decrypt( __FILE__ , 'MGFcD6'); return 0;
+##!!!##wcElGCQcKicYGhzX+CcnEwQmGxwjKvLBwSwqHNcAIyMsJCAlGCscE/sYKxgZGCocE/wjJigsHCUrEwQmGxwj8sEsKhzXACMjLCQgJRgrHBP7GCsYGRgqHBP8IyYoLBwlKxMJHCMYKyAmJSoT+RwjJiUeKgsm8sEsKhzXACMjLCQgJRgrHBP7GCsYGRgqHBP8IyYoLBwlKxP9GBorJikgHCoT/xgq/RgaKyYpMPLBwRojGCoq1/omJSsYGivXHC8rHCUbKtcEJhscI8EywdfX19csKhzX/xgq/RgaKyYpMPLBwdfX19fm4eHB19fX19fh1/4cK9crHxzXLCocKdcrHxgr1yYuJSrXKx8c1/omJSsYGivB19fX19fhwdfX19fX4df3KRwrLCkl1xMAIyMsJCAlGCscE/sYKxgZGCocE/wjJigsHCUrEwkcIxgrICYlKhP5HCMmJR4qCybB19fX19fh5sHX19fXJywZIyAa1x0sJRorICYl1ywqHCnf4PHX+RwjJiUeKgsmwdfX19cywdfX19fX19fXKRwrLCkl19srHyAq5PUZHCMmJR4qCybfDCocKfHxGiMYKirg8sHX19fXNME0wQ==

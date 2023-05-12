@@ -1,11 +1,3 @@
 <?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class AEPS extends Model
-{
-    use HasFactory;
-}
+bolt_decrypt( __FILE__ , 'HTfo4I'); return 0;
+##!!!##+PhcT1tTYV5PUVMOL15eSjtdUlNaYSn4+GNhUw43WlpjW1dcT2JTSjJPYk9QT2FTSjNaXV9jU1xiSjRPUWJdYFdTYUo2T2E0T1FiXWBnKfhjYVMON1paY1tXXE9iU0oyT2JPUE9hU0ozWl1fY1NcYko7XVJTWin4+FFaT2FhDi8zPkEOU2ZiU1xSYQ47XVJTWvhp+A4ODg5jYVMONk9hNE9RYl1gZyn4a/g=

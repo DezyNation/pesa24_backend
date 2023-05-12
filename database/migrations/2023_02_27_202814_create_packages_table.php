@@ -1,32 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('packages', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('organization_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('role_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('name');
-            $table->boolean('is_default')->default(false);
-            $table->softDeletes();
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('packages');
-    }
-};
+bolt_decrypt( __FILE__ , 'kMdJSV'); return 0;
+##!!!##GRmEgnQvWHt7hHx4fXCDdGtTcINwcXCCdGtceHaBcIN4fn2Ca1x4doFwg3h+fUoZhIJ0L1h7e4R8eH1wg3RrU3CDcHFwgnRrYnJ3dHxwa1F7hHR/gXh9g0oZhIJ0L1h7e4R8eH1wg3RrYoR/f36Bg2tVcHJwc3SCa2Jyd3R8cEoZGYF0g4SBfS99dIYvcntwgoIvdIeDdH1zgi9ceHaBcIN4fn0ZihkvLy8vPjk5GS8vLy8vOS9hhH0vg3d0L3x4doFwg3h+fYI9GS8vLy8vOT4ZLy8vL3+EcXt4ci91hH1yg3h+fS+Efzc4SS+FfnhzGS8vLy+KGS8vLy8vLy8vYnJ3dHxwSUlygXRwg3Q3Nn9wcnpwdnSCNjsvdYR9coN4fn0vN1F7hHR/gXh9gy8zg3Bxe3Q4L4oZLy8vLy8vLy8vLy8vM4NwcXt0PE14czc4ShkvLy8vLy8vLy8vLy8zg3Bxe3Q8TXV+gXR4dn1Yczc2foF2cH14iXCDeH59bnhzNjg8TXJ+fYKDgXB4fXRzNzg8TXJwgnJwc3RefVN0e3SDdDc4PE1ycIJycHN0Xn1kf3Nwg3Q3OEoZLy8vLy8vLy8vLy8vM4NwcXt0PE11foF0eHZ9WHM3NoF+e3RueHM2ODxNcn59goOBcHh9dHM3ODxNcnCCcnBzdF59U3R7dIN0Nzg8TXJwgnJwc3RefWR/c3CDdDc4ShkvLy8vLy8vLy8vLy8zg3Bxe3Q8TYKDgXh9djc2fXB8dDY4ShkvLy8vLy8vLy8vLy8zg3Bxe3Q8TXF+fnt0cH03NniCbnN0dXCEe4M2ODxNc3R1cIR7gzd1cHuCdDhKGS8vLy8vLy8vLy8vLzODcHF7dDxNgn51g1N0e3SDdII3OEoZLy8vLy8vLy8vLy8vM4NwcXt0PE2DeHx0goNwfH+CNzhKGS8vLy8vLy8vjDhKGS8vLy+MGRkvLy8vPjk5GS8vLy8vOS9hdIV0gYJ0L4N3dC98eHaBcIN4fn2CPRkvLy8vLzk+GS8vLy9/hHF7eHIvdYR9coN4fn0vc36GfTc4SS+FfnhzGS8vLy+KGS8vLy8vLy8vYnJ3dHxwSUlzgX5/WHVUh3iCg4I3Nn9wcnpwdnSCNjhKGS8vLy+MGYxKGQ==

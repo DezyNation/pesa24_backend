@@ -1,29 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('b_b_p_s_user', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('b_b_p_s_id')->nullable()->constrained()->nullOnDelete()->cascadeOnUpdate();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete()->cascadeOnUpdate();
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('b_b_p_s_user');
-    }
-};
+bolt_decrypt( __FILE__ , 'eir5qD'); return 0;
+##!!!##NDSfnY9Kc5aWn5eTmIuej4Zui56LjIudj4Z3k5Gci56TmZidhneTkZyLnpOZmGU0n52PSnOWlp+Xk5iLno+Gbouei4yLnY+GfY2Sj5eLhmyWn4+anJOYnmU0n52PSnOWlp+Xk5iLno+GfZ+ampmcnoZwi42Ljo+dhn2Nko+Xi2U0NJyPnp+cmEqYj6FKjZaLnZ1Kj6Kej5iOnUp3k5Gci56TmZg0pTRKSkpKWVRUNEpKSkpKVEp8n5hKnpKPSpeTkZyLnpOZmJ1YNEpKSkpKVFk0SkpKSpqfjJaTjUqQn5iNnpOZmEqfmlJTZEqgmZOONEpKSkqlNEpKSkpKSkpKfY2Sj5eLZGSNnI+Lno9SUYyJjImaiZ2Jn52PnFFWSpCfmI2ek5mYSlJslp+PmpyTmJ5KTp6LjJaPU0qlNEpKSkpKSkpKSkpKSk6ei4yWj1dok45SU2U0SkpKSkpKSkpKSkpKTp6LjJaPV2iQmZyPk5GYc45SUYyJjImaiZ2Jk45RU1domJ+WlouMlo9SU1dojZmYnZ6ci5OYj45SU1domJ+WlnmYbo+Wj56PUlNXaI2LnY2Ljo95mH+ajouej1JTZTRKSkpKSkpKSkpKSkpOnouMlo9XaJCZnI+TkZhzjlJRn52PnImTjlFTV2iYn5aWi4yWj1JTV2iNmZidnpyLk5iPjlJTV2iYn5aWeZhuj5aPno9SU1dojYudjYuOj3mYf5qOi56PUlNlNEpKSkpKSkpKSkpKSk6ei4yWj1donpOXj52ei5eanVJTZTRKSkpKSkpKSqdTZTRKSkpKpzQ0SkpKSllUVDRKSkpKSlRKfI+gj5ydj0qeko9Kl5ORnIuek5mYnVg0SkpKSkpUWTRKSkpKmp+MlpONSpCfmI2ek5mYSo6ZoZhSU2RKoJmTjjRKSkpKpTRKSkpKSkpKSn2Nko+Xi2RkjpyZmnOQb6KTnZ6dUlGMiYyJmomdiZ+dj5xRU2U0SkpKSqc0p2U0

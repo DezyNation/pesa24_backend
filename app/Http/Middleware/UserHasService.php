@@ -1,28 +1,3 @@
 <?php
-
-namespace App\Http\Middleware;
-
-use App\Models\User;
-use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\Response;
-
-class UserHasService
-{
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
-    {
-        $service_code = $request['service_code'];
-        $provider = "$request->provider"."_"."active";
-        $query = DB::table('service_user')->where(['user_id'=> auth()->user()->id, 'service_id' => $service_code])->first();
-        if (!$query || $query->$provider == 0) {
-            return response()->json(['message' => 'Service not available at the moment']);
-        }
-        return $next($request);
-    }
-}
+bolt_decrypt( __FILE__ , '7vsm5p'); return 0;
+##!!!##PDygk5+XpaKTlZdSc6KijnqmpqKOf5uWlp6XqZOkl208PKell1JzoqKOf6GWl56ljoell6RtPKell1J1nqGlp6SXbTynpZdSe56ep5+boJOml456pqaijoSXo6eXpaZtPKell1J7np6nn5ugk6aXjoWnoqKhpKaOeJOVk5aXpY52dG08p6WXUoWrn5ihoKuOdaGfoqGgl6CmjnqmpqJ4oaeglpOmm6GgjoSXpaKhoKWXbTw8lZ6TpaVSh6WXpHqTpYWXpKiblZc8rTxSUlJSYVxcPFJSUlJSXFJ6k6CWnpdSk6BSm6CVoZ+boJlSpJejp5elpmA8UlJSUlJcPFJSUlJSXFJyopOkk59SUo51nqGlp6SXWo57np6nn5ugk6aXjnqmpqKOhJejp5elpltsUlqOhaufmKGgq451oZ+ioaCXoKaOeqamonihp6CWk6aboaCOhJeloqGgpZdbUlJWoJeqpjxSUlJSUlxhPFJSUlKip5Sem5VSmKeglaaboaBSmpOglp6XWoSXo6eXpaZSVqSXo6eXpaZeUnWeoaWnpJdSVqCXqqZbbFKEl6WioaCllzxSUlJSrTxSUlJSUlJSUlall6Som5WXkZWhlpdSb1JWpJejp5elpo1ZpZekqJuVl5GVoZaXWY9tPFJSUlJSUlJSVqKkoaiblpekUm9SVFakl6Onl6WmX3CipKGom5aXpFRgVJFUYFSTlaabqJdUbTxSUlJSUlJSUlajp5ekq1JvUnZ0bGymk5Sel1pZpZekqJuVl5GnpZekWVtfcKmal6SXWo1Zp6WXpJGblllvcFKTp6aaWltfcKell6RaW19wm5ZeUlmll6Som5WXkZuWWVJvcFJWpZekqJuVl5GVoZaXj1tfcJibpKWmWlttPFJSUlJSUlJSm5hSWlNWo6eXpKtSrq5SVqOnl6SrX3BWoqShqJuWl6RSb29SYltSrTxSUlJSUlJSUlJSUlKkl6anpKBSpJeloqGgpZdaW19wnKWhoFqNWZ+XpaWTmZdZUm9wUlmFl6Som5WXUqChplKTqJObnpOUnpdSk6ZSppqXUp+hn5egplmPW208UlJSUlJSUlKvPFJSUlJSUlJSpJemp6SgUlagl6qmWlakl6Onl6WmW208UlJSUq88rzw=

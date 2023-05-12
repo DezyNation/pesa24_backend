@@ -1,28 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('bank_account_remarks');
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
-    }
-};
+bolt_decrypt( __FILE__ , '6u1UOn'); return 0;
+##!!!##+PhjYVMON1paY1tXXE9iU0oyT2JPUE9hU0o7V1VgT2JXXVxhSjtXVWBPYlddXCn4Y2FTDjdaWmNbV1xPYlNKMk9iT1BPYVNKQVFWU1tPSjBaY1NeYFdcYin4Y2FTDjdaWmNbV1xPYlNKQWNeXl1gYko0T1FPUlNhSkFRVlNbTyn4+GBTYmNgXA5cU2UOUVpPYWEOU2ZiU1xSYQ47V1VgT2JXXVz4afgODg4OHRgY+A4ODg4OGA5AY1wOYlZTDltXVWBPYlddXGEc+A4ODg4OGB34Dg4ODl5jUFpXUQ5UY1xRYlddXA5jXhYXKA5kXVdS+A4ODg5p+A4ODg4ODg4OQVFWU1tPKChiT1BaUxYVY2FTYGEVGg5UY1xRYlddXA4WMFpjU15gV1xiDhJiT1BaUxcOafgODg4ODg4ODg4ODg4SYk9QWlMbLGFiYFdcVRYVUE9cWU1PUVFdY1xiTWBTW09gWWEVFyn4Dg4ODg4ODg5rFyn4Dg4ODmv4+A4ODg4dGBj4Dg4ODg4YDkBTZFNgYVMOYlZTDltXVWBPYlddXGEc+A4ODg4OGB34Dg4ODl5jUFpXUQ5UY1xRYlddXA5SXWVcFhcoDmRdV1L4Dg4ODmn4Dg4ODg4ODg5BUVZTW08oKGJPUFpTFhVjYVNgYRUaDlRjXFFiV11cDhYwWmNTXmBXXGIOEmJPUFpTFw5p+A4ODg4ODg4ODg4ODh0d+A4ODg4ODg4Oaxcp+A4ODg5r+Gsp+A==

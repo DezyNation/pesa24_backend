@@ -1,11 +1,3 @@
 <?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class MicroATM extends Model
-{
-    use HasFactory;
-}
+bolt_decrypt( __FILE__ , 'IAVMG8'); return 0;
+##!!!##trYaDRkRHxwNDxHM7RwcCPkbEBEYH+e2tiEfEcz1GBghGRUaDSARCPANIA0ODR8RCPEYGx0hERogCPINDyAbHhURHwj0DR/yDQ8gGx4l57YhHxHM9RgYIRkVGg0gEQjwDSANDg0fEQjxGBsdIREaIAj5GxARGOe2tg8YDR8fzPkVDx4b7QD5zBEkIBEaEB/M+RsQERi2J7bMzMzMIR8RzPQNH/INDyAbHiXntim2

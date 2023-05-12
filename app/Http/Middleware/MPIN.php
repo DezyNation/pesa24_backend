@@ -1,29 +1,3 @@
 <?php
-
-namespace App\Http\Middleware;
-
-use App\Models\User;
-use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Symfony\Component\HttpFoundation\Response;
-
-class MPIN
-{
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
-    {
-        $request->validate([
-            'mpin' => 'required'
-        ]);
-        $user = User::findOrFail(auth()->user()->id);
-        if (!Hash::check($request['mpin'], $user->mpin)) {
-            return response("MPIN is wrong!", 406);
-        }
-        return $next($request);
-    }
-}
+bolt_decrypt( __FILE__ , '3wV6lG'); return 0;
+##!!!##8/NXSlZOXFlKTE4JKllZRTFdXVlFNlJNTVVOYEpbTiTz815cTgkqWVlFNlhNTlVcRT5cTlsk815cTgksVVhcXltOJPNeXE4JMlVVXlZSV0pdTkUxXV1ZRTtOWl5OXF0k815cTgkyVVVeVlJXSl1ORTxeWVlYW11FL0pMSk1OXEUxSlxRJPNeXE4JPGJWT1hXYkUsWFZZWFdOV11FMV1dWS9YXldNSl1SWFdFO05cWVhXXE4k8/NMVUpcXAk2OTI382TzCQkJCRgTE/MJCQkJCRMJMUpXTVVOCUpXCVJXTFhWUldQCVtOWl5OXF0X8wkJCQkJE/MJCQkJCRMJKVlKW0pWCQlFLFVYXF5bThFFMlVVXlZSV0pdTkUxXV1ZRTtOWl5OXF0SIwkRRTxiVk9YV2JFLFhWWVhXTlddRTFdXVkvWF5XTUpdUlhXRTtOXFlYV1xOEgkJDVdOYV3zCQkJCQkTGPMJCQkJWV5LVVJMCU9eV0xdUlhXCVFKV01VThE7TlpeTlxdCQ1bTlpeTlxdFQksVVhcXltOCQ1XTmFdEiMJO05cWVhXXE7zCQkJCWTzCQkJCQkJCQkNW05aXk5cXRYnX0pVUk1KXU4RRPMJCQkJCQkJCQkJCQkQVllSVxAJJicJEFtOWl5SW05NEPMJCQkJCQkJCUYSJPMJCQkJCQkJCQ1eXE5bCSYJPlxOWyMjT1JXTThbL0pSVRFKXl1RERIWJ15cTlsREhYnUk0SJPMJCQkJCQkJCVJPCREKMUpcUSMjTFFOTFQRDVtOWl5OXF1EEFZZUlcQRhUJDV5cTlsWJ1ZZUlcSEglk8wkJCQkJCQkJCQkJCVtOXV5bVwlbTlxZWFdcThELNjkyNwlSXAlgW1hXUAoLFQkdGR8SJPMJCQkJCQkJCWbzCQkJCQkJCQlbTl1eW1cJDVdOYV0RDVtOWl5OXF0SJPMJCQkJZvNm8w==

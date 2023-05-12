@@ -1,28 +1,3 @@
 <?php
-
-namespace App\Http\Middleware;
-
-use Illuminate\Http\Middleware\TrustProxies as Middleware;
-use Illuminate\Http\Request;
-
-class TrustProxies extends Middleware
-{
-    /**
-     * The trusted proxies for this application.
-     *
-     * @var array<int, string>|string|null
-     */
-    protected $proxies;
-
-    /**
-     * The headers that should be used to detect proxies.
-     *
-     * @var int
-     */
-    protected $headers =
-        Request::HEADER_X_FORWARDED_FOR |
-        Request::HEADER_X_FORWARDED_HOST |
-        Request::HEADER_X_FORWARDED_PORT |
-        Request::HEADER_X_FORWARDED_PROTO |
-        Request::HEADER_X_FORWARDED_AWS_ELB;
-}
+bolt_decrypt( __FILE__ , '2jdnX2'); return 0;
+##!!!##AgJmWWVda2hZW10YOWhoVEBsbGhURWFcXGRdb1lqXTMCAm1rXRhBZGRtZWFmWWxdVEBsbGhURWFcXGRdb1lqXVRMam1rbEhqZ3BhXWsYWWsYRWFcXGRdb1lqXTMCbWtdGEFkZG1lYWZZbF1UQGxsaFRKXWltXWtsMwICW2RZa2sYTGpta2xIamdwYV1rGF1wbF1mXGsYRWFcXGRdb1lqXQJzAhgYGBgnIiICGBgYGBgiGExgXRhsam1rbF1cGGhqZ3BhXWsYXmdqGGxgYWsYWWhoZGFbWWxhZ2YmAhgYGBgYIgIYGBgYGCIYOG5ZahhZampZcTRhZmwkGGtsamFmXzZ0a2xqYWZfdGZtZGQCGBgYGBgiJwIYGBgYaGpnbF1bbF1cGBxoamdwYV1rMwICGBgYGCciIgIYGBgYGCIYTGBdGGBdWVxdamsYbGBZbBhrYGdtZFwYWl0YbWtdXBhsZxhcXWxdW2wYaGpncGFdayYCGBgYGBgiAhgYGBgYIhg4bllqGGFmbAIYGBgYGCInAhgYGBhoamdsXVtsXVwYHGBdWVxdamsYNQIYGBgYGBgYGEpdaW1da2wyMkA9OTw9SldQVz5HSk85Sjw9PFc+R0oYdAIYGBgYGBgYGEpdaW1da2wyMkA9OTw9SldQVz5HSk85Sjw9PFdAR0tMGHQCGBgYGBgYGBhKXWltXWtsMjJAPTk8PUpXUFc+R0pPOUo8PTxXSEdKTBh0AhgYGBgYGBgYSl1pbV1rbDIyQD05PD1KV1BXPkdKTzlKPD08V0hKR0xHGHQCGBgYGBgYGBhKXWltXWtsMjJAPTk8PUpXUFc+R0pPOUo8PTxXOU9LVz1EOjMCdQI=

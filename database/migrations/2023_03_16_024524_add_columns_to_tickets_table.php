@@ -1,28 +1,3 @@
 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('tickets', function (Blueprint $table) {
-            $table->foreignId('organization_id')->nullable()->constrained()->nullOnDelete()->cascadeOnUpdate()->after('user_id');
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('tickets', function (Blueprint $table) {
-            //
-        });
-    }
-};
+bolt_decrypt( __FILE__ , 'dyHNQf'); return 0;
+##!!!##NDSfnY9Kc5aWn5eTmIuej4Zui56LjIudj4Z3k5Gci56TmZidhneTkZyLnpOZmGU0n52PSnOWlp+Xk5iLno+Gbouei4yLnY+GfY2Sj5eLhmyWn4+anJOYnmU0n52PSnOWlp+Xk5iLno+GfZ+ampmcnoZwi42Ljo+dhn2Nko+Xi2U0NJyPnp+cmEqYj6FKjZaLnZ1Kj6Kej5iOnUp3k5Gci56TmZg0pTRKSkpKWVRUNEpKSkpKVEp8n5hKnpKPSpeTkZyLnpOZmJ1YNEpKSkpKVFk0SkpKSpqfjJaTjUqQn5iNnpOZmEqfmlJTZEqgmZOONEpKSkqlNEpKSkpKSkpKfY2Sj5eLZGSei4yWj1JRnpONlY+enVFWSpCfmI2ek5mYSlJslp+PmpyTmJ5KTp6LjJaPU0qlNEpKSkpKSkpKSkpKSk6ei4yWj1dokJmcj5ORmHOOUlGZnJGLmJOki56TmZiJk45RU1domJ+WlouMlo9SU1dojZmYnZ6ci5OYj45SU1domJ+WlnmYbo+Wj56PUlNXaI2LnY2Ljo95mH+ajouej1JTV2iLkJ6PnFJRn52PnImTjlFTZTRKSkpKSkpKSqdTZTRKSkpKpzQ0SkpKSllUVDRKSkpKSlRKfI+gj5ydj0qeko9Kl5ORnIuek5mYnVg0SkpKSkpUWTRKSkpKmp+MlpONSpCfmI2ek5mYSo6ZoZhSU2RKoJmTjjRKSkpKpTRKSkpKSkpKSn2Nko+Xi2RknouMlo9SUZ6TjZWPnp1RVkqQn5iNnpOZmEpSbJafj5qck5ieSk6ei4yWj1NKpTRKSkpKSkpKSkpKSkpZWTRKSkpKSkpKSqdTZTRKSkpKpzSnZTQ=

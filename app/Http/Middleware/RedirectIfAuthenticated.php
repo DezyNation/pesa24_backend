@@ -1,32 +1,3 @@
 <?php
-
-namespace App\Http\Middleware;
-
-use App\Providers\RouteServiceProvider;
-use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
-class RedirectIfAuthenticated
-{
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @param  string|null  ...$guards
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
-     */
-    public function handle(Request $request, Closure $next, ...$guards)
-    {
-        $guards = empty($guards) ? [null] : $guards;
-
-        foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
-            }
-        }
-
-        return $next($request);
-    }
-}
+bolt_decrypt( __FILE__ , 'Cvjv9t'); return 0;
+##!!!##UFC0p7Orubanqatmh7a2oo66uraik6+qqrKrvae4q4FQULu5q2aHtrailri1vK+qq7i5opi1u7qrmau4vK+pq5a4tbyvqqu4gVC7uatmibK1ubu4q4FQu7mrZo+ysruzr7Snuquijrq6tqKYq7e7q7m6gVC7uatmj7Kyu7OvtKe6q6KZu7a2tbi6ooynqaeqq7mih7u6roFQUKmyp7m5Zpirqq+4q6m6j6yHu7quq7S6r6mnuquqUMFQZmZmZnVwcFBmZmZmZnBmjqe0qrKrZqe0Zq+0qbWzr7StZrirt7urubp0UGZmZmZmcFBmZmZmZnBmhranuKezZmaij7Kyu7OvtKe6q6KOurq2opirt7urubpmZmq4q7e7q7m6UGZmZmZmcGaGtqe4p7NmZqKJsrW5u7irbqKPsrK7s6+0p7qroo66uraimKu3u6u5um+AZm6ij7Kyu7OvtKe6q6KOurq2opiruba1tLmrwqKPsrK7s6+0p7qroo66uraimKuqr7irqbqYq7m2tbS5q29mZmq0q766UGZmZmZmcGaGtqe4p7NmZrm6uK+0rcK0u7KyZmZ0dHRqrbunuKq5UGZmZmZmcGaGuKu6u7i0ZqKPsrK7s6+0p7qroo66uraimKu5trW0uavCoo+ysruzr7Snuquijrq6tqKYq6qvuKupupiruba1tLmrUGZmZmZmcHVQZmZmZra7qLKvqWasu7Spuq+1tGaup7SqsqtumKu3u6u5umZquKu3u6u5unJmibK1ubu4q2ZqtKu+unJmdHR0aq27p7iquW9QZmZmZsFQZmZmZmZmZmZqrbunuKq5ZoNmq7O2ur9uaq27p7iquW9mhWahtLuysqNmgGZqrbunuKq5gVBQZmZmZmZmZmastbirp6muZm5qrbunuKq5Zqe5Zmqtu6e4qm9mwVBmZmZmZmZmZmZmZmavrGZuh7u6roCArbunuKpuaq27p7iqb3OEqa6rqbFub29mwVBmZmZmZmZmZmZmZmZmZmZmuKu6u7i0Zrirqq+4q6m6bpi1u7qrmau4vK+pq5a4tbyvqqu4gICOlZOLb4FQZmZmZmZmZmZmZmZmw1BmZmZmZmZmZsNQUGZmZmZmZmZmuKu6u7i0Zmq0q766bmq4q7e7q7m6b4FQZmZmZsNQw1A=
