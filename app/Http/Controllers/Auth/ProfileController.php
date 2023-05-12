@@ -92,7 +92,7 @@ class ProfileController extends AgentManagementController
         User::where('id', auth()->user()->id)->update([
             'aadhaar' => $request['values']['aadhaar'],
             'pincode' => $request['values']['pincode'],
-            'gst_number' => $request['values']['gst'],
+            'gst_number' => $request['values']['gst'] ?? null,
             // 'phone_number' => $request['values']['phone'],
             'pan_number' => $request['values']['pan'],
             'company_name' => $request['values']['firmName'] ?? null,
