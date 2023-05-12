@@ -19,7 +19,7 @@ class FundController extends Controller
 
     public function fetchFund()
     {
-        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['users.organization_id' => auth()->user()->organization_id])->select('funds.*', 'users.name', 'users.phone_number')->paginate(20);
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['users.organization_id' => auth()->user()->organization_id])->select('funds.*', 'users.name', 'users.phone_number')->latest()->paginate(20);
         return $data;
     }
 
