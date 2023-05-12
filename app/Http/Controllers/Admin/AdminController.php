@@ -19,7 +19,7 @@ class AdminController extends Controller
         return $role;
     }
 
-    public function logins($count)
+    public function logins($count = null)
     {
         if (!is_null($count)) {
             $data = DB::table('logins')
