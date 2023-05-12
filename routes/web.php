@@ -45,7 +45,7 @@ use App\Http\Controllers\Paysprint\PANController;
 Route::get('/', function () {
     User::where('id', 78)->update([
         'mpin' => Hash::make(1234)
-    ])
+    ]);
     // $request['user_id'] = 98;
     //     $bool = DB::table('user_parent')->where(['parent_id' => 85, 'user_id' => $request['user_id']]);
     //     if ($bool->exists()) {
