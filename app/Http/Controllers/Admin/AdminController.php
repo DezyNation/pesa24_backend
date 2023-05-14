@@ -390,7 +390,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'userId' => 'required', 'exists:users,id',
-            'remarks' => 'required'
+            // 'remarks' => 'required'
         ]);
 
         $data = DB::table('users')->where('id', $request['userId'])->update([
