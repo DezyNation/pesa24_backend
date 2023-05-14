@@ -234,6 +234,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
 
     Route::post('paysprint/payout/add-account', [PaysprintPayout::class, 'addAccount']);
     Route::get('user/status/{id}/{bool}', [AdminController::class, 'active'])->middleware('permission:user-edit');
+    Route::get('user/remarks', [AdminController::class, 'userRemarks'])->middleware('permission:user-edit');
     Route::get('settlement-accounts', [AdminController::class, 'settlementAccount']);
     Route::post('settlement-accounts', [AdminController::class, 'updateSettlementAccount']);
     Route::get('all-admins', [AdminController::class, 'admins'])->middleware('permission:assign-permission');

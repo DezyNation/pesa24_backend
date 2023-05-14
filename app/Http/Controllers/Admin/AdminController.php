@@ -385,4 +385,19 @@ class AdminController extends Controller
 
             return $data;
     }
+
+    public function userRemarks(Request $request)
+    {
+        $request->validate([
+            'userId' => 'required', 'exists:users,id',
+            'remarks' => 'required'
+        ]);
+
+        $data = DB::table('users')->where('id', $request['userId'])->update([
+            'delete_remarks' => $request['remarks'],
+            'updated_at' => now()
+        ]);
+
+        return $data;
+    }
 }

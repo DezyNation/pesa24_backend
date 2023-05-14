@@ -43,8 +43,8 @@ class AdminTransactionController extends Controller
         $data = DB::table('transactions')
             ->join('users', 'users.id', '=', 'transactions.user_id')
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
-            ->select('users.name', 'transactions.*', 'admin.first_name', 'admin.phone_number')
-            ->where('user_id', $id)->latest()->paginate(20);
+            ->select('users.name', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name', 'admin.phone_number')
+            ->where('transactions.trigered_by', $id)->latest()->paginate(20);
         return $data;
     }
 
@@ -65,8 +65,8 @@ class AdminTransactionController extends Controller
         $data = DB::table('transactions')
             ->join('users', 'users.id', '=', 'transactions.trigered_by')
             ->join('users as beneficiaries', 'beneficiaries.id', '=', 'transactions.user_id')
-            ->select('transactions.credit_amount', 'transactions.debit_amount', 'transactions.service_type', 'transactions.trigered_by', 'transactions.user_id', 'transactions.created_at', 'transactions.meta_data', 'users.name as trigered_by_name', 'users.phone_number as trigered_by_phone', 'users.organization_id', 'beneficiaries.name', 'beneficiaries.phone_number')
-            ->where('users.organization_id', auth()->user()->organization_id ?? 5)
+            ->select('transactions.*', 'users.name as trigered_by_name', 'users.phone_number as trigered_by_phone', 'users.organization_id', 'beneficiaries.name', 'beneficiaries.phone_number')
+            ->where('users.organization_id', auth()->user()->organization_id)
             ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::yesterday(), $request['to'] ?? Carbon::tomorrow()])
             ->get();
 
@@ -89,14 +89,14 @@ class AdminTransactionController extends Controller
         // });
 
         // return $groupwithcount;
-        $collection = collect($data);
+        // $collection = collect($data);
 
-        $transaction = $collection->groupBy(['trigered_by', 'service_type'])->map(function ($item) {
-            return $item->map(function ($key) {
-                return ['transactions' => $key, 'debit_amount' => $key->sum('debit_amount'), 'credit_amount' => $key->sum('credit_amount')];
-            });
-        });
+        // $transaction = $collection->groupBy(['trigered_by', 'service_type'])->map(function ($item) {
+        //     return $item->map(function ($key) {
+        //         return ['transactions' => $key, 'debit_amount' => $key->sum('debit_amount'), 'credit_amount' => $key->sum('credit_amount')];
+        //     });
+        // });
 
-        return $transaction;
+        return $data;
     }
 }
