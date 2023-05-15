@@ -400,4 +400,25 @@ class AdminController extends Controller
 
         return $data;
     }
+
+    public function parentUser(Request $request)
+    {
+        $request->validate([
+            'userId' => 'required', 'exists:users,id',
+            'parentId' => 'required', 'exists:users,id'
+            // 'remarks' => 'required'
+        ]);
+        $data = DB::table('parent_user')->updateOrInsert([
+            ['user_id' => $request['userId']],
+            ['parent_id' => $request['parentId']]
+        ]);
+
+        return $data;
+    }
+
+    public function roleChange(Request $request)
+    {
+        User::where('id', $request['userId'])->syncRoles($request['role']);
+        return true;
+    }
 }

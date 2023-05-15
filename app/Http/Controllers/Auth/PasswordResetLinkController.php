@@ -72,7 +72,8 @@ class PasswordResetLinkController extends Controller
         $password = Str::random(8);
         $user = User::where('email', $email);
         $user->update([
-            'password' => Hash::make($password)
+            'password' => Hash::make($password),
+            'credential_remarks' => $request['remarks']
         ]);
 
         $phone = $user->get('phone_number');

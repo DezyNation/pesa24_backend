@@ -236,6 +236,8 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('user/status/{id}/{bool}', [AdminController::class, 'active'])->middleware('permission:user-edit');
     Route::post('user/remarks', [AdminController::class, 'userRemarks'])->middleware('permission:user-edit');
     Route::get('settlement-accounts', [AdminController::class, 'settlementAccount']);
+    Route::post('parent-user', [AdminController::class, 'parentUser']);
+    Route::post('change-role', [AdminController::class, 'roleChange']);
     Route::post('settlement-accounts', [AdminController::class, 'updateSettlementAccount']);
     Route::get('all-admins', [AdminController::class, 'admins'])->middleware('permission:assign-permission');
     Route::post('new-admin', [AdminController::class, 'newAdmin'])->middleware('permission:assign-permission');
