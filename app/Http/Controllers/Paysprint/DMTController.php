@@ -252,7 +252,7 @@ class DMTController extends CommissionController
                 'mobile' => $data['mobile'],
                 'reference_id' => $data['referenceid'] ?? null,
                 'operator' => $data['operator'] ?? null,
-                'beneficiary_name' => $data['beneficiary_name']
+                'beneficiary_name' => $data['beneficiary_name'] ?? null
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $transaction_id = "DMT" . strtoupper(Str::random(9));
