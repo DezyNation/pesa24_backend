@@ -25,6 +25,7 @@ Route::post('/send-otp', [AuthenticatedSessionController::class, 'sendOtp'])
 
 Route::post('admin-register', [RegisteredUserController::class, 'registerAdmin'])->middleware('permission:user-create');
 Route::post('admin-update-user', [RegisteredUserController::class, 'adminUpdate'])->middleware(['auth:api','permission:user-edit']);
+Route::post('admin-send-creds', [PasswordResetLinkController::class, 'adminSendCreds'])->middleware(['auth:api','permission:user-edit']);
 
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
     ->middleware('guest')

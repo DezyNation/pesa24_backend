@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
@@ -59,5 +60,36 @@ class PasswordResetLinkController extends Controller
 
 
         return response()->json(['status' => 'Check your email for password']);
+    }
+
+    public function adminSendCreds(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'email', 'exists:users,email'],
+            'remarks' => 'required'
+        ]);
+        $email = $request['email'];
+        $password = Str::random(8);
+        $user = User::where('email', $email);
+        $user->update([
+            'password' => Hash::make($password)
+        ]);
+
+        $phone = $user->get('phone_number');
+        $phone = $phone[0];
+        $mpin = rand(1001, 9999);
+        // SMS api
+
+        $newmsg = "Dear $email, Welcome to Rpay. You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Now you can login https://rpay.live/. From'-P24 Technology Pvt. Ltd";
+        Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
+
+        Mail::raw("Dear User, Your new password for Login to Pesa24 is $password", function ($message) use ($request) {
+            $message->from('info@pesa24.co.in', 'Pesa24');
+            $message->to($request['email'], 'User');
+            $message->subject('Password reset');
+            $message->priority(1);
+        });
+
+        return true;
     }
 }
