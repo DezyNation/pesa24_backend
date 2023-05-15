@@ -247,7 +247,7 @@ class DMTController extends CommissionController
         } else {
             $metadata = [
                 'status' => false,
-                'account_number' => $data['account_number'],
+                'account_number' => $data['account_number'] ?? null,
                 'amount' => $data['amount'],
                 'mobile' => $data['mobile'],
                 'reference_id' => $data['referenceid'] ?? null,
