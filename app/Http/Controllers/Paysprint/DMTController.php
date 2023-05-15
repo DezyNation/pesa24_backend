@@ -244,7 +244,14 @@ class DMTController extends CommissionController
             ]);
             $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->dmtCommission(auth()->user()->id, $request['amount']);
-        } else {
+        } elseif($response['status'] == false) {
+            if ($response['response_code'] == 13) {
+                $metadata = [
+                    'status' => false,
+                    'amount' => $data['amount'],
+                ];
+                return response(["Server busy, try later!", 'metadata' => $metadata], 501);
+            }
             $metadata = [
                 'status' => false,
                 'account_number' => $data['accno'] ?? null,
@@ -257,21 +264,20 @@ class DMTController extends CommissionController
             $transaction_id = "DMT" . strtoupper(Str::random(9));
             $this->transaction(0, 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
             return ['response' => $response->body(), 'metadata' => $metadata];
-        }
-
-        if ($response['status'] == false) {
-            if ($response['response_code'] == 13) {
-                $metadata = [
-                    'status' => false,
-                    'amount' => $data['amount'],
-                ];
-                return response(["Server busy, try later!", 'metadata' => $metadata], 501);
-            }
+        } else {
+            
             $metadata = [
                 'status' => false,
+                'account_number' => $data['accno'] ?? null,
                 'amount' => $data['amount'],
+                'mobile' => $data['mobile'],
+                'reference_id' => $data['referenceid'] ?? null,
+                'beneficiary_name' => $data['benename'] ?? null
             ];
-            return response([$response['message'], 'metadata' => $metadata], 501);
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $transaction_id = "DMT" . strtoupper(Str::random(9));
+            $this->transaction(0, 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+            return ['response' => $response->body(), 'metadata' => $metadata];
         }
 
         return [$response->body(), 'metadata' => $metadata];
