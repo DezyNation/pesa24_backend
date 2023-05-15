@@ -251,7 +251,7 @@ class DMTController extends CommissionController
                 'amount' => $data['amount'],
                 'mobile' => $data['mobile'],
                 'reference_id' => $data['referenceid'] ?? null,
-                'operator' => $data['operator'],
+                'operator' => $data['operator'] ?? null,
                 'beneficiary_name' => $data['beneficiary_name']
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
