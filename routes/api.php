@@ -236,10 +236,16 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('user/status/{id}/{bool}', [AdminController::class, 'active'])->middleware('permission:user-edit');
     Route::post('user/remarks', [AdminController::class, 'userRemarks'])->middleware('permission:user-edit');
     Route::get('settlement-accounts', [AdminController::class, 'settlementAccount']);
-    Route::post('parent-user', [AdminController::class, 'parentUser']);
-    Route::post('change-role', [AdminController::class, 'roleChange']);
+    // Route::post('parent-user', [AdminController::class, 'parentUser']);
+    Route::post('change-role-parent', [AdminController::class, 'parentUser']);
+    Route::get('change-role-parent', [AdminController::class, 'getRoleParent']);
+    Route::post('remove-parent', [AdminController::class, 'removeParent']);
     Route::post('settlement-accounts', [AdminController::class, 'updateSettlementAccount']);
     Route::get('all-admins', [AdminController::class, 'admins'])->middleware('permission:assign-permission');
+    Route::get('credential-remarks', function(){
+        $data = auth()->user()->credential_remarks;
+        return $data;
+    });
     Route::post('new-admin', [AdminController::class, 'newAdmin'])->middleware('permission:assign-permission');
     Route::get('all-permissions', [AdminController::class, 'permissions'])->middleware('permission:assign-permission');
     Route::post('assign-permission', [AdminController::class, 'assignPermission'])->middleware('permission:assign-permission');

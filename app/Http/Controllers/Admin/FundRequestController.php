@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 
 class FundRequestController extends Controller
 {
@@ -35,6 +36,12 @@ class FundRequestController extends Controller
             'created_at' => now(),
             'updated_at' => now()
         ]);
+
+        $today = today();
+        $balance = auth()->user()->wallet;
+        $phone = 9759048362;
+        $message = "Hello ADMIN, Your fund request has been raised and Now Your Bal $balance on the date of $today. -From P24 Technology Pvt. Ltd.";
+        Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$message", []);
 
         return response('Request sent', 200);
     }

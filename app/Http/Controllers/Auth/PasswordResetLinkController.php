@@ -66,27 +66,28 @@ class PasswordResetLinkController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email', 'exists:users,email'],
-            'remarks' => 'required'
+            // 'remarks' => 'required'
         ]);
         $email = $request['email'];
+        $mpin = rand(1001, 9999);
         $password = Str::random(8);
         $user = User::where('email', $email);
         $user->update([
             'password' => Hash::make($password),
-            'credential_remarks' => $request['remarks']
+            'mpin' => Hash::make($mpin)
+            // 'credential_remarks' => $request['remarks']
         ]);
 
         $phone = $user->get('phone_number');
         $phone = $phone[0];
-        $mpin = rand(1001, 9999);
         // SMS api
 
-        $newmsg = "Dear $email, Welcome to Rpay. You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Now you can login https://rpay.live/. From'-P24 Technology Pvt. Ltd";
-        Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
+        // $newmsg = "Dear $email, Welcome to Rpay. You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Now you can login https://rpay.live/. From'-P24 Technology Pvt. Ltd";
+        // Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
 
-        Mail::raw("Dear User, Your new password for Login to Pesa24 is $password", function ($message) use ($request) {
+        Mail::raw("Dear User, Your new password for Login to Pesa24 is $password and MPIN is $mpin", function ($message) use ($request) {
             $message->from('info@pesa24.co.in', 'Pesa24');
-            $message->to($request['email'], 'User');
+            $message->to($request['email'], $request['name']);
             $message->subject('Password reset');
             $message->priority(1);
         });

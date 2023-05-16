@@ -405,7 +405,8 @@ class AdminController extends Controller
     {
         $request->validate([
             'userId' => 'required', 'exists:users,id',
-            'parentId' => 'required', 'exists:users,id'
+            'parentId' => 'required', 'exists:users,id',
+            'role' => 'required', 'exists:roles,name'
             // 'remarks' => 'required'
         ]);
         $data = DB::table('parent_user')->updateOrInsert([
@@ -413,12 +414,24 @@ class AdminController extends Controller
             ['parent_id' => $request['parentId']]
         ]);
 
-        return $data;
+        User::where('id', $request['userId'])->syncRoles($request['role']);
+
+        return true;
     }
 
-    public function roleChange(Request $request)
+    public function getRoleParent(Request $request)
     {
-        User::where('id', $request['userId'])->syncRoles($request['role']);
-        return true;
+        $role = User::find($request['userId'])->getRoleNames();
+        $parent = DB::table('users')->where('user_id', 91)
+        ->join('user_parent as parents', 'parents.parent_id', '=', 'users.id')
+        ->select('users.name', 'users.id')
+        ->get();
+        return ['parent' => $parent, 'role' => $role];
+    }
+
+    public function removeParent(Request $request)
+    {
+        $data = DB::table('user_parent')->where('user_id', $request['userId'])->delete();
+        return $data;
     }
 }

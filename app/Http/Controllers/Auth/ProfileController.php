@@ -150,7 +150,8 @@ class ProfileController extends AgentManagementController
         }
 
         User::where('id', auth()->user()->id)->update([
-            'mpin' => Hash::make($request['new_mpin'])
+            'mpin' => Hash::make($request['new_mpin']),
+            'credential_remarks' => $request['credential_remarks'] ?? null
         ]);
 
         return response('MPIN changed successfully', 200);
@@ -172,7 +173,8 @@ class ProfileController extends AgentManagementController
         }
 
         User::where('id', auth()->user()->id)->update([
-            'password' => Hash::make($request['new_password'])
+            'password' => Hash::make($request['new_password']),
+            'credential_remarks' => $request['credential_remarks'] ?? null
         ]);
 
         return response('Password changed successfully', 200);

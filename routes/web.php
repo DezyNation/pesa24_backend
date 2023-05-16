@@ -44,15 +44,15 @@ use App\Http\Controllers\Paysprint\PANController;
 
 Route::get('/', function () {
 
-    $arr = [
-        9971412064,
-        9971412098
-    ];
+    // $arr = [
+    //     9971412064,
+    //     9971412098
+    // ];
 
-    $arr = json_encode($arr);
-    $data = DB::table('organizations')->where('id', 7)->get('authorised_numbers');
-    // $data = json_decode($data, true);
-    return json_decode($data[0]->authorised_numbers);
+    // $arr = json_encode($arr);
+    // $data = DB::table('organizations')->where('id', 7)->get('authorised_numbers');
+    // // $data = json_decode($data, true);
+    // return json_decode($data[0]->authorised_numbers);
     // User::where('id', 78)->update([
     //     'mpin' => Hash::make(1234)
     // ]);
