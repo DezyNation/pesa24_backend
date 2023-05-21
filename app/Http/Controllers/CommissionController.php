@@ -1192,7 +1192,7 @@ class CommissionController extends Controller
 
     public function licCommission($user_id, $amount)
     {
-        $table = DB::table('payoutcommissions')
+        $table = DB::table('lic_commissions')
             ->join('package_user', 'package_user.package_id', '=', 'lic_commissions.package_id')
             ->where('package_user.user_id', $user_id)->where('lic_commissions.from', '<', $amount)
             ->where('lic_commissions.to', '>=', $amount)
@@ -1244,7 +1244,7 @@ class CommissionController extends Controller
 
     public function licParentCommission($user_id, $amount)
     {
-        $table = DB::table('payoutcommissions')
+        $table = DB::table('lic_commissions')
             ->join('package_user', 'package_user.package_id', '=', 'lic_commissions.package_id')
             ->where('package_user.user_id', $user_id)->where('lic_commissions.from', '<', $amount)
             ->where('lic_commissions.to', '>=', $amount)
@@ -1281,6 +1281,110 @@ class CommissionController extends Controller
         ];
         $transaction_id = "REV" . strtoupper(Str::random(9));
         $this->transaction($credit, 'LIC bill commission', 'lic', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
+
+        if (!$table->parents) {
+            return response("No commissions to parent users.");
+        }
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+        $parent_id = $parent->pluck('parent_id');
+        $this->licParentCommission($parent_id, $amount);
+        return $table;
+    }
+
+    public function fastCommission($user_id, $amount)
+    {
+        $table = DB::table('fasttag_commissions')
+            ->join('package_user', 'package_user.package_id', '=', 'fasttag_commissions.package_id')
+            ->where('package_user.user_id', $user_id)->where('fasttag_commissions.from', '<', $amount)
+            ->where('fasttag_commissions.to', '>=', $amount)
+            ->get();
+
+        if ($table->isEmpty()) {
+            return response("No commissions for this transactions.");
+        }
+
+        $table = $table[0];
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = $table->fixed_charge;
+        $is_flat = $table->is_flat;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->pluck($role_commission_name);
+        $opening_balance = $user->wallet;
+
+        if ($is_flat) {
+            $debit = $amount + $fixed_charge;
+            $credit = $role_commission - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $credit + $debit;
+        } elseif (!$is_flat) {
+            $debit = $amount + $amount * $fixed_charge / 100;
+            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $credit + $debit;
+        }
+        $metadata = [
+            'status' => true,
+            'event' => 'fasttag',
+            'amount' => $amount
+        ];
+        $transaction_id = "REV" . strtoupper(Str::random(9));
+        $this->transaction($credit, 'FastTag bill commission', 'fasttag', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
+
+        if (!$table->parents) {
+            return response("No commissions to parent users.");
+        }
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+        $parent_id = $parent->pluck('parent_id');
+        $this->fastParentCommission($parent_id, $amount);
+        return $table;
+    }
+
+    public function fastParentCommission($user_id, $amount)
+    {
+        $table = DB::table('fasttag_commissions')
+            ->join('package_user', 'package_user.package_id', '=', 'fasttag_commissions.package_id')
+            ->where('package_user.user_id', $user_id)->where('fasttag_commissions.from', '<', $amount)
+            ->where('fasttag_commissions.to', '>=', $amount)
+            ->get();
+
+        if ($table->isEmpty()) {
+            return response("No commissions for this transactions.");
+        }
+
+        $table = $table[0];
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = 0;
+        $is_flat = $table->is_flat;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->pluck($role_commission_name);
+        $opening_balance = $user->wallet;
+
+        if ($is_flat) {
+            $debit = $amount + $fixed_charge;
+            $credit = $role_commission - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $credit + $debit;
+        } elseif (!$is_flat) {
+            $debit = $amount + $amount * $fixed_charge / 100;
+            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $credit + $debit;
+        }
+        $metadata = [
+            'status' => true,
+            'event' => 'fasttag',
+            'amount' => $amount
+        ];
+        $transaction_id = "REV" . strtoupper(Str::random(9));
+        $this->transaction($credit, 'FastTag bill commission', 'fasttag', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
         $user->update([
             'wallet' => $closing_balance
         ]);

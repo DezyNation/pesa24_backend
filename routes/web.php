@@ -28,6 +28,7 @@ use App\Http\Controllers\Eko\Agent\AgentManagementController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
+use App\Http\Controllers\Paysprint\BBPS\FastTagController;
 use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
 use App\Http\Controllers\Paysprint\PANController;
 use Illuminate\Support\Facades\Artisan;
@@ -77,7 +78,7 @@ Route::get('/', function () {
     // return $data;
 });
 
-// Route::get('lic', [PANController::class, 'generateUrl']);
+Route::get('lic', [FastTagController::class, 'fetchConsumer']);
 // Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
 // Route::prefix('commissions')->group(function () {
 //     // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);
