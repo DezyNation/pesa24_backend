@@ -77,14 +77,14 @@ Route::get('/', function () {
     // return $data;
 });
 
-Route::get('lic', [PANController::class, 'generateUrl']);
-Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
-Route::prefix('commissions')->group(function () {
-    // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);
-    // Route::get('dmt/{user_id}/{amount}', [CommissionController::class, 'dmtCommission']);
-    // Route::get('recharge/{user_id}/{operator}/{amount}', [CommissionController::class, 'rechargeCommissionPaysprint']);
-    // Route::get('bbps/{user_id}/{operator}/{amount}', [CommissionController::class, 'bbpsPaysprintCommission']);
-});
+// Route::get('lic', [PANController::class, 'generateUrl']);
+// Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
+// Route::prefix('commissions')->group(function () {
+//     // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);
+//     // Route::get('dmt/{user_id}/{amount}', [CommissionController::class, 'dmtCommission']);
+//     // Route::get('recharge/{user_id}/{operator}/{amount}', [CommissionController::class, 'rechargeCommissionPaysprint']);
+//     // Route::get('bbps/{user_id}/{operator}/{amount}', [CommissionController::class, 'bbpsPaysprintCommission']);
+// });
 
 
 
