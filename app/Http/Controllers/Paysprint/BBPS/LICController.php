@@ -34,8 +34,8 @@ class LICController extends CommissionController
         ]);
         $data = [
             'canumber' => $request['canumber'],
-            'ad1' => $request['add1'],
-            'mode' => $request['mode']
+            'ad1' => $request['ad1'] ?? "",
+            'mode' => 'online'
         ];
 
         $token = $this->token();
