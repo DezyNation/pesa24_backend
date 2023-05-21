@@ -70,7 +70,7 @@ return [
     */
 
     'links' => [
-        public_path('storage/profile') => storage_path('app/profile'),
+        public_path('api/storage/profile') => storage_path('app/profile'),
     ],
 
 ];
