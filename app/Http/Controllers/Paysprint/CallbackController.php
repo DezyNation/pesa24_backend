@@ -21,6 +21,8 @@ class CallbackController extends CommissionController
         ];
 
         echo json_encode($metadata);
+
+        return redirect('dashboard.pesa24.in');
     }
 
     public function dmtCallback(Request $request)
