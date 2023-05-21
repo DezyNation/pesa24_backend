@@ -30,6 +30,7 @@ use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
 use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
 use App\Http\Controllers\Paysprint\PANController;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +44,7 @@ use App\Http\Controllers\Paysprint\PANController;
 */
 
 Route::get('/', function () {
-
+    Artisan::call('storage:link');
     // $arr = [
     //     9971412064,
     //     9971412098
