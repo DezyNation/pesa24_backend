@@ -94,7 +94,7 @@ class LICController extends CommissionController
             ]);
 
             $transaction_id = "BBPS" . strtoupper(Str::random(9));
-            $this->transaction($data['amount'], "Bill Payment", 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction($data['amount'], "Bill Payment", 'lic', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->licCommission(auth()->user()->id, $data['amount']);
 
         } elseif ($response->json($key = 'response_code') == 16 || $response->json($key = 'response_code') == 6 || $response->json($key = 'response_code') == 12) {
