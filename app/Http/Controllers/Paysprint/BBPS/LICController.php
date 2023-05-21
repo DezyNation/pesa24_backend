@@ -12,7 +12,7 @@ class LICController extends Controller
 
     public function token()
     {
-        $key = 'UFMwMDEyNGQ2NTliODUzYmViM2I1OWRjMDc2YWNhMTE2M2I1NQ==';
+        $key = env('JWT_KEY');
         $payload = [
             'timestamp' => time(),
             'partnerId' => env('PAYSPRINT_PARTNERID'),
@@ -64,7 +64,7 @@ class LICController extends Controller
             'content-type' => 'application/json',
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ='
         ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paylicbill', $data);
-
+        
         return $response;
     }
 }
