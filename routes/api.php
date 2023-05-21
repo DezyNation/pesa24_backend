@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Middleware\AdminLogin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +17,11 @@ use App\Http\Controllers\Paysprint\DMTController;
 use App\Http\Controllers\Pesa24\TicketController;
 use App\Http\Controllers\Razorpay\PayoutController;
 use App\Http\Controllers\Razorpay\ContactController;
+use App\Http\Controllers\Razorpay\WebhookController;
 use App\Http\Controllers\Admin\FundRequestController;
+use App\Http\Controllers\Paysprint\BBPS\LICController;
+use App\Http\Controllers\Paysprint\CallbackController;
+use App\Http\Controllers\Paysprint\BBPS\BillController;
 use App\Http\Controllers\Pesa24\AttachServiceController;
 use App\Http\Controllers\Pesa24\GlobalServiceController;
 use App\Http\Controllers\Razorpay\FundAccountController;
@@ -30,11 +35,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Pesa24\Dashboard\UserDashboardController;
 use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
-use App\Http\Controllers\Paysprint\BBPS\BillController;
-use App\Http\Controllers\Paysprint\CallbackController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
-use App\Http\Controllers\Razorpay\WebhookController;
-use App\Http\Middleware\AdminLogin;
 
 /*
 |--------------------------------------------------------------------------
@@ -179,7 +180,9 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     /*-----------------------Paysprint BBPS-----------------------*/
     Route::get('paysprint/bbps/operators/categories/{id?}', [BillController::class, 'operatorParameter']);
     Route::post('paysprint/bbps/fetch-bill', [BillController::class, 'fetchBill']);
+    Route::post('paysprint/lic/fetch-bill', [LICController::class, 'fetchBill']);
     Route::post('paysprint/bbps/pay-bill', [BillController::class, 'payBill'])->middleware('mpin');
+    Route::post('paysprint/lic/pay-bill', [LICController::class, 'payLicBill'])->middleware('mpin');
     /*-----------------------Paysprint BBPS-----------------------*/
     /*-----------------------Paysprint Recharge-----------------------*/
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);

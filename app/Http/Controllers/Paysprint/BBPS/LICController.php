@@ -29,6 +29,9 @@ class LICController extends CommissionController
 
     public function fetchBill(Request $request)
     {
+        $request->validate([
+            'canumber' => 'required',
+        ]);
         $data = [
             'canumber' => $request['canumber'],
             'ad1' => $request['add1'],
@@ -48,6 +51,12 @@ class LICController extends CommissionController
 
     public function payLicBill(Request $request)
     {
+        $request->validate([
+            'canumber' => 'required',
+            'mode' => 'required',
+            'latlong' => 'required',
+            'bill' => 'required'
+        ]);
         $latlong = explode(",", $request['latlong']);
         $token = $this->token();
         $data = [
