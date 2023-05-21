@@ -70,7 +70,7 @@ return [
     */
 
     'links' => [
-        public_path('storage/profile') => storage_path('app/profile'),
+        "https://srv846.hstgr.io:7443/5809cc506c73e2a3/files/public_html/api/storage/profile" => storage_path('app/profile'),
     ],
 
 ];
