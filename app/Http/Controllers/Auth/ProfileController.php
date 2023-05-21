@@ -47,7 +47,7 @@ class ProfileController extends AgentManagementController
      */
     public function info()
     {
-        return new UserResource(User::findOrFail(Auth::id())->makeVisible(['phone_number', 'dob', 'aadhaar', 'user_code', 'company_name', 'line', 'city', 'state', 'pincode', 'profile', 'kyc', 'onboard_fee']));
+        return new UserResource(User::findOrFail(Auth::id())->makeVisible(['phone_number', 'dob', 'aadhaar', 'user_code', 'company_name', 'line', 'city', 'state', 'pincode', 'profile', 'kyc', 'onboard_fee', 'pan_photo', 'aadhar_front', 'aadhar_back']));
     }
 
     /**
