@@ -254,7 +254,7 @@ class UserController extends Controller
     {
         $org_id = auth()->user()->organization_id;
         if (is_null($id)) {
-            $user = User::role($role)->where(['organization_id' => $org_id])->get(['users.id', 'users.name']);
+            $user = User::role($role)->where(['organization_id' => $org_id])->get(['users.id', 'users.name', 'users.profile_pic']);
             return $user;
         }
 

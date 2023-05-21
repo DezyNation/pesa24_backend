@@ -44,7 +44,6 @@ use Illuminate\Support\Facades\Artisan;
 */
 
 Route::get('/', function () {
-    Artisan::call('storage:link');
     // $arr = [
     //     9971412064,
     //     9971412098
