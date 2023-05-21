@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Paysprint\BBPS;
 
+use App\Models\User;
 use Firebase\JWT\JWT;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\CommissionController;
 
-class LICController extends Controller
+class LICController extends CommissionController
 {
 
     public function token()
@@ -64,6 +68,45 @@ class LICController extends Controller
             'content-type' => 'application/json',
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ='
         ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paylicbill', $data);
+
+        
+        if ($response->json($key = 'response_code') == 1 || $response->json($key = 'response_code') == 0) {
+            $metadata = [
+                'status' => $response['status'],
+                'message' => $response['message'],
+                'amount' => $data['amount'],
+                'reference_id' => $data['referenceid'],
+                'acknowldgement_number' => $response['ackno'] ?? null,
+            ];
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $balance_left = $walletAmt[0] - $data['amount'];
+            User::where('id', auth()->user()->id)->update([
+                'wallet' => $balance_left
+            ]);
+
+            $transaction_id = "BBPS" . strtoupper(Str::random(9));
+            $this->transaction($data['amount'], "Bill Payment", 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->licCommission(auth()->user()->id, $data['amount']);
+
+        } elseif ($response->json($key = 'response_code') == 16 || $response->json($key = 'response_code') == 6 || $response->json($key = 'response_code') == 12) {
+            $metadata = [
+                'status' => false,
+                'canumber' => $data['canumber'],
+                'amount' => $data['amount'],
+            ];
+            return response(["Server Busy pleasy try later!", 'metadata' => $metadata], 501);
+        } else {
+            $metadata = [
+                'status' => false,
+                'canumber' => $data['canumber'],
+                'amount' => $data['amount'],
+            ];
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $transaction_id = "DMT" . strtoupper(Str::random(9));
+            $this->transaction($data['amount'], 'Bill payment', 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+
+            return response([$response['message'], 'metadata' => $metadata], 400);
+        }
         
         return $response;
     }
