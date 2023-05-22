@@ -35,6 +35,9 @@ use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Pesa24\Dashboard\UserDashboardController;
 use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
+use App\Http\Controllers\Paysprint\BBPS\FastTagController;
+use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
+use App\Http\Controllers\Paysprint\CMS\FinoCMSController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 
 /*
@@ -189,6 +192,18 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
     Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge'])->middleware('mpin');
     /*-----------------------Paysprint Recharge-----------------------*/
+    /*-----------------------Paysprint CMS-----------------------*/
+    Route::post('paysprint/cms/fino', [FinoCMSController::class, 'generateUrl']);
+    Route::post('paysprint/cms/airtel', [AirtelCMSController::class, 'generateUrl']);
+    Route::post('paysprint/cms/fino-status', [FinoCMSController::class, 'transactionStatus']);
+    Route::post('paysprint/cms/airtel-status', [AirtelCMSController::class, 'transactionStatus']);
+    /*-----------------------Paysprint CMS-----------------------*/
+    /*-----------------------Paysprint FastTAG-----------------------*/
+    Route::get('paysprint/fastag/operators', [FastTagController::class, 'operatorList']);
+    Route::post('paysprint/fastag/fetch-bill', [FastTagController::class, 'fetchConsumer']);
+    Route::post('paysprint/fastag/pay-bill', [FastTagController::class, 'payAmount']);
+    Route::post('paysprint/fastag/status', [FastTagController::class, 'status']);
+    /*-----------------------Paysprint FastTAG-----------------------*/
 });
 
 Route::get('admin/packages', [AdminController::class, 'packages'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);

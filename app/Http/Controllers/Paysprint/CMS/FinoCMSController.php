@@ -43,7 +43,7 @@ class FinoCMSController extends Controller
     public function transactionStatus(Request $request)
     {
         $data = [
-            'refid' => $request['reference_id'] ?? uniqid()
+            'refid' => $request['referenceId'] ?? uniqid()
         ];
 
         $token = $this->token();

@@ -35,10 +35,10 @@ class FastTagController extends CommissionController
 
     public function fetchConsumer(Request $request)
     {
-        // $request->validate([
-        //     'operator' => 'required',
-        //     'canumber' => 'required',
-        // ]);
+        $request->validate([
+            'operator' => 'required',
+            'canumber' => 'required',
+        ]);
 
         $token = $this->token();
 
@@ -67,7 +67,6 @@ class FastTagController extends CommissionController
         $token = $this->token();
         $data = [
             'canumber' => $request['canumber'],
-            'mode' => $request['mode'],
             'amount' => $request['amount'],
             'referenceid' => uniqid(),
             'latitude' => $latlong[0],
@@ -88,7 +87,7 @@ class FastTagController extends CommissionController
     {
         $token = $this->token();
         $data = [
-            'referenceid' => $request['referenceid']
+            'referenceid' => $request['referenceId']
         ];
 
         $response = Http::withHeaders([

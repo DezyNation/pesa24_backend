@@ -43,7 +43,7 @@ class AirtelCMSController extends Controller
     public function transactionStatus(Request $request)
     {
         $data = [
-            'refid' => $request['reference_id'] ?? uniqid()
+            'refid' => $request['referenceId'] ?? uniqid()
         ];
 
         $token = $this->token();
@@ -52,7 +52,7 @@ class AirtelCMSController extends Controller
             'Token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://paysprint.in/service-api/api/v1/service/airtelcms/airtel/status', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/finocms/fino/status', $data);
 
         return $response;
     }
