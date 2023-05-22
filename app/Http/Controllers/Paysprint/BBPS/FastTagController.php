@@ -60,12 +60,14 @@ class FastTagController extends CommissionController
     {
         $request->validate([
             'canumber' => 'required',
+            'operator' => 'required',
             'latlong' => 'required',
             'bill' => 'required'
         ]);
         $latlong = explode(",", $request['latlong']);
         $token = $this->token();
         $data = [
+            'operator' => $request['operator'],
             'canumber' => $request['canumber'],
             'amount' => $request['amount'],
             'referenceid' => uniqid(),
