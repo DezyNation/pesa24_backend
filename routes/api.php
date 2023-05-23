@@ -35,6 +35,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Pesa24\Dashboard\UserDashboardController;
 use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
+use App\Http\Controllers\Paysprint\AxisController;
 use App\Http\Controllers\Paysprint\BBPS\FastTagController;
 use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
 use App\Http\Controllers\Paysprint\CMS\FinoCMSController;
@@ -204,6 +205,9 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::post('paysprint/fastag/pay-bill', [FastTagController::class, 'payAmount']);
     Route::post('paysprint/fastag/status', [FastTagController::class, 'status']);
     /*-----------------------Paysprint FastTAG-----------------------*/
+    /*-----------------------Paysprint Axis-----------------------*/
+    Route::post('paysprint/axis/account', [AxisController::class, 'generateUcc']);
+    /*-----------------------Paysprint Axis-----------------------*/
 });
 
 Route::get('admin/packages', [AdminController::class, 'packages'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);
@@ -275,6 +279,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('packages/delete/{id}', [AdminController::class, 'packagesId'])->middleware('mpin');
     Route::get('commissions/{name}/{id}', [AdminController::class, 'commissionsPackage']);
     Route::post('commissions/{name}', [AdminController::class, 'updateCommission']);
+    Route::post('commissions/delete/{name}/{id}', [AdminController::class, 'deleteCommission']);
     Route::post('create-package', [AdminController::class, 'packageCreate']);
     Route::post('update-package-defaults', [AdminController::class, 'packageSwitch']);
 });

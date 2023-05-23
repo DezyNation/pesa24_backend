@@ -24,9 +24,12 @@ class AxisController extends Controller
 
     public function generateUcc(Request $request)
     {
+        $request->validate([
+            'type' => 'required', 'integer'
+        ]);
         $token = $this->token();
         $data = [
-            'merchantcode' => auth()->user()->paysprint_merchant,
+            'merchantcode' => auth()->user()->paysprint_merchant ?? 1232232,
             'type' => $request['type']
         ];
 
