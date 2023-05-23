@@ -42,7 +42,9 @@ class AirtelCMSController extends Controller
             DB::table('cms_records')->insert([
                 'user_id' => auth()->user()->id,
                 'reference_id' => $data['refid'],
-                'transaction_id' => $data['transaction_id']
+                'transaction_id' => $data['transaction_id'],
+                'created_at' => now(),
+                'provider' => 'airtel'
             ]);
         }
         
@@ -61,7 +63,7 @@ class AirtelCMSController extends Controller
             'Token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://paysprint.in/service-api/api/v1/service/finocms/fino/status', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/airtelcms/airtel/status', $data);
 
         return $response;
     }

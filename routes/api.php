@@ -40,6 +40,7 @@ use App\Http\Controllers\Paysprint\AxisController;
 use App\Http\Controllers\Paysprint\BBPS\FastTagController;
 use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
 use App\Http\Controllers\Paysprint\CMS\FinoCMSController;
+use App\Http\Controllers\Paysprint\PANController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 
 /*
@@ -107,7 +108,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
     Route::get('fund/fetch-parents', [FundController::class, 'parents']);
     Route::get('cms-records', function(){
-        $data = DB::table('cms_records')->where('user_id', auth()->user()->id)->get();
+        $data = DB::table('cms_records')->where('user_id', auth()->user()->id)->latest()->get();
         return $data;
     });
     Route::get('fund/fetch-fund', [FundRequestController::class, 'fetchFundUser']);
@@ -184,6 +185,9 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::post('paysprint/dmt/add-recipient/{service_id}', [DMTController::class, 'registerBeneficiary']);
     Route::post('paysprint/dmt/delete-recipient/{service_id}', [DMTController::class, 'deleteBeneficiary']);
     /*-----------------------Paysprint DMT-----------------------*/
+    /*-----------------------Paysprint PAN-----------------------*/
+    Route::post('paysprint/pan/start', [PANController::class, 'generateUrl']);
+    /*-----------------------Paysprint PAN-----------------------*/
 
 
     /*-----------------------Paysprint BBPS-----------------------*/
@@ -201,13 +205,12 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     /*-----------------------Paysprint CMS-----------------------*/
     Route::post('paysprint/cms/fino', [FinoCMSController::class, 'generateUrl']);
     Route::post('paysprint/cms/airtel', [AirtelCMSController::class, 'generateUrl']);
-    Route::post('paysprint/cms/fino-status', [FinoCMSController::class, 'transactionStatus']);
-    Route::post('paysprint/cms/airtel-status', [AirtelCMSController::class, 'transactionStatus']);
+    Route::post('paysprint/cms/status', [FinoCMSController::class, 'transactionStatus']);
     /*-----------------------Paysprint CMS-----------------------*/
     /*-----------------------Paysprint FastTAG-----------------------*/
     Route::get('paysprint/fastag/operators', [FastTagController::class, 'operatorList']);
     Route::post('paysprint/fastag/fetch-bill', [FastTagController::class, 'fetchConsumer']);
-    Route::post('paysprint/fastag/pay-bill', [FastTagController::class, 'payAmount']);
+    Route::post('paysprint/fastag/pay-bill', [FastTagController::class, 'payAmount'])->middleware('mpin');
     Route::post('paysprint/fastag/status', [FastTagController::class, 'status']);
     /*-----------------------Paysprint FastTAG-----------------------*/
     /*-----------------------Paysprint Axis-----------------------*/
