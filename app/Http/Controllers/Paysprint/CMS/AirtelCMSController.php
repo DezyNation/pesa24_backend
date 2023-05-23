@@ -40,6 +40,7 @@ class AirtelCMSController extends Controller
 
         if ($response['response_code'] == 1) {
             DB::table('cms_records')->insert([
+                'user_id' => auth()->user()->id,
                 'reference_id' => $data['refid'],
                 'transaction_id' => $data['transaction_id']
             ]);

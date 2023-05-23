@@ -106,6 +106,10 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
     Route::get('fund/fetch-parents', [FundController::class, 'parents']);
+    Route::get('cms-records', function(){
+        $data = DB::table('cms_records')->where('user_id', auth()->user()->id)->get();
+        return $data;
+    });
     Route::get('fund/fetch-fund', [FundRequestController::class, 'fetchFundUser']);
 
     /*-----------------------Fund Requests-----------------------*/
