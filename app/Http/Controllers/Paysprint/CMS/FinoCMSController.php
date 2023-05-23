@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Paysprint\CMS;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class FinoCMSController extends Controller
@@ -26,7 +27,7 @@ class FinoCMSController extends Controller
     {
         $data = [
             'transaction_id' => $request['transactionId'] ?? uniqid(),
-            'refid' => uniqid(),
+            'refid' => "PESA24FINOCMS".uniqid(),
         ];
 
         $token = $this->token();
@@ -36,6 +37,13 @@ class FinoCMSController extends Controller
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
         ])->post('https://paysprint.in/service-api/api/v1/service/finocms/fino/generate_url', $data);
+        
+        if ($response['response_code'] == 1) {
+            DB::table('cms_records')->insert([
+                'reference_id' => $data['refid'],
+                'transaction_id' => $data['transaction_id']
+            ]);
+        }
 
         return $response;
     }

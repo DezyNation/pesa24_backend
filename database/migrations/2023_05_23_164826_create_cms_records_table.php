@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('cms_records', function (Blueprint $table) {
             $table->id();
             $table->string('reference_id');
-            $table->decimal('amount');
+            $table->string('transaction_id');
             $table->timestamps();
         });
     }

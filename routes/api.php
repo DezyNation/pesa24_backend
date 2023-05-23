@@ -29,6 +29,7 @@ use App\Http\Controllers\Eko\DMT\AgentCustomerController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Admin\AdminTransactionController;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController;
+use App\Http\Controllers\Eko\AePS\AepsApiController as EkoAepsApiController;
 use App\Http\Controllers\Pesa24\KycVerificationController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
@@ -111,42 +112,42 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('transaction/{type}', [UserDashboardController::class, 'sunTransaction']);
 });
 
+Route::get('eko/aeps/aeps-inquiry', [EkoAepsApiController::class, 'aepsInquiry']);
 Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(function () {
     /*------------------------EKO AEPS------------------------*/
-    Route::post('eko/aeps/aeps-inquiry/{service_id}', [AepsApiController::class, 'aepsInquiry']);
-    Route::post('fund-settlement/{service_id}', [AepsApiController::class, 'fundSettlement']);
-    Route::post('eko/aeps/money-transfer/{service_id}', [AepsApiController::class, 'moneyTransfer']);
+    Route::get('fund-settlement', [EkoAepsApiController::class, 'fundSettlement']);
+    Route::get('eko/aeps/money-transfer', [EkoAepsApiController::class, 'moneyTransfer']);
     Route::get('users/{id}', [ProfileController::class, 'findUser']);
 
-    Route::post('activate-service/{service_id}', [AttachServiceController::class, 'attachService'])->middleware('subscribe');
+    Route::post('activate-service', [AttachServiceController::class, 'attachService'])->middleware('subscribe');
 
     /*------------------------EKO BBPS------------------------*/
-    Route::get('eko/bbps/operators/categories/{service_id}', [BBPSController::class, 'operatorCategoryList']);
-    Route::get('eko/bbps/operators/{category_id?}/{service_id}', [BBPSController::class, 'operators']);
-    Route::get('eko/bbps/operators/fields/{operator_id}/{service_id}', [BBPSController::class, 'operatorField']);
-    Route::post('eko/bbps/fetch-bill/{service_id}', [BBPSController::class, 'fetchBill']);
+    Route::get('eko/bbps/operators/categories', [BBPSController::class, 'operatorCategoryList']);
+    Route::get('eko/bbps/operators/{category_id?}', [BBPSController::class, 'operators']);
+    Route::get('eko/bbps/operators/fields/{operator_id}', [BBPSController::class, 'operatorField']);
+    Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill']);
 
     /*------------------------EKO DMT------------------------*/
 
-    Route::post('eko/dmt/customer-info/{service_id}', [CustomerRecipientController::class, 'customerInfo']);
-    Route::post('eko/dmt/create-customer/{service_id}', [CustomerRecipientController::class, 'createCustomer']);
-    Route::post('eko/dmt/resend-otp/{service_id}', [CustomerRecipientController::class, 'resendOtp']);
-    Route::post('eko/dmt/verify-customer/{service_id}', [CustomerRecipientController::class, 'verifyCustomerIdentity']);
+    Route::post('eko/dmt/customer-info', [CustomerRecipientController::class, 'customerInfo']);
+    Route::post('eko/dmt/create-customer', [CustomerRecipientController::class, 'createCustomer']);
+    Route::post('eko/dmt/resend-otp', [CustomerRecipientController::class, 'resendOtp']);
+    Route::post('eko/dmt/verify-customer', [CustomerRecipientController::class, 'verifyCustomerIdentity']);
 
-    Route::post('eko/bbps/fetch-bill/{service_id}', [BBPSController::class, 'fetchBill']);
+    Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill']);
 
-    Route::get('eko/dmt/recipient-list/{service_id}', [CustomerRecipientController::class, 'recipientList']);
-    Route::get('eko/dmt/recipient-details/{service_id}', [CustomerRecipientController::class, 'recipientDetails']);
-    Route::post('eko/dmt/add-recipient/{service_id}', [CustomerRecipientController::class, 'addRecipient']);
+    Route::get('eko/dmt/recipient-list', [CustomerRecipientController::class, 'recipientList']);
+    Route::get('eko/dmt/recipient-details', [CustomerRecipientController::class, 'recipientDetails']);
+    Route::post('eko/dmt/add-recipient', [CustomerRecipientController::class, 'addRecipient']);
 
-    Route::get('eko/dmt/customer-info/{service_id}', [CustomerRecipientController::class, 'customerInfo']);
-    Route::post('eko/dmt/register-agent/{service_id}', [AgentCustomerController::class, 'dmtRegistration']);
-    Route::get('eko/dmt/fetch-agent/{service_id}', [AgentCustomerController::class, 'fetchAgent']);
+    Route::get('eko/dmt/customer-info', [CustomerRecipientController::class, 'customerInfo']);
+    Route::post('eko/dmt/register-agent', [AgentCustomerController::class, 'dmtRegistration']);
+    Route::get('eko/dmt/fetch-agent', [AgentCustomerController::class, 'fetchAgent']);
 
-    Route::post('eko/dmt/initiate-payment/{service_id}', [TransactionController::class, 'initiatePayment']);
-    Route::get('eko/dmt/transaction-inquiry/{transactionid}/{service_id}', [TransactionController::class, 'transactionInquiry']);
-    Route::post('eko/dmt/transaction-refund/{tid}/{service_id}', [TransactionController::class, 'refund']);
-    Route::post('eko/dmt/transaction-refund-otp/{tid}/{service_id}', [TransactionController::class, 'refund']);
+    Route::post('eko/dmt/initiate-payment', [TransactionController::class, 'initiatePayment']);
+    Route::get('eko/dmt/transaction-inquiry/{transactionid}', [TransactionController::class, 'transactionInquiry']);
+    Route::post('eko/dmt/transaction-refund/{tid}', [TransactionController::class, 'refund']);
+    Route::post('eko/dmt/transaction-refund-otp/{tid}', [TransactionController::class, 'refund']);
     Route::post('paysprint/bank/bank-verify', [DMTController::class, 'penneyDrop']);
     /*-----------------------Razorpay Payout-----------------------*/
     Route::post('razorpay/payout/new-payout/{service_id}', [FundAccountController::class, 'createFundAcc']);

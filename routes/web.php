@@ -78,7 +78,7 @@ Route::get('/', function () {
     // return $data;
 });
 
-Route::get('lic', [FastTagController::class, 'fetchConsumer']);
+Route::get('licCommission/{user_id}/{amount}', [CommissionController::class, 'licCommission']);
 // Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
 // Route::prefix('commissions')->group(function () {
 //     // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);

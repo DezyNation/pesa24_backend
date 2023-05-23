@@ -119,19 +119,27 @@ class AdminController extends Controller
 
             case 'fastag':
                 $data = DB::table('fasttag_commissions')
-                ->join('packages', 'packages.id', '=', 'fasttag_commissions.package_id')
-                ->where('fasttag_commissions.package_id', $id)
-                ->select('fasttag_commissions.*')
-                ->get();
-            break;
+                    ->join('packages', 'packages.id', '=', 'fasttag_commissions.package_id')
+                    ->where('fasttag_commissions.package_id', $id)
+                    ->select('fasttag_commissions.*')
+                    ->get();
+                break;
 
             case 'lic':
                 $data = DB::table('lic_commissions')
-                ->join('packages', 'packages.id', '=', 'lic_commissions.package_id')
-                ->where('lic_commissions.package_id', $id)
-                ->select('lic_commissions.*')
-                ->get();
-            break;
+                    ->join('packages', 'packages.id', '=', 'lic_commissions.package_id')
+                    ->where('lic_commissions.package_id', $id)
+                    ->select('lic_commissions.*')
+                    ->get();
+                break;
+
+            case 'cms':
+                $data = DB::table('cms_commissions')
+                    ->join('packages', 'packages.id', '=', 'cms_commissions.package_id')
+                    ->where('cms_commissions.package_id', $id)
+                    ->select('cms_commissions.*')
+                    ->get();
+                break;
             default:
                 $data = response("Invalid parameter was sent.", 404);
                 break;
@@ -322,7 +330,7 @@ class AdminController extends Controller
                 );
 
                 break;
-            
+
             case 'fastag':
                 $data = DB::table('fasttag_commissions')->updateOrInsert(
                     ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
@@ -330,12 +338,19 @@ class AdminController extends Controller
                 );
                 break;
 
-                case 'lic':
-                    $data = DB::table('lic_commissions')->updateOrInsert(
-                        ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
-                        $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat', 'fixed_charge'])
-                    );
-                    break;
+            case 'lic':
+                $data = DB::table('lic_commissions')->updateOrInsert(
+                    ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
+                    $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat', 'fixed_charge'])
+                );
+                break;
+
+            case 'cms':
+                $data = DB::table('cms_commissions')->updateOrInsert(
+                    ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
+                    $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat', 'fixed_charge', 'provider'])
+                );
+            break;
 
             default:
                 $data = response("Invalid parameter was sent.", 404);
@@ -413,9 +428,9 @@ class AdminController extends Controller
                 'package_id' => $request['package_id'],
                 'updated_at' => now()
             ]
-            );
+        );
 
-            return $data;
+        return $data;
     }
 
     public function userRemarks(Request $request)
@@ -455,9 +470,9 @@ class AdminController extends Controller
     {
         $role = User::find($request['userId'])->getRoleNames();
         $parent = DB::table('users')->where('user_id', 91)
-        ->join('user_parent as parents', 'parents.parent_id', '=', 'users.id')
-        ->select('users.name', 'users.id')
-        ->get();
+            ->join('user_parent as parents', 'parents.parent_id', '=', 'users.id')
+            ->select('users.name', 'users.id')
+            ->get();
         return ['parent' => $parent, 'role' => $role];
     }
 
@@ -515,15 +530,21 @@ class AdminController extends Controller
 
             case 'fastag':
                 $data = DB::table('fasttag_commissions')
-                ->where('id', $id)
-                ->delete();
-            break;
+                    ->where('id', $id)
+                    ->delete();
+                break;
 
             case 'lic':
                 $data = DB::table('lic_commissions')
-                ->where('id', $id)
-                ->delete();
-            break;
+                    ->where('id', $id)
+                    ->delete();
+                break;
+
+            case 'cms':
+                $data = DB::table('cms_commissions')
+                    ->where('id', $id)
+                    ->delete();
+                break;
             default:
                 $data = response("Invalid parameter was sent.", 404);
                 break;
