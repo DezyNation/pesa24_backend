@@ -31,6 +31,7 @@ use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
 use App\Http\Controllers\Eko\Agent\AgentManagementController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
+use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayoutController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
 
@@ -80,7 +81,7 @@ Route::get('/', function () {
 });
 
 Route::get('inquiry', [AepsApiController::class, 'initiateSettlement']);
-Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
+Route::get('dmt', [MoneyTransferPayoutController::class, 'payout']);
 Route::get('pan', [PANController::class, 'generateUrl']);
 // Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
 // Route::prefix('commissions')->group(function () {
