@@ -97,20 +97,17 @@ class AepsApiController extends CommissionController
 
 
         return $response;
-
+        $this->apiRecords($data['client_ref_id'], 'eko', $response);
         $transaction_id = "AEP" . strtoupper(Str::random(5));
         $opening_balance = auth()->user()->wallet;
         $closing_balance = $opening_balance + $encryption['amount'];
 
-        DB::table('users')->where('id', auth()->user()->id)->update([
-            'wallet' => $closing_balance,
-            'updated_at' => now()
-        ]);
         $metadata = [
-            'status' => true
+            'status' => true,
+            'amount' => $encryption['amount']
         ];
         $this->transaction($encryption['amount'], 'AePS: Withdrawal', 'banking', auth()->user()->id, $opening_balance, $transaction_id, json_encode($metadata), $closing_balance);
-
+        $this->aepsComission($encryption['amount'], auth()->user()->id);
         return $response;
     }
 
@@ -127,7 +124,7 @@ class AepsApiController extends CommissionController
             "customer_id" => $request['customerId'] ?? 9971412064,
             "bank_code" => $request['bankCode'] ?? 'HDFC',
             "amount" => $encryption['amount'],
-            "client_ref_id" => "PESA24AEPS" . strtoupper(uniqid()),
+            "client_ref_id" => "PESA24AEPSM" . strtoupper(uniqid()),
             "pipe" => "0",
             "aadhar" => $encryption['encrypted_aadhaar'],
             "latlong" => $request['latlong'],
@@ -142,7 +139,7 @@ class AepsApiController extends CommissionController
             'Content-Type' => 'application/json',
             'request_hash' => $encryption['request_hash']
         ]))->post('https://staging.eko.in:25004/ekoapi/v2/aeps', $data);
-
+        $this->apiRecords($data['client_ref_id'], 'eko', $response);
         return $response;
     }
 
@@ -162,7 +159,7 @@ class AepsApiController extends CommissionController
             "customer_id" => $request['customerId'] ?? 9971412064,
             "bank_code" => $request['bankCode'] ?? 'HDFC',
             "amount" => $encryption['amount'],
-            "client_ref_id" => "PESA24AEPS" . strtoupper(uniqid()),
+            "client_ref_id" => "PESA24AEPSB" . strtoupper(uniqid()),
             "pipe" => "0",
             "aadhar" => $encryption['encrypted_aadhaar'],
             "latlong" => $request['latlong'],
@@ -177,19 +174,19 @@ class AepsApiController extends CommissionController
             'Content-Type' => 'application/json',
             'request_hash' => $encryption['request_hash']
         ]))->post('https://staging.eko.in:25004/ekoapi/v2/aeps', $data);
-
+        $this->apiRecords($data['client_ref_id'], 'eko', $response);
         return $response;
     }
 
     public function aepsInquiry(Request $request)
     {
         $initiator_id = 9962981729;
-        $transaction_id = $request['transction_id'] ?? 1234545;
+        $transaction_id = $request['transction_id'];
 
         $response = Http::withHeaders(
             $this->headerArray()
         )->get("https://staging.eko.in:25004/ekoapi/v1/transactions/$transaction_id?initiator_id=$initiator_id");
-
+        $this->apiRecords($transaction_id, 'eko', $response);
         return $response;
     }
 
@@ -197,14 +194,14 @@ class AepsApiController extends CommissionController
     {
         $data = [
             'service_code' => "39",
-            'initiator_id' => 9962981729,
-            'user_code' => auth()->user()->user_code ??  20310003
+            'initiator_id' => 7411111111,
+            'user_code' => auth()->user()->user_code ??  20310006
         ];
 
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
         )->put('https://staging.eko.in:25004/ekoapi/v1/user/service/activate', $data);
-
+        $this->apiRecords($data['user_code'], 'eko', $response);
         return $response;
     }
 
@@ -213,8 +210,8 @@ class AepsApiController extends CommissionController
 
         $data = [
             'service_code' => 39,
-            'initiator_id' => env('INITIATOR_ID'),
-            'user_code' => auth()->user()->user_code,
+            'initiator_id' => 7411111111,
+            'user_code' => auth()->user()->user_code ?? 20310006,
             'bank_id' => 108,
             'ifsc' => $request['ifsc'],
             'account' => $request['acc_num'],
@@ -223,26 +220,26 @@ class AepsApiController extends CommissionController
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
         )->put("https://staging.eko.in:25004/ekoapi/v1/agent/user_code:{$data['user_code']}/settlementaccount", $data);
-
+        $this->apiRecords($data['user_code'], 'eko', $response);
         return $response;
     }
 
     public function initiateSettlement(Request $request)
     {
-        $usercode = auth()->user()->user_code;
+        $usercode = auth()->user()->user_code ?? 20310006;
         $data = [
             'service_code' => 39,
             'initiator_id' => 7411111111,
-            'amount' => $request['amount'],
-            'recipient_id' => $request['recipient_id'],
+            'amount' => $request['amount'] ?? 1000,
+            'recipient_id' => $request['recipient_id'] ?? 9971412064,
             'payment_mode' => 5,
-            'client_ref_id' => $request['client_ref_id']
+            'client_ref_id' => "PESA24SET".strtoupper(uniqid().Str::random(10))
         ];
 
         $response = Http::asForm()->withHeaders(array_merge($this->headerArray() ,[
             'cache-control' => 'no-cache',
         ]))->post("https://staging.eko.in:25004/ekoapi/v1/agent/user_code:$usercode/settlement", $data);
-
+        $this->apiRecords($data['client_ref_id'], 'eko', $response);
         return $response;
     }
 

@@ -48,7 +48,7 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true,
         ];
-        $this->transaction($debit, 'Comission AePS', 'withdrawal', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Commission AePS', 'withdrawal', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");

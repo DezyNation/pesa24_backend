@@ -89,10 +89,6 @@ class LICController extends CommissionController
             ];
             $walletAmt = auth()->user()->wallet;
             $balance_left = $walletAmt - $data['amount'];
-            
-            User::where('id', auth()->user()->id)->update([
-                'wallet' => $balance_left
-            ]);
 
             $transaction_id = "BBPS" . strtoupper(Str::random(9));
             $this->transaction($data['amount'], "Bill Payment for LIC", 'lic', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));

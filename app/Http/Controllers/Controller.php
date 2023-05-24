@@ -37,6 +37,19 @@ class Controller extends BaseController
         return $data;
     }
 
+    public function apiRecords(string $refernce_id, string $provider, string $response)
+    {
+        $data = DB::table('api_records')->insert([
+            'user_id' => auth()->user()->id,
+            'organization_id' => auth()->user()->organization_id,
+            'reference_id' => $refernce_id,
+            'provider_id' => $provider,
+            'response' => $response
+        ]);
+
+        return $data;
+    }
+
     public function activateService(Request $request)
     {
         $service_id = $request['id'];
@@ -69,6 +82,10 @@ class Controller extends BaseController
             'transaction_id' => $transaction_id,
             'created_at' => now(),
             'updated_at' => now()
+        ]);
+
+        User::where('id', auth()->user()->id)->update([
+            'wallet' => $closing_balance
         ]);
 
         return response()->json(['message' => 'Transaction successful.']);
