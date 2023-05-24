@@ -78,6 +78,7 @@ Route::get('/', function () {
     // return $data;
 });
 
+Route::get('inquiry', [AepsApiController::class, 'bankSettlement']);
 Route::get('pan', [PANController::class, 'generateUrl']);
 // Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
 // Route::prefix('commissions')->group(function () {

@@ -117,9 +117,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('transaction/{type}', [UserDashboardController::class, 'sunTransaction']);
 });
 
-Route::get('eko/aeps/aeps-inquiry', [EkoAepsApiController::class, 'aepsInquiry']);
 Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(function () {
     /*------------------------EKO AEPS------------------------*/
+    Route::get('eko/aeps/aeps-inquiry', [EkoAepsApiController::class, 'aepsInquiry']);
     Route::get('fund-settlement', [EkoAepsApiController::class, 'fundSettlement']);
     Route::get('eko/aeps/money-transfer', [EkoAepsApiController::class, 'moneyTransfer']);
     Route::get('users/{id}', [ProfileController::class, 'findUser']);
