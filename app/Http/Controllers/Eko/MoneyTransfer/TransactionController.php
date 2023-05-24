@@ -6,8 +6,9 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\CommissionController;
 
-class TransactionController extends Controller
+class TransactionController extends CommissionController
 {
     public function headerArray()
     {
@@ -55,7 +56,7 @@ class TransactionController extends Controller
                 'currency' => 'INR',
                 'customer_id' => $customer_id,
                 'initiator_id' => 9999912796,
-                'client_ref_id' => substr(strtoupper(uniqid().Str::random(10)), 0, 10),
+                'client_ref_id' => substr(strtoupper(uniqid() . Str::random(10)), 0, 10),
                 'state' => 1,
                 'channel' => 2,
                 'latlong' => '26.8863786%2C75.7393589',
@@ -70,7 +71,7 @@ class TransactionController extends Controller
                 'currency' => 'INR',
                 'customer_id' => $customer_id,
                 'initiator_id' => 9999912796,
-                'client_ref_id' => substr(strtoupper(uniqid().Str::random(10)), 0, 10),
+                'client_ref_id' => substr(strtoupper(uniqid() . Str::random(10)), 0, 10),
                 'state' => 1,
                 'channel' => 2,
                 'latlong' => '26.8863786%2C75.7393589',
@@ -81,9 +82,19 @@ class TransactionController extends Controller
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
         )->post('http://dev.simplibank.eko.in:25008/ekoicici/v2/transactions', $data);
-        
-        if ($response['response_status_id'] == 0) {
-            # code...
+
+        if ($response['status'] == 0) {
+            $metadata = [
+                'status' => true,
+                'amount' => $response['data']['amount'],
+                'reference_id' => $response['data']['client_ref_id']
+            ];
+            $opening_balance = auth()->user()->wallet;
+            $closing_balance = $opening_balance - $data['amount'];
+            $this->transaction($data['amount'], "DMT to {$response['data']['recipient_name']}", 'dmt', auth()->user()->id, $opening_balance, $data['client_ref_id'], $closing_balance, json_encode($metadata));
+            $this->dmtCommission(auth()->user()->id, $data['amount']);
+
+            return response(['metadata' => $metadata]);
         }
 
         return $response;
@@ -91,12 +102,12 @@ class TransactionController extends Controller
 
     /*------------------------------Transaction Inquiry------------------------------*/
     public function transactionInquiry($transactionid)
-    {   
+    {
         $usercode = auth()->user()->user_code;
 
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
-            )->get("https://staging.eko.in:25004/ekoapi/v2/transactions/$transactionid?initiator_id=9962981729&user_code=$usercode");
+        )->get("https://staging.eko.in:25004/ekoapi/v2/transactions/$transactionid?initiator_id=9962981729&user_code=$usercode");
 
         return $response;
     }
@@ -104,7 +115,7 @@ class TransactionController extends Controller
     /*------------------------------Transaction Inquiry------------------------------*/
     public function refundOtp($tid)
     {
-        
+
         $data = [
             'initiator_id' => 9962981729,
             'user_code' => 20810200,
