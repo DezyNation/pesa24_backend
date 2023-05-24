@@ -20,7 +20,7 @@ class GlobalServiceController extends Controller
             'service_name' => $request['service_name'],
             'image_url' => $request['image_url'],
             'is_active' => $request['is_active'],
-            'can_subscribe' => $request['can_subscribe'],
+            'api_call' => $request['api_call'],
             'down_message' => $request['down_message'],
             'updated_at' => now()
         ]);

@@ -12,26 +12,27 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\CommissionController;
-use App\Http\Controllers\Paysprint\BBPS\LICController;
 use App\Http\Controllers\Paysprint\LPGController;
+use App\Http\Controllers\Paysprint\PANController;
 use App\Http\Controllers\Razorpay\PayoutController;
 use App\Http\Controllers\Eko\AePS\AepsApiController;
 use App\Http\Controllers\Razorpay\ContactController;
 use App\Http\Controllers\Paysprint\OnboardController;
+use App\Http\Controllers\Paysprint\BBPS\LICController;
 use App\Http\Controllers\Paysprint\BBPS\BillController;
+use App\Http\Controllers\Paysprint\BBPS\FastTagController;
 use App\Http\Controllers\Pesa24\KycVerificationController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
+use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
 use App\Http\Controllers\Eko\Agent\AgentManagementController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
+use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
-use App\Http\Controllers\Paysprint\BBPS\FastTagController;
-use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
-use App\Http\Controllers\Paysprint\PANController;
-use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,7 +80,7 @@ Route::get('/', function () {
 });
 
 Route::get('inquiry', [AepsApiController::class, 'initiateSettlement']);
-Route::get('inquiry', [AepsApiController::class, 'initiateSettlement']);
+Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
 Route::get('pan', [PANController::class, 'generateUrl']);
 // Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
 // Route::prefix('commissions')->group(function () {
