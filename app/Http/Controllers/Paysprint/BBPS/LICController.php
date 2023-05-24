@@ -44,7 +44,7 @@ class LICController extends CommissionController
             'Token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://api.paysprint.in/api/v1/service/bill-payment/bill/fetchlicbill', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/fetchlicbill', $data);
 
         return $response;
     }
@@ -53,15 +53,15 @@ class LICController extends CommissionController
     {
         $request->validate([
             'canumber' => 'required',
-            'mode' => 'required',
             'latlong' => 'required',
-            'bill' => 'required'
+            'bill' => 'required',
+            'amount' => 'required'
         ]);
         $latlong = explode(",", $request['latlong']);
         $token = $this->token();
         $data = [
                 'canumber' => $request['canumber'],
-                'mode' => $request['mode'],
+                'mode' => 'online',
                 'amount' => $request['amount'],
                 'ad1' => $request['ad1'],
                 'ad2' => $request['ad2'],
@@ -76,7 +76,7 @@ class LICController extends CommissionController
             'token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://api.paysprint.in/api/v1/service/bill-payment/bill/paylicbill', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paylicbill', $data);
 
         
         if ($response->json($key = 'response_code') == 1 || $response->json($key = 'response_code') == 0) {
@@ -87,15 +87,18 @@ class LICController extends CommissionController
                 'reference_id' => $data['referenceid'],
                 'acknowldgement_number' => $response['ackno'] ?? null,
             ];
-            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $balance_left = $walletAmt[0] - $data['amount'];
+            $walletAmt = auth()->user()->wallet;
+            $balance_left = $walletAmt - $data['amount'];
+            
             User::where('id', auth()->user()->id)->update([
                 'wallet' => $balance_left
             ]);
 
             $transaction_id = "BBPS" . strtoupper(Str::random(9));
-            $this->transaction($data['amount'], "Bill Payment", 'lic', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction($data['amount'], "Bill Payment for LIC", 'lic', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->licCommission(auth()->user()->id, $data['amount']);
+
+            return response(['metadata' => $metadata]);
 
         } elseif ($response->json($key = 'response_code') == 16 || $response->json($key = 'response_code') == 6 || $response->json($key = 'response_code') == 12) {
             $metadata = [

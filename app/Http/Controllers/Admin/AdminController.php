@@ -116,6 +116,30 @@ class AdminController extends Controller
                     ->select('b_b_p_s.parents', 'b_b_p_s.category', 'b_b_p_s.operator', 'b_b_p_s.from', 'b_b_p_s.to', 'b_b_p_s.fixed_charge', 'b_b_p_s.is_flat', 'b_b_p_s.gst', 'b_b_p_s.retailer_commission', 'b_b_p_s.distributor_commission', 'b_b_p_s.super_distributor_commission', 'b_b_p_s.admin_commission')
                     ->get();
                 break;
+
+            case 'fastag':
+                $data = DB::table('fasttag_commissions')
+                    ->join('packages', 'packages.id', '=', 'fasttag_commissions.package_id')
+                    ->where('fasttag_commissions.package_id', $id)
+                    ->select('fasttag_commissions.*')
+                    ->get();
+                break;
+
+            case 'lic':
+                $data = DB::table('lic_commissions')
+                    ->join('packages', 'packages.id', '=', 'lic_commissions.package_id')
+                    ->where('lic_commissions.package_id', $id)
+                    ->select('lic_commissions.*')
+                    ->get();
+                break;
+
+            case 'cms':
+                $data = DB::table('cms_commissions')
+                    ->join('packages', 'packages.id', '=', 'cms_commissions.package_id')
+                    ->where('cms_commissions.package_id', $id)
+                    ->select('cms_commissions.*')
+                    ->get();
+                break;
             default:
                 $data = response("Invalid parameter was sent.", 404);
                 break;
@@ -210,7 +234,7 @@ class AdminController extends Controller
                     'package_id' => 'required',
                 ]);
                 $data = DB::table('a_e_p_s')
-                    ->updateOrInsert(['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']], $request->except('id'));
+                    ->updateOrInsert(['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']], $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat', 'fixed_charge']));
                 break;
 
             case 'aeps-aadhaar-pay':
@@ -229,7 +253,7 @@ class AdminController extends Controller
             case 'aeps-mini-statement':
                 $request->validate([
                     'fixed_charge' => 'required',
-                    'package_id' => 'required'
+                    'package_id' => 'required',
                 ]);
                 $data = DB::table('ae_p_s_mini_statements')
                     ->updateOrInsert(['fixed_charge' => $request['fixed_charge'], 'package_id' => $request['package_id']], $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat']));
@@ -255,7 +279,7 @@ class AdminController extends Controller
                     'package_id' => 'required',
                 ]);
                 $data = DB::table('d_m_t_s')
-                    ->updateOrInsert(['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']], $request->except('id'));
+                    ->updateOrInsert(['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']], $request->only(['from', 'to', 'gst', 'retailer_commission', 'distributor_commission', 'super_distributor_commission', 'fixed_charge', 'is_flat']));
                 break;
 
             case 'payout':
@@ -268,12 +292,12 @@ class AdminController extends Controller
                         ],
                         [
                             'name' => $request['name'],
-                            'gst' => $request['gst'],
-                            'is_flat' => $request['is_flat'],
-                            'fixed_charge' => $request['fixed_charge'],
-                            'super_distributor_commission' => $request['super_distributor_commission'],
-                            'distributor_commission' => $request['distributor_commission'],
-                            'retailer_commission' => $request['retailer_commission'],
+                            'gst' => $request['gst'] ?? 0,
+                            'is_flat' => $request['is_flat'] ?? 0,
+                            'fixed_charge' => $request['fixed_charge'] ?? 0,
+                            'super_distributor_commission' => $request['super_distributor_commission'] ?? 0,
+                            'distributor_commission' => $request['distributor_commission'] ?? 0,
+                            'retailer_commission' => $request['retailer_commission'] ?? 0,
                             'updated_at' => now()
                         ]
                     );
@@ -304,6 +328,29 @@ class AdminController extends Controller
                     ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
                     $request->except('id')
                 );
+
+                break;
+
+            case 'fastag':
+                $data = DB::table('fasttag_commissions')->updateOrInsert(
+                    ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
+                    $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat', 'fixed_charge'])
+                );
+                break;
+
+            case 'lic':
+                $data = DB::table('lic_commissions')->updateOrInsert(
+                    ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
+                    $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat', 'fixed_charge'])
+                );
+                break;
+
+            case 'cms':
+                $data = DB::table('cms_commissions')->updateOrInsert(
+                    ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
+                    $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat', 'fixed_charge', 'provider'])
+                );
+            break;
 
             default:
                 $data = response("Invalid parameter was sent.", 404);
@@ -381,9 +428,9 @@ class AdminController extends Controller
                 'package_id' => $request['package_id'],
                 'updated_at' => now()
             ]
-            );
+        );
 
-            return $data;
+        return $data;
     }
 
     public function userRemarks(Request $request)
@@ -423,15 +470,86 @@ class AdminController extends Controller
     {
         $role = User::find($request['userId'])->getRoleNames();
         $parent = DB::table('users')->where('user_id', 91)
-        ->join('user_parent as parents', 'parents.parent_id', '=', 'users.id')
-        ->select('users.name', 'users.id')
-        ->get();
+            ->join('user_parent as parents', 'parents.parent_id', '=', 'users.id')
+            ->select('users.name', 'users.id')
+            ->get();
         return ['parent' => $parent, 'role' => $role];
     }
 
     public function removeParent(Request $request)
     {
         $data = DB::table('user_parent')->where('user_id', $request['userId'])->delete();
+        return $data;
+    }
+
+    public function deleteCommission($name, $id)
+    {
+        switch ($name) {
+            case 'aeps-cash-withdrawal':
+                $data = DB::table('a_e_p_s')
+                    ->where('id', $id)
+                    ->delete();
+                break;
+
+
+            case 'aeps-aadhaar-pay':
+                $data = DB::table('aadhaar_pays')
+                    ->where('id', $id)
+                    ->delete();
+                break;
+
+            case 'aeps-mini-statement':
+                $data = DB::table('ae_p_s_mini_statements')
+                    ->where('id', $id)
+                    ->delete();
+                break;
+
+            case 'dmt':
+                $data = DB::table('d_m_t_s')
+                    ->where('id', $id)
+                    ->delete();
+                break;
+
+            case 'payout':
+                $data = DB::table('payoutcommissions')
+                    ->where('id', $id)
+                    ->delete();
+                break;
+
+            case 'recharge':
+                $data = DB::table('recharges')
+                    ->where('id', $id)
+                    ->delete();
+                break;
+
+            case 'bbps':
+                $data = DB::table('b_b_p_s')
+                    ->where('id', $id)
+                    ->delete();
+                break;
+
+            case 'fastag':
+                $data = DB::table('fasttag_commissions')
+                    ->where('id', $id)
+                    ->delete();
+                break;
+
+            case 'lic':
+                $data = DB::table('lic_commissions')
+                    ->where('id', $id)
+                    ->delete();
+                break;
+
+            case 'cms':
+                $data = DB::table('cms_commissions')
+                    ->where('id', $id)
+                    ->delete();
+                break;
+            default:
+                $data = response("Invalid parameter was sent.", 404);
+                break;
+        }
+
         return $data;
     }
 }

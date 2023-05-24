@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Eko\AePS;
 
+use App\Http\Controllers\CommissionController;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -12,14 +13,29 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class AepsApiController extends Controller
+class AepsApiController extends CommissionController
 {
+
+    public function headerArray()
+    {
+        $key = "d2fe1d99-6298-4af2-8cc5-d97dcf46df30";
+        $encodedKey = base64_encode($key);
+        $secret_key_timestamp = round(microtime(true) * 1000);
+        $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
+        $secret_key = base64_encode($signature);
+
+        return [
+            'developer_key' => env('DEVELOPER_KEY'),
+            'secret-key' => $secret_key,
+            'secret-key-timestamp' => $secret_key_timestamp
+        ];
+    }
+
     public function moneyTransfer(Request $request)
     {
         /*---------------------------------------------Data Encoding---------------------------------------------*/
-        $service_id = $request['serviceId'];
-        $aadhar = $request['aadharNo'];
-        $amount = $request['amount'];
+        $aadhar = $request['aadharNo'] ?? 123456789012;
+        $amount = $request['amount'] ?? 100;
         $usercode = 99099211;
         $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
         $encodedKey = base64_encode($key);
@@ -103,8 +119,10 @@ class AepsApiController extends Controller
             'wallet' => $closing_balance,
             'updated_at' => now()
         ]);
-        $this->transaction($amount, 'AePS: Withdrawal', 'banking', auth()->user()->id, $opening_balance, $transaction_id, $closing_balance);
-        $this->baseCommission($amount, auth()->user()->id, $service_id);
+        $metadata = [
+            'status' => true
+        ];
+        $this->transaction($amount, 'AePS: Withdrawal', 'banking', auth()->user()->id, $opening_balance, $transaction_id, json_encode($metadata), $closing_balance);
 
         return $response;
     }
@@ -264,20 +282,12 @@ class AepsApiController extends Controller
 
     public function aepsInquiry(Request $request)
     {
-        $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
-        $encodedKey = base64_encode($key);
-        $secret_key_timestamp = round(microtime(true) * 1000);
-        $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
-        $secret_key = base64_encode($signature);
-
         $initiator_id = 9962981729;
-        $transaction_id = $request['transction_id'];
+        $transaction_id = $request['transction_id'] ?? 1234545;
 
-        $response = Http::withHeaders([
-            'developer_key' => 'becbbce45f79c6f5109f848acd540567',
-            'secret-key-timestamp' => $secret_key_timestamp,
-            'secret-key' => $secret_key,
-        ])->get("https://staging.eko.in:25004/ekoapi/v1/transactions/$transaction_id?initiator_id=$initiator_id");
+        $response = Http::withHeaders(
+            $this->headerArray()
+        )->get("https://staging.eko.in:25004/ekoapi/v1/transactions/$transaction_id?initiator_id=$initiator_id");
 
         return $response;
     }
