@@ -1294,7 +1294,7 @@ class CommissionController extends Controller
         return $table;
     }
 
-    public function fastCommission($user_id, $amount)
+    public function fastCommission(int $user_id, float $amount)
     {
         $table = DB::table('fasttag_commissions')
             ->join('package_user', 'package_user.package_id', '=', 'fasttag_commissions.package_id')
