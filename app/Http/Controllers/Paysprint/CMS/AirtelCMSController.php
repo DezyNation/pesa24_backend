@@ -36,7 +36,7 @@ class AirtelCMSController extends Controller
             'Token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://paysprint.in/service-api/api/v1/service/airtelcms/airtel/generate_url', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/airtelcms/airtel/generate_url', $data);
 
         if ($response['response_code'] == 1) {
             DB::table('cms_records')->insert([
@@ -63,7 +63,7 @@ class AirtelCMSController extends Controller
             'Token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://paysprint.in/service-api/api/v1/service/airtelcms/airtel/status', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/airtelcms/airtel/status', $data);
 
         return $response;
     }

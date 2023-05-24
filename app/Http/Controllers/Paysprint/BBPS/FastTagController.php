@@ -54,7 +54,7 @@ class FastTagController extends CommissionController
             'Token' => $token,
             'Content-Type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://paysprint.in/service-api/api/v1/service/fastag/Fastag/fetchConsumerDetails', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/fastag/Fastag/fetchConsumerDetails', $data);
 
         return $response;
     }
@@ -83,7 +83,7 @@ class FastTagController extends CommissionController
             'Token' => $token,
             'Content-Type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://paysprint.in/service-api/api/v1/service/fastag/Fastag/recharge', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/fastag/Fastag/recharge', $data);
 
         if ($response['response_code'] == 1) {
             $metadata = [
@@ -121,7 +121,7 @@ class FastTagController extends CommissionController
             'Token' => $token,
             'Content-Type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://paysprint.in/service-api/api/v1/service/fastag/Fastag/status', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/fastag/Fastag/status', $data);
 
         return $response;
     }

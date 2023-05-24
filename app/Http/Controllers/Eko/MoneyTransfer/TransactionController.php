@@ -24,7 +24,7 @@ class TransactionController extends Controller
         ];
     }
 
-    public function splitAmount($recipient_id, $amount, $customer_id)
+    public function splitAmount($recipient_id = 10011321, $amount = 5100, $customer_id = 8619485911)
     {
         $data = [
             'recipient_id' => $recipient_id,
@@ -37,9 +37,7 @@ class TransactionController extends Controller
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
         )->get("http://dev.simplibank.eko.in:25008/ekoicici/v1/transactions/split", $data);
-        
-        // ?initiator_id={$data['initiator_id']}&customer_id={$data['customer_id']}&recipient_id={$data['recipient_id']}&amount={$data['amount']}&channel=2"
-        return $response;
+        return $response['data']['split_tid'];
     }
     /*------------------------------Initiate Transaction------------------------------*/
     public function initiateTransaction()
@@ -66,24 +64,27 @@ class TransactionController extends Controller
             ];
         } else {
             $data = [
-                'recipient_id' => 10011321,
-                'amount' => 5600,
+                'recipient_id' => $recipient_id,
+                'amount' => $amount,
                 'timestamp' => time(),
                 'currency' => 'INR',
-                'customer_id' => 8619485911,
+                'customer_id' => $customer_id,
                 'initiator_id' => 9999912796,
                 'client_ref_id' => substr(strtoupper(uniqid().Str::random(10)), 0, 10),
                 'state' => 1,
                 'channel' => 2,
                 'latlong' => '26.8863786%2C75.7393589',
                 'user_code' => 99029899,
-                'split_tid' => 2886107641
             ];
         }
 
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
         )->post('http://dev.simplibank.eko.in:25008/ekoicici/v2/transactions', $data);
+        
+        if ($response['response_status_id'] == 0) {
+            # code...
+        }
 
         return $response;
     }
