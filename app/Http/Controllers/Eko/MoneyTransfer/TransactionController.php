@@ -37,13 +37,13 @@ class TransactionController extends CommissionController
 
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
-        )->get("http://dev.simplibank.eko.in:25008/ekoicici/v1/transactions/split", $data);
+        )->get("http://staging.eko.in:8080/ekoapi/v1/transactions/split", $data);
         return $response['data']['split_tid'];
     }
     /*------------------------------Initiate Transaction------------------------------*/
     public function initiateTransaction()
     {
-        $amount = 5000;
+        $amount = 5600;
         $recipient_id = 10011321;
         $customer_id = 8619485911;
 
@@ -81,8 +81,8 @@ class TransactionController extends CommissionController
 
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
-        )->post('http://dev.simplibank.eko.in:25008/ekoicici/v2/transactions', $data);
-
+        )->post('http://staging.eko.in:8080/ekoapi/v2/transactions', $data);
+        return json_decode($response);
         if ($response['status'] == 0) {
             $metadata = [
                 'status' => true,
