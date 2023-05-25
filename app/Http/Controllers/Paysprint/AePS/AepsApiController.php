@@ -173,7 +173,7 @@ class AepsApiController extends CommissionController
         $response = Http::withHeaders([
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
-        ])->post('https://api.paysprint.in/api/v1/service/aeps/banklist/index', []);
+        ])->post('https://api.paysprint.in/api/v1/service/balance/balance/authenticationcheck', []);
 
         return $response;
     }

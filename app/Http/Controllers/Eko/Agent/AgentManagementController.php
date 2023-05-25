@@ -73,6 +73,30 @@ class AgentManagementController extends Controller
         return $response;
     }
 
+    public function aepsOnboard(Request $request)
+    {
+        $data = [
+            'service_code' => $request['serviceCode'] ?? 43,
+            'initiator_id' => '9962981729',
+            'user_code' => auth()->user()->user_code ?? 20810200,
+            'modelname' => $request['modelname']??'ANYDFEFE',
+            'devicenumber' => $request['devicenumber'] ?? 'q1232e',
+            'office_address' => json_encode(['line' => strval($request['line']?? 'ABC'), 'city' => strval($request['city']??'ASD'), 'state' => strval($request['state']?? 'Delhi NCR'), 'pincode' => strval($request['pincode'] ?? 110033)]),
+            'address_as_per_proof' => json_encode(['line' => strval($request['line']?? 'ABC'), 'city' => strval($request['city']??'ASD'), 'state' => strval($request['state']?? 'Delhi NCR'), 'pincode' => strval($request['pincode'] ?? 110033)]),
+            // 'address_as_per_proof' => json_encode(['line' => strval($request['lineProof']), 'city' => strval($request['cityProof']), 'state' => strval($request['stateProof']), 'pincode' => strval($request['pincodeProof'])])
+        ];
+        $pan = "../storage/app/aadhar_back/IcZlHKoDq9h6zJSAZkocAwsISgpwDqUd5tYybTGf.png";
+        $aadhar_front = "../storage/app/aadhar_back/IcZlHKoDq9h6zJSAZkocAwsISgpwDqUd5tYybTGf.png";
+        $aadhar_back = "../storage/app/aadhar_back/IcZlHKoDq9h6zJSAZkocAwsISgpwDqUd5tYybTGf.png";
+
+        $response = Http::attach('pancard', file_get_contents($pan), 'pan.png')->attach('aadhar_front', file_get_contents($aadhar_front), 'aadhar_front.png')->attach('aadhar_back', file_get_contents($aadhar_back), 'aadhar_back.png')
+        ->asForm()
+        ->withHeaders(
+            $this->headerArray()
+        )->put('http://staging.eko.in:8080/ekoapi/v1/user/service/activate', $data);
+        return $response;
+    }
+
     public function services()
     {
         $key = "f74c50a1-f705-4634-9cda-30a477df91b7";

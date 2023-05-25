@@ -46,7 +46,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayo
 |
 */
 
-Route::get('/file', function (Request $request=null) {
+Route::get('/file', function () {
 
 
 
@@ -108,9 +108,9 @@ Route::get('/file', function (Request $request=null) {
     // return $data;
 });
 
-Route::get('inquiry', [AepsApiController::class, 'initiateSettlement']);
+Route::get('inquiry', [AepsApiController::class, 'moneyTransfer']);
 Route::get('dmt', [CustomerRecipientController::class, 'customerInfo']);
-Route::get('pan', [PANController::class, 'file']);
+Route::get('pan', [AgentManagementController::class, 'aepsOnboard']);
 // Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
 // Route::prefix('commissions')->group(function () {
 //     // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);

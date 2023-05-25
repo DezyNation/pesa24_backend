@@ -26,8 +26,8 @@ class AepsApiController extends CommissionController
 
         return [
             'developer_key' => env('DEVELOPER_KEY'),
-            // 'secret-key' => $secret_key,
-            // 'secret-key-timestamp' => $secret_key_timestamp
+            'secret-key' => $secret_key,
+            'secret-key-timestamp' => $secret_key_timestamp
         ];
     }
 
@@ -93,7 +93,7 @@ class AepsApiController extends CommissionController
         $response = Http::withHeaders(array_merge($this->headerArray(), [
             'Content-Type' => 'application/json',
             'request_hash' => $encryption['request_hash']
-        ]))->post('https://staging.eko.in:25004/ekoapi/v2/aeps', $data);
+        ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
 
 
         return $response;
