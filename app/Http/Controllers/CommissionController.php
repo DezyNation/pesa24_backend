@@ -1040,6 +1040,119 @@ class CommissionController extends Controller
         return true;
     }
 
+
+
+    public function bbpsEkoCommission($user_id, $operator, $amount)
+    { 
+        $table = DB::table('b_b_p_s')
+            ->join('package_user', 'package_user.package_id', '=', 'b_b_p_s.package_id')
+            ->where(['package_user.user_id' => $user_id, 'b_b_p_s.eko_id' => $operator])->where('b_b_p_s.from', '<', $amount)->where('b_b_p_s.to', '>=', $amount)
+            ->get();
+
+        if ($table->isEmpty()) {
+            return response("No commissions.");
+        }
+
+        $table = $table[0];
+
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = $table->fixed_charge;
+        $is_flat = $table->is_flat;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->{$role_commission_name};
+        $opening_balance = $user->wallet;
+
+        if ($is_flat) {
+            $debit = $fixed_charge;
+            $credit = $role_commission - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        } elseif (!$is_flat) {
+            $debit = $amount * $fixed_charge / 100;
+            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        }
+
+        $metadata = [
+            'status' => true
+        ];
+
+        $transaction_id = "RECHARGE" . strtoupper(Str::random(9));
+        $this->transaction($debit, 'BBPS bill Comission', 'bbps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
+
+        if (!$table->parents) {
+            return response("No comission for parents");
+        }
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+
+        if ($parent->exists()) {
+            $parent_id = $parent->pluck('parent_id');
+            $this->bbpsParentEkoCommission($parent_id[0], $operator, $amount);
+        }
+
+        return true;
+    }
+
+    public function bbpsParentEkoCommission($user_id, $operator, $amount)
+    {
+        $table = DB::table('b_b_p_s')
+            ->join('package_user', 'package_user.package_id', '=', 'b_b_p_s.package_id')
+            ->where(['package_user.user_id' => $user_id, 'b_b_p_s.eko_id' => $operator])->where('b_b_p_s.from', '<', $amount)->where('b_b_p_s.to', '>=', $amount)
+            ->get();
+
+        if ($table->isEmpty()) {
+            return response("No commissions.");
+        }
+
+        $table = $table[0];
+
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = 0;
+        $is_flat = $table->is_flat;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->{$role_commission_name};
+        $opening_balance = $user->wallet;
+
+        if ($is_flat) {
+            $debit = $fixed_charge;
+            $credit = $role_commission - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        } elseif (!$is_flat) {
+            $debit = $amount * $fixed_charge / 100;
+            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $debit + $credit;
+        }
+        $metadata = [
+            'status' => true
+        ];
+        $transaction_id = "BBPSCOM" . strtoupper(Str::random(9));
+        $this->transaction($debit, 'BBPS Bill COMISSIONS', 'bbps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
+
+        if (!$table->parents) {
+            return response("No commission for parents");
+        }
+
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+
+        if ($parent->exists()) {
+            $parent_id = $parent->pluck('parent_id');
+            $this->bbpsParentEkoCommission($parent_id[0], $operator, $amount);
+        }
+
+        return true;
+    }
+
     /*-------------------------------------BBPS Commissions-------------------------------------*/
 
 
