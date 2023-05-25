@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\CommissionController;
+use CURLFile;
 use Illuminate\Support\Facades\Log;
 
 class PANController extends CommissionController
@@ -27,7 +28,7 @@ class PANController extends CommissionController
         return $jwt;
     }
 
-/*------------------------------PAN NSDL------------------------------*/
+    /*------------------------------PAN NSDL------------------------------*/
     public function generateUrl(Request $request)
     {
 
@@ -41,9 +42,9 @@ class PANController extends CommissionController
         ]);
 
         $token = $this->token();
-             
+
         $data = [
-            'refid' => "PESA24".strtoupper(uniqid() . Str::random(12)),
+            'refid' => "PESA24" . strtoupper(uniqid() . Str::random(12)),
             'title' => '1',
             'firstname' => $request['firstName'] ?? 'Rishi',
             'middlename' => $request['middleName'] ?? 'AS',
@@ -96,6 +97,26 @@ class PANController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://paysprint.in/service-api/api/v1/service/pan/V2/pan_status', $data);
+
+        return $response;
+    }
+
+    public function file()
+    {
+        $token = $this->token();
+        $data = [
+            'doctype' => 'PAN',
+            'bene_id' => 1257678,
+            'passbook' => 'ASas',
+            'panimage' => 'asas'
+        ];
+
+
+        $response = Http::attach('passbook', file_get_contents('../storage/app/pan/aqdr41MnYbMgcA6kv7vaFuVFrozdnOJya8NbFhc4.jpeg', true), 'passbook')->attach('panimage', file_get_contents('../storage/app/pan/aqdr41MnYbMgcA6kv7vaFuVFrozdnOJya8NbFhc4.jpeg', true), 'panimage')
+            ->asForm()->withHeaders([
+                'Token' => $token,
+                'Authorisedkey' => env('AUTHORISED_KEY'),
+            ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/uploaddocument', $data);
 
         return $response;
     }

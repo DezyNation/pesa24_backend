@@ -48,31 +48,33 @@ use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayo
 
 Route::get('/file', function (Request $request=null) {
 
-    $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
-    $encodedKey = base64_encode($key);
-    $secret_key_timestamp = round(microtime(true) * 1000);
-    $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
-    $secret_key = base64_encode($signature);
 
-    $data = [
-        'service_code' => $request['serviceCode'] ?? 43,
-        'initiator_id' => '9962981729',
-        'user_code' => auth()->user()->user_code ?? 20810200,
-        'modelname' => $request['modelname'] ?? "ANYSQE",
-        'devicenumber' => $request['devicenumber'] ?? 123433,
-        'office_address' => json_encode(['line' => strval($request['line'] ?? "ABD"), 'city' => strval($request['city']?? "ABD"), 'state' => strval($request['state']?? "Delhi NCR"), 'pincode' => strval($request['pincode']?? "110033")]),
-        'address_as_per_proof' => json_encode(['line' => strval($request['line'] ?? "ABD"), 'city' => strval($request['city']?? "ABD"), 'state' => strval($request['state']?? "Delhi NCR"), 'pincode' => strval($request['pincode']?? "110033")])
-    ];
-    $pan = storage_path('app/pan/fOawYlLn9uEmUYLfQlvQXl28GdT3ypqWTxYuLFX2.png');
-    $aadhar_front = storage_path('app/pan/fOawYlLn9uEmUYLfQlvQXl28GdT3ypqWTxYuLFX2.png');
-    $aadhar_back = storage_path('app/pan/fOawYlLn9uEmUYLfQlvQXl28GdT3ypqWTxYuLFX2.png');
 
-    $response = Http::asForm()->attach('pancard', file_get_contents($pan), 'pan.pdf')->attach('aadhar_front', file_get_contents($aadhar_front), 'aadhar_front.pdf')->attach('aadhar_back', file_get_contents($aadhar_back), 'aadhar_back.pdf')->withHeaders([
-        'developer_key' => 'becbbce45f79c6f5109f848acd540567',
-        'secret-key-timestamp' => $secret_key_timestamp,
-        'secret-key' => $secret_key,
-    ])->put('http://staging.eko.in:25004/ekoapi/v1/user/service/activate', $data);
-    return $response;
+    // $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
+    // $encodedKey = base64_encode($key);
+    // $secret_key_timestamp = round(microtime(true) * 1000);
+    // $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
+    // $secret_key = base64_encode($signature);
+
+    // $data = [
+    //     'service_code' => $request['serviceCode'] ?? 43,
+    //     'initiator_id' => '9962981729',
+    //     'user_code' => auth()->user()->user_code ?? 20810200,
+    //     'modelname' => $request['modelname'] ?? "ANYSQE",
+    //     'devicenumber' => $request['devicenumber'] ?? 123433,
+    //     'office_address' => json_encode(['line' => strval($request['line'] ?? "ABD"), 'city' => strval($request['city']?? "ABD"), 'state' => strval($request['state']?? "Delhi NCR"), 'pincode' => strval($request['pincode']?? "110033")]),
+    //     'address_as_per_proof' => json_encode(['line' => strval($request['line'] ?? "ABD"), 'city' => strval($request['city']?? "ABD"), 'state' => strval($request['state']?? "Delhi NCR"), 'pincode' => strval($request['pincode']?? "110033")])
+    // ];
+    // $pan = storage_path('app/pan/fOawYlLn9uEmUYLfQlvQXl28GdT3ypqWTxYuLFX2.png');
+    // $aadhar_front = storage_path('app/pan/fOawYlLn9uEmUYLfQlvQXl28GdT3ypqWTxYuLFX2.png');
+    // $aadhar_back = storage_path('app/pan/fOawYlLn9uEmUYLfQlvQXl28GdT3ypqWTxYuLFX2.png');
+
+    // $response = Http::asForm()->attach('pancard', file_get_contents($pan), 'pan.pdf')->attach('aadhar_front', file_get_contents($aadhar_front), 'aadhar_front.pdf')->attach('aadhar_back', file_get_contents($aadhar_back), 'aadhar_back.pdf')->withHeaders([
+    //     'developer_key' => 'becbbce45f79c6f5109f848acd540567',
+    //     'secret-key-timestamp' => $secret_key_timestamp,
+    //     'secret-key' => $secret_key,
+    // ])->put('http://staging.eko.in:25004/ekoapi/v1/user/service/activate', $data);
+    // return $response;
     // $arr = [
     //     9971412064,
     //     9971412098
@@ -108,7 +110,7 @@ Route::get('/file', function (Request $request=null) {
 
 Route::get('inquiry', [AepsApiController::class, 'initiateSettlement']);
 Route::get('dmt', [CustomerRecipientController::class, 'customerInfo']);
-Route::get('pan', [PANController::class, 'generateUrl']);
+Route::get('pan', [PANController::class, 'file']);
 // Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
 // Route::prefix('commissions')->group(function () {
 //     // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);

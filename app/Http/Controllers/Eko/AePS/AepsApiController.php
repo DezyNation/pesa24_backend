@@ -26,8 +26,8 @@ class AepsApiController extends CommissionController
 
         return [
             'developer_key' => env('DEVELOPER_KEY'),
-            'secret-key' => $secret_key,
-            'secret-key-timestamp' => $secret_key_timestamp
+            // 'secret-key' => $secret_key,
+            // 'secret-key-timestamp' => $secret_key_timestamp
         ];
     }
 
@@ -226,7 +226,7 @@ class AepsApiController extends CommissionController
 
     public function initiateSettlement(Request $request)
     {
-        $usercode = auth()->user()->user_code ?? 20310006;
+        $usercode = auth()->user()->user_code ?? 99029899;
         $data = [
             'service_code' => 39,
             'initiator_id' => 7411111111,
@@ -238,9 +238,9 @@ class AepsApiController extends CommissionController
 
         $response = Http::asForm()->withHeaders(array_merge($this->headerArray() ,[
             'cache-control' => 'no-cache',
-        ]))->post("https://staging.eko.in:25004/ekoapi/v1/agent/user_code:$usercode/settlement", $data);
-        $this->apiRecords($data['client_ref_id'], 'eko', $response);
+        ]))->post("http://staging.eko.in:8080/ekoapi/v1/agent/user_code:$usercode/settlement", $data);
         return $response;
+        $this->apiRecords($data['client_ref_id'], 'eko', $response);
     }
 
 }
