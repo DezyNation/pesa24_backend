@@ -36,7 +36,7 @@ class CustomerRecipientController extends Controller
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
         )->get("http://dev.simplibank.eko.in:25008/ekoicici/v1/customers/mobile_number:$phone?initiator_id=9910028267&user_code=$user_code");
-
+            
         $data = $this->recipientList($phone);
         // return json_decode($data);
         return ['response' => json_decode($response->body()), 'recepient' => json_decode($data->body())];

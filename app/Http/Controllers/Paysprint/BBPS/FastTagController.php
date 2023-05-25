@@ -32,7 +32,7 @@ class FastTagController extends CommissionController
             'Token' => $token,
             'Content-Type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://paysprint.in/service-api/api/v1/service/fastag/Fastag/operatorsList', []);
+        ])->post('https://api.paysprint.in/api/v1/service/fastag/Fastag/operatorsList', []);
         return $response;
     }
 
