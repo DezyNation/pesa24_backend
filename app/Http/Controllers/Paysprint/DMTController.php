@@ -47,7 +47,7 @@ class DMTController extends CommissionController
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
         ])->post('https://api.paysprint.in/api/v1/service/dmt/remitter/queryremitter', $data);
-        Log::info(['response' => $response]);
+        Log::info(['response' => $response->body()]);
         return $response;
     }
 
