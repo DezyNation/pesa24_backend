@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Controllers\CommissionController;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class DMTController extends CommissionController
 {
@@ -133,13 +134,13 @@ class DMTController extends CommissionController
         $data = [
             'mobile' => $request['customerId']
         ];
-
+        Log::info(['payload' => $$request->all()]);
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
         ])->post('https://api.paysprint.in/api/v1/service/dmt/beneficiary/registerbeneficiary/fetchbeneficiary', $data);
-
+        Log::info(['response' => $response]);
         return $response;
     }
 
