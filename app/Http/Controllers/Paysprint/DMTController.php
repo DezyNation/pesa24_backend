@@ -41,13 +41,13 @@ class DMTController extends CommissionController
             'mobile' => $request['customerId'],
             'bank3_flag' => 'NO'
         ];
-
+        Log::info(['request' => $request->all()]);
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
         ])->post('https://api.paysprint.in/api/v1/service/dmt/remitter/queryremitter', $data);
-
+        Log::info(['response' => $response]);
         return $response;
     }
 
@@ -134,13 +134,12 @@ class DMTController extends CommissionController
         $data = [
             'mobile' => $request['customerId']
         ];
-        Log::info(['payload' => $$request->all()]);
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
         ])->post('https://api.paysprint.in/api/v1/service/dmt/beneficiary/registerbeneficiary/fetchbeneficiary', $data);
-        Log::info(['response' => $response]);
+
         return $response;
     }
 
