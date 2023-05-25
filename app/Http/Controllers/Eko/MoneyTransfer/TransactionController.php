@@ -41,11 +41,11 @@ class TransactionController extends CommissionController
         return $response['data']['split_tid'];
     }
     /*------------------------------Initiate Transaction------------------------------*/
-    public function initiateTransaction()
+    public function initiateTransaction(Request $request)
     {
-        $amount = 5600;
-        $recipient_id = 10011321;
-        $customer_id = 8619485911;
+        $amount = $request['amount'];
+        $recipient_id = $request['beneficiaryId'];
+        $customer_id = $request['customerId'];
 
         if ($amount > 5000) {
             $split_tid = $this->splitAmount($recipient_id, $amount, $customer_id);
@@ -59,7 +59,7 @@ class TransactionController extends CommissionController
                 'client_ref_id' => substr(strtoupper(uniqid() . Str::random(10)), 0, 10),
                 'state' => 1,
                 'channel' => 2,
-                'latlong' => '26.8863786%2C75.7393589',
+                'latlong' => $request['latlong'],
                 'user_code' => 99029899,
                 'split_tid' => $split_tid
             ];
@@ -74,7 +74,7 @@ class TransactionController extends CommissionController
                 'client_ref_id' => substr(strtoupper(uniqid() . Str::random(10)), 0, 10),
                 'state' => 1,
                 'channel' => 2,
-                'latlong' => '26.8863786%2C75.7393589',
+                'latlong' => $request['latlong'],
                 'user_code' => 99029899,
             ];
         }
@@ -82,7 +82,7 @@ class TransactionController extends CommissionController
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
         )->post('http://staging.eko.in:8080/ekoapi/v2/transactions', $data);
-        return json_decode($response);
+        // return json_decode($response);
         if ($response['status'] == 0) {
             $metadata = [
                 'status' => true,
@@ -94,10 +94,16 @@ class TransactionController extends CommissionController
             $this->transaction($data['amount'], "DMT to {$response['data']['recipient_name']}", 'dmt', auth()->user()->id, $opening_balance, $data['client_ref_id'], $closing_balance, json_encode($metadata));
             $this->dmtCommission(auth()->user()->id, $data['amount']);
 
-            return response(['metadata' => $metadata]);
+        } else {
+            $metadata = [
+                'status' => false,
+                'amount' => $request['amount'],
+                'reference_id' => $data['client_ref_id'],
+                'message' => $response['message']
+            ];
         }
 
-        return $response;
+        return response(['metadata' => $metadata]);
     }
 
     /*------------------------------Transaction Inquiry------------------------------*/

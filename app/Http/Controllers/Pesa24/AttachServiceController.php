@@ -72,10 +72,6 @@ class AttachServiceController extends Controller
         $closing_balance = $opening_balance - $amount;
         $transaction_id = "SER" . strtoupper(Str::random(5));
 
-        $user->update([
-            'wallet' => $closing_balance
-        ]);
-
         $metadata = [
             'status' => true,
             'amount' => $amount,

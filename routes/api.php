@@ -30,6 +30,7 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Admin\AdminTransactionController;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController;
 use App\Http\Controllers\Eko\AePS\AepsApiController as EkoAepsApiController;
+use App\Http\Controllers\Eko\Agent\AgentManagementController;
 use App\Http\Controllers\Pesa24\KycVerificationController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
@@ -125,6 +126,7 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::get('users/{id}', [ProfileController::class, 'findUser']);
 
     Route::post('activate-service', [AttachServiceController::class, 'attachService'])->middleware('subscribe');
+    Route::post('eko/activate-service', [AgentManagementController::class, 'newService']);
 
     /*------------------------EKO BBPS------------------------*/
     Route::get('eko/bbps/operators/categories', [BBPSController::class, 'operatorCategoryList']);
@@ -135,24 +137,24 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     /*------------------------EKO DMT------------------------*/
 
     Route::post('eko/dmt/customer-info/{service_code}', [CustomerRecipientController::class, 'customerInfo']);
-    Route::post('eko/dmt/create-customer', [CustomerRecipientController::class, 'createCustomer']);
-    Route::post('eko/dmt/resend-otp', [CustomerRecipientController::class, 'resendOtp']);
-    Route::post('eko/dmt/verify-customer', [CustomerRecipientController::class, 'verifyCustomerIdentity']);
+    Route::post('eko/dmt/create-customer/{service_code}', [CustomerRecipientController::class, 'createCustomer']);
+    Route::post('eko/dmt/resend-otp/{service_code}', [CustomerRecipientController::class, 'resendOtp']);
+    Route::post('eko/dmt/verify-customer/{service_code}', [CustomerRecipientController::class, 'verifyCustomerIdentity']);
 
     Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill']);
 
-    Route::get('eko/dmt/recipient-list', [CustomerRecipientController::class, 'recipientList']);
-    Route::get('eko/dmt/recipient-details', [CustomerRecipientController::class, 'recipientDetails']);
-    Route::post('eko/dmt/add-recipient', [CustomerRecipientController::class, 'addRecipient']);
+    Route::get('eko/dmt/recipient-list/{service_code}', [CustomerRecipientController::class, 'recipientList']);
+    Route::get('eko/dmt/recipient-details/{service_code}', [CustomerRecipientController::class, 'recipientDetails']);
+    Route::post('eko/dmt/add-recipient/{service_code}', [CustomerRecipientController::class, 'addRecipient']);
 
-    Route::get('eko/dmt/customer-info', [CustomerRecipientController::class, 'customerInfo']);
-    Route::post('eko/dmt/register-agent', [AgentCustomerController::class, 'dmtRegistration']);
-    Route::get('eko/dmt/fetch-agent', [AgentCustomerController::class, 'fetchAgent']);
+    Route::get('eko/dmt/customer-info/{service_code}', [CustomerRecipientController::class, 'customerInfo']);
+    // Route::post('eko/dmt/register-agent/{service_code}', [AgentCustomerController::class, 'dmtRegistration']);
+    // Route::get('eko/dmt/fetch-agent/{service_code}', [AgentCustomerController::class, 'fetchAgent']);
 
-    Route::post('eko/dmt/initiate-payment', [TransactionController::class, 'initiatePayment']);
+    Route::post('eko/dmt/initiate-payment/{service_code}', [TransactionController::class, 'initiateTransaction']);
     Route::get('eko/dmt/transaction-inquiry/{transactionid}', [TransactionController::class, 'transactionInquiry']);
-    Route::post('eko/dmt/transaction-refund/{tid}', [TransactionController::class, 'refund']);
-    Route::post('eko/dmt/transaction-refund-otp/{tid}', [TransactionController::class, 'refund']);
+    // Route::post('eko/dmt/transaction-refund/{tid}', [TransactionController::class, 'refund']);
+    // Route::post('eko/dmt/transaction-refund-otp/{tid}', [TransactionController::class, 'refund']);
     Route::post('paysprint/bank/bank-verify', [DMTController::class, 'penneyDrop']);
     /*-----------------------Razorpay Payout-----------------------*/
     Route::post('razorpay/payout/new-payout/{service_id}', [FundAccountController::class, 'createFundAcc']);

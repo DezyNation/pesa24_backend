@@ -109,8 +109,8 @@ Route::get('/file', function () {
 });
 
 Route::get('inquiry', [AepsApiController::class, 'moneyTransfer']);
-Route::get('dmt', [CustomerRecipientController::class, 'customerInfo']);
-Route::get('pan', [AgentManagementController::class, 'aepsOnboard']);
+Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
+Route::get('pan', [AgentManagementController::class, 'generalService']);
 // Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
 // Route::prefix('commissions')->group(function () {
 //     // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);
