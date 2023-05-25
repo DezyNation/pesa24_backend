@@ -29,6 +29,7 @@ use App\Http\Controllers\Pesa24\KycVerificationController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
 use App\Http\Controllers\Eko\Agent\AgentManagementController;
+use App\Http\Controllers\Eko\BBPS\BBPSController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
@@ -110,7 +111,7 @@ Route::get('/file', function () {
 
 Route::get('inquiry', [AepsApiController::class, 'moneyTransfer']);
 Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
-Route::get('pan', [AgentManagementController::class, 'generalService']);
+Route::get('pan', [BBPSController::class, 'fetchBill']);
 // Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
 // Route::prefix('commissions')->group(function () {
 //     // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);

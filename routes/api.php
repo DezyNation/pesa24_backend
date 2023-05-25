@@ -133,9 +133,9 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::get('eko/bbps/operators/{category_id?}', [BBPSController::class, 'operators']);
     Route::get('eko/bbps/operators/fields/{operator_id}', [BBPSController::class, 'operatorField']);
     Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill']);
-
+    
     /*------------------------EKO DMT------------------------*/
-
+    
     Route::post('eko/dmt/customer-info/{service_code}', [CustomerRecipientController::class, 'customerInfo']);
     Route::post('eko/dmt/create-customer/{service_code}', [CustomerRecipientController::class, 'createCustomer']);
     Route::post('eko/dmt/resend-otp/{service_code}', [CustomerRecipientController::class, 'resendOtp']);
