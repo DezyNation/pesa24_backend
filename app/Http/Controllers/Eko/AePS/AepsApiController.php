@@ -35,7 +35,7 @@ class AepsApiController extends CommissionController
     {
         $aadhar = $request['aadharNo'] ?? 123456789012;
         $amount = $request['amount'] ?? 100;
-        $usercode = 99099211;
+        $usercode = 20810200;
         $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
@@ -91,7 +91,7 @@ class AepsApiController extends CommissionController
         /*---------------------------Hit EKO api------------------------------*/
 
         $response = Http::withHeaders(array_merge($this->headerArray(), [
-            'Content-Type' => 'application/json',
+            // 'Content-Type' => 'application/json',
             'request_hash' => $encryption['request_hash']
         ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
 
