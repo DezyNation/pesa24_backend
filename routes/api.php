@@ -134,7 +134,7 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
 
     /*------------------------EKO DMT------------------------*/
 
-    Route::post('eko/dmt/customer-info', [CustomerRecipientController::class, 'customerInfo']);
+    Route::post('eko/dmt/customer-info/{service_code}', [CustomerRecipientController::class, 'customerInfo']);
     Route::post('eko/dmt/create-customer', [CustomerRecipientController::class, 'createCustomer']);
     Route::post('eko/dmt/resend-otp', [CustomerRecipientController::class, 'resendOtp']);
     Route::post('eko/dmt/verify-customer', [CustomerRecipientController::class, 'verifyCustomerIdentity']);
