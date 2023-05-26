@@ -31,7 +31,7 @@ class AdminController extends Controller
                 ->join('users', 'users.id', '=', 'logins.user_id')
                 ->select('users.name', 'users.phone_number', 'logins.*')
                 ->latest()
-                ->paginate(10);
+                ->get();
         }
 
         return $data;
