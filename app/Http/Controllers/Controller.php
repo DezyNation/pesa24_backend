@@ -43,7 +43,7 @@ class Controller extends BaseController
             'user_id' => auth()->user()->id ?? 85,
             'organization_id' => auth()->user()->organization_id ?? 5,
             'reference_id' => $refernce_id,
-            'provider_id' => $provider,
+            'provider' => $provider,
             'response' => $response
         ]);
 

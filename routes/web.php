@@ -114,7 +114,7 @@ Route::get('/', function () {
 
 Route::get('inquiry', [AepsApiController::class, 'moneyTransfer']);
 Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
-Route::get('pan', [BBPSController::class, 'fetchBill']);
+Route::get('pan', [BBPSController::class, 'payBill']);
 // Route::get('cms', [AirtelCMSController::class, 'transactionStatus']);
 // Route::prefix('commissions')->group(function () {
 //     // Route::get('aeps-mini/{user_id}', [CommissionController::class, 'aepsMiniComission']);

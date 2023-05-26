@@ -133,6 +133,7 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::get('eko/bbps/operators/{category_id?}', [BBPSController::class, 'operators']);
     Route::get('eko/bbps/operators/fields/{operator_id}', [BBPSController::class, 'operatorField']);
     Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill']);
+    Route::post('eko/bbps/pay-bill/{service_code}', [BBPSController::class, 'paybill'])->middleware('mpin');
     
     /*------------------------EKO DMT------------------------*/
     
@@ -259,7 +260,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
         return Storage::download($address['address']);
     });
     Route::get('transactions-type/{data}', [AdminTransactionController::class, 'categoryIndex']);
-    Route::get('transactions/{id}', [AdminTransactionController::class, 'view']);
+    Route::get('transactions/{id?}', [AdminTransactionController::class, 'view']);
     Route::get('transactions-user/{id}', [AdminTransactionController::class, 'userTransction']);
     Route::post('transactions-period', [AdminTransactionController::class, 'dailySales']);
     Route::post('user/update', [ProfileController::class, 'adminUpdatProfile']);
