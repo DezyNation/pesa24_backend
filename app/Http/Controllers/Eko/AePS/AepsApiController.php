@@ -54,7 +54,7 @@ class AepsApiController extends CommissionController
     public function requestHash(Request $request)
     {
         $aadhar = $request['aadharNo'] ?? 715547838073;
-        $amount = $request['amount'] ?? 100;
+        $amount = $request['amount'] ?? 0;
         $usercode = 20810200;
         $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
         $encodedKey = base64_encode($key);
@@ -115,8 +115,6 @@ class AepsApiController extends CommissionController
             // 'request_hash' => $encryption['request_hash']
         ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
 
-
-        return $response;
         $this->apiRecords($data['client_ref_id'], 'eko', $response);
         $transaction_id = "AEP" . strtoupper(Str::random(5));
         $opening_balance = auth()->user()->wallet;
@@ -131,7 +129,7 @@ class AepsApiController extends CommissionController
         return $response;
     }
 
-    public function miniStatement(Request $request)
+    public function  miniStatement(Request $request)
     {
         /*---------------------------------------------Data Encoding---------------------------------------------*/
         $encryption = $this->requestHash($request);
@@ -175,16 +173,16 @@ class AepsApiController extends CommissionController
         $data = [
             "service_type" => "3",
             "initiator_id" => 9962981729,
-            "user_code" => $encryption['user_code'],
+            "user_code" => $encryption['user_code'] ?? 20810200,
             "customer_id" => $request['customerId'] ?? 9971412064,
             "bank_code" => $request['bankCode'] ?? 'HDFC',
             "amount" => $encryption['amount'],
             "client_ref_id" => "PESA24AEPSB" . strtoupper(uniqid()),
             "pipe" => "0",
             "aadhar" => $encryption['encrypted_aadhaar'],
-            "latlong" => $request['latlong'],
+            "latlong" => $request['latlong'] ?? "81,81,12",
             "notify_customer" => "0",
-            "piddata" => $request['pid'],
+            "piddata" => $request['pid'] ?? $this->pid(),
             "sourceip" => $request->ip()
         ];
 
@@ -192,10 +190,10 @@ class AepsApiController extends CommissionController
 
         $response = Http::withHeaders(array_merge($this->headerArray(), [
             'Content-Type' => 'application/json',
-            'request_hash' => $encryption['request_hash']
-        ]))->post('https://staging.eko.in:25004/ekoapi/v2/aeps', $data);
-        $this->apiRecords($data['client_ref_id'], 'eko', $response);
+            // 'request_hash' => $encryption['request_hash']
+        ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
         return $response;
+        $this->apiRecords($data['client_ref_id'], 'eko', $response);
     }
 
     public function aepsInquiry(Request $request)
@@ -210,47 +208,66 @@ class AepsApiController extends CommissionController
         return $response;
     }
 
-    public function fundSettlement(Request $request)
-    {
-        $data = [
-            'service_code' => "39",
-            'initiator_id' => 7411111111,
-            'user_code' => auth()->user()->user_code ??  20310006
-        ];
+    // public function fundSettlement(Request $request)
+    // {
+    //     $data = [
+    //         'service_code' => "39",
+    //         'initiator_id' => 7411111111,
+    //         'user_code' => auth()->user()->user_code ??  20810200
+    //     ];
 
-        $response = Http::asForm()->withHeaders(
-            $this->headerArray()
-        )->put('https://staging.eko.in:25004/ekoapi/v1/user/service/activate', $data);
-        $this->apiRecords($data['user_code'], 'eko', $response);
-        return $response;
-    }
+    //     $response = Http::asForm()->withHeaders(
+    //         $this->headerArray()
+    //     )->put('http://staging.eko.in:8080/ekoapi/v1/user/service/activate', $data);
+    //     return $response;
+    //     $this->apiRecords($data['user_code'], 'eko', $response);
+    // }
 
     public function bankSettlement(Request $request)
     {
 
+        $initiator_id = 7411111111;
+
         $data = [
             'service_code' => 39,
-            'initiator_id' => 7411111111,
-            'user_code' => auth()->user()->user_code ?? 20310006,
+            'initiator_id' => $initiator_id,
+            // 'user_code' => auth()->user()->user_code ?? 20310006,
             'bank_id' => 108,
-            'ifsc' => $request['ifsc'],
-            'account' => $request['acc_num'],
+            'ifsc' => $request['ifsc'] ?? 'SBIN0000001',
+            'account' => $request['acc_num'] ?? 34567891238,
         ];
 
-        $response = Http::asForm()->withHeaders(
-            $this->headerArray()
-        )->put("https://staging.eko.in:25004/ekoapi/v1/agent/user_code:{$data['user_code']}/settlementaccount", $data);
+        $user_code = 20810200;
+
+        $response = Http::asForm()->withHeaders([
+            'developer_key' => 'becbbce45f79c6f5109f848acd540567'
+        ])->put("http://staging.eko.in:8080/ekoapi/v1/agent/user_code:$user_code/settlementaccount", $data);
+        return $response;
         $this->apiRecords($data['user_code'], 'eko', $response);
+    }
+
+    public function getSttlmentAccount(Request $request)
+    {
+        $initiator_id = 7411111111;
+        $data = [
+            'service_code' => 39,
+            'initiator_id' => $initiator_id,
+        ];
+        $user_code = 20810200;
+        $response = Http::asForm()->withHeaders([
+            'developer_key' => 'becbbce45f79c6f5109f848acd540567'
+        ])->get("http://staging.eko.in:8080/ekoapi/v1/agent/user_code:$user_code/settlementaccounts", $data);
+
         return $response;
     }
 
     public function initiateSettlement(Request $request)
     {
-        $usercode = auth()->user()->user_code ?? 99029899;
+        $usercode = auth()->user()->user_code ?? 20810200;
         $data = [
             'service_code' => 39,
             'initiator_id' => 7411111111,
-            'amount' => $request['amount'] ?? 1000,
+            'amount' => $request['amount'] ?? 100,
             'recipient_id' => $request['recipient_id'] ?? 9971412064,
             'payment_mode' => 5,
             'client_ref_id' => "PESA24SET" . strtoupper(uniqid() . Str::random(10))
