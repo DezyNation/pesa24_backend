@@ -72,6 +72,7 @@ class AdminTransactionController extends Controller
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
             ->select('users.name', 'transactions.*', 'admin.first_name', 'admin.phone_number')
             ->where('created_at', '>=', Carbon::now()->subDay()->toDateTimeString())
+            ->whereJsonContains('transactions.metadata->status', 'true')
             ->latest()->paginate(20);
         return $data;
     }

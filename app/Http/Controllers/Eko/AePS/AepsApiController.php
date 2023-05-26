@@ -116,17 +116,32 @@ class AepsApiController extends CommissionController
         ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
 
         $this->apiRecords($data['client_ref_id'], 'eko', $response);
-        $transaction_id = "AEP" . strtoupper(Str::random(5));
-        $opening_balance = auth()->user()->wallet;
-        $closing_balance = $opening_balance + $encryption['amount'];
+        if ($response['status'] == 0) {
+            $transaction_id = "AEP" . strtoupper(Str::random(5));
+            $opening_balance = auth()->user()->wallet;
+            $closing_balance = $opening_balance + $encryption['amount'];
 
-        $metadata = [
-            'status' => true,
-            'amount' => $encryption['amount']
-        ];
-        $this->transaction($encryption['amount'], 'AePS: Withdrawal', 'banking', auth()->user()->id, $opening_balance, $transaction_id, json_encode($metadata), $closing_balance);
-        $this->aepsComission($encryption['amount'], auth()->user()->id);
-        return $response;
+            $metadata = [
+                'status' => true,
+                'Amount' => $encryption['amount'],
+                'User Name' => auth()->user()->name,
+                'User ID' => auth()->user()->id,
+                'Message' => $response['message']
+            ];
+            $this->transaction($encryption['amount'], 'AePS: Withdrawal', 'banking', auth()->user()->id, $opening_balance, $transaction_id, json_encode($metadata), $closing_balance);
+            $this->aepsComission($encryption['amount'], auth()->user()->id);
+            
+        } else {
+            $metadata = [
+                'status' => false,
+                'Amount' => $encryption['amount'],
+                'User Name' => auth()->user()->name,
+                'User ID' => auth()->user()->id,
+                'Message' => $response['message']
+            ];
+        }   
+
+        return response(['metadata' => $metadata]);
     }
 
     public function  miniStatement(Request $request)

@@ -121,8 +121,10 @@ Route::middleware(['auth:api'])->group(function () {
 Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(function () {
     /*------------------------EKO AEPS------------------------*/
     Route::get('eko/aeps/aeps-inquiry', [EkoAepsApiController::class, 'aepsInquiry']);
-    Route::get('fund-settlement', [EkoAepsApiController::class, 'fundSettlement']);
-    Route::get('eko/aeps/money-transfer', [EkoAepsApiController::class, 'moneyTransfer']);
+    // Route::get('fund-settlement', [EkoAepsApiController::class, 'fundSettlement']);
+    Route::post('eko/aeps/money-transfer/{service_id}', [EkoAepsApiController::class, 'moneyTransfer']);
+    Route::post('eko/aeps/mini-statement/{service_id}', [EkoAepsApiController::class, 'miniStatement']);
+    Route::post('eko/aeps/balance-enquiry/{service_id}', [EkoAepsApiController::class, 'balanceEnquiry']);
     Route::get('users/{id}', [ProfileController::class, 'findUser']);
 
     Route::post('activate-service', [AttachServiceController::class, 'attachService'])->middleware('subscribe');
