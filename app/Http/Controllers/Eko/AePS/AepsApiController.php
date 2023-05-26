@@ -26,14 +26,34 @@ class AepsApiController extends CommissionController
 
         return [
             'developer_key' => env('DEVELOPER_KEY'),
-            'secret-key' => $secret_key,
-            'secret-key-timestamp' => $secret_key_timestamp
+            // 'secret-key' => $secret_key,
+            // 'secret-key-timestamp' => $secret_key_timestamp
         ];
+    }
+
+    public function pid()
+    {
+        $pid = "<?xml version='1.0'?>
+                <PidData>
+                <Resp errCode='0' errInfo='Success.' fCount='1' fType='0' nmPoints='29' qScore='61' />
+                <DeviceInfo dpId='MANTRA.MSIPL' rdsId='MANTRA.WIN.001' rdsVer='1.0.6' mi='MFS100' mc='MIIEGDCCAwCgAwIBAgIEAQNmQDANBgkqhkiG9w0BAQsFADCB6jEqMCgGA1UEAxMhRFMgTWFudHJhIFNvZnRlY2ggSW5kaWEgUHZ0IEx0ZCA3MUMwQQYDVQQzEzpCIDIwMyBTaGFwYXRoIEhleGEgb3Bwb3NpdGUgR3VqYXJhdCBIaWdoIENvdXJ0IFMgRyBIaWdod2F5MRIwEAYDVQQJEwlBaG1lZGFiYWQxEDAOBgNVBAgTB0d1amFyYXQxHTAbBgNVBAsTFFRlY2huaWNhbCBEZXBhcnRtZW50MSUwIwYDVQQKExxNYW50cmEgU29mdGVjaCBJbmRpYSBQdnQgTHRkMQswCQYDVQQGEwJJTjAeFw0yMjEyMjkwNjIxMTlaFw0yMzAxMjgwNjM2MTdaMIGwMSUwIwYDVQQDExxNYW50cmEgU29mdGVjaCBJbmRpYSBQdnQgTHRkMR4wHAYDVQQLExVCaW9tZXRyaWMgTWFudWZhY3R1cmUxDjAMBgNVBAoTBU1TSVBMMRIwEAYDVQQHEwlBSE1FREFCQUQxEDAOBgNVBAgTB0dVSkFSQVQxCzAJBgNVBAYTAklOMSQwIgYJKoZIhvcNAQkBFhVzdXBwb3J0QG1hbnRyYXRlYy5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDFJQAaWua0qcD6YpL25Xdqfbuj5Nn59tLKr0ESkTyLdxLDjOo6xF93tj8APbjyBIK3lhjx+/VX6wnfTa4X3t+0MieX4mX6i7wbrXtEXr3X8c9+yX6En0dgFOFxeKwdJRiv6Fq0cf+N2X4bzPG+7IRFqsO0NoDqJXV8jhBVNqErau12H+X9uSUmuL+G+9znd+OtOGzk73kQhbpD5uGFaz70yg/Atvi/HuN0OJ5rj71VWcr67BRlrwR89lJg2mKZLEmuEezCqj/dJpg6nvQwSRrCQHoNO6v8A+kO7gPzCBRqjN6+zolKY92QRQDd6N0agP0jlFOVXxbkvfkG8NTOeevBAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAIJfUxB+jRPYULnMqZxpWkNXMbdlwy4NB9X/WqtvnB0uJLHopnQFmKCLOivnpxl7vwbaKgfvcrrt/y+2hOodrMfvnQhiTWyVsbD10Gc0DHro6oATTA3CItCCwmgQU0yHYzC1IaRAZnA3vKq4FNTQg1eAg76ZouIQ2HNRl6niTcrJszmcOBMQPAWRA+oIZkBWmUJsC7uU0c375atwluELAJ9ZIHVAKBDUk/tCdIX78gpvP9rKWctT21hxzlcuY0I7JumcAMfxJhZ3X5VlUd8ecXMtOuJgO7xKd4N0jQS4texZkc5GegD2DMMlWfsW/07Osx1SxcOeBWfbU0WCf64f4Sc=' dc='4da240d5-fb80-492c-9fa2-7493a8868466'>
+                    <additional_info>
+                    <Param name='srno' value='4904844' />
+                    <Param name='sysid' value='651FCBF442F7F1DFBFF0' />
+                    <Param name='ts' value='2022-12-29T18:19:09+05:30' />
+                    </additional_info>
+                </DeviceInfo>
+                <Skey ci='20250923'>A+YyFa648DrH+/EOOJPDxtzL+Cna3RmWbGlPLYNmBqDpUsDd368GkQvJGpFj+xJvP22EpEEig1GxWgBYmMtn9lDFZFRCZoN0N+48lPLdLsFrfAcoQOPGUq30NSiF3EizD1vPGVzBOawoerTQjbEBouHdjGk6djnnypBaTPhtJcp9IreTqbjYMaVcOLOj9gcjPDk7skR+fnIFp+iGLuKiJ/hifh3NxZFbTNFAb+pdSDOV3oczKnH56Oy5nmtqXpxLy5eytri93jG83hbX63y4ypGDJx/91Zxqgza1qdksVyj9N7O982vJF8fBawvPJ3HOHLBbdNNdrOioXRwWXu1TKg==</Skey>
+                <Hmac>YgYoK0WegdPcwFRUcTR3DT/eAqHwsxydgLcOGzLGA9fzQuXpie4uSkuqENComHU1</Hmac>
+                <Data type='X'>MjAyMi0xMi0yOVQxODoxOTowOe3S/UkQT93TW9IJgypTv1QlErT35fWfG/Ajwr2odnAiRZMCL+8lp4ZpGlBHUtlMtRv0OoD9UJ2ZXD49uYsh5ho7f/n8KPNyAqhacyCTG+WJrRK0Td3m8MxOOVfprQ0PtdRxDLgh1k6Cg84/oim2/qK0mltC2o55TKbEvIVsUAfCBAubTsTHoIcQ0YbukkAg/2jqPDIYTv/K+3G5R6vitU6RTiW1vk6Pmz+3CtIUaAL9OqPvdooqgEZHeV77ek0UlTiXRNDsRQAZdpYBGMq18osc9FZcurumGBcotbebqZqPYLrPH0sVbvNKsbP+ItuKbHr9V6ZCw0yqIKzb2XyK70yBohBvOznP0AaogVzTKEBwFLKV7vX3++2W2BEgUxjbPEi+NBg5+HbJE203IeyrwLhA/X129UXolGB2PSF8E1pmBCxv+fssmNj9OhdZubzI4EuJdfhdos/P5cp2qn8C7sxepSNjF8hbvtQS0GDndUqJnqJsLz8X99skZwm6RXviPUtItR4Zj1gYB2GVC9IVot/ghKizQivDVx+yw6GUTx8V8txGFvQsq+g+5F8Kzl3FlSx4ccUZU01ECDtw1OHEiHDj9VZVnTm86dYNejR76lXCpqAJb197MmaUlPlqNFV7HymExEO/Cf1edSRr/wnLYAt3gamPCjw4UC/9ikkcev5b56XpsUSJRx9metAiEiSmil9JiWACsewgn7ntipFEUxm+nZN7EW4zTakpt+YIWvx+j9qEcS2ShiUWBmkjVyRWnVazA3uEb/yrEFB7HinjA3P4fDw1sqRs4TXi6t1ioXbeYQa5TzSz9KcC7kcjDMCEX9fcv17o+r5/KRtd08nOfnDx7vTEal2kyTlXmaLuRoD09ljQcY5poWPLUFx6Azb0h5jlKjxt7EBMkVYYSAtRYWKKsCfKHnGEuzlmRHQ7IGkraWzmEQWFzkmxFXrMbjOxyr57sXvvZivrnJygBRZWmW+e6jILkvJqoRu6jMKhvA0rRn637neO0UmfA1SR1UhXBCC7yS8WxGvZqfqe8ycqdNSh0I2ZnpIbf0mTjtYHYone+CzNUeDYKzk+NsrgHOLFrj8JcOM=</Data>
+                </PidData>";
+
+        return $pid;
     }
 
     public function requestHash(Request $request)
     {
-        $aadhar = $request['aadharNo'] ?? 123456789012;
+        $aadhar = $request['aadharNo'] ?? 715547838073;
         $amount = $request['amount'] ?? 100;
         $usercode = 20810200;
         $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
@@ -75,24 +95,24 @@ class AepsApiController extends CommissionController
         $data = [
             "service_type" => "2",
             "initiator_id" => env('INITIATOR_ID'),
-            "user_code" => $encryption['user_code'],
+            "user_code" => $encryption['user_code'] ?? 20810200,
             "customer_id" => $request['customerId'] ?? 9971412064,
             "bank_code" => $request['bankCode'] ?? 'HDFC',
-            "amount" => $encryption['amount'],
+            "amount" => $encryption['amount'] ?? 100,
             "client_ref_id" => "PESA24AEPS" . strtoupper(uniqid()),
             "pipe" => "0",
             "aadhar" => $encryption['encrypted_aadhaar'],
             "latlong" => "81,81,12",
             "notify_customer" => "0",
-            "piddata" => $request['pid'],
+            "piddata" => $request['pid'] ?? $this->pid(),
             "sourceip" => $request->ip()
         ];
 
         /*---------------------------Hit EKO api------------------------------*/
 
         $response = Http::withHeaders(array_merge($this->headerArray(), [
-            // 'Content-Type' => 'application/json',
-            'request_hash' => $encryption['request_hash']
+            'Content-Type' => 'application/json',
+            // 'request_hash' => $encryption['request_hash']
         ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
 
 
@@ -120,16 +140,16 @@ class AepsApiController extends CommissionController
         $data = [
             "service_type" => "4",
             "initiator_id" => 9962981729,
-            "user_code" => $encryption['user_code'],
+            "user_code" => $encryption['user_code'] ?? 20810200,
             "customer_id" => $request['customerId'] ?? 9971412064,
             "bank_code" => $request['bankCode'] ?? 'HDFC',
-            "amount" => $encryption['amount'],
+            "amount" => $encryption['amount'] ?? 0,
             "client_ref_id" => "PESA24AEPSM" . strtoupper(uniqid()),
             "pipe" => "0",
             "aadhar" => $encryption['encrypted_aadhaar'],
-            "latlong" => $request['latlong'],
+            "latlong" => $request['latlong'] ?? "81,81,12",
             "notify_customer" => "0",
-            "piddata" => $request['pid'],
+            "piddata" => $request['pid'] ?? $this->pid(),
             "sourceip" => $request->ip()
         ];
 
@@ -137,9 +157,9 @@ class AepsApiController extends CommissionController
 
         $response = Http::withHeaders(array_merge($this->headerArray(), [
             'Content-Type' => 'application/json',
-            'request_hash' => $encryption['request_hash']
-        ]))->post('https://staging.eko.in:25004/ekoapi/v2/aeps', $data);
-        $this->apiRecords($data['client_ref_id'], 'eko', $response);
+            // 'request_hash' => $encryption['request_hash']
+        ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
+        // $this->apiRecords($data['client_ref_id'], 'eko', $response);
         return $response;
     }
 
@@ -233,16 +253,15 @@ class AepsApiController extends CommissionController
             'amount' => $request['amount'] ?? 1000,
             'recipient_id' => $request['recipient_id'] ?? 9971412064,
             'payment_mode' => 5,
-            'client_ref_id' => "PESA24SET".strtoupper(uniqid().Str::random(10))
+            'client_ref_id' => "PESA24SET" . strtoupper(uniqid() . Str::random(10))
         ];
 
-        $response = Http::asForm()->withHeaders(array_merge($this->headerArray() ,[
+        $response = Http::asForm()->withHeaders(array_merge($this->headerArray(), [
             'cache-control' => 'no-cache',
         ]))->post("http://staging.eko.in:8080/ekoapi/v1/agent/user_code:$usercode/settlement", $data);
         return $response;
         $this->apiRecords($data['client_ref_id'], 'eko', $response);
     }
-
 }
 
 
