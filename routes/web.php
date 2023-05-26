@@ -47,8 +47,11 @@ use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayo
 |
 */
 
-Route::get('/file', function () {
-
+Route::get('/', function () {
+    // $data = DB::table('packages')
+    //     ->join('users', 'users.id', '=', 'packages.user_id')
+    //     ->where('packages.organization_id', 7)->select('packages.id', 'packages.name', 'packages.is_default', 'packages.status', 'users.name as user_name')
+    //     ->get();
 
 
     // $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
@@ -120,7 +123,7 @@ Route::get('pan', [BBPSController::class, 'fetchBill']);
 //     // Route::get('bbps/{user_id}/{operator}/{amount}', [CommissionController::class, 'bbpsPaysprintCommission']);
 // });
 
-Route::post('file-test', function(Request $request){
+Route::post('file-test', function (Request $request) {
     // return $request->all();
     if ($request->hasFile('pancard')) {
         $request->file('pancard')->store('public');

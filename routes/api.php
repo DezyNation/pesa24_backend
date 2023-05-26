@@ -282,6 +282,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('all-permissions', [AdminController::class, 'permissions'])->middleware('permission:assign-permission');
     Route::post('assign-permission', [AdminController::class, 'assignPermission'])->middleware('permission:assign-permission');
     Route::post('assign-package', [AdminController::class, 'assignPackage'])->middleware('permission:user-edit');
+    Route::get('package-count/{id}', [AdminController::class, 'packageCount']);
 
     Route::post('add-admin-funds', [AdminController::class, 'addAdminFunds'])->middleware('mpin');
     Route::get('add-admin-funds', [AdminController::class, 'adminFundsRecords']);
@@ -291,7 +292,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('commissions/{name}', [AdminController::class, 'updateCommission']);
     Route::post('commissions/delete/{name}/{id}', [AdminController::class, 'deleteCommission']);
     Route::post('create-package', [AdminController::class, 'packageCreate']);
-    Route::post('update-package-defaults', [AdminController::class, 'packageSwitch']);
+    Route::post('update-package-defaults', [AdminController::class, 'defaultPackage']);
 });
 
 Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);

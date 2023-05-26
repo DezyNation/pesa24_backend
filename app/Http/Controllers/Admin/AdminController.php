@@ -154,7 +154,9 @@ class AdminController extends Controller
         if (is_null($request->page)) {
             $data = DB::table('packages')
                 ->join('users', 'users.id', '=', 'packages.user_id')
-                ->where('packages.organization_id', auth()->user()->organization_id)->select('packages.id', 'packages.name', 'packages.is_default', 'packages.status', 'users.name as user_name')->get();
+                ->where('packages.organization_id', auth()->user()->organization_id)->select('packages.id', 'packages.name', 'packages.is_default', 'packages.status', 'users.name as user_name')
+                ->get();
+
         } else {
             $data = DB::table('packages')
                 ->join('users', 'users.id', '=', 'packages.user_id')
@@ -188,6 +190,15 @@ class AdminController extends Controller
             $request['column'] => $request['value'],
             'updated_at' => now()
         ]);
+
+        return $data;
+    }
+
+    public function defaultPackage(Request $request)
+    {
+        $query = DB::table('packages')->where(['organization_id' => auth()->user()->organization_id]);
+        $query->update(['is_default' => 0]);
+        $data = $query->where('id', $request['packageId'])->update(['is_default' => 1]);
 
         return $data;
     }
@@ -430,6 +441,14 @@ class AdminController extends Controller
             ]
         );
 
+        return $data;
+    }
+
+    public function packageCount($id)
+    {
+        $data = DB::table('package_user')
+        ->join('packages', 'packages.id', '=', 'package_user.package_id')
+        ->where(['package_user.package_id'=> $id, 'packages.organization_id' => auth()->user()->id])->count();
         return $data;
     }
 
