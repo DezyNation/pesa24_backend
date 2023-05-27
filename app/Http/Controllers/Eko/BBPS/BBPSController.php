@@ -133,10 +133,10 @@ class BBPSController extends CommissionController
         if (!array_key_exists('status', $response->json())) {
             $metadata = [
                 'status' => false,
-                'Amount' => $data['amount'],
-                'User' => auth()->user()->name,
-                'User ID' => auth()->user()->id,
-                'Message' => $response['message']
+                'amount' => $data['amount'],
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'message' => $response['message']
             ];
 
             return response(['metadata' => $metadata]);
@@ -144,12 +144,13 @@ class BBPSController extends CommissionController
         if ($response['status'] == 0) {
             $metadata = [
                 'status' => true,
-                'Sender ID' => $response['data']['sender_id'],
-                'User' => auth()->user()->name,
-                'User ID' => auth()->user()->id,
-                'Amount' => $response['data']['amount'],
-                'Operator Name' => $response['data']['operator_name'],
-                'Refernce ID' => $data['client_ref_id']
+                'sender_id' => $response['data']['sender_id'],
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
+                'amount' => $response['data']['amount'],
+                'operator_name' => $response['data']['operator_name'],
+                'reference_id' => $data['client_ref_id']
             ];
 
             $opening_balance = auth()->user()->wallet;
@@ -162,9 +163,10 @@ class BBPSController extends CommissionController
             $metadata = [
                 'status' => false,
                 'Amount' => $data['amount'],
-                'User' => auth()->user()->name,
-                'User ID' => auth()->user()->id,
-                'Message' => $response['message']
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
+                'message' => $response['message']
             ];
 
             $this->apiRecords($data['client_ref_id'], 'eko', $response);
