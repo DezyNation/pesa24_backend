@@ -26,8 +26,8 @@ class AepsApiController extends CommissionController
 
         return [
             'developer_key' => env('DEVELOPER_KEY'),
-            // 'secret-key' => $secret_key,
-            // 'secret-key-timestamp' => $secret_key_timestamp
+            'secret-key' => $secret_key,
+            'secret-key-timestamp' => $secret_key_timestamp
         ];
     }
 
@@ -342,9 +342,9 @@ class AepsApiController extends CommissionController
 
     public function bankList()
     {
-        $response = Http::asForm()->withHeaders([
-            'developr_key' => env('DEVELOPER_KEY')
-        ])->get('http://staging.eko.in:8080/ekoapi/v2/banks');
+        $response = Http::asForm()->withHeaders(
+            $this->headerArray()
+            )->get('http://staging.eko.in:8080/ekoapi/v2/banks');
         return $response;
     }
 }
