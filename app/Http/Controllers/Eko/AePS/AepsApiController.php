@@ -344,7 +344,7 @@ class AepsApiController extends CommissionController
     {
         $response = Http::asForm()->withHeaders([
             'developr_key' => env('DEVELOPER_KEY')
-        ])->post('http://staging.eko.in:8080/ekoapi/v2/banks');
+        ])->get('http://staging.eko.in:8080/ekoapi/v2/banks');
         return $response;
     }
 }
