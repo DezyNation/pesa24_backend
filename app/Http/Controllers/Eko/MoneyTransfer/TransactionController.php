@@ -87,7 +87,13 @@ class TransactionController extends CommissionController
             $metadata = [
                 'status' => true,
                 'amount' => $response['data']['amount'],
-                'reference_id' => $response['data']['client_ref_id']
+                'reference_id' => $response['data']['client_ref_id'],
+                'message' => $response['message'],
+                'user_id' => auth()->user()->id,
+                'user_name' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
+                'amount' => $amount,
+
             ];
             $opening_balance = auth()->user()->wallet;
             $closing_balance = $opening_balance - $data['amount'];
@@ -99,7 +105,11 @@ class TransactionController extends CommissionController
                 'status' => false,
                 'amount' => $request['amount'],
                 'reference_id' => $data['client_ref_id'],
-                'message' => $response['message']
+                'message' => $response['message'],
+                'user_id' => auth()->user()->id,
+                'user_name' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
+                'amount' => $amount,
             ];
         }
 
