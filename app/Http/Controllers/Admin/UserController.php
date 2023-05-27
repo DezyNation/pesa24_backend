@@ -299,9 +299,9 @@ class UserController extends Controller
         return $user;
     }
 
-    public function userReport(Request $request)
+    public function userReport($id=null)
     {
-        if ($request->has('user_id')) {
+        if (!is_null($id)) {
             $bool = DB::table('user_parent')->where(['parent_id' => auth()->user()->id, 'user_id' => $request['user_id']]);
             if ($bool->exists()) {
                 $data = DB::table('transactions')
