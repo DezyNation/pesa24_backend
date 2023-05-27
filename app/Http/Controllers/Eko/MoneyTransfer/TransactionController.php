@@ -45,6 +45,7 @@ class TransactionController extends CommissionController
     {
         $amount = $request['amount'];
         $recipient_id = $request['beneficiaryId'];
+        $recipient_id = 10011321;
         $customer_id = $request['customerId'];
 
         if ($amount > 5000) {
