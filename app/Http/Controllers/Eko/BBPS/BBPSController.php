@@ -130,6 +130,9 @@ class BBPSController extends CommissionController
 
         ])->post("http://staging.eko.in:8080/ekoapi/v2/billpayments/paybill?initiator_id=9962981729", $data);
 
+        $opening_balance = auth()->user()->wallet;
+        $closing_balance = $opening_balance - $data['amount'];
+        $transaction_id = "BBPSE" . uniqid();
         if (!array_key_exists('status', $response->json())) {
             $metadata = [
                 'status' => false,
@@ -138,7 +141,7 @@ class BBPSController extends CommissionController
                 'user_id' => auth()->user()->id,
                 'message' => $response['message']
             ];
-
+            $this->transaction(0, "BBPS recharge for {$response['data']['operator_name']}", 'bbps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
             return response(['metadata' => $metadata]);
         }
         if ($response['status'] == 0) {
@@ -153,9 +156,6 @@ class BBPSController extends CommissionController
                 'reference_id' => $data['client_ref_id']
             ];
 
-            $opening_balance = auth()->user()->wallet;
-            $closing_balance = $opening_balance - $data['amount'];
-            $transaction_id = "BBPSE" . uniqid();
             $this->transaction($data['amount'], "BBPS recharge for {$response['data']['operator_name']}", 'bbps', auth()->user()->id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata));
             $this->bbpsEkoCommission(auth()->user()->id, $data['operator_id'], $data['amount']);
             $this->apiRecords($data['client_ref_id'], 'eko', $response);
@@ -169,6 +169,7 @@ class BBPSController extends CommissionController
                 'message' => $response['message']
             ];
 
+            $this->transaction(0, "BBPS recharge for {$response['data']['operator_name']}", 'bbps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
             $this->apiRecords($data['client_ref_id'], 'eko', $response);
         }
         return response(['metadata' => $metadata]);

@@ -251,6 +251,8 @@ class AepsApiController extends CommissionController
             'accept' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://paysprint.in/service-api/api/v1/service/aeps/ministatement/index', ['body' => $body]);
+        $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+        $balance_left = $walletAmt[0] + $data['amount'];
 
         if ($response['response_code'] == 24) {
             return $this->onboard();
@@ -268,10 +270,8 @@ class AepsApiController extends CommissionController
                 'reference_id' => $data['referenceno'],
                 'acknowldgement_number' => $response['ackno'],
             ];
-            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $balance_left = $walletAmt[0] - $data['amount'];
 
-            $this->transaction(0, "AePS Mini Statement for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction(0, "AePS Mini Statement for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata), $data['amount']);
             $this->aepsMiniComission(auth()->user()->id);
         } else {
             $transaction_id = "MINIS" . strtoupper(Str::random(9));

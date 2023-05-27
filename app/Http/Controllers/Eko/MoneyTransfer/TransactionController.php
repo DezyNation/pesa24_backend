@@ -82,7 +82,8 @@ class TransactionController extends CommissionController
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
         )->post('http://staging.eko.in:8080/ekoapi/v2/transactions', $data);
-
+        $opening_balance = auth()->user()->wallet;
+        $closing_balance = $opening_balance - $data['amount'];
         if (!array_key_exists('status', $response->json())) {
             $metadata = [
                 'status' => false,
@@ -92,7 +93,7 @@ class TransactionController extends CommissionController
                 'user_phone' => auth()->user()->phone_number,
                 'amount' => $amount,
             ];
-
+            $this->transaction($data['amount'], "DMT to {$response['data']['recipient_name']}", 'dmt', auth()->user()->id, $opening_balance, $data['client_ref_id'], $closing_balance, json_encode($metadata));
             return response(['metadata' => $metadata]);
         }
 
@@ -108,8 +109,7 @@ class TransactionController extends CommissionController
                 'amount' => $amount,
 
             ];
-            $opening_balance = auth()->user()->wallet;
-            $closing_balance = $opening_balance - $data['amount'];
+
             $this->transaction($data['amount'], "DMT to {$response['data']['recipient_name']}", 'dmt', auth()->user()->id, $opening_balance, $data['client_ref_id'], $closing_balance, json_encode($metadata));
             $this->dmtCommission(auth()->user()->id, $data['amount']);
 
@@ -124,6 +124,7 @@ class TransactionController extends CommissionController
                 'user_phone' => auth()->user()->phone_number,
                 'amount' => $amount,
             ];
+            $this->transaction(0, "DMT to {$response['data']['recipient_name']}", 'dmt', auth()->user()->id, $opening_balance, $data['client_ref_id'], $opening_balance, json_encode($metadata));
         }
 
         return response(['metadata' => $metadata]);

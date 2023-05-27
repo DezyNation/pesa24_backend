@@ -85,6 +85,9 @@ class FastTagController extends CommissionController
             'Authorisedkey' => env('AUTHORISED_KEY')
         ])->post('https://paysprint.in/service-api/api/v1/service/fastag/Fastag/recharge', $data);
 
+        $transaction_id = "BBPS" . strtoupper(Str::random(9));
+        $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+        $balance_left = $walletAmt[0] - $data['amount'];
         if ($response['response_code'] == 1) {
             $metadata = [
                 'status' => $response['status'],
@@ -95,11 +98,8 @@ class FastTagController extends CommissionController
                 'amount' => $data['amount'],
                 'reference_id' => $data['referenceid'],
             ];
-            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $balance_left = $walletAmt[0] - $data['amount'];
 
 
-            $transaction_id = "BBPS" . strtoupper(Str::random(9));
             $this->transaction($data['amount'], "Fastag Rcharge", 'fastag', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->fastCommission(auth()->user()->id, $data['amount']);
         } else {
@@ -112,6 +112,7 @@ class FastTagController extends CommissionController
                 'amount' => $data['amount'],
                 'reference_id' => $data['referenceid'],
             ];
+            $this->transaction(0, "Fastag Recharge", 'fastag', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
         }
         return [$response->body(), 'metadata' => $metadata];
     }

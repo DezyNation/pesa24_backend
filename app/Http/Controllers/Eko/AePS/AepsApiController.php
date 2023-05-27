@@ -114,12 +114,12 @@ class AepsApiController extends CommissionController
             'Content-Type' => 'application/json',
             // 'request_hash' => $encryption['request_hash']
         ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
+        $transaction_id = "AEP" . strtoupper(Str::random(5));
+        $opening_balance = auth()->user()->wallet;
+        $closing_balance = $opening_balance + $encryption['amount'];
 
         $this->apiRecords($data['client_ref_id'], 'eko', $response);
         if ($response['status'] == 0) {
-            $transaction_id = "AEP" . strtoupper(Str::random(5));
-            $opening_balance = auth()->user()->wallet;
-            $closing_balance = $opening_balance + $encryption['amount'];
 
             $metadata = [
                 'status' => true,
@@ -136,11 +136,12 @@ class AepsApiController extends CommissionController
         } else {
             $metadata = [
                 'status' => false,
-                'Amount' => $encryption['amount'],
-                'User Name' => auth()->user()->name,
-                'User ID' => auth()->user()->id,
-                'Message' => $response['message']
+                'amount' => $encryption['amount'],
+                'user_name' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'message' => $response['message']
             ];
+            $this->transaction(0, 'AePS: Withdrawal', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata));
         }
 
         return response(['metadata' => $metadata]);
@@ -174,8 +175,9 @@ class AepsApiController extends CommissionController
             'Content-Type' => 'application/json',
             // 'request_hash' => $encryption['request_hash']
         ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
-        // $this->apiRecords($data['client_ref_id'], 'eko', $response);
-
+        $this->apiRecords($data['client_ref_id'], 'eko', $response);
+        $transaction_id = "AEP" . strtoupper(Str::random(5));
+        $opening_balance = auth()->user()->wallet;
         if ($response['status'] == 0) {
             $metadata = [
                 'status' => true,
@@ -186,6 +188,7 @@ class AepsApiController extends CommissionController
                 'mini_statment' => $response['data']['mini_statement_list'],
                 'message' => $response['message']
             ];
+            $this->transaction(0, 'AePS: Mini Statement', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
             $this->aepsMiniComission(auth()->user()->id);
         } else {
             $metadata = [
@@ -195,6 +198,7 @@ class AepsApiController extends CommissionController
                 'user_phone' => auth()->user()->phone_number,
                 'message' => $response['message']
             ];
+            $this->transaction(0, 'AePS: Mini Statement', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
         }
         return response(['metadata' => $metadata]);
     }
@@ -230,6 +234,9 @@ class AepsApiController extends CommissionController
             'Content-Type' => 'application/json',
             // 'request_hash' => $encryption['request_hash']
         ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
+        $this->apiRecords($data['client_ref_id'], 'eko', $response);
+        $transaction_id = "AEP" . strtoupper(Str::random(5));
+        $opening_balance = auth()->user()->wallet;
         if ($response['status'] == 0) {
             $metadata = [
                 'status' => true,
@@ -243,6 +250,7 @@ class AepsApiController extends CommissionController
                 'user_phone' => auth()->user()->phone_number,
 
             ];
+            $this->transaction(0, 'AePS: Mini Statement', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
         } else {
             $metadata = [
                 'status' => false,
@@ -251,9 +259,9 @@ class AepsApiController extends CommissionController
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
             ];
+            $this->transaction(0, 'AePS: Mini Statement', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
         }
         return response(['metadata' => $metadata]);
-        $this->apiRecords($data['client_ref_id'], 'eko', $response);
     }
 
     public function aepsInquiry(Request $request)

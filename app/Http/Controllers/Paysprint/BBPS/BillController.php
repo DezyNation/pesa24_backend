@@ -85,8 +85,13 @@ class BillController extends CommissionController
             'token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
-        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paybill', $data);
+            ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paybill', $data);
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $balance_left = $walletAmt[0] - $data['amount'];
 
+            $transaction_id = "BBPS" . strtoupper(Str::random(9));
+        $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+        $transaction_id = "DMT" . strtoupper(Str::random(9));
         if ($response->json($key = 'response_code') == 1 || $response->json($key = 'response_code') == 0) {
             $metadata = [
                 'status' => $response['status'],
@@ -99,10 +104,6 @@ class BillController extends CommissionController
                 'reference_id' => $data['referenceid'],
                 'acknowldgement_number' => $response['ackno'],
             ];
-            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $balance_left = $walletAmt[0] - $data['amount'];
-
-            $transaction_id = "BBPS" . strtoupper(Str::random(9));
             $this->transaction($data['amount'], "Bill Payment", 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->bbpsPaysprintCommission(auth()->user()->id, $data['operator'], $data['amount']);
 
@@ -115,6 +116,7 @@ class BillController extends CommissionController
                 'canumber' => $data['canumber'],
                 'amount' => $data['amount'],
             ];
+            $this->transaction($data['amount'], 'Bill payment', 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             return response(["Server Busy pleasy try later!", 'metadata' => $metadata], 501);
         } else {
             $metadata = [
@@ -125,9 +127,8 @@ class BillController extends CommissionController
                 'canumber' => $data['canumber'],
                 'amount' => $data['amount'],
             ];
-            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $transaction_id = "DMT" . strtoupper(Str::random(9));
-            $this->transaction($data['amount'], 'Bill payment', 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+
+            $this->transaction(0, 'Bill payment', 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
 
             return response([$response['message'], 'metadata' => $metadata], 400);
         }
