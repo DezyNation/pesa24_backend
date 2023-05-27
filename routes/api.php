@@ -232,6 +232,8 @@ Route::get('parent/users-transactions/{id?}', [UserController::class, 'userRepor
 Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
     Route::get('users', [UserController::class, 'index']);
+    Route::get('role-count/{role}', [AdminController::class, 'roleCount']);
+    Route::get('sum-amounts', [AdminController::class, 'roleCount']);
     Route::get('users/{id}', [UserController::class, 'show']);
     Route::get('tickets', [TicketController::class, 'adminTicket']);
     Route::post('tickets', [TicketController::class, 'adminUpdateTicket']);
@@ -266,7 +268,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('transactions/{id?}', [AdminTransactionController::class, 'view']);
     Route::get('transactions-user/{id}', [AdminTransactionController::class, 'userTransction']);
     Route::post('transactions-period', [AdminTransactionController::class, 'dailySales']);
-    Route::post('user/update', [ProfileController::class, 'adminUpdatProfile']);
+    Route::post('user/update', [ProfileController::class, 'adminUpdateProfile']);
 
     Route::post('paysprint/payout/add-account', [PaysprintPayout::class, 'addAccount']);
     Route::get('user/status/{id}/{bool}', [AdminController::class, 'active'])->middleware('permission:user-edit');

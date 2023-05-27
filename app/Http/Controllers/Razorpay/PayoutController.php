@@ -71,7 +71,7 @@ class PayoutController extends CommissionController
                 'reference_id' => $data['reference_id'],
                 'to' => $request['bank_account']['name'] ?? null,
             ];
-            $this->transaction($amount, 'Bank Payout', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction($amount, 'Bank Payout', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             return response(['Transaction sucessfull', 'metadata' => $metadata], 200);
         } else {
             $metadata = [

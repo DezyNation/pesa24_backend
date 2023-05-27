@@ -48,7 +48,7 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true,
         ];
-        $this->transaction($debit, 'Commission AePS', 'withdrawal', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Commission AePS', 'aeps-cw', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -104,7 +104,7 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true,
         ];
-        $this->transaction($debit, 'Comission AePS', 'withdrawal', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Comission AePS', 'aeps-cw', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -164,7 +164,7 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true,
         ];
-        $this->transaction($debit, 'Commission AePS mini statement', 'mini-statement', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Commission AePS mini statement', 'aeps-ms', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -221,7 +221,7 @@ class CommissionController extends Controller
             'status' => true,
         ];
 
-        $this->transaction($debit, 'Commission AePS mini statement', 'mini-statement', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Commission AePS mini statement', 'aeps-ms', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -504,7 +504,7 @@ class CommissionController extends Controller
         ];
 
         $transaction_id = "PAN" . strtoupper(Str::random(9));
-        $this->transaction($amount, 'Payout Commission', 'money-transfer', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($amount, 'Payout Commission', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -560,7 +560,7 @@ class CommissionController extends Controller
         ];
 
         $transaction_id = "PAY" . strtoupper(Str::random(9));
-        $this->transaction($amount, 'Payout Comissions', 'money-transfer', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($amount, 'Payout Comissions', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -1233,7 +1233,7 @@ class CommissionController extends Controller
             'amount' => $amount
         ];
         $transaction_id = "REV" . strtoupper(Str::random(9));
-        $this->transaction($credit, 'Commissions Reversal', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $this->transaction($credit, 'Commissions Reversal', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -1284,7 +1284,7 @@ class CommissionController extends Controller
             'amount' => $amount
         ];
         $transaction_id = "REV" . strtoupper(Str::random(9));
-        $this->transaction($credit, 'Commissions Reversal', 'pan', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $this->transaction($credit, 'Commissions Reversal', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
         $user->update([
             'wallet' => $closing_balance
         ]);

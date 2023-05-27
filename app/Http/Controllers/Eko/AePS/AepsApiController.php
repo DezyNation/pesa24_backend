@@ -130,7 +130,7 @@ class AepsApiController extends CommissionController
                 'message' => $response['message'],
                 'reference_id' => $data['client_ref_id']
             ];
-            $this->transaction($encryption['amount'], 'AePS: Withdrawal', 'banking', auth()->user()->id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata));
+            $this->transaction($encryption['amount'], 'AePS: Withdrawal', 'aeps-cw', auth()->user()->id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata));
             $this->aepsComission($encryption['amount'], auth()->user()->id);
 
         } else {

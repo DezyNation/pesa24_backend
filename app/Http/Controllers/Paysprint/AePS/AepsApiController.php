@@ -146,7 +146,7 @@ class AepsApiController extends CommissionController
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $balance_left = $walletAmt[0] + $data['amount'];
 
-            $this->transaction(0, "AePS withdrawal for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata), $data['amount']);
+            $this->transaction(0, "AePS withdrawal for {$data['mobilenumber']}", 'aeps-cw', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata), $data['amount']);
             $this->aepsComission($data['amount'], auth()->user()->id);
         } else {
             $transaction_id = "AEPS" . strtoupper(Str::random(9));
@@ -161,7 +161,7 @@ class AepsApiController extends CommissionController
                 'mobile_number' => $data['mobilenumber'],
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $this->transaction(0, "AePS withdrawal for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+            $this->transaction(0, "AePS withdrawal for {$data['mobilenumber']}", 'aeps-cw', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
         // $this->aepsCommssion($data['amount'], auth()->user()->id);
         return response([$response->body(), 'metadata' => $metadata]);
@@ -271,7 +271,7 @@ class AepsApiController extends CommissionController
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $balance_left = $walletAmt[0] - $data['amount'];
 
-            $this->transaction(0, "AePS Mini Statement for {$data['mobilenumber']}", 'mini-statement', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction(0, "AePS Mini Statement for {$data['mobilenumber']}", 'aeps-ms', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->aepsMiniComission(auth()->user()->id);
         } else {
             $transaction_id = "MINIS" . strtoupper(Str::random(9));
@@ -284,7 +284,7 @@ class AepsApiController extends CommissionController
                 'mobile_number' => $data['mobilenumber'],
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $this->transaction(0, "Mini Statement for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+            $this->transaction(0, "Mini Statement for {$data['mobilenumber']}", 'aeps-ms', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
 
         return [$response->object(), 'metadata' => $metadata];
@@ -362,7 +362,7 @@ class AepsApiController extends CommissionController
                 'wallet' => $balance_left
             ]);
 
-            $this->transaction($data['amount'], "Aadhaar Pay {$data['mobilenumber']}", 'aadhaar-pay', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction($data['amount'], "Aadhaar Pay {$data['mobilenumber']}", 'aeps-ap', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->aepsComission($data['amount'], auth()->user()->id);
         } else {
             $transaction_id = "AADHP" . strtoupper(Str::random(9));
@@ -376,7 +376,7 @@ class AepsApiController extends CommissionController
                 'mobile_number' => $data['mobilenumber'],
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $this->transaction(0, "Aadhaar Pay {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+            $this->transaction(0, "Aadhaar Pay {$data['mobilenumber']}", 'aeps-ap', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
         // $this->aepsCommssion($data['amount'], auth()->user()->id);
         return [$response->object(), 'metadata' => $metadata];

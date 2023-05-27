@@ -111,7 +111,7 @@ class LICController extends CommissionController
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $transaction_id = "DMT" . strtoupper(Str::random(9));
-            $this->transaction($data['amount'], 'Bill payment', 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+            $this->transaction($data['amount'], 'Bill payment', 'lic', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
 
             return response([$response['message'], 'metadata' => $metadata], 400);
         }

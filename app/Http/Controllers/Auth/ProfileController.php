@@ -244,7 +244,7 @@ class ProfileController extends AgentManagementController
         return new UserResource($user[0]);
     }
 
-    public function adminUpdatProfile(Request $request)
+    public function adminUpdateProfile(Request $request)
     {
         $request->validate([
             'values.firstName' => ['required', 'max:255'],

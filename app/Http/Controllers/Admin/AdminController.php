@@ -411,7 +411,7 @@ class AdminController extends Controller
             'refernce_id' => $transaction_id,
             'remarks' => $request['remarks']
         ];
-        $this->transaction(0, 'Admin funds added', 'admin-funds', auth()->user()->id, $wallet, $transaction_id, $amount, json_encode($metadata), $request['amount']);
+        $this->transaction(0, 'Admin funds added', 'ADMIN-FUNDS', auth()->user()->id, $wallet, $transaction_id, $amount, json_encode($metadata), $request['amount']);
         DB::table('users')->where('id', auth()->user()->id)->update([
             'wallet' => $amount,
             'updated_at' => now()
@@ -570,5 +570,19 @@ class AdminController extends Controller
         }
 
         return $data;
+    }
+
+    public function roleCount($role)
+    {
+        $data = User::role($role)->count();
+        return $data;
+    }
+
+    public function sumAmounts()
+    {
+        $table = DB::table('users');
+        $capped_sum = $table->sum('minimum_balance');
+        $wallet_sum = $table->sum('wallet');
+        return ['capping_sum' => $capped_sum, 'wallet_sum' => $wallet_sum];
     }
 }
