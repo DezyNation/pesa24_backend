@@ -37,7 +37,7 @@ class BillController extends CommissionController
             'accept' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post("https://api.paysprint.in/api/v1/service/bill-payment/bill/getoperator/307", []);
+        ])->post("https://paysprint.in/service-api/api/v1/service/bill-payment/bill/getoperator/307", []);
 
         is_null($id) ?
             $response = collect($response->json($key = 'data'))->groupBy('category')
@@ -61,7 +61,7 @@ class BillController extends CommissionController
             'token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
-        ])->post('https://api.paysprint.in/api/v1/service/bill-payment/bill/fetchbill', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/fetchbill', $data);
 
         return $response;
     }
@@ -85,7 +85,7 @@ class BillController extends CommissionController
             'token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
-        ])->post('https://api.paysprint.in/api/v1/service/bill-payment/bill/paybill', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paybill', $data);
 
         if ($response->json($key = 'response_code') == 1 || $response->json($key = 'response_code') == 0) {
             $metadata = [
@@ -137,7 +137,7 @@ class BillController extends CommissionController
         $response = Http::acceptJson()->withHeaders([
             'token' => $token,
             'content-type' => 'application/json'
-        ])->post('https://api.paysprint.in/api/v1/service/bill-payment/bill/status', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/status', $data);
 
         return $response;
     }

@@ -44,7 +44,7 @@ class LICController extends CommissionController
             'Token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://api.paysprint.in/api//v1/service/bill-payment/bill/fetchlicbill', $data);
+        ])->post('https://paysprint.in/service-api/api//v1/service/bill-payment/bill/fetchlicbill', $data);
 
         return $response;
     }
@@ -76,7 +76,7 @@ class LICController extends CommissionController
             'token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://api.paysprint.in/api/v1/service/bill-payment/bill/paylicbill', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paylicbill', $data);
 
         
         if ($response->json($key = 'response_code') == 1 || $response->json($key = 'response_code') == 0) {

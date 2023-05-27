@@ -46,7 +46,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://api.paysprint.in/api/v1/service/dmt/remitter/queryremitter', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/remitter/queryremitter', $data);
         Log::info(['response' => $response->body()]);
         return $response;
     }
@@ -72,7 +72,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://api.paysprint.in/api/v1/service/dmt/remitter/registerremitter', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/remitter/registerremitter', $data);
 
         if ($response['status'] == false) {
             return response($response['message'], 501);
@@ -104,7 +104,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://api.paysprint.in/api/v1/service/dmt/beneficiary/registerbeneficiary', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/beneficiary/registerbeneficiary', $data);
 
         return $response;
     }
@@ -122,7 +122,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://api.paysprint.in/api/v1/service/dmt/beneficiary/registerbeneficiary/deletebeneficiary', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/beneficiary/registerbeneficiary/deletebeneficiary', $data);
 
         return $response;
     }
@@ -138,7 +138,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://api.paysprint.in/api/v1/service/dmt/beneficiary/registerbeneficiary/fetchbeneficiary', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/beneficiary/registerbeneficiary/fetchbeneficiary', $data);
 
         return $response;
     }
@@ -156,7 +156,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://api.paysprint.in/api/v1/service/dmt/beneficiary/registerbeneficiary/fetchbeneficiarybybeneid', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/beneficiary/registerbeneficiary/fetchbeneficiarybybeneid', $data);
 
         return $response;
     }
@@ -179,7 +179,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://api.paysprint.in/api/v1/service/verification/bank/verify', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/verification/bank/verify', $data);
 
         return $response;
     }
@@ -208,7 +208,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://api.paysprint.in/api/v1/service/dmt/transact/transact', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact', $data);
 
         if ($response->json($key = 'status') == true) {
             $metadata = [
@@ -295,7 +295,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://api.paysprint.in/api/v1/service/dmt/transact/transact/querytransact', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact/querytransact', $data);
 
         return $response;
     }
@@ -313,7 +313,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://api.paysprint.in/api/v1/service/dmt/transact/transact/querytransact', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/transact/transact/querytransact', $data);
 
         return $response;
     }
@@ -332,7 +332,7 @@ class DMTController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://api.paysprint.in/api/v1/service/dmt/refund/refund/', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/dmt/refund/refund/', $data);
 
         return $response;
     }

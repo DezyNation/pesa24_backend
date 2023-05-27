@@ -41,7 +41,7 @@ class RechargeController extends CommissionController
             'accept' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post("https://api.paysprint.in/api/v1/service/recharge/recharge/getoperator", []);
+        ])->post("https://paysprint.in/service-api/api/v1/service/recharge/recharge/getoperator", []);
 
         return collect($response->json($key = 'data'))->whereIn('category', [$type]);
     }
@@ -53,7 +53,7 @@ class RechargeController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post("https://api.paysprint.in/api/v1/service/recharge/Recharge_v2/location", []);
+        ])->post("https://paysprint.in/service-api/api/v1/service/recharge/Recharge_v2/location", []);
 
         return $response;
     }
@@ -71,7 +71,7 @@ class RechargeController extends CommissionController
             'accept' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post("https://api.paysprint.in/api/v1/service/recharge/hlrapi/browseplan", $data);
+        ])->post("https://paysprint.in/service-api/api/v1/service/recharge/hlrapi/browseplan", $data);
 
 
         return $response;
@@ -92,7 +92,7 @@ class RechargeController extends CommissionController
             'accept' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
-        ])->post('https://api.paysprint.in/api/v1/service/recharge/recharge/dorecharge', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/recharge/recharge/dorecharge', $data);
 
 
         if ($response->json('status') == true) {
@@ -158,7 +158,7 @@ class RechargeController extends CommissionController
     //         'accept' => 'application/json',
     //         'Authorisedkey' => env('PAYSPRINT_PARTNERID'),
     //         'content-type' => 'application/json',
-    //     ])->post('https://api.paysprint.in/api/v1/service/recharge/Recharge_v2/dorecharge', $data);
+    //     ])->post('https://paysprint.in/service-api/api/v1/service/recharge/Recharge_v2/dorecharge', $data);
 
     //     return $response;
     // }
@@ -180,7 +180,7 @@ class RechargeController extends CommissionController
             'accept' => 'application/json',
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'content-type' => 'application/json',
-        ])->post("https://api.paysprint.in/api/v1/service/recharge/plan/list", $data);
+        ])->post("https://paysprint.in/service-api/api/v1/service/recharge/plan/list", $data);
 
         return $response->json($key = 'data');
     }

@@ -87,7 +87,7 @@ class PayoutController extends CommissionController
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://api.paysprint.in/api/v1/service/payout/payout/uploaddocument',
+        CURLOPT_URL => 'https://paysprint.in/service-api/api/v1/service/payout/payout/uploaddocument',
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
