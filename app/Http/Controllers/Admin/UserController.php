@@ -308,7 +308,7 @@ class UserController extends Controller
                 ->join('users', 'users.id', '=', 'transactions.trigered_by')
                 ->where('trigered_by', $request['user_id'])
                 ->select('users.name', 'transactions.*')
-                ->get();
+                ->paginate(50);
             } else {
                 return response("No transaction found.", 404);
             }
@@ -318,7 +318,7 @@ class UserController extends Controller
             ->join('users', 'users.id', '=', 'transactions.trigered_by')
             ->where('user_parent.parent_id', auth()->user()->id)
             ->select('users.name', 'transactions.*')
-            ->get();
+            ->paginate(50);
         }
 
         return $data;
