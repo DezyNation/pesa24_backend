@@ -280,7 +280,7 @@ class UserController extends Controller
                 ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
                 ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
                 ->where(['user_parent.parent_id'=> auth()->user()->id, 'roles.name' => $role])
-                ->select('users.id', 'users.name', 'users.email', 'users.phone_number', 'users.alternate_phone', 'users.line', 'users.line', 'users.city', 'users.state', 'users.pincode', 'users.wallet', 'users.minimum_balance', 'users.kyc', 'roles.name', 'users.aadhar_front', 'users.aadhar_back', 'users.pan_photo')
+                ->select('users.id', 'users.name', 'users.email', 'users.phone_number', 'users.alternate_phone', 'users.line', 'users.line', 'users.city', 'users.state', 'users.pincode', 'users.wallet', 'users.minimum_balance', 'users.kyc', 'roles.name', 'users.aadhar_front', 'users.aadhar_back', 'users.pan_photo', 'users.profile_pic')
                 ->get();
             return  $user;
         }
@@ -290,7 +290,7 @@ class UserController extends Controller
         ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
         ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
         ->where(['user_parent.parent_id' => auth()->user()->id, 'users.id' => $id, 'roles.name' => $role])
-        ->select('users.id', 'users.name', 'users.email', 'users.phone_number', 'users.alternate_phone', 'users.line', 'users.line', 'users.city', 'users.state', 'users.pincode', 'users.wallet', 'users.minimum_balance', 'users.kyc', 'roles.name', 'users.aadhar_front', 'users.aadhar_back', 'users.pan_photo')
+        ->select('users.id', 'users.name', 'users.email', 'users.phone_number', 'users.alternate_phone', 'users.line', 'users.line', 'users.city', 'users.state', 'users.pincode', 'users.wallet', 'users.minimum_balance', 'users.kyc', 'roles.name', 'users.aadhar_front', 'users.aadhar_back', 'users.pan_photo', 'users.profile_pic')
         ->get();
         return $user;
     }
