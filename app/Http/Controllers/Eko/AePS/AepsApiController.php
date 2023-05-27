@@ -342,8 +342,10 @@ class AepsApiController extends CommissionController
 
     public function bankList()
     {
-        $data = DB::table('eko_banks_list')->get(['bank_id', 'name', 'short_code']);
-        return $data;
+        $response = Http::asForm()->withHeaders([
+            'developr_key' => env('DEVELOPER_KEY')
+        ])->post('http://staging.eko.in:8080/ekoapi/v2/banks');
+        return $response;
     }
 }
 
