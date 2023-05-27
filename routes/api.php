@@ -118,13 +118,14 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('transaction/{type}', [UserDashboardController::class, 'sunTransaction']);
 });
 
+Route::post('eko/aeps/money-transfer/{service_id}', [EkoAepsApiController::class, 'moneyTransfer'])->middleware(['auth:api', 'profile', 'kyc']);
 Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(function () {
     /*------------------------EKO AEPS------------------------*/
     Route::get('eko/aeps/aeps-inquiry', [EkoAepsApiController::class, 'aepsInquiry']);
     // Route::get('fund-settlement', [EkoAepsApiController::class, 'fundSettlement']);
-    Route::post('eko/aeps/money-transfer/{service_id}', [EkoAepsApiController::class, 'moneyTransfer']);
     Route::post('eko/aeps/mini-statement/{service_id}', [EkoAepsApiController::class, 'miniStatement']);
     Route::post('eko/aeps/balance-enquiry/{service_id}', [EkoAepsApiController::class, 'balanceEnquiry']);
+    Route::get('eko/aeps/fetch-bank/{service_id}', [EkoAepsApiController::class, 'bankList']);
     Route::get('users/{id}', [ProfileController::class, 'findUser']);
 
     Route::post('activate-service', [AttachServiceController::class, 'attachService'])->middleware('subscribe');
@@ -136,9 +137,9 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::get('eko/bbps/operators/fields/{operator_id}', [BBPSController::class, 'operatorField']);
     Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill']);
     Route::post('eko/bbps/pay-bill/{service_code}', [BBPSController::class, 'paybill'])->middleware('mpin');
-    
+
     /*------------------------EKO DMT------------------------*/
-    
+
     Route::post('eko/dmt/customer-info/{service_code}', [CustomerRecipientController::class, 'customerInfo']);
     Route::post('eko/dmt/create-customer/{service_code}', [CustomerRecipientController::class, 'createCustomer']);
     Route::post('eko/dmt/resend-otp/{service_code}', [CustomerRecipientController::class, 'resendOtp']);

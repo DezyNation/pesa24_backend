@@ -53,7 +53,7 @@ class AepsApiController extends CommissionController
 
     public function requestHash(Request $request)
     {
-        $aadhar = $request['aadharNo'] ?? 715547838073;
+        $aadhar = $request['aadhaarNo'] ?? 715547838073;
         $amount = $request['amount'] ?? 0;
         $usercode = 20810200;
         $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
@@ -123,14 +123,16 @@ class AepsApiController extends CommissionController
 
             $metadata = [
                 'status' => true,
-                'Amount' => $encryption['amount'],
-                'User Name' => auth()->user()->name,
-                'User ID' => auth()->user()->id,
-                'Message' => $response['message']
+                'amount' => $encryption['amount'],
+                'user_name' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
+                'user_id' => auth()->user()->id,
+                'message' => $response['message'],
+                'reference_id' => $data['client_ref_id']
             ];
-            $this->transaction($encryption['amount'], 'AePS: Withdrawal', 'banking', auth()->user()->id, $opening_balance, $transaction_id, json_encode($metadata), $closing_balance);
+            $this->transaction($encryption['amount'], 'AePS: Withdrawal', 'banking', auth()->user()->id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata));
             $this->aepsComission($encryption['amount'], auth()->user()->id);
-            
+
         } else {
             $metadata = [
                 'status' => false,
@@ -139,7 +141,7 @@ class AepsApiController extends CommissionController
                 'User ID' => auth()->user()->id,
                 'Message' => $response['message']
             ];
-        }   
+        }
 
         return response(['metadata' => $metadata]);
     }
@@ -173,7 +175,28 @@ class AepsApiController extends CommissionController
             // 'request_hash' => $encryption['request_hash']
         ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
         // $this->apiRecords($data['client_ref_id'], 'eko', $response);
-        return $response;
+
+        if ($response['status'] == 0) {
+            $metadata = [
+                'status' => true,
+                'user_id' => auth()->user()->id,
+                'user_name' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
+                'bank_ref_num' => $response['data']['bank_ref_num'],
+                'mini_statment' => $response['data']['mini_statement_list'],
+                'message' => $response['message']
+            ];
+            $this->aepsMiniComission(auth()->user()->id);
+        } else {
+            $metadata = [
+                'status' => false,
+                'user_id' => auth()->user()->id,
+                'user_name' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
+                'message' => $response['message']
+            ];
+        }
+        return response(['metadata' => $metadata]);
     }
 
 
@@ -207,7 +230,29 @@ class AepsApiController extends CommissionController
             'Content-Type' => 'application/json',
             // 'request_hash' => $encryption['request_hash']
         ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
-        return $response;
+        if ($response['status'] == 0) {
+            $metadata = [
+                'status' => true,
+                'customer_balance' => $response['data']['customer_balance'],
+                'bank_ref_num' => $response['data']['bank_ref_num'],
+                'aadhar' => $response['data']['aadhar'],
+                // 'merchantname' => $response['data']['merchantname'],
+                'message' => $response['message'],
+                'user_id' => auth()->user()->id,
+                'user_name' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
+
+            ];
+        } else {
+            $metadata = [
+                'status' => false,
+                'message' => $response['message'],
+                'user_id' => auth()->user()->id,
+                'user_name' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
+            ];
+        }
+        return response(['metadata' => $metadata]);
         $this->apiRecords($data['client_ref_id'], 'eko', $response);
     }
 
@@ -294,6 +339,12 @@ class AepsApiController extends CommissionController
         return $response;
         $this->apiRecords($data['client_ref_id'], 'eko', $response);
     }
+
+    public function bankList()
+    {
+        $data = DB::table('eko_banks_list')->get(['bank_id', 'name', 'short_code']);
+        return $data;
+    }
 }
 
 
@@ -303,7 +354,7 @@ class AepsApiController extends CommissionController
  * check role and make a transaction of commission
  * check if parent exists
  * assign commission to parents recursively
- * 
+ *
  */
 
 // $result = DB::table('users')
