@@ -99,6 +99,9 @@ class RechargeController extends CommissionController
             $metadata = [
                 'status' => $response['status'],
                 'mobile_number' => $data['canumber'],
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'amount' => $data['amount'],
                 'operator' => $response['operatorid'],
                 'reference_id' => $response['refid'],
