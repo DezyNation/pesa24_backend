@@ -90,7 +90,7 @@ class TransactionController extends CommissionController
                 'reference_id' => $response['data']['client_ref_id'],
                 'message' => $response['message'],
                 'user_id' => auth()->user()->id,
-                'user_name' => auth()->user()->name,
+                'user' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
                 'amount' => $amount,
 
@@ -107,7 +107,7 @@ class TransactionController extends CommissionController
                 'reference_id' => $data['client_ref_id'],
                 'message' => $response['message'],
                 'user_id' => auth()->user()->id,
-                'user_name' => auth()->user()->name,
+                'user' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
                 'amount' => $amount,
             ];
