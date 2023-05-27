@@ -150,7 +150,7 @@ class CustomerRecipientController extends Controller
         ];
 
         $customer_id = $request['customerId'];
-        $acc_ifsc = $request['accountNumber'] . '_' . $request['ifsc'] ?? '1711650492_KKBK0000261';
+        $acc_ifsc = $request['accountNumber'] . '_' . $request['ifsc'];
         $acc_ifsc = '1711650592_KKBK0000261';
 
         $response = Http::asForm()->withHeaders(
