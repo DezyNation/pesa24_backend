@@ -302,11 +302,11 @@ class UserController extends Controller
     public function userReport($id=null)
     {
         if (!is_null($id)) {
-            $bool = DB::table('user_parent')->where(['parent_id' => auth()->user()->id, 'user_id' => $request['user_id']]);
+            $bool = DB::table('user_parent')->where(['parent_id' => auth()->user()->id, 'user_id' => $id]);
             if ($bool->exists()) {
                 $data = DB::table('transactions')
                 ->join('users', 'users.id', '=', 'transactions.trigered_by')
-                ->where('trigered_by', $request['user_id'])
+                ->where('trigered_by', $id)
                 ->select('users.name', 'transactions.*', 'users.phone_number')
                 ->paginate(50);
             } else {
