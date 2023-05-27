@@ -82,7 +82,20 @@ class TransactionController extends CommissionController
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
         )->post('http://staging.eko.in:8080/ekoapi/v2/transactions', $data);
-        // return json_decode($response);
+
+        if (!array_key_exists('status', $response->json())) {
+            $metadata = [
+                'status' => false,
+                'message' => $response['message'],
+                'user_id' => auth()->user()->id,
+                'user' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
+                'amount' => $amount,
+            ];
+
+            return response(['metadata' => $metadata]);
+        }
+
         if ($response['status'] == 0) {
             $metadata = [
                 'status' => true,
