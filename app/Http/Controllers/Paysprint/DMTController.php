@@ -231,17 +231,6 @@ class DMTController extends CommissionController
                 'updated_at' => now()
             ]);
             $transaction_id = "DMT" . strtoupper(Str::random(9));
-
-            $dmt_table = DB::table('dmt_transactions')->insert([
-                'user_id' => auth()->user()->id,
-                'reference_id' => $data['referenceid'],
-                'status' => $response['status'],
-                'paysprint_metadata' => $response,
-                'transaction_id' => $transaction_id,
-                'amount' => $response['txn_amount'],
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
             $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->dmtCommission(auth()->user()->id, $request['amount']);
         } elseif($response['status'] == false) {
