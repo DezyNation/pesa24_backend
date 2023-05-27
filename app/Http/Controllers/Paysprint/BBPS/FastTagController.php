@@ -88,6 +88,9 @@ class FastTagController extends CommissionController
         if ($response['response_code'] == 1) {
             $metadata = [
                 'status' => $response['status'],
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'message' => $response['message'],
                 'amount' => $data['amount'],
                 'reference_id' => $data['referenceid'],
@@ -102,6 +105,9 @@ class FastTagController extends CommissionController
         } else {
             $metadata = [
                 'status' => $response['status'],
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'message' => $response['message'],
                 'amount' => $data['amount'],
                 'reference_id' => $data['referenceid'],

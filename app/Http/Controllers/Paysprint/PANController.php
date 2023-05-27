@@ -64,6 +64,9 @@ class PANController extends CommissionController
         if ($response['status'] == true && $response['response_code'] == 1) {
             $metadata = [
                 'status' => $response['status'] ?? null,
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'reference_id' => $data['refid'],
                 'event' => 'PAN Card NSDL'
             ];

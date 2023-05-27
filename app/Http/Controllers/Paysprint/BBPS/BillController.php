@@ -90,6 +90,9 @@ class BillController extends CommissionController
         if ($response->json($key = 'response_code') == 1 || $response->json($key = 'response_code') == 0) {
             $metadata = [
                 'status' => $response['status'],
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'message' => $response['message'],
                 'amount' => $data['amount'],
                 'operatorid' => $response['operatorid'],
@@ -106,6 +109,9 @@ class BillController extends CommissionController
         } elseif ($response->json($key = 'response_code') == 16 || $response->json($key = 'response_code') == 6 || $response->json($key = 'response_code') == 12) {
             $metadata = [
                 'status' => false,
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'canumber' => $data['canumber'],
                 'amount' => $data['amount'],
             ];
@@ -113,6 +119,9 @@ class BillController extends CommissionController
         } else {
             $metadata = [
                 'status' => false,
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'canumber' => $data['canumber'],
                 'amount' => $data['amount'],
             ];

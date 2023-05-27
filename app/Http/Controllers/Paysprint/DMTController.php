@@ -255,6 +255,9 @@ class DMTController extends CommissionController
             $metadata = [
                 'status' => false,
                 'account_number' => $data['accno'] ?? null,
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'amount' => $data['amount'],
                 'mobile' => $data['mobile'],
                 'reference_id' => $data['referenceid'] ?? null,
@@ -269,6 +272,9 @@ class DMTController extends CommissionController
             $metadata = [
                 'status' => false,
                 'account_number' => $data['accno'] ?? null,
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'amount' => $data['amount'],
                 'mobile' => $data['mobile'],
                 'reference_id' => $data['referenceid'] ?? null,

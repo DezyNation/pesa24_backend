@@ -115,6 +115,9 @@ class RechargeController extends CommissionController
                 $metadata = [
                     'status' => false,
                     'mobile_number' => $data['canumber'],
+                    'user' => auth()->user()->name,
+                    'user_id' => auth()->user()->id,
+                    'user_phone' => auth()->user()->phone_number,
                     'amount' => $data['amount'],
                     'refid' => $data['referenceid'],
                     'operator' => $data['operator'],
@@ -125,6 +128,9 @@ class RechargeController extends CommissionController
             $metadata = [
                 'status' => false,
                 'mobile_number' => $data['canumber'],
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'amount' => $data['amount'],
                 'refid' => $data['referenceid'],
                 'operator' => $data['operator']

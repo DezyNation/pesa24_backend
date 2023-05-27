@@ -61,13 +61,13 @@ class PayoutController extends CommissionController
         $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
         $balance_left = $walletAmt[0] - $amount;
         if ($transfer->status() == 200) {
-            User::where('id', auth()->user()->id)->update([
-                'wallet' => $balance_left
-            ]);
             $transaction_id = "PAY" . strtoupper(Str::random(5));
             $metadata = [
                 'status' => true,
                 'amount' => $amount,
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'reference_id' => $data['reference_id'],
                 'to' => $request['bank_account']['name'] ?? null,
             ];
@@ -77,6 +77,9 @@ class PayoutController extends CommissionController
             $metadata = [
                 'status' => false,
                 'amount' => $data['amount'] / 100,
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'reference_id' => $data['reference_id'],
                 'to' => $request['bank_account']['name'] ?? null,
                 'r_status' => $transfer->status()

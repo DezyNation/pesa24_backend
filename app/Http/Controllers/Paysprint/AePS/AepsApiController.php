@@ -347,6 +347,9 @@ class AepsApiController extends CommissionController
             $transaction_id = "AAPAY" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => $response['status'],
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'message' => $data['message'],
                 'amount' => $data['amount'],
                 'bankrrn' => $response['bankrrn'],
@@ -358,9 +361,6 @@ class AepsApiController extends CommissionController
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $balance_left = $walletAmt[0] - $data['amount'];
-            User::where('id', auth()->user()->id)->update([
-                'wallet' => $balance_left
-            ]);
 
             $this->transaction($data['amount'], "Aadhaar Pay {$data['mobilenumber']}", 'aeps-ap', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             $this->aepsComission($data['amount'], auth()->user()->id);
@@ -368,6 +368,9 @@ class AepsApiController extends CommissionController
             $transaction_id = "AADHP" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => false,
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'transaction_id' => $transaction_id,
                 'created_at' => date("F j, Y, g:i a"),
                 'event' => 'aadhar-pay',
