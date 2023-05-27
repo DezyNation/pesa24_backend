@@ -129,7 +129,6 @@ class BBPSController extends CommissionController
             'developer_key' => env('DEVELOPER_KEY'),
 
         ])->post("http://staging.eko.in:8080/ekoapi/v2/billpayments/paybill?initiator_id=9962981729", $data);
-
         $opening_balance = auth()->user()->wallet;
         $closing_balance = $opening_balance - $data['amount'];
         $transaction_id = "BBPSE" . uniqid();
@@ -139,9 +138,10 @@ class BBPSController extends CommissionController
                 'amount' => $data['amount'],
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
                 'message' => $response['message']
             ];
-            $this->transaction(0, "BBPS recharge for {$response['data']['operator_name']}", 'bbps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
+            $this->transaction(0, "BBPS recharge failed", 'bbps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
             return response(['metadata' => $metadata]);
         }
         if ($response['status'] == 0) {

@@ -250,7 +250,7 @@ class AepsApiController extends CommissionController
                 'user_phone' => auth()->user()->phone_number,
 
             ];
-            $this->transaction(0, 'AePS: Mini Statement', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
+            $this->transaction(0, 'AePS: Balance Enquiry', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
         } else {
             $metadata = [
                 'status' => false,
@@ -259,7 +259,7 @@ class AepsApiController extends CommissionController
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
             ];
-            $this->transaction(0, 'AePS: Mini Statement', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
+            $this->transaction(0, 'AePS: Balance Enquiry', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
         }
         return response(['metadata' => $metadata]);
     }

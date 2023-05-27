@@ -124,7 +124,7 @@ class TransactionController extends CommissionController
                 'user_phone' => auth()->user()->phone_number,
                 'amount' => $amount,
             ];
-            $this->transaction(0, "DMT to {$response['data']['recipient_name']}", 'dmt', auth()->user()->id, $opening_balance, $data['client_ref_id'], $opening_balance, json_encode($metadata));
+            $this->transaction(0, "DMT to User", 'dmt', auth()->user()->id, $opening_balance, $data['client_ref_id'], $opening_balance, json_encode($metadata));
         }
 
         return response(['metadata' => $metadata]);
