@@ -308,6 +308,8 @@ class UserController extends Controller
                 ->join('users', 'users.id', '=', 'transactions.trigered_by')
                 ->where('trigered_by', $request['user_id'])
                 ->select('users.name', 'transactions.*');
+            } else {
+                return response("No transaction found.", 404);
             }
         } else {
             $data = DB::table('transactions')
