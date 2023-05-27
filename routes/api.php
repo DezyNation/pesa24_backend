@@ -233,7 +233,8 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
     Route::get('users', [UserController::class, 'index']);
     Route::get('role-count/{role}', [AdminController::class, 'roleCount']);
-    Route::get('sum-amounts', [AdminController::class, 'roleCount']);
+    Route::get('sum-amounts', [AdminController::class, 'sumAmounts']);
+    Route::get('statistics/{category}', [AdminController::class, 'sumAmounts']);
     Route::get('users/{id}', [UserController::class, 'show']);
     Route::get('tickets', [TicketController::class, 'adminTicket']);
     Route::post('tickets', [TicketController::class, 'adminUpdateTicket']);

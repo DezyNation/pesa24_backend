@@ -574,15 +574,27 @@ class AdminController extends Controller
 
     public function roleCount($role)
     {
-        $data = User::role($role)->count();
+        $data = User::where('organization_id', auth()->user()->organization_id)->role($role)->count();
         return $data;
     }
 
     public function sumAmounts()
     {
-        $table = DB::table('users');
+        $table = DB::table('users')->where('organization_id', auth()->user()->organization_id);
         $capped_sum = $table->sum('minimum_balance');
         $wallet_sum = $table->sum('wallet');
         return ['capping_sum' => $capped_sum, 'wallet_sum' => $wallet_sum];
+    }
+
+    public function sumCategory($category)
+    {
+        $table = DB::table('transactions')
+                ->join('users', 'users.id', '=', 'transactions.trigered_by')
+                ->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => $category]);
+
+        $credit = $table->sum('credit_amount');
+        $debit = $table->sum('debit_amount');
+
+        return response(['credit_amount' => $credit, 'debit_amount' => $debit]);
     }
 }
