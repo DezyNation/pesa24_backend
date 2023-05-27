@@ -144,12 +144,12 @@ class CustomerRecipientController extends Controller
         $data = [
             'initiator_id' => 9999912796,
             'recipient_name' => $request['beneficiaryName'],
-            'recipient_mobile' => $request['phone'],
+            'recipient_mobile' => $request['beneficiaryPhone'],
             'recipient_type' => 3,
             'user_code' => auth()->user()->user_code ?? 20810200
         ];
 
-        $customer_id = $request['customerId'] ?? 9999912345;
+        $customer_id = $request['customerId'];
         $acc_ifsc = $request['accountNumber'] . '_' . $request['ifsc'] ?? '1711650492_KKBK0000261';
         $acc_ifsc = '1711650592_KKBK0000261';
 
