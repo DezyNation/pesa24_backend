@@ -48,7 +48,7 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true,
         ];
-        $this->transaction($debit, 'Commission AePS', 'aeps-cw', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Commission AePS', 'aeps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -104,7 +104,7 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true,
         ];
-        $this->transaction($debit, 'Comission AePS', 'aeps-cw', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Comission AePS', 'aeps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -164,7 +164,7 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true,
         ];
-        $this->transaction($debit, 'Commission AePS mini statement', 'aeps-ms', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Commission AePS mini statement', 'aeps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -221,7 +221,7 @@ class CommissionController extends Controller
             'status' => true,
         ];
 
-        $this->transaction($debit, 'Commission AePS mini statement', 'aeps-ms', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Commission AePS mini statement', 'aeps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
