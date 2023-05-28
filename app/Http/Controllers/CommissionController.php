@@ -930,7 +930,7 @@ class CommissionController extends Controller
     /*-------------------------------------BBPS Commissions-------------------------------------*/
 
     public function bbpsPaysprintCommission($user_id, $operator, $amount)
-    { 
+    {
         $table = DB::table('b_b_p_s')
             ->join('package_user', 'package_user.package_id', '=', 'b_b_p_s.package_id')
             ->where(['package_user.user_id' => $user_id, 'b_b_p_s.paysprint_id' => $operator])->where('b_b_p_s.from', '<', $amount)->where('b_b_p_s.to', '>=', $amount)
@@ -1043,7 +1043,7 @@ class CommissionController extends Controller
 
 
     public function bbpsEkoCommission($user_id, $operator, $amount)
-    { 
+    {
         $table = DB::table('b_b_p_s')
             ->join('package_user', 'package_user.package_id', '=', 'b_b_p_s.package_id')
             ->where(['package_user.user_id' => $user_id, 'b_b_p_s.eko_id' => $operator])->where('b_b_p_s.from', '<', $amount)->where('b_b_p_s.to', '>=', $amount)
@@ -1527,11 +1527,11 @@ class CommissionController extends Controller
         return $table;
     }
 
-    public function cmsCommission($user_id, $amount, $provider)
+    public function cmsCommission($user_id, $amount, $provider, $biller_id)
     {
         $table = DB::table('cms_commissions')
             ->join('package_user', 'package_user.package_id', '=', 'cms_commissions.package_id')
-            ->where(['package_user.user_id'=> $user_id, 'cms_commissions.provider' => $provider])->where('cms_commissions.from', '<', $amount)
+            ->where(['package_user.user_id'=> $user_id, 'cms_commissions.provider' => $provider, 'cms_biller_id', $biller_id])->where('cms_commissions.from', '<', $amount)
             ->where('cms_commissions.to', '>=', $amount)
             ->get();
 

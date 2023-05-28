@@ -26,7 +26,7 @@ class AirtelCMSController extends Controller
     public function generateUrl(Request $request)
     {
         $data = [
-            'transaction_id' => $request['transactionId'] ?? uniqid(),
+            'transaction_id' => $request['transactionId'],
             'refid' => uniqid(),
         ];
 
@@ -47,7 +47,7 @@ class AirtelCMSController extends Controller
                 'provider' => 'airtel'
             ]);
         }
-        
+
         return $response;
     }
 
