@@ -131,4 +131,17 @@ class GlobalServiceController extends Controller
         DB::table('operators')->where('id', $request['operatorId'])->delete();
         return true;
     }
+
+    public function newOrganization(Request $request)
+    {
+        $data = DB::table('organizations')->insert([
+            'user_id' => $request['userId'],
+            'authorised_numbers' => $request['authorisedNumbers']??null,
+            'code' => $request['code'],
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        return $data;
+    }
 }
