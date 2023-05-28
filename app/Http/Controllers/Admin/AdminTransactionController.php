@@ -32,26 +32,26 @@ class AdminTransactionController extends Controller
         return $data;
     }
 
-    public function view($id=null)
+    public function view($id = null)
     {
         if (is_null($id)) {
             $data = DB::table('transactions')
+                ->join('users', 'users.id', '=', 'transactions.user_id')
+                ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
+                ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone')
+                ->paginate(20);
+
+            return $data;
+        }
+
+        $data = DB::table('transactions')
             ->join('users', 'users.id', '=', 'transactions.user_id')
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
+            ->where('transactions.id', $id)
             ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone')
             ->paginate(20);
 
-            return $data;
-        } 
 
-        $data = DB::table('transactions')
-        ->join('users', 'users.id', '=', 'transactions.user_id')
-        ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
-        ->where('transactions.id', $id)
-        ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone')
-        ->paginate(20);
-        
-        
         return $data;
     }
 
@@ -116,5 +116,35 @@ class AdminTransactionController extends Controller
         // });
 
         return $data;
+    }
+
+    public function homeStatistics(Request $request)
+    {
+        $request->only(['tennure', 'service']);
+        $event = $request['tennure'];
+        $query = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->select('transactions.*');
+        switch ($event) {
+            case 'week':
+                $data = $query->whereBetween('transactions.created_at', [Carbon::now()->endOfWeek(), Carbon::now()->endOfWeek()])
+                    ->where(['users.organization_id' => auth()->user()->organization_id, 'transactions.service_type' => $request['service']]);
+                break;
+
+            case 'month':
+                $data = $query->whereBetween('transactions.created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
+                    ->where(['users.organization_id' => auth()->user()->organization_id, 'transactions.service_type' => $request['service']]);
+                break;
+
+            default:
+                $data = $query->whereBetween('transactions.created_at', [Carbon::yesterday(), Carbon::firstWeekDay()])
+                    ->where(['users.organization_id' => auth()->user()->organization_id, 'transactions.service_type' => $request['service']]);
+                break;
+        }
+
+        $sum = $data->sum('tranasctions.debit_amount');
+        $count = $data->count();
+
+        return response(['sum' => $sum, 'count' => $count]);
     }
 }
