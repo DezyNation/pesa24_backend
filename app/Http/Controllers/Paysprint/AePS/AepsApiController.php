@@ -170,7 +170,7 @@ class AepsApiController extends CommissionController
         } else {
             $transaction_id = "AEPS" . strtoupper(Str::random(9));
             $metadata = [
-                'status' => true,
+                'status' => false,
                 'user_id' => auth()->user()->id,
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
@@ -178,62 +178,6 @@ class AepsApiController extends CommissionController
                 'amount' => $data['amount'],
                 'transaction_id' => $transaction_id,
                 'created_at' => date("F j, Y, g:i a"),
-                'ministatement' => [
-                    [
-                      "date"=> "30/06",
-                      "txnType"=> "Cr",
-                      "amount"=> "105.0",
-                      "narration"=> " APD "
-                    ],
-                    [
-                      "date"=> "30/06",
-                      "txnType"=> "Dr",
-                      "amount"=> "105.0",
-                      "narration"=> " APD "
-                    ],
-                    [
-                      "date"=> "31/05",
-                      "txnType"=> "Cr",
-                      "amount"=> "105.0",
-                      "narration"=> " APD "
-                    ],
-                    [
-                      "date"=> "31/05",
-                      "txnType"=> "Dr",
-                      "amount"=> "105.0",
-                      "narration"=> " APD "
-                    ],
-                    [
-                      "date"=> "30/04",
-                      "txnType"=> "Cr",
-                      "amount"=> "100.0",
-                      "narration"=> " APD "
-                    ],
-                    [
-                      "date"=> "30/04",
-                      "txnType"=> "Dr",
-                      "amount"=> "100.0",
-                      "narration"=> " APD "
-                    ],
-                    [
-                      "date"=> "31/03",
-                      "txnType"=> "Cr",
-                      "amount"=> "101.0",
-                      "narration"=> " APD "
-                    ],
-                    [
-                      "date"=> "31/03",
-                      "txnType"=> "Dr",
-                      "amount"=> "101.0",
-                      "narration"=> " APD "
-                    ],
-                    [
-                      "date"=> "01/03",
-                      "txnType"=> "Cr",
-                      "amount"=> "150.0",
-                      "narration"=> " APD "
-                    ]
-                  ],
                 'reference_id' => $data['referenceno'],
                 'reason' => $response['message'] ?? "null",
                 'mobile_number' => $data['mobilenumber'],
@@ -358,7 +302,63 @@ class AepsApiController extends CommissionController
         } else {
             $transaction_id = "MINIS" . strtoupper(Str::random(9));
             $metadata = [
-                'status' => false,
+                'status' => true,
+                'ministatement' => [
+                    [
+                      "date"=> "30/06",
+                      "txnType"=> "Cr",
+                      "amount"=> "105.0",
+                      "narration"=> " APD "
+                    ],
+                    [
+                      "date"=> "30/06",
+                      "txnType"=> "Dr",
+                      "amount"=> "105.0",
+                      "narration"=> " APD "
+                    ],
+                    [
+                      "date"=> "31/05",
+                      "txnType"=> "Cr",
+                      "amount"=> "105.0",
+                      "narration"=> " APD "
+                    ],
+                    [
+                      "date"=> "31/05",
+                      "txnType"=> "Dr",
+                      "amount"=> "105.0",
+                      "narration"=> " APD "
+                    ],
+                    [
+                      "date"=> "30/04",
+                      "txnType"=> "Cr",
+                      "amount"=> "100.0",
+                      "narration"=> " APD "
+                    ],
+                    [
+                      "date"=> "30/04",
+                      "txnType"=> "Dr",
+                      "amount"=> "100.0",
+                      "narration"=> " APD "
+                    ],
+                    [
+                      "date"=> "31/03",
+                      "txnType"=> "Cr",
+                      "amount"=> "101.0",
+                      "narration"=> " APD "
+                    ],
+                    [
+                      "date"=> "31/03",
+                      "txnType"=> "Dr",
+                      "amount"=> "101.0",
+                      "narration"=> " APD "
+                    ],
+                    [
+                      "date"=> "01/03",
+                      "txnType"=> "Cr",
+                      "amount"=> "150.0",
+                      "narration"=> " APD "
+                    ]
+                  ],
                 'user_id' => auth()->user()->id,
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
