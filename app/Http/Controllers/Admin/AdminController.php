@@ -475,12 +475,12 @@ class AdminController extends Controller
             'role' => 'required', 'exists:roles,name'
             // 'remarks' => 'required'
         ]);
-        $data = DB::table('parent_user')->updateOrInsert([
+        $data = DB::table('user_parent')->updateOrInsert(
             ['user_id' => $request['userId']],
             ['parent_id' => $request['parentId']]
-        ]);
+        );
 
-        User::where('id', $request['userId'])->syncRoles($request['role']);
+        User::find($request['userId'])->syncRoles($request['role']);
 
         return true;
     }
@@ -596,5 +596,15 @@ class AdminController extends Controller
         $debit = $table->sum('debit_amount');
 
         return response(['credit_amount' => $credit, 'debit_amount' => $debit]);
+    }
+
+    public function cmsBiller(Request $request)
+    {
+        $data = DB::table('cms_billers')->insert([
+            'name' => $request['name'],
+            'biller_id' => $request['billerId']
+        ]);
+
+        return $data;
     }
 }
