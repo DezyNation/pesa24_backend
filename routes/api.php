@@ -212,8 +212,8 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     /*-----------------------Paysprint CMS-----------------------*/
     Route::post('paysprint/cms/fino', [FinoCMSController::class, 'generateUrl']);
     Route::post('paysprint/cms/airtel', [AirtelCMSController::class, 'generateUrl']);
-    Route::post('add-cms-billers', [AdminController::class, 'cmsBiller']);
     Route::post('paysprint/cms/status', [FinoCMSController::class, 'transactionStatus']);
+    Route::get('cms-billers', [AdminController::class, 'getCmsBiller']);
     /*-----------------------Paysprint CMS-----------------------*/
     /*-----------------------Paysprint FastTAG-----------------------*/
     Route::get('paysprint/fastag/operators', [FastTagController::class, 'operatorList']);
