@@ -78,6 +78,7 @@ class AepsApiController extends CommissionController
                 'amount' => $response['amount'] ?? "Could not fetch.",
                 'user_id' => auth()->user()->id,
                 'user_name' => auth()->user()->name,
+                'message' => $response['message']??"Transaction Failed",
                 'user_phone' => auth()->user()->phone_number,
             ];
         } else {
@@ -86,6 +87,7 @@ class AepsApiController extends CommissionController
                 'amount' => $response['amount'] ?? "Could not fetch.",
                 'user_id' => auth()->user()->id,
                 'user_name' => auth()->user()->name,
+                'message' => $response['message']??"Transaction Failed",
                 'user_phone' => auth()->user()->phone_number,
             ];
         }
