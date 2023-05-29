@@ -26,7 +26,7 @@ class UserDashboardController extends Controller
         return $data;
     }
 
-    public function overView($category)
+    public function overView()
     {
         $table = DB::aeps('transactions')
             ->join('users', 'users.id', '=', 'transactions.trigered_by');
