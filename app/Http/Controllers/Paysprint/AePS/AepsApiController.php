@@ -72,10 +72,24 @@ class AepsApiController extends CommissionController
             'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://api.paysprint.in/api/v1/service/aeps/balanceenquiry/index', ['body' => $body]);
 
-        if ($response['response_code'] == 24) {
-            return $this->onboard();
+        if ($response['status'] == "true") {
+            $metadata = [
+                'status' => true,
+                'amount' => $response['amount'] ?? "Could not fetch.",
+                'user_id' => auth()->user()->id,
+                'user_name' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
+            ];
+        } else {
+            $metadata = [
+                'status' => false,
+                'amount' => $response['amount'] ?? "Could not fetch.",
+                'user_id' => auth()->user()->id,
+                'user_name' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
+            ];
         }
-        return ['metadata' => $response->object()];
+        return ['metadata' => $metadata];
     }
 
     public function withdrwal(Request $request)
@@ -138,7 +152,7 @@ class AepsApiController extends CommissionController
                 'user_id' => auth()->user()->id,
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
-                'message' => $response['message']??"Transaction Failed",
+                'message' => $response['message'] ?? "Transaction Failed",
                 'amount' => $data['amount'],
                 'bankrrn' => $response['bankrrn'],
                 'transaction_id' => $transaction_id,
@@ -158,7 +172,7 @@ class AepsApiController extends CommissionController
                 'user_id' => auth()->user()->id,
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
-                'message' => $response['message']??"Transaction Failed",
+                'message' => $response['message'] ?? "Transaction Failed",
                 'amount' => $data['amount'],
                 'transaction_id' => $transaction_id,
                 'created_at' => date("F j, Y, g:i a"),
@@ -272,7 +286,7 @@ class AepsApiController extends CommissionController
                 'user_id' => auth()->user()->id,
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
-                'message' => $response['message']??"Transaction Failed",
+                'message' => $response['message'] ?? "Transaction Failed",
                 'amount' => $data['amount'],
                 'bankrrn' => $response['bankrrn'],
                 'transaction_id' => $transaction_id,
@@ -290,7 +304,7 @@ class AepsApiController extends CommissionController
                 'user_id' => auth()->user()->id,
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
-                'message' => $response['message']??"Transaction Failed",
+                'message' => $response['message'] ?? "Transaction Failed",
                 'transaction_id' => $transaction_id,
                 'created_at' => date("F j, Y, g:i a"),
                 'reference_id' => $data['referenceno'],
@@ -363,7 +377,7 @@ class AepsApiController extends CommissionController
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,
-                'message' => $response['message']??"Transaction Failed",
+                'message' => $response['message'] ?? "Transaction Failed",
                 'amount' => $data['amount'],
                 'bankrrn' => $response['bankrrn'],
                 'bankiin' => $response['bankiin'],
@@ -387,7 +401,7 @@ class AepsApiController extends CommissionController
                 'transaction_id' => $transaction_id,
                 'created_at' => date("F j, Y, g:i a"),
                 'event' => 'aadhar-pay',
-                'message' => $response['message']??"Transaction Failed",
+                'message' => $response['message'] ?? "Transaction Failed",
                 'reference_id' => $data['referenceno'],
                 'mobile_number' => $data['mobilenumber'],
             ];
