@@ -200,8 +200,8 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::get('paysprint/bbps/operators/categories/{id?}', [BillController::class, 'operatorParameter']);
     Route::post('paysprint/bbps/fetch-bill', [BillController::class, 'fetchBill']);
     Route::post('paysprint/lic/fetch-bill', [LICController::class, 'fetchBill']);
-    Route::post('paysprint/bbps/pay-bill', [BillController::class, 'payBill'])->middleware('mpin');
-    Route::post('paysprint/lic/pay-bill', [LICController::class, 'payLicBill'])->middleware('mpin');
+    Route::post('paysprint/bbps/pay-bill/{service_code}', [BillController::class, 'payBill'])->middleware('mpin');
+    Route::post('paysprint/lic/pay-bill/{service_code?}', [LICController::class, 'payLicBill'])->middleware('mpin');
     /*-----------------------Paysprint BBPS-----------------------*/
     /*-----------------------Paysprint Recharge-----------------------*/
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
