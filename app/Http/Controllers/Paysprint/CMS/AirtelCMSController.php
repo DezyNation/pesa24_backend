@@ -42,6 +42,7 @@ class AirtelCMSController extends Controller
             DB::table('cms_records')->insert([
                 'user_id' => auth()->user()->id,
                 'reference_id' => $data['refid'],
+                'biller_id' => $request['billerId'],
                 'transaction_id' => $data['transaction_id'],
                 'created_at' => now(),
                 'provider' => 'airtel'
