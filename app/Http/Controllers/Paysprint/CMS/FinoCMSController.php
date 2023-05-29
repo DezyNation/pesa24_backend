@@ -36,8 +36,8 @@ class FinoCMSController extends Controller
             'Token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://paysprint.in/service-api/api/v1/service/finocms/fino/generate_url', $data);
-        
+        ])->post('https://api.paysprint.in/api/v1/service/finocms/fino/generate_url', $data);
+
         if ($response['response_code'] == 1) {
             DB::table('cms_records')->insert([
                 'user_id' => auth()->user()->id,
@@ -56,11 +56,11 @@ class FinoCMSController extends Controller
         $data = [
             'refid' => $request['referenceId']
         ];
-        
+
         if ($request['provider'] == 'fino') {
-            $url = 'https://paysprint.in/service-api/api/v1/service/finocms/fino/status';
+            $url = 'https://api.paysprint.in/api/v1/service/finocms/fino/status';
         } else {
-            $url = 'https://paysprint.in/service-api/api/v1/service/airtelcms/airtel/status';
+            $url = 'https://api.paysprint.in/api/v1/service/airtelcms/airtel/status';
         }
 
         $token = $this->token();

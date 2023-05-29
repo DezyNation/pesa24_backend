@@ -17,7 +17,7 @@ class OnboardController extends Controller
             'partnerId' => 'PS001',
             'reqid' => abs(crc32(uniqid()))
         ];
-        
+
         $jwt = JWT::encode($payload, $key, 'HS256');
         return $jwt;
     }
@@ -39,7 +39,7 @@ class OnboardController extends Controller
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/onboard/onboardnew/getonboardurl', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/onboard/onboardnew/getonboardurl', $data);
 
         return redirect($response->json($key = 'redirecturl'));
     }

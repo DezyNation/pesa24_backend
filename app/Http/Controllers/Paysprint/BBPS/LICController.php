@@ -22,7 +22,7 @@ class LICController extends CommissionController
             'partnerId' => env('PAYSPRINT_PARTNERID'),
             'reqid' => abs(crc32(uniqid()))
         ];
-        
+
         $jwt = JWT::encode($payload, $key, 'HS256');
         return $jwt;
     }
@@ -44,7 +44,7 @@ class LICController extends CommissionController
             'Token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://paysprint.in/service-api/api//v1/service/bill-payment/bill/fetchlicbill', $data);
+        ])->post('https://api.paysprint.in/api//v1/service/bill-payment/bill/fetchlicbill', $data);
 
         return $response;
     }
@@ -76,9 +76,9 @@ class LICController extends CommissionController
             'token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paylicbill', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/bill-payment/bill/paylicbill', $data);
 
-        
+
         if ($response->json($key = 'response_code') == 1 || $response->json($key = 'response_code') == 0) {
             $metadata = [
                 'status' => $response['status'],
@@ -124,7 +124,7 @@ class LICController extends CommissionController
 
             return response([$response['message'], 'metadata' => $metadata], 400);
         }
-        
+
         return $response;
     }
 }

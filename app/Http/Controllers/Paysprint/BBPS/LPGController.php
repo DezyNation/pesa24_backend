@@ -18,7 +18,7 @@ class LPGController extends Controller
             'partnerId' => 'PS001',
             'reqid' => abs(crc32(uniqid()))
         ];
-        
+
         $jwt = JWT::encode($payload, $key, 'HS256');
         return $jwt;
     }
@@ -31,7 +31,7 @@ class LPGController extends Controller
         $response = Http::acceptJson()->withHeaders([
             'Content-type' => 'application/json',
             'Token' => $token,
-        ])->post('https://paysprint.in/service-api/api/v1/service/bill-payment/lpg/getoperator', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/bill-payment/lpg/getoperator', $data);
 
         return $response;
     }

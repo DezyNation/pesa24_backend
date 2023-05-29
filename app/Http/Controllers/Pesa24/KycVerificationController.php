@@ -67,7 +67,7 @@ class KycVerificationController extends Controller
                 ['user_id' => $user_id],
                 ['aadhar' => 1]
             );
-            
+
             DB::table('users')->where('id', $user_id)->update([
                 'name' => $response['response']['name'],
                 'dob' =>date("Y-m-d", strtotime(str_replace('/', '-' ,$response['response']['dob']))),
@@ -200,7 +200,7 @@ class KycVerificationController extends Controller
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'Content-Type: application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/onboard/onboard/getonboardurl', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/onboard/onboard/getonboardurl', $data);
         Log::channel('response')->info($response);
         DB::table('users')->where('id', auth()->user()->id)->update([
             'paysprint_merchant' => $data['merchantcode'],

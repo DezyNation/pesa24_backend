@@ -70,7 +70,7 @@ class AepsApiController extends CommissionController
             'Token' => $token,
             'accept' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
-        ])->post('https://paysprint.in/service-api/api/v1/service/aeps/balanceenquiry/index', ['body' => $body]);
+        ])->post('https://api.paysprint.in/api/v1/service/aeps/balanceenquiry/index', ['body' => $body]);
 
         if ($response['response_code'] == 24) {
             return $this->onboard();
@@ -125,7 +125,7 @@ class AepsApiController extends CommissionController
             'Token' => $token,
             'accept' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
-        ])->post('https://paysprint.in/service-api/api/v1/service/aeps/cashwithdraw/index', ['body' => $body]);
+        ])->post('https://api.paysprint.in/api/v1/service/aeps/cashwithdraw/index', ['body' => $body]);
 
         if ($response['response_code'] == 24) {
             return $this->onboard();
@@ -173,7 +173,7 @@ class AepsApiController extends CommissionController
         $response = Http::withHeaders([
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
-        ])->post('https://paysprint.in/service-api/api/v1/service/aeps/banklist/index', []);
+        ])->post('https://api.paysprint.in/api/v1/service/aeps/banklist/index', []);
 
         return $response;
     }
@@ -250,7 +250,7 @@ class AepsApiController extends CommissionController
             'Token' => $token,
             'accept' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
-        ])->post('https://paysprint.in/service-api/api/v1/service/aeps/ministatement/index', ['body' => $body]);
+        ])->post('https://api.paysprint.in/api/v1/service/aeps/ministatement/index', ['body' => $body]);
         $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
         $balance_left = $walletAmt[0] + $data['amount'];
 
@@ -337,7 +337,7 @@ class AepsApiController extends CommissionController
             'Token' => $token,
             'accept' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
-        ])->post('https://paysprint.in/service-api/api/v1/service/aadharpay/aadharpay/index', ['body' => $body]);
+        ])->post('https://api.paysprint.in/api/v1/service/aadharpay/aadharpay/index', ['body' => $body]);
 
         if ($response['response_code'] == 24) {
             return $this->onboard();

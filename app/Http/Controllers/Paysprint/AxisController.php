@@ -37,7 +37,7 @@ class AxisController extends Controller
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'Content-Type: application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/axisbank-utm/axisutm/generateurl', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/axisbank-utm/axisutm/generateurl', $data);
 
         return $response;
     }

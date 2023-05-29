@@ -39,7 +39,7 @@ class PayoutController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/list', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/payout/payout/list', $data);
 
         return $response;
     }
@@ -61,7 +61,7 @@ class PayoutController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/add', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/payout/payout/add', $data);
 
         if ($response->json($key = 'bene_id')) {
             $user->update(['paysprint_bene_id' => $response->json($key = 'bene_id')]);
@@ -87,7 +87,7 @@ class PayoutController extends CommissionController
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://paysprint.in/service-api/api/v1/service/payout/payout/uploaddocument',
+        CURLOPT_URL => 'https://api.paysprint.in/api/v1/service/payout/payout/uploaddocument',
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
@@ -120,7 +120,7 @@ class PayoutController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type' => 'application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/uploaddocument', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/payout/payout/uploaddocument', $data);
 
         return $response;
     }
@@ -138,7 +138,7 @@ class PayoutController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/payout/Payout/accountstatus', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/payout/Payout/accountstatus', $data);
 
         return $response;
     }
@@ -158,7 +158,7 @@ class PayoutController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/dotransaction', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/payout/payout/dotransaction', $data);
 
         return $response;
 
@@ -190,7 +190,7 @@ class PayoutController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/status', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/payout/payout/status', $data);
 
         return $response;
     }
@@ -296,7 +296,7 @@ class PayoutController extends CommissionController
                 'Token' => $token,
                 'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
                 'Content-Type: application/json'
-            ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/uploaddocument', $data);
+            ])->post('https://api.paysprint.in/api/v1/service/payout/payout/uploaddocument', $data);
 
         return $response;
     }

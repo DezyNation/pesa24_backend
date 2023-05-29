@@ -59,7 +59,7 @@ class PANController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'Content-Type: application/json'
-        ])->post('https://paysprint.in/service-api/api/v1/service/pan/V2/generateurl', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/pan/V2/generateurl', $data);
 
         if ($response['status'] == true && $response['response_code'] == 1) {
             $metadata = [
@@ -99,7 +99,7 @@ class PANController extends CommissionController
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
-        ])->post('https://paysprint.in/service-api/api/v1/service/pan/V2/pan_status', $data);
+        ])->post('https://api.paysprint.in/api/v1/service/pan/V2/pan_status', $data);
 
         return $response;
     }
@@ -119,7 +119,7 @@ class PANController extends CommissionController
             ->asForm()->withHeaders([
                 'Token' => $token,
                 'Authorisedkey' => env('AUTHORISED_KEY'),
-            ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/uploaddocument', $data);
+            ])->post('https://api.paysprint.in/api/v1/service/payout/payout/uploaddocument', $data);
 
         return $response;
     }
