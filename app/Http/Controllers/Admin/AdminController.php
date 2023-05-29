@@ -613,4 +613,10 @@ class AdminController extends Controller
         $data = DB::table('cms_billers')->get();
         return $data;
     }
+
+    public function deleteCmsBiller($id)
+    {
+        $data = DB::table('cms_billers')->where('id', $id)->delete();
+        return $data;
+    }
 }

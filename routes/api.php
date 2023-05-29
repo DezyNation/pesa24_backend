@@ -290,6 +290,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     });
     Route::post('new-admin', [AdminController::class, 'newAdmin'])->middleware('permission:assign-permission');
     Route::post('add-cms-billers', [AdminController::class, 'cmsBiller']);
+    Route::delete('cms-biller/{id}', [AdminController::class, 'deleteCmsBiller']);
     Route::get('cms-billers', [AdminController::class, 'getCmsBiller']);
     Route::get('all-permissions', [AdminController::class, 'permissions'])->middleware('permission:assign-permission');
     Route::post('assign-permission', [AdminController::class, 'assignPermission'])->middleware('permission:assign-permission');
