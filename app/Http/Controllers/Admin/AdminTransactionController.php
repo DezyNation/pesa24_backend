@@ -120,7 +120,7 @@ class AdminTransactionController extends Controller
 
     public function homeStatistics(Request $request)
     {
-        $request->only(['tennure', 'service']);
+        $request->only(['tennure']);
         $event = $request['tennure'];
         $query = DB::table('transactions')
             ->join('users', 'users.id', '=', 'transactions.trigered_by')

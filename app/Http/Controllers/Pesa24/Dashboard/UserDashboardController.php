@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Pesa24\Dashboard;
 
-use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 
 class UserDashboardController extends Controller
 {
@@ -26,8 +27,27 @@ class UserDashboardController extends Controller
         return $data;
     }
 
-    public function overView()
+    public function overView(Request $request)
     {
+        $tennure = $request['tennure'];
+        switch ($tennure) {
+            case 'week':
+                $start = Carbon::now()->startOfWeek();
+                $end = Carbon::now()->endOfWeek();
+                break;
+
+            case 'month':
+                $start = Carbon::now()->startOfMonth();
+                $end = Carbon::now()->endOfMonth();
+                break;
+            default:
+                $start = Carbon::now();
+                $end = Carbon::now();
+                break;
+        }
+        $table = DB::aeps('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->whereBetween('transactions.created_at', [$start, $end]);
         $table = DB::aeps('transactions')
             ->join('users', 'users.id', '=', 'transactions.trigered_by');
 

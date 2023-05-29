@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Spatie\Permission\Models\Permission;
 
 class AdminController extends Controller
@@ -156,7 +157,6 @@ class AdminController extends Controller
                 ->join('users', 'users.id', '=', 'packages.user_id')
                 ->where('packages.organization_id', auth()->user()->organization_id)->select('packages.id', 'packages.name', 'packages.is_default', 'packages.status', 'users.name as user_name')
                 ->get();
-
         } else {
             $data = DB::table('packages')
                 ->join('users', 'users.id', '=', 'packages.user_id')
@@ -361,7 +361,7 @@ class AdminController extends Controller
                     ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
                     $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat', 'fixed_charge', 'provider'])
                 );
-            break;
+                break;
 
             default:
                 $data = response("Invalid parameter was sent.", 404);
@@ -447,8 +447,8 @@ class AdminController extends Controller
     public function packageCount($id)
     {
         $data = DB::table('package_user')
-        ->join('packages', 'packages.id', '=', 'package_user.package_id')
-        ->where(['package_user.package_id'=> $id, 'packages.organization_id' => auth()->user()->id])->count();
+            ->join('packages', 'packages.id', '=', 'package_user.package_id')
+            ->where(['package_user.package_id' => $id, 'packages.organization_id' => auth()->user()->id])->count();
         return $data;
     }
 
@@ -586,48 +586,65 @@ class AdminController extends Controller
         return ['capping_sum' => $capped_sum, 'wallet_sum' => $wallet_sum];
     }
 
-    public function sumCategory($category)
+    public function sumCategory(Request $request)
     {
-        $table = DB::aeps('transactions')
-            ->join('users', 'users.id', '=', 'transactions.trigered_by');
+        $tennure = $request['tennure'];
+        switch ($tennure) {
+            case 'week':
+                $start = Carbon::now()->startOfWeek();
+                $end = Carbon::now()->endOfWeek();
+                break;
 
-        $aeps = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'apes']);
+            case 'month':
+                $start = Carbon::now()->startOfMonth();
+                $end = Carbon::now()->endOfMonth();
+                break;
+            default:
+                $start = Carbon::now();
+                $end = Carbon::now();
+                break;
+        }
+        $table = DB::aeps('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->whereBetween('transactions.created_at', [$start, $end]);
+
+        $aeps = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'apes']);
 
         $credit_aeps = $aeps->sum('credit_amount');
         $debit_aeps = $aeps->sum('debit_amount');
         $count_aeps = $aeps->count();
 
-        $bbps = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'bbps']);
+        $bbps = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'bbps']);
 
         $credit_bbps = $bbps->sum('credit_amount');
         $debit_bbps = $bbps->sum('debit_amount');
         $count_bbps = $bbps->count();
 
-        $dmt = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'dmt']);
+        $dmt = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'dmt']);
 
         $credit_dmt = $dmt->sum('credit_amount');
         $debit_dmt = $dmt->sum('debit_amount');
         $count_dmt = $dmt->count();
 
-        $pan = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'pan']);
+        $pan = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'pan']);
 
         $credit_pan = $pan->sum('credit_amount');
         $debit_pan = $pan->sum('debit_amount');
         $count_pan = $pan->count();
 
-        $payout = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'payout']);
+        $payout = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'payout']);
 
         $credit_payout = $payout->sum('credit_amount');
         $debit_payout = $payout->sum('debit_amount');
         $count_payout = $payout->count();
 
-        $lic = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'lic']);
+        $lic = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'lic']);
 
         $credit_lic = $lic->sum('credit_amount');
         $debit_lic = $lic->sum('debit_amount');
         $count_lic = $lic->count();
 
-        $fastag = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'fastag']);
+        $fastag = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'fastag']);
 
         $credit_fastag = $fastag->sum('credit_amount');
         $debit_fastag = $fastag->sum('debit_amount');
