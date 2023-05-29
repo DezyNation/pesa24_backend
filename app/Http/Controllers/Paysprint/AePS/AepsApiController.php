@@ -135,6 +135,9 @@ class AepsApiController extends CommissionController
             $transaction_id = "AEPSW" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => $response['status'],
+                'user_id' => auth()->user()->id,
+                'user_name' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
                 'message' => $data['message'],
                 'amount' => $data['amount'],
                 'bankrrn' => $response['bankrrn'],
@@ -152,6 +155,9 @@ class AepsApiController extends CommissionController
             $transaction_id = "AEPS" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => false,
+                'user_id' => auth()->user()->id,
+                'user_name' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
                 'message' => "Trasaction failed",
                 'amount' => $data['amount'],
                 'transaction_id' => $transaction_id,
@@ -263,6 +269,9 @@ class AepsApiController extends CommissionController
             $transaction_id = "AEPSW" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => $response['status'],
+                'user_id' => auth()->user()->id,
+                'user_name' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
                 'message' => $data['message'],
                 'amount' => $data['amount'],
                 'bankrrn' => $response['bankrrn'],
@@ -278,6 +287,9 @@ class AepsApiController extends CommissionController
             $transaction_id = "MINIS" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => false,
+                'user_id' => auth()->user()->id,
+                'user_name' => auth()->user()->name,
+                'user_phone' => auth()->user()->phone_number,
                 'message' => "Trasaction failed",
                 'transaction_id' => $transaction_id,
                 'created_at' => date("F j, Y, g:i a"),
