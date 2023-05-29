@@ -115,6 +115,7 @@ class BillController extends CommissionController
                 'user_phone' => auth()->user()->phone_number,
                 'canumber' => $data['canumber'],
                 'amount' => $data['amount'],
+                'message' => "Server Busy pleasy try later!"
             ];
             $this->transaction($data['amount'], 'Bill payment', 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             return response(["Server Busy pleasy try later!", 'metadata' => $metadata], 501);
