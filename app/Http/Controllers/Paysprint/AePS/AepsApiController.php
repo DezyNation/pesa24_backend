@@ -233,6 +233,7 @@ class AepsApiController extends CommissionController
             'nationalbankidentification' => $request['bankCode'],
             'requestremarks' => 'AePS mini statement',
             'data' => $pid,
+            'amount' => 0,
             'pipe' => 'bank1',
             'timestamp' => now(),
             'submerchantid' => auth()->user()->paysprint_merchant,
