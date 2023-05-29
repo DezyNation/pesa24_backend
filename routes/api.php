@@ -99,6 +99,7 @@ Route::middleware(['auth:api'])->group(function () {
     /*-----------------------Tickets-----------------------*/
     Route::post('tickets', [TicketController::class, 'store']);
     Route::get('user/tickets', [TicketController::class, 'index']);
+    Route::get('user/overview/{category}', [UserDashboardController::class, 'overView']);
     /*-----------------------Tickets-----------------------*/
 
     /*-----------------------Password and MPIN-----------------------*/

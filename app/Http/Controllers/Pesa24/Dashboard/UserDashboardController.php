@@ -25,4 +25,17 @@ class UserDashboardController extends Controller
         $data = DB::table('transactions')->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->paginate(20);
         return $data;
     }
+
+    public function overView($category)
+    {
+        $table = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->where(['transactions.trigered_by' => auth()->user()->id, 'service_type' => $category]);
+
+        $credit = $table->sum('credit_amount');
+        $debit = $table->sum('debit_amount');
+        $count = $table->count();
+
+        return response(['credit_amount' => $credit, 'debit_amount' => $debit, 'count' => $count]);
+    }
 }
