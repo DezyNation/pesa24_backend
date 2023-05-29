@@ -607,4 +607,10 @@ class AdminController extends Controller
 
         return $data;
     }
+
+    public function getCmsBiller()
+    {
+        $data = DB::table('cms_billers')->get();
+        return $data;
+    }
 }
