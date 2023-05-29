@@ -588,14 +588,90 @@ class AdminController extends Controller
 
     public function sumCategory($category)
     {
-        $table = DB::table('transactions')
-                ->join('users', 'users.id', '=', 'transactions.trigered_by')
-                ->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => $category]);
+        $table = DB::aeps('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by');
 
-        $credit = $table->sum('credit_amount');
-        $debit = $table->sum('debit_amount');
+        $aeps = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'apes']);
 
-        return response(['credit_amount' => $credit, 'debit_amount' => $debit]);
+        $credit_aeps = $aeps->sum('credit_amount');
+        $debit_aeps = $aeps->sum('debit_amount');
+        $count_aeps = $aeps->count();
+
+        $bbps = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'bbps']);
+
+        $credit_bbps = $bbps->sum('credit_amount');
+        $debit_bbps = $bbps->sum('debit_amount');
+        $count_bbps = $bbps->count();
+
+        $dmt = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'dmt']);
+
+        $credit_dmt = $dmt->sum('credit_amount');
+        $debit_dmt = $dmt->sum('debit_amount');
+        $count_dmt = $dmt->count();
+
+        $pan = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'pan']);
+
+        $credit_pan = $pan->sum('credit_amount');
+        $debit_pan = $pan->sum('debit_amount');
+        $count_pan = $pan->count();
+
+        $payout = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'payout']);
+
+        $credit_payout = $payout->sum('credit_amount');
+        $debit_payout = $payout->sum('debit_amount');
+        $count_payout = $payout->count();
+
+        $lic = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'lic']);
+
+        $credit_lic = $lic->sum('credit_amount');
+        $debit_lic = $lic->sum('debit_amount');
+        $count_lic = $lic->count();
+
+        $fastag = $table->where(['users.organization_id'=> auth()->user()->organization_id, 'service_type' => 'fastag']);
+
+        $credit_fastag = $fastag->sum('credit_amount');
+        $debit_fastag = $fastag->sum('debit_amount');
+        $count_fastag = $fastag->count();
+
+        $array = [
+            'aeps' => [
+                'credit' => $credit_aeps,
+                'debit' => $debit_aeps,
+                'count' => $count_aeps
+            ],
+            'bbps' => [
+                'credit' => $credit_bbps,
+                'debit' => $debit_bbps,
+                'count' => $count_bbps
+            ],
+            'dmt' => [
+                'credit' => $credit_dmt,
+                'debit' => $debit_dmt,
+                'count' => $count_dmt
+            ],
+            'pan' => [
+                'credit' => $credit_pan,
+                'debit' => $debit_pan,
+                'count' => $count_pan
+            ],
+            'payout' => [
+                'credit' => $credit_payout,
+                'debit' => $debit_payout,
+                'count' => $count_payout
+            ],
+            'lic' => [
+                'credit' => $credit_lic,
+                'debit' => $debit_lic,
+                'count' => $count_lic
+            ],
+            'fastag' => [
+                'credit' => $credit_fastag,
+                'debit' => $debit_fastag,
+                'count' => $count_fastag
+            ]
+        ];
+
+        return response($array);
     }
 
     public function cmsBiller(Request $request)
