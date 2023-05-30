@@ -714,12 +714,12 @@ class AdminController extends Controller
 
         $not_approved = DB::table('funds')
         ->join('users', 'users.id', '=', 'funds.user_id')
-            ->whereBetween('created_at', [$start, $end])
+            ->whereBetween('funds.created_at', [$start, $end])
             ->where(['funds.approved' => 0, 'users.organization_id'=>auth()->user()->id])->count();
 
         $all = DB::table('funds')
         ->join('users', 'users.id', '=', 'funds.user_id')
-        ->whereBetween('created_at', [$start, $end])
+        ->whereBetween('funds.created_at', [$start, $end])
         ->where('users.organization_id', auth()->user()->organization_id)
         ->count();
 
@@ -755,7 +755,7 @@ class AdminController extends Controller
                 break;
         }
 
-        $logins = DB::table('logins')->whereBetween('created_at', [$start, $end])
+        $logins = DB::table('logins')->whereBetween('logins.created_at', [$start, $end])
         ->join('users', 'users.id', '=', 'logins.user_id')
         ->where('users.organization_id', auth()->user()->organization_id)
         ->count();
