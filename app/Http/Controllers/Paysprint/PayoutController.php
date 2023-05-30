@@ -18,10 +18,10 @@ class PayoutController extends CommissionController
 {
     public function token()
     {
-        $key = 'UFMwMDEyNGQ2NTliODUzYmViM2I1OWRjMDc2YWNhMTE2M2I1NQ==';
+        $key = env('JWT_KEY');
         $payload = [
             'timestamp' => now(),
-            'partnerId' => 'PS001',
+            'partnerId' => env('PAYSPRINT_PARTNERID'),
             'reqid' => abs(crc32(uniqid()))
         ];
 
@@ -46,6 +46,9 @@ class PayoutController extends CommissionController
 
     public function addAccount(Request $request)
     {
+        $request->validate([
+            'id' => 'exists:users'
+        ]);
         $user = User::findOrFail($request['id']);
         $token = $this->token();
         $data = [
@@ -61,52 +64,56 @@ class PayoutController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
-        ])->post('https://api.paysprint.in/api/v1/service/payout/payout/add', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/add', $data);
 
-        if ($response->json($key = 'bene_id')) {
+        if (array_key_exists('bene_id', $response->json())) {
             $user->update(['paysprint_bene_id' => $response->json($key = 'bene_id')]);
+            $response = $this->uploadDocuments($request['id']);
+            return response($response);
+        } else {
+            return response("Could not implement at the moment. Reason: {$response['message']}", 501);
         }
-
-        return $response;
     }
 
     public function documents(Request $request)
     {
-        $user = DB::table('users')->where(['id' => $request['id'], 'organization_id' => auth()->user()->organization_id])->get();
-        $pan = $user[0]->pan_photo;
-        $passbook = $user[0]->passbook;
+        // $user = DB::table('users')->where(['id' => $request['id'], 'organization_id' => auth()->user()->organization_id])->get();
+        // $pan = $user[0]->pan_photo;
+        // $passbook = $user[0]->passbook;
         $token = $this->token();
 
         $doctype = 'PAN';
         $data = [
-            'passbook' => new CURLFile(Storage::path($passbook)),
+            'passbook' => new CURLFile('../storage/app/aadhar_front/aadhaarfront.jpeg'),
             'doctype' => $doctype,
-            'panimage' => new CURLFile(Storage::path($pan)),
-            'bene_id' => $user[0]->paysprint_bene_id
+            'panimage' => new CURLFile('../storage/app/aadhar_front/aadhaarfront.jpeg'),
+            // 'bene_id' => $user[0]->paysprint_bene_id
+            'bene_id' => 1257678
         ];
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://api.paysprint.in/api/v1/service/payout/payout/uploaddocument',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => 'POST',
-        CURLOPT_POSTFIELDS => $data,
-        CURLOPT_HTTPHEADER => array(
-            'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
-            'Content-Type' => 'application/json'
-        ),
+            CURLOPT_URL => 'https://paysprint.in/service-api/api/v1/service/payout/payout/uploaddocument',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_HTTPHEADER => array(
+                'Token' => $token,
+                'Authorisedkey' => env('AUTHORISED_KEY'),
+                'Content-Type' => 'application/json',
+                'accept' => 'application/json'
+            ),
         ));
 
         $response2 = curl_exec($curl);
         curl_close($curl);
 
-        echo $response2;
+        dd($response2);
 
         // if ($doctype == 'PAN') {
         //     $data['panimage'] = Storage::get($pan);
@@ -138,7 +145,7 @@ class PayoutController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
-        ])->post('https://api.paysprint.in/api/v1/service/payout/Payout/accountstatus', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/payout/Payout/accountstatus', $data);
 
         return $response;
     }
@@ -262,42 +269,29 @@ class PayoutController extends CommissionController
         return response()->json(['message' => "Successfull", 'metadata' => $metadata]);
     }
 
-    public function testdocuments()
+    public function uploadDocuments($id)
     {
-        // $user = DB::table('users')->where(['id' => $request['id'], 'organization_id' => auth()->user()->organization_id])->get();
-        // $pan = $user[0]->pan_photo;
-        // $passbook = $user[0]->passbook;
+        $user = User::find($id);
         $token = $this->token();
 
         $doctype = 'PAN';
         $data = [
-            // 'passbook' => fopen(Storage::path('pan/16SsPkgJeJNUNgss40ZLEp6AUiEJuDdEzEPqnd9D.jpg'), 'r'),
+            // 'passbook' => fopen(Storage::path('pan/16SsPkgJeJNUNgss40ZLEp6AUiEJuDdEzEPqnd9D'), 'r'),
             'doctype' => $doctype,
-            // 'bene_id' => $user[0]->paysprint_bene_id
-            'bene_id' => 1257304
+            'bene_id' => $user->paysprint_bene_id
         ];
         $data2 = [
-            'passbook' => file_get_contents(Storage::path('pan/16SsPkgJeJNUNgss40ZLEp6AUiEJuDdEzEPqnd9D.jpg'), 'r'),
-            'panimage' => file_get_contents(Storage::path('pan/16SsPkgJeJNUNgss40ZLEp6AUiEJuDdEzEPqnd9D.jpg'), 'r'),
+            'passbook' => file_get_contents("../storage/app/$user->passbook"),
+            'panimage' => file_get_contents("../storage/app/$user->pan_photo"),
         ];
-
-        // return $data['passbook'];
-        // if ($doctype == 'PAN') {
-        //     $data['panimage'] = Storage::get($pan);
-        // }
-        // } else {
-        //     $data['front_image'] = Storage::get($user);
-        //     $data['back_image'] = Storage::get($pan);
-        // }
-
-        $response = Http::asForm()
-            ->attach('passbook', $data2['passbook'], 'passbook.jpg')->attach('panimage', $data2['panimage'], 'panimage.jpg')
+    
+        $response = Http::attach('passbook', $data2['passbook'], 'passbook.jpeg')->attach('panimage', $data2['panimage'], 'panimage.jpeg')
             ->acceptJson()->withHeaders([
                 'Token' => $token,
                 'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
                 'Content-Type: application/json'
-            ])->post('https://api.paysprint.in/api/v1/service/payout/payout/uploaddocument', $data);
-
+            ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/uploaddocument', $data);
+    
         return $response;
     }
 }

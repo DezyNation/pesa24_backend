@@ -358,8 +358,8 @@ class AdminController extends Controller
 
             case 'cms':
                 $data = DB::table('cms_commissions')->updateOrInsert(
-                    ['from' => $request['from'], 'to' => $request['to'], 'package_id' => $request['package_id']],
-                    $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat', 'fixed_charge', 'provider'])
+                    ['biller_id' => $request['biller_id'], 'package_id' => $request['package_id']],
+                    $request->only(['distributor_commission', 'super_distributor_commission', 'retailer_commission', 'gst', 'is_flat', 'fixed_charge', 'provider', 'parents'])
                 );
                 break;
 
@@ -471,13 +471,13 @@ class AdminController extends Controller
     {
         $request->validate([
             'userId' => 'required', 'exists:users,id',
-            'parentId' => 'required', 'exists:users,id',
+            'parent' => 'required', 'exists:users,id',
             'role' => 'required', 'exists:roles,name'
             // 'remarks' => 'required'
         ]);
         $data = DB::table('user_parent')->updateOrInsert(
             ['user_id' => $request['userId']],
-            ['parent_id' => $request['parentId']]
+            ['parent_id' => $request['parent']]
         );
 
         User::find($request['userId'])->syncRoles($request['role']);
@@ -488,9 +488,9 @@ class AdminController extends Controller
     public function getRoleParent(Request $request)
     {
         $role = User::find($request['userId'])->getRoleNames();
-        $parent = DB::table('users')->where('user_id', 91)
-            ->join('user_parent as parents', 'parents.parent_id', '=', 'users.id')
-            ->select('users.name', 'users.id')
+        $parent = DB::table('user_parent')->where('user_parent.user_id', $request['userId'])
+            ->join('users as parents', 'parents.id', '=', 'user_parent.parent_id')
+            ->select('parents.name', 'user_parent.parent_id')
             ->get();
         return ['parent' => $parent, 'role' => $role];
     }
@@ -600,92 +600,47 @@ class AdminController extends Controller
                 $end = Carbon::now()->endOfMonth();
                 break;
             default:
-                $start = Carbon::now();
-                $end = Carbon::now();
+                $start = Carbon::today();
+                $end = Carbon::tomorrow();
                 break;
         }
-        $table = DB::aeps('transactions')
-            ->join('users', 'users.id', '=', 'transactions.trigered_by')
-            ->whereBetween('transactions.created_at', [$start, $end]);
 
-        $aeps = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'apes']);
+        $aeps = $this->table($tennure, 'aeps');
 
-        $credit_aeps = $aeps->sum('credit_amount');
-        $debit_aeps = $aeps->sum('debit_amount');
-        $count_aeps = $aeps->count();
+        $bbps = $this->table($tennure, 'bbps');;
 
-        $bbps = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'bbps']);
+        $dmt = $this->table($tennure, 'dmt');;
 
-        $credit_bbps = $bbps->sum('credit_amount');
-        $debit_bbps = $bbps->sum('debit_amount');
-        $count_bbps = $bbps->count();
+        $pan = $this->table($tennure, 'pan');;
 
-        $dmt = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'dmt']);
+        $payout = $this->table($tennure, 'payout');;
 
-        $credit_dmt = $dmt->sum('credit_amount');
-        $debit_dmt = $dmt->sum('debit_amount');
-        $count_dmt = $dmt->count();
+        $lic = $this->table($tennure, 'lic');;
 
-        $pan = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'pan']);
+        $fastag = $this->table($tennure, 'fastag');
 
-        $credit_pan = $pan->sum('credit_amount');
-        $debit_pan = $pan->sum('debit_amount');
-        $count_pan = $pan->count();
+        $cms = $this->table($tennure, 'cms');
 
-        $payout = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'payout']);
+        $recharge = $this->table($tennure, 'recharge');
 
-        $credit_payout = $payout->sum('credit_amount');
-        $debit_payout = $payout->sum('debit_amount');
-        $count_payout = $payout->count();
+        $funds = $this->fundRequestCount($tennure);
 
-        $lic = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'lic']);
+        $users = $this->countLogins($tennure);
 
-        $credit_lic = $lic->sum('credit_amount');
-        $debit_lic = $lic->sum('debit_amount');
-        $count_lic = $lic->count();
-
-        $fastag = $table->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => 'fastag']);
-
-        $credit_fastag = $fastag->sum('credit_amount');
-        $debit_fastag = $fastag->sum('debit_amount');
-        $count_fastag = $fastag->count();
+        
 
         $array = [
-            'aeps' => [
-                'credit' => $credit_aeps,
-                'debit' => $debit_aeps,
-                'count' => $count_aeps
-            ],
-            'bbps' => [
-                'credit' => $credit_bbps,
-                'debit' => $debit_bbps,
-                'count' => $count_bbps
-            ],
-            'dmt' => [
-                'credit' => $credit_dmt,
-                'debit' => $debit_dmt,
-                'count' => $count_dmt
-            ],
-            'pan' => [
-                'credit' => $credit_pan,
-                'debit' => $debit_pan,
-                'count' => $count_pan
-            ],
-            'payout' => [
-                'credit' => $credit_payout,
-                'debit' => $debit_payout,
-                'count' => $count_payout
-            ],
-            'lic' => [
-                'credit' => $credit_lic,
-                'debit' => $debit_lic,
-                'count' => $count_lic
-            ],
-            'fastag' => [
-                'credit' => $credit_fastag,
-                'debit' => $debit_fastag,
-                'count' => $count_fastag
-            ]
+            $aeps,
+            $bbps,
+            $dmt,
+            $pan,
+            $payout,
+            $lic,
+            $fastag,
+            $cms,
+            $recharge,
+            $funds,
+            $users
         ];
 
         return response($array);
@@ -711,5 +666,112 @@ class AdminController extends Controller
     {
         $data = DB::table('cms_billers')->where('id', $id)->delete();
         return $data;
+    }
+
+    public function table($tennure, $category)
+    {
+        $tennure;
+        switch ($tennure) {
+            case 'week':
+                $start = Carbon::now()->startOfWeek();
+                $end = Carbon::now()->endOfWeek();
+                break;
+
+            case 'month':
+                $start = Carbon::now()->startOfMonth();
+                $end = Carbon::now()->endOfMonth();
+                break;
+
+            case 'year':
+                $start = Carbon::now()->startOfYear();
+                $end = Carbon::now()->endOfYear();
+                break;
+            default:
+                $start = Carbon::today();
+                $end = Carbon::tomorrow();
+                break;
+        }
+        $table = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->whereBetween('transactions.created_at', [$start, $end])
+            ->where(['users.organization_id' => auth()->user()->organization_id, 'service_type' => $category]);
+        return [
+            $category => [
+                'credit' => $table->sum('credit_amount'),
+                'debit' => $table->sum('debit_amount'),
+                'count' => $table->count()
+            ]
+        ];
+    }
+
+    public function fundRequestCount($tennure)
+    {
+        switch ($tennure) {
+            case 'week':
+                $start = Carbon::now()->startOfWeek();
+                $end = Carbon::now()->endOfWeek();
+                break;
+
+            case 'month':
+                $start = Carbon::now()->startOfMonth();
+                $end = Carbon::now()->endOfMonth();
+                break;
+
+            case 'year':
+                $start = Carbon::now()->startOfYear();
+                $end = Carbon::now()->endOfYear();
+                break;
+            default:
+                $start = Carbon::today();
+                $end = Carbon::tomorrow();
+                break;
+        }
+
+        $not_approved = DB::table('funds')
+            ->whereBetween('created_at', [$start, $end])
+            ->where(['approved' => 0])->count();
+
+        $all = DB::table('funds')->count();
+
+        return [
+            'funds' => [
+                'approved' => $all - $not_approved,
+                'not_approved' => $not_approved,
+                'all' => $all
+            ]
+        ];
+    }
+
+    public function countLogins($tennure)
+    {
+        switch ($tennure) {
+            case 'week':
+                $start = Carbon::now()->startOfWeek();
+                $end = Carbon::now()->endOfWeek();
+                break;
+
+            case 'month':
+                $start = Carbon::now()->startOfMonth();
+                $end = Carbon::now()->endOfMonth();
+                break;
+
+            case 'year':
+                $start = Carbon::now()->startOfYear();
+                $end = Carbon::now()->endOfYear();
+                break;
+            default:
+                $start = Carbon::today();
+                $end = Carbon::tomorrow();
+                break;
+        }
+
+        $logins = DB::table('logins')->whereBetween('created_at', [$start, $end])->count();
+        $registration = DB::table('users')->whereBetween('created_at', [$start, $end])->count();
+        return [
+            'users' => [
+                'login' => $logins,
+                'registration' => $registration
+            ]
+        ];
     }
 }

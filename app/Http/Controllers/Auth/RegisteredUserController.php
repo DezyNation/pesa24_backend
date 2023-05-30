@@ -61,7 +61,10 @@ class RegisteredUserController extends Controller
         $data = [
             'user_id' => $user->id,
             'user_name' => $user->name,
-            'organisation_code' => $request['organization_code']
+            'organisation_code' => $request['organization_code'],
+            [
+                ''
+            ]
         ];
         Http::post('https://pesa24-webhooks.vercel.app/api/users', $data);
         Mail::raw("Hello Your one time password is $password and Mpin'-$mpin", function ($message) use ($email, $name) {
