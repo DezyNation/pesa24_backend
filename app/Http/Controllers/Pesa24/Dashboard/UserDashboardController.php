@@ -107,4 +107,9 @@ class UserDashboardController extends Controller
             ]
         ];
     }
+
+    public function fundRequests($tennure)
+    {
+        # code...
+    }
 }

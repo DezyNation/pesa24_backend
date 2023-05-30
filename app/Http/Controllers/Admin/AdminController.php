@@ -719,6 +719,7 @@ class AdminController extends Controller
 
         $all = DB::table('funds')
         ->join('users', 'users.id', '=', 'funds.user_id')
+        ->whereBetween('created_at', [$start, $end])
         ->where('users.organization_id', auth()->user()->organization_id)
         ->count();
 
