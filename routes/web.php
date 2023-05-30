@@ -35,6 +35,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
 use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayoutController;
+use App\Http\Controllers\Pesa24\Dashboard\UserDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +52,7 @@ Route::get('/', function () {
     return ['Application' => 'Pesa24'];
 });
 
-Route::get('inquiry', [AepsApiController::class, 'miniStatement']);
+Route::get('inquiry', [UserDashboardController::class, 'overView']);
 Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
 Route::get('pan', [BBPSController::class, 'payBill']);
 
