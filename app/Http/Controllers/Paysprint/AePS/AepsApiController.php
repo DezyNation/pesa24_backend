@@ -274,6 +274,7 @@ class AepsApiController extends CommissionController
             'accept' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
         ])->post('https://api.paysprint.in/api/v1/service/aeps/ministatement/index', ['body' => $body]);
+        $this->apiRecords($data['referenceno'], 'paysprint', $response);
         $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
         $balance_left = $walletAmt[0] + $data['amount'];
 
