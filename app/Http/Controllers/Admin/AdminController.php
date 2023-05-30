@@ -589,21 +589,6 @@ class AdminController extends Controller
     public function sumCategory(Request $request)
     {
         $tennure = $request['tennure'];
-        switch ($tennure) {
-            case 'week':
-                $start = Carbon::now()->startOfWeek();
-                $end = Carbon::now()->endOfWeek();
-                break;
-
-            case 'month':
-                $start = Carbon::now()->startOfMonth();
-                $end = Carbon::now()->endOfMonth();
-                break;
-            default:
-                $start = Carbon::today();
-                $end = Carbon::tomorrow();
-                break;
-        }
 
         $aeps = $this->table($tennure, 'aeps');
 
@@ -728,10 +713,14 @@ class AdminController extends Controller
         }
 
         $not_approved = DB::table('funds')
+        ->join('users', 'users.id', '=', 'funds.user_id')
             ->whereBetween('created_at', [$start, $end])
-            ->where(['approved' => 0])->count();
+            ->where(['funds.approved' => 0, 'users.organization_id'=>auth()->user()->id])->count();
 
-        $all = DB::table('funds')->count();
+        $all = DB::table('funds')
+        ->join('users', 'users.id', '=', 'funds.user_id')
+        ->where('users.organization_id', auth()->user()->organization_id)
+        ->count();
 
         return [
             'funds' => [
@@ -765,12 +754,17 @@ class AdminController extends Controller
                 break;
         }
 
-        $logins = DB::table('logins')->whereBetween('created_at', [$start, $end])->count();
-        $registration = DB::table('users')->whereBetween('created_at', [$start, $end])->count();
+        $logins = DB::table('logins')->whereBetween('created_at', [$start, $end])
+        ->join('users', 'users.id', '=', 'logins.user_id')
+        ->where('users.organization_id', auth()->user()->organization_id)
+        ->count();
+        $registration = DB::table('users')->whereBetween('created_at', [$start, $end])->where('organization_id', auth()->user()->organization_id)->count();
+        $support_tickets = DB::table('tickets')->whereBetween('created_at', [$start, $end])->where('organization_id', auth()->user()->organization_id)->count();
         return [
             'users' => [
                 'login' => $logins,
-                'registration' => $registration
+                'registration' => $registration,
+                'tickets' => $support_tickets
             ]
         ];
     }

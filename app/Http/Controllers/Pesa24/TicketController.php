@@ -17,6 +17,7 @@ class TicketController extends Controller
         $ticket = DB::table('tickets')->insert([
             'user_id' => auth()->user()->id,
             'title' => $request['title'],
+            'organization_id' => auth()->user()->organization_id,
             'transaction_id' => $request['linkedTransactionId'],
             'body' => $request['body'],
             'status' => 'created',
