@@ -136,8 +136,27 @@ class GlobalServiceController extends Controller
     {
         $data = DB::table('organizations')->insert([
             'user_id' => $request['userId'],
+            'firm_name' => $request['firmName'],
             'authorised_numbers' => $request['authorisedNumbers']??null,
             'code' => $request['code'],
+            'firm_address' => $request['firmAddress'],
+            'email' => $request['email'],
+            'phone_number' => $request['phoneNumber'],
+            'coi' => $request['coi'],
+            'coi_attachment' => $request->file('coiAttachment')->store('coi'),
+            'gst' => $request['gst'],
+            'gst_attachment' => $request->file('gstAttachment')->store('gst'),
+            'mou' => $request['mou'],
+            'mou_attachment' => $request->file('mouAttachment')->store('mou'),
+            'aoa' => $request['aoa'],
+            'aoa_attachment' => $request->file('aoaAttachment')->store('aoa'),
+            'firm_pan' => $request['firm_pan'],
+            'firm_pan_attachment' => $request->file('firmPanAttachment')->store('firm_pan'),
+            'signatury_pan' => $request['signatury_pan'],
+            'signatury_pan_attachment' => $request->file('signaturyPanAttachment')->store('signatury_pan'),
+            'signatury_aadhaar' => $request['signatury_aadhaar'],
+            'signatury_aadhaar_attachment' => $request->file('signaturyAadhaarAttachment')->store('signatury_aadhaar'),
+            'signatury_photo' => $request->file('signaturyPhoto')->store('signatury_photo'),
             'created_at' => now(),
             'updated_at' => now()
         ]);
