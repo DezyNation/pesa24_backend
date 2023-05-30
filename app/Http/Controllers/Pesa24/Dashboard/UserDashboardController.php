@@ -49,11 +49,7 @@ class UserDashboardController extends Controller
 
         $recharge = $this->userTable($tennure, 'recharge');
 
-        $funds = $this->fundRequestCount($tennure);
-
-        $users = $this->countLogins($tennure);
-
-
+        $funds = $this->fundRequests($tennure);
 
         $array = [
             $aeps,
@@ -66,7 +62,6 @@ class UserDashboardController extends Controller
             $cms,
             $recharge,
             $funds,
-            $users
         ];
 
         return response($array);
@@ -96,7 +91,6 @@ class UserDashboardController extends Controller
                 break;
         }
         $table = DB::table('transactions')
-            ->join('users', 'users.id', '=', 'transactions.trigered_by')
             ->whereBetween('transactions.created_at', [$start, $end])
             ->where(['transactions.trigered_by' => auth()->user()->id, 'service_type' => $category]);
         return [
@@ -110,6 +104,42 @@ class UserDashboardController extends Controller
 
     public function fundRequests($tennure)
     {
-        # code...
+        switch ($tennure) {
+            case 'week':
+                $start = Carbon::now()->startOfWeek();
+                $end = Carbon::now()->endOfWeek();
+                break;
+
+            case 'month':
+                $start = Carbon::now()->startOfMonth();
+                $end = Carbon::now()->endOfMonth();
+                break;
+
+            case 'year':
+                $start = Carbon::now()->startOfYear();
+                $end = Carbon::now()->endOfYear();
+                break;
+            default:
+                $start = Carbon::today();
+                $end = Carbon::tomorrow();
+                break;
+        }
+
+        $not_approved = DB::table('funds')
+            ->whereBetween('created_at', [$start, $end])
+            ->where(['funds.approved' => 0, 'funds.user_id'=>auth()->user()->id])->count();
+
+        $all = DB::table('funds')
+        ->whereBetween('created_at', [$start, $end])
+        ->where('funds.user_id', auth()->user()->id)
+        ->count();
+
+        return [
+            'funds' => [
+                'approved' => $all - $not_approved,
+                'not_approved' => $not_approved,
+                'all' => $all
+            ]
+        ];
     }
 }
