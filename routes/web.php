@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\CommissionController;
+use App\Http\Controllers\Eko\BBPS\BBPSController;
 use App\Http\Controllers\Paysprint\LPGController;
 use App\Http\Controllers\Paysprint\PANController;
-use App\Http\Controllers\Razorpay\PayoutController;
 use App\Http\Controllers\Eko\AePS\AepsApiController;
 use App\Http\Controllers\Razorpay\ContactController;
 use App\Http\Controllers\Paysprint\OnboardController;
@@ -28,8 +28,8 @@ use App\Http\Controllers\Paysprint\BBPS\FastTagController;
 use App\Http\Controllers\Pesa24\KycVerificationController;
 use App\Http\Controllers\Paysprint\BBPS\RechargeController;
 use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
+use App\Http\Controllers\Eko\MoneyTransfer\PayoutController;
 use App\Http\Controllers\Eko\Agent\AgentManagementController;
-use App\Http\Controllers\Eko\BBPS\BBPSController;
 use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
@@ -51,7 +51,7 @@ Route::get('/', function () {
     return ['Application' => 'Pesa24'];
 });
 
-Route::get('inquiry', [AepsApiController::class, 'miniStatement']);
+Route::get('inquiry', [PaysprintPayout::class, 'testdocuments']);
 Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
 Route::get('pan', [BBPSController::class, 'payBill']);
 

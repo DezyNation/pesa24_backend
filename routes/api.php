@@ -236,7 +236,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('users', [UserController::class, 'index']);
     Route::get('role-count/{role}', [AdminController::class, 'roleCount']);
     Route::get('sum-amounts', [AdminController::class, 'sumAmounts']);
-    Route::get('statistics/{category}', [AdminController::class, 'sumAmounts']);
+    Route::get('overview', [AdminController::class, 'sumCategory']);
     Route::get('users/{id}', [UserController::class, 'show']);
     Route::get('tickets', [TicketController::class, 'adminTicket']);
     Route::post('tickets', [TicketController::class, 'adminUpdateTicket']);
@@ -256,7 +256,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('users-list/{role}', [AdminController::class, 'roleUser']);
     Route::get('logins/{count?}', [AdminController::class, 'logins']);
 
-    Route::post('paysprint/payout/upload-documents', [PaysprintPayout::class, 'documents']);
+    Route::post('paysprint/payout/upload-documents', [PaysprintPayout::class, 'uploadDocuments']);
     Route::get('fetch-fund-requests/{id}', [FundController::class, 'fetchFundId']);
     Route::get('fetch-admin-funds', [FundController::class, 'reversalAndTransferFunds']);
     Route::post('update-fund-requests', [FundController::class, 'updateFund'])->middleware(['permission:fund-request-edit', 'minimum_balance']);

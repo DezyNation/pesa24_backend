@@ -34,7 +34,6 @@ class BillController extends CommissionController
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'accept' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'content-type' => 'application/json',
         ])->post("https://api.paysprint.in/api/v1/service/bill-payment/bill/getoperator/307", []);
