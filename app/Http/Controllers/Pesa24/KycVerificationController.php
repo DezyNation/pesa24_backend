@@ -165,6 +165,8 @@ class KycVerificationController extends Controller
             'shop_name' => auth()->user()->company_name ?? "PAYMONEY"
         ];
 
+        Log::channel('response')->info('request', $data);
+
         $response = Http::asForm()->withHeaders([
             'developer_key' => '28fbc74a742123e19bcda26d05453a18',
             'secret-key-timestamp' => $secret_key_timestamp,
@@ -239,8 +241,27 @@ class KycVerificationController extends Controller
         return $response;
     }
 
-    public function otpRequest()
+    public function otpRequest(Request $request)
     {
-        # code...
+        $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
+        $encodedKey = base64_encode($key);
+        $secret_key_timestamp = round(microtime(true) * 1000);
+        $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
+        $secret_key = base64_encode($signature);
+
+        $data = [
+            'initiator_id' => 9758105858,
+            'user_code' => auth()->user()->code,
+            'customer_id' => auth()->user()->phone_number,
+            'aadhar' => auth()->user()->aadhaar,
+            'latlong' => $request['latlong']
+        ];
+
+        $response = Http::asForm()->withHeaders([
+            'developer_key' => '28fbc74a742123e19bcda26d05453a18',
+            'secret-key-timestamp' => $secret_key_timestamp,
+            'secret-key' => $secret_key,
+        ])->post('https://staging.eko.in:25004/ekoapi/v2/aeps/otp');
+
     }
 }
