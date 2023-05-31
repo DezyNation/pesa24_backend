@@ -209,9 +209,9 @@ class AdminController extends Controller
         return $users;
     }
 
-    public function assignPermission(Request $request)
+    public function assignPermission(Request $request=null)
     {
-        $user = User::role('admin')->findOrFail($request['userId']);
+        $user = User::find($request['userId']);
         $user->givePermissionTo($request['permission']);
 
         return response()->json(['message' => "Permission Assigned"]);
