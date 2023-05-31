@@ -114,7 +114,7 @@ class AdminController extends Controller
                 $data = DB::table('b_b_p_s')
                     ->join('packages', 'packages.id', '=', 'b_b_p_s.package_id')
                     ->where('b_b_p_s.package_id', $id)
-                    ->select('b_b_p_s.parents', 'b_b_p_s.category', 'b_b_p_s.operator', 'b_b_p_s.from', 'b_b_p_s.to', 'b_b_p_s.fixed_charge', 'b_b_p_s.is_flat', 'b_b_p_s.gst', 'b_b_p_s.retailer_commission', 'b_b_p_s.distributor_commission', 'b_b_p_s.super_distributor_commission', 'b_b_p_s.admin_commission')
+                    ->select('b_b_p_s.parents', 'b_b_p_s.category', 'b_b_p_s.operator_name', 'b_b_p_s.from', 'b_b_p_s.to', 'b_b_p_s.fixed_charge', 'b_b_p_s.is_flat', 'b_b_p_s.gst', 'b_b_p_s.retailer_commission', 'b_b_p_s.distributor_commission', 'b_b_p_s.super_distributor_commission', 'b_b_p_s.admin_commission')
                     ->get();
                 break;
 
