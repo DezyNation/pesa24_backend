@@ -227,12 +227,20 @@ class KycVerificationController extends Controller
             'purpose_desc' => 'onboard'
         ];
 
+        Log::channel('response')->info('request', $data);
+
         $response = Http::asForm()->withHeaders([
             'developer_key' => '28fbc74a742123e19bcda26d05453a18',
             'secret-key-timestamp' => $secret_key_timestamp,
             'secret-key' => $secret_key,
         ])->post('https://api.eko.in:25002/ekoicici/v2/pan/verify', $data);
 
+        Log::channel('response')->info($response);
         return $response;
+    }
+
+    public function otpRequest()
+    {
+        # code...
     }
 }
