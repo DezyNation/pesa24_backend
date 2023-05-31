@@ -141,7 +141,7 @@ class KycVerificationController extends Controller
     public function userOnboard()
     {
 
-        $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
+        $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
@@ -162,16 +162,16 @@ class KycVerificationController extends Controller
             'email' => auth()->user()->email,
             'residence_address' => json_encode($residence_address),
             'dob' => auth()->user()->dob,
-            'shop_name' => auth()->user()->company_name
+            'shop_name' => auth()->user()->company_name ?? "PAYMONEY"
         ];
 
         $response = Http::asForm()->withHeaders([
-            'developer_key' => 'becbbce45f79c6f5109f848acd540567',
-            // 'secret-key-timestamp' => $secret_key_timestamp,
-            // 'secret-key' => $secret_key,
-        ])->put('https://staging.eko.in:25004/ekoapi/v1/user/onboard', $data);
-
+            'developer_key' => '28fbc74a742123e19bcda26d05453a18',
+            'secret-key-timestamp' => $secret_key_timestamp,
+            'secret-key' => $secret_key,
+        ])->put('https://api.eko.in:25002/ekoicici/v1/user/onboard', $data);
         Log::channel('response')->info($response);
+        return $response;
 
         if (array_key_exists('user_code', $response->json($key = 'data'))) {
             DB::table('users')->where('id', auth()->user()->id)->update([

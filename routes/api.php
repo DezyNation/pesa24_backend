@@ -129,8 +129,9 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::get('eko/aeps/fetch-bank/{service_id}', [EkoAepsApiController::class, 'bankList']);
     Route::get('users/{id}', [ProfileController::class, 'findUser']);
 
-    Route::post('activate-service', [AttachServiceController::class, 'attachService'])->middleware('subscribe');
+    Route::post('activate-service/{service_id}', [AttachServiceController::class, 'attachService'])->middleware('subscribe');
     Route::post('eko/activate-service', [AgentManagementController::class, 'newService']);
+    Route::get('eko/onboard', [KycVerificationController::class, 'userOnboard']);
 
     /*------------------------EKO BBPS------------------------*/
     Route::get('eko/bbps/operators/categories', [BBPSController::class, 'operatorCategoryList']);
