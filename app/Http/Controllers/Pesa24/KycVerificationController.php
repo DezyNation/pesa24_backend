@@ -264,4 +264,51 @@ class KycVerificationController extends Controller
         ])->post('https://staging.eko.in:25004/ekoapi/v2/aeps/otp');
 
     }
+
+    public function sendEkoOtp()
+    {
+        $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
+        $encodedKey = base64_encode($key);
+        $secret_key_timestamp = round(microtime(true) * 1000);
+        $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
+        $secret_key = base64_encode($signature);
+
+        $data = [
+            'initiator_id' => 9758105858,
+            'mobile' => auth()->user()->phone_number,
+        ];
+
+        $response = Http::asForm()->withHeaders([
+            'developer_key' => '28fbc74a742123e19bcda26d05453a18',
+            'secret-key-timestamp' => $secret_key_timestamp,
+            'secret-key' => $secret_key,
+        ])->post('https://api.eko.in:25002/ekoicici/v2/user/request/otp', $data);
+        if ($response['status'] == 0) {
+            return response("OTP sent");
+        }
+        return response($response['message']??"Could not sent OTP.", 502);
+    }
+
+    public function verifyMobile(Request $request)
+    {
+        $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
+        $encodedKey = base64_encode($key);
+        $secret_key_timestamp = round(microtime(true) * 1000);
+        $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
+        $secret_key = base64_encode($signature);
+
+        $data = [
+            'initiator_id' => 9758105858,
+            'mobile' => auth()->user()->phone_number,
+            'otp' => $request['otp'],
+        ];
+
+        $response = Http::asForm()->withHeaders([
+            'developer_key' => '28fbc74a742123e19bcda26d05453a18',
+            'secret-key-timestamp' => $secret_key_timestamp,
+            'secret-key' => $secret_key,
+        ])->post('https://api.eko.in:25002/ekoicici/v2/user/verify', $data);
+
+        return $response;
+    }
 }
