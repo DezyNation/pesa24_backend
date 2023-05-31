@@ -87,7 +87,7 @@ Route::middleware(['auth:api'])->group(function () {
         return $arr;
     });
 
-    Route::get('user/kyc-status', function() {
+    Route::get('user/kyc-status', function () {
         $table = DB::table('k_y_c_verifications')->where('user_id', auth()->user()->id)->get();
         if (!$table[0]->aadhar || !$table[0]->pan) {
             return false;
@@ -109,7 +109,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
     Route::get('fund/fetch-parents', [FundController::class, 'parents']);
-    Route::get('cms-records', function(){
+    Route::get('cms-records', function () {
         $data = DB::table('cms_records')->where('user_id', auth()->user()->id)->latest()->get();
         return $data;
     });
@@ -121,6 +121,12 @@ Route::middleware(['auth:api'])->group(function () {
 
 Route::post('eko/aeps/money-transfer/{service_id}', [EkoAepsApiController::class, 'moneyTransfer'])->middleware(['auth:api', 'profile', 'kyc']);
 Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(function () {
+    /*-------------------------EKO ONBOARD-------------------------*/
+    Route::get('eko/send-otp', [KycVerificationController::class, 'sendEkoOtp']);
+    Route::get('eko/onbaord', [KycVerificationController::class, 'onboard']);
+    Route::post('eko/verify-otp', [KycVerificationController::class, 'verifyMobile']);
+    /*-------------------------EKO ONBOARD-------------------------*/
+
     /*------------------------EKO AEPS------------------------*/
     Route::get('eko/aeps/aeps-inquiry', [EkoAepsApiController::class, 'aepsInquiry']);
     // Route::get('fund-settlement', [EkoAepsApiController::class, 'fundSettlement']);
@@ -131,7 +137,6 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
 
     Route::post('activate-service/{service_id}', [AttachServiceController::class, 'attachService'])->middleware('subscribe');
     Route::post('eko/activate-service', [AgentManagementController::class, 'newService']);
-    Route::get('eko/onboard', [KycVerificationController::class, 'userOnboard']);
 
     /*------------------------EKO BBPS------------------------*/
     Route::get('eko/bbps/operators/categories', [BBPSController::class, 'operatorCategoryList']);
@@ -285,7 +290,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('remove-parent', [AdminController::class, 'removeParent']);
     Route::post('settlement-accounts', [AdminController::class, 'updateSettlementAccount']);
     Route::get('all-admins', [AdminController::class, 'admins'])->middleware('permission:assign-permission');
-    Route::get('credential-remarks', function(){
+    Route::get('credential-remarks', function () {
         $data = auth()->user()->credential_remarks;
         return $data;
     });

@@ -471,7 +471,6 @@ class AdminController extends Controller
     {
         $request->validate([
             'userId' => 'required', 'exists:users,id',
-            'parent' => 'required', 'exists:users,id',
             'role' => 'required', 'exists:roles,name'
             // 'remarks' => 'required'
         ]);
