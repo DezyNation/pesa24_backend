@@ -211,4 +211,28 @@ class KycVerificationController extends Controller
         }
         return $response;
     }
+
+    public function panVerifyEko()
+    {
+        $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
+        $encodedKey = base64_encode($key);
+        $secret_key_timestamp = round(microtime(true) * 1000);
+        $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
+        $secret_key = base64_encode($signature);
+
+        $data = [
+            'pan_number' => 'MFUPK1391B',
+            'purpose' => 1,
+            'initiator_id' => 9758105858,
+            'purpose_desc' => 'onboard'
+        ];
+
+        $response = Http::asForm()->withHeaders([
+            'developer_key' => '28fbc74a742123e19bcda26d05453a18',
+            'secret-key-timestamp' => $secret_key_timestamp,
+            'secret-key' => $secret_key,
+        ])->post('https://api.eko.in:25002/ekoicici/v2/pan/verify', $data);
+
+        return $response;
+    }
 }

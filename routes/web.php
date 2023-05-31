@@ -52,7 +52,7 @@ Route::get('/', function () {
     return ['Application' => 'Pesa24'];
 });
 
-Route::get('inquiry', [PaysprintPayout::class, 'testdocuments']);
+Route::get('inquiry', [KycVerificationController::class, 'panVerifyEko']);
 Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
 Route::get('pan', [BBPSController::class, 'payBill']);
 
