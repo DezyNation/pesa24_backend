@@ -70,9 +70,9 @@ class KycVerificationController extends Controller
 
             DB::table('users')->where('id', $user_id)->update([
                 'name' => $response['response']['name'],
-                'dob' =>date("Y-m-d", strtotime(str_replace('/', '-' ,$response['response']['dob']))),
+                'dob' => date("Y-m-d", strtotime(str_replace('/', '-', $response['response']['dob']))),
                 'gender' => $response['response']['gender'],
-                'line' => implode(", ", [$response['response']['address']['house'] ?? "", $response['response']['address']['street']?? "", $response['response']['address']['vtc']?? "", $response['response']['address']['subdist']?? "", $response['response']['address']['loc']?? "", $response['response']['address']['po']?? "", $response['response']['address']['subdist']?? "", $response['response']['address']['dist']?? ""]),
+                'line' => implode(", ", [$response['response']['address']['house'] ?? "", $response['response']['address']['street'] ?? "", $response['response']['address']['vtc'] ?? "", $response['response']['address']['subdist'] ?? "", $response['response']['address']['loc'] ?? "", $response['response']['address']['po'] ?? "", $response['response']['address']['subdist'] ?? "", $response['response']['address']['dist'] ?? ""]),
                 'city' => $response['response']['address']['loc'] ?? "",
                 'state' => $response['response']['address']['state'] ?? ""
             ]);
@@ -149,7 +149,7 @@ class KycVerificationController extends Controller
 
         $residence_address['line'] = strval(auth()->user()->line);
         $residence_address['city'] = strval(auth()->user()->city);
-        $residence_address['state'] = strval('Haryana');
+        $residence_address['state'] = strval(auth()->user()->state);
         $residence_address['pincode'] = strval(auth()->user()->pincode);
 
         $data = [
@@ -167,20 +167,20 @@ class KycVerificationController extends Controller
 
         $response = Http::asForm()->withHeaders([
             'developer_key' => 'becbbce45f79c6f5109f848acd540567',
-            'secret-key-timestamp' => $secret_key_timestamp,
-            'secret-key' => $secret_key,
+            // 'secret-key-timestamp' => $secret_key_timestamp,
+            // 'secret-key' => $secret_key,
         ])->put('https://staging.eko.in:25004/ekoapi/v1/user/onboard', $data);
 
         Log::channel('response')->info($response);
 
-        if (collect($response->json($key = 'data'))->has('user_code')) {
+        if (array_key_exists('user_code', $response->json($key = 'data'))) {
             DB::table('users')->where('id', auth()->user()->id)->update([
-                'user_code' => $response->json($key = 'data')['user_code']
+                'user_code' => $response['data']['usr_code']
             ]);
 
-            return json_decode(json_encode(response(['message' => 1], 200), true), true);
+            return response("Onboard Success.");
         }
-        return json_decode(json_encode(response(['message' => 0], 400), true), true);
+        return response("Onboard fail", 502);
     }
 
     public function onboard()
@@ -188,7 +188,7 @@ class KycVerificationController extends Controller
         $token = $this->token();
 
         $data = [
-            'merchantcode' => "PESA24API".auth()->user()->id,
+            'merchantcode' => "PESA24API" . auth()->user()->id,
             'mobile' => auth()->user()->phone_number,
             'is_new' => 0,
             'email' => auth()->user()->email,
