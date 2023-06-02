@@ -182,7 +182,7 @@ class KycVerificationController extends Controller
 
             return response("Onboard Success.");
         }
-        return response("Onboard fail", 502);
+        return response("Onboard fail: {$response['message']}", 502);
     }
 
     public function onboard()
@@ -311,6 +311,15 @@ class KycVerificationController extends Controller
             'secret-key' => $secret_key,
         ])->post('https://api.eko.in:25002/ekoicici/v2/user/verify', $data);
 
-        return $response;
+        if (array_key_exists('status', $response->json())) {
+            if ($response['status'] == 0) {
+                $onboard = $this->userOnboard();
+                return $onboard;
+            } else {
+                return $response['message'];
+            }
+        } else {
+            return $response;
+        }
     }
 }
