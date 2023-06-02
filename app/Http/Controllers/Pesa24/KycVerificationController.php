@@ -279,6 +279,7 @@ class KycVerificationController extends Controller
         ];
 
         $response = Http::asForm()->withHeaders([
+            'cache-control'=> 'no-cache',
             'developer_key' => '28fbc74a742123e19bcda26d05453a18',
             'secret-key-timestamp' => $secret_key_timestamp,
             'secret-key' => $secret_key,
