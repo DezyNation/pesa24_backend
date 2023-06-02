@@ -282,7 +282,8 @@ class KycVerificationController extends Controller
             'developer_key' => '28fbc74a742123e19bcda26d05453a18',
             'secret-key-timestamp' => $secret_key_timestamp,
             'secret-key' => $secret_key,
-        ])->post('https://api.eko.in:25002/ekoicici/v2/user/request/otp', $data);
+        ])->put('http://staging.eko.in:8080/ekoapi/v1/user/request/otp', $data);
+        return $response;
         if ($response['status'] == 0) {
             return response("OTP sent");
         }
