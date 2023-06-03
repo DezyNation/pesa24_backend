@@ -134,6 +134,26 @@ class GlobalServiceController extends Controller
 
     public function newOrganization(Request $request)
     {
+        $request->validate([
+            'firmName' => 'required',
+            'code' => 'required|unique:organizations',
+            'email' => 'required|email|unique:organizations,email',
+            'phoneNumber' => 'required|unique:organizations,phone_number',
+            'coi' => 'required',
+            'gst' => 'required|unique:organizations',
+            'mou' => 'required',
+            'aoa' => 'required',
+            'firmPan' => 'required|unique:organizations,firm_pan|regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/',
+            'signatoryPan' => 'required|unique:organizations,signatory_pan|regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/',
+            'signatoryAadhaar' => 'required|digits:12',
+            'coiAttachment' => 'required|file|mimes:jpg,jpeg,png,pdf|size:2048',
+            'gstAttachment' => 'required|file|mimes:jpg,jpeg,png,pdf|size:2048',
+            'mouAttachment' => 'required|file|mimes:jpg,jpeg,png,pdf|size:2048',
+            'aoaAttachment' => 'required|file|mimes:jpg,jpeg,png,pdf|size:2048',
+            'firmPanAttachment' => 'required|file|mimes:jpg,jpeg,png,pdf|size:2048',
+            'signatoryAadhaarAttachment' => 'required|file|mimes:jpg,jpeg,png,pdf|size:2048',
+            'signatoryPhoto' => 'required|file|mimes:jpg,jpeg,png,pdf|size:2048'
+        ]);
         $data = DB::table('organizations')->insert([
             'user_id' => $request['userId'],
             'firm_name' => $request['firmName'],
@@ -152,11 +172,11 @@ class GlobalServiceController extends Controller
             'aoa_attachment' => $request->file('aoaAttachment')->store('aoa'),
             'firm_pan' => $request['firmPan'],
             'firm_pan_attachment' => $request->file('firmPanAttachment')->store('firm_pan'),
-            'signatury_pan' => $request['signaturyPan'],
-            'signatury_pan_attachment' => $request->file('signaturyPanAttachment')->store('signatury_pan'),
-            'signatury_aadhaar' => $request['signaturyAadhaar'],
-            'signatury_aadhaar_attachment' => $request->file('signaturyAadhaarAttachment')->store('signatury_aadhaar'),
-            'signatury_photo' => $request->file('signaturyPhoto')->store('signatury_photo'),
+            'signatory_pan' => $request['signatoryPan'],
+            'signatory_pan_attachment' => $request->file('signatoryPanAttachment')->store('signatory_pan'),
+            'signatory_aadhaar' => $request['signatoryAadhaar'],
+            'signatory_aadhaar_attachment' => $request->file('signatoryAadhaarAttachment')->store('signatory_aadhaar'),
+            'signatory_photo' => $request->file('signatoryPhoto')->store('signatory_photo'),
             'created_at' => now(),
             'updated_at' => now()
         ]);

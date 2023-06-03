@@ -768,4 +768,11 @@ class AdminController extends Controller
             ]
         ];
     }
+
+    public function userPermission($id)
+    {
+        $user = User::find($id);
+        $permissions = $user->getAllPermissions();
+        return $permissions;
+    }
 }
