@@ -311,7 +311,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('assign-permission', [AdminController::class, 'assignPermission'])->middleware('permission:assign-permission');
     Route::post('assign-package', [AdminController::class, 'assignPackage'])->middleware('permission:user-edit');
     Route::get('package-count/{id}', [AdminController::class, 'packageCount']);
-    Route::get('user-permissions/{id}', [AdminController::class, 'userPermission']);
+    Route::get('user-permissions/{id?}', [AdminController::class, 'userPermission']);
 
     Route::post('add-admin-funds', [AdminController::class, 'addAdminFunds'])->middleware('mpin');
     Route::get('add-admin-funds', [AdminController::class, 'adminFundsRecords']);
