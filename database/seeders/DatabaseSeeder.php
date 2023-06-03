@@ -4,10 +4,11 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Package;
 use App\Models\Commission;
 use App\Models\Organization;
-use App\Models\Package;
 use Illuminate\Database\Seeder;
+use Database\Seeders\NewPermissionSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,5 +22,6 @@ class DatabaseSeeder extends Seeder
         // Organization::factory(1)->create();
         // Package::factory(1)->create();
         // Commission::factory(20)->create();
+        // $this->call([NewPermissionSeeder::class]);
     }
 }
