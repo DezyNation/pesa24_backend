@@ -33,7 +33,7 @@ class Controller extends BaseController
 
     public function index()
     {
-        $data = DB::table('services')->where(['is_active' => 1, 'can_subscribe' => 1])->get(['id', 'type', 'service_name', 'operator_name', 'image_url', 'price']);
+        $data = DB::table('services')->where(['is_active' => 1, 'can_subscribe' => 1])->get(['id', 'type', 'service_name', 'operator_name', 'image_url', 'price', 'eko_id', 'key']);
         return $data;
     }
 

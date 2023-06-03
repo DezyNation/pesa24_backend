@@ -82,39 +82,39 @@ class AttachServiceController extends Controller
         return response('Service acivated.');
     }
 
-    public function aepsEnroll($service_code)
+    public function aepsEnroll()
     {
-        $key = env('EKO_KEY');
+        $key = env('EKO_AUTHENTICATOR_KEY');
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
         $secret_key = base64_encode($signature);
 
-        $pan = Storage::download(auth()->user()->pan_photo, 'pancard.jpeg');
-        $aadhar_front = Storage::download(auth()->user()->aadhar_front, 'aadhar_front.jpeg');
-        $aadhar_back = Storage::download(auth()->user()->aadhar_back, 'aadhar_back.jpeg');
+        $user = User::find(auth()->user()->id);
+        $pan = $user->pan_photo;
+        $aadhar_front = $user->aadhar_front;
+        $aadhar_back = $user->aadhar_back;
+        $pan_photo = file_get_contents("../storage/app/$pan");
+        $aadhar_front_photo = file_get_contents("../storage/app/$aadhar_front");
+        $aadhar_back_photo = file_get_contents("../storage/app/$aadhar_back");
 
         $data = [
-            'service_code' =>   $service_code,
+            'service_code' =>  85,
             'initiator_id' => env('EKO_INITIATOR_ID'),
-            'user_code' => auth()->user()->user_code,
-            'modelname' => auth()->user()->model_name,
-            'devicenumber' => auth()->user()->device_number,
-            'office_address' => json_encode(['line' => strval(auth()->user()->line), 'city' => strval(auth()->user()->city), 'state' => strval(auth()->user()->state), 'pincode' => strval(auth()->user()->pincode)]),
-            'address_as_per_proof' => json_encode(['line' => strval(auth()->user()->line), 'city' => strval(auth()->user()->city), 'state' => strval(auth()->user()->state), 'pincode' => strval(auth()->user()->pincode)]),
-            'pancard' => $pan,
-            'aadhar_front' => $aadhar_front,
-            'aadhar_back' => $aadhar_back
+            'user_code' => $user->user_code,
+            'modelname' => $user->model_name,
+            'devicenumber' => $user->device_number,
+            'office_address' => json_encode(['line' => strval($user->line), 'city' => strval($user->city), 'state' => strval($user->state), 'pincode' => strval($user->pincode)]),
+            'address_as_per_proof' => json_encode(['line' => strval($user->line), 'city' => strval($user->city), 'state' => strval($user->state), 'pincode' => strval($user->pincode)]),
         ];
 
-        Log::channel('response')->info($data['pancard']);
-
-        $response = Http::asForm()
+        $response = Http::attach('pancard', $pan_photo, 'pan.jpg')->attach('aadhar_front', $aadhar_front_photo, 'aadhar_front.jpg')->attach('aadhar_back', $aadhar_back_photo, 'aadhar_back.jpg')
             ->withHeaders([
                 'developer_key' => env('EKO_DEVELOPER_KEY'),
                 'secret-key-timestamp' => $secret_key_timestamp,
                 'secret-key' => $secret_key,
-            ])->put('https://staging.eko.in:25004/ekoapi/v1/user/service/activate', $data);
+            ])->put('http://staging.eko.in:8080/ekoapi/v1/user/service/activate', $data);
+            dd($response);
         Log::channel('response')->info($response);
         return $response;
     }
@@ -144,7 +144,7 @@ class AttachServiceController extends Controller
 
     public function generalService($id)
     {
-        $key = env('EKO_KEY');
+        $key = env('EKO_AUTHENTICATOR_KEY');
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
@@ -163,5 +163,16 @@ class AttachServiceController extends Controller
         Log::channel('response')->info($response);
 
         return $response;
+    }
+
+    public function ekoActicvateService($service_code)
+    {
+        if ($service_code == 52) {
+            $data =$this->aepsEnroll();
+            return $data;
+        } else {
+            $data = $this->generalService($service_code);
+            return $data;
+        }
     }
 }

@@ -283,9 +283,9 @@ class KycVerificationController extends Controller
             'developer_key' => '28fbc74a742123e19bcda26d05453a18',
             'secret-key-timestamp' => $secret_key_timestamp,
             'secret-key' => $secret_key,
-        ])->put('http://staging.eko.in:8080/ekoapi/v1/user/request/otp', $data);
+        ])->put('https://api.eko.in:25002/ekoicici/v1/user/request/otp', $data);
 
-        if (!array_key_exists('status', $response->json())) {
+        if (is_null($response->json())||!array_key_exists('status', $response->json())) {
             return response($response, 502);
         }
 
@@ -315,15 +315,17 @@ class KycVerificationController extends Controller
             'secret-key' => $secret_key,
         ])->post('https://api.eko.in:25002/ekoicici/v2/user/verify', $data);
 
-        if (array_key_exists('status', $response->json())) {
+        Log::channel('response')->info($response);
+
+        if (isset($response['status'])) {
             if ($response['status'] == 0) {
                 $onboard = $this->userOnboard();
-                return $onboard;
+                return response($onboard);
             } else {
-                return $response['message'];
+                return response($response['message']);
             }
         } else {
-            return $response;
+            return response($response);
         }
     }
 }

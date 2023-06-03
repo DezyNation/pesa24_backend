@@ -75,6 +75,7 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\AdminLogin::class,
         'profile' => \App\Http\Middleware\EnsureProfileIsCompleted::class,
         'kyc' => \App\Http\Middleware\KycVerification::class,
-        'paysprint_merchant' => \App\Http\Middleware\PaysprintOnboard::class
+        'paysprint_merchant' => \App\Http\Middleware\PaysprintOnboard::class,
+        'eko' => \App\Http\Middleware\EkoOnboard::class
     ];
 }

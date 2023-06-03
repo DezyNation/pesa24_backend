@@ -123,16 +123,25 @@ Route::post('eko/aeps/money-transfer/{service_id}', [EkoAepsApiController::class
 Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(function () {
     /*-------------------------EKO ONBOARD-------------------------*/
     Route::get('eko/send-otp', [KycVerificationController::class, 'sendEkoOtp']);
+    Route::get('eko-status', function() {
+        $bool = is_null(auth()->user()->user_code);
+        if ($bool) {
+            return response(false);
+        } else {
+            return response(true);
+        }
+    });
     Route::get('eko/onbaord', [KycVerificationController::class, 'onboard']);
     Route::post('eko/verify-otp', [KycVerificationController::class, 'verifyMobile']);
+    Route::get('eko/attach-service/{service_code}', [AttachServiceController::class, 'ekoActicvateService'])->middleware('eko');
     /*-------------------------EKO ONBOARD-------------------------*/
 
     /*------------------------EKO AEPS------------------------*/
-    Route::get('eko/aeps/aeps-inquiry', [EkoAepsApiController::class, 'aepsInquiry']);
+    Route::get('eko/aeps/aeps-inquiry', [EkoAepsApiController::class, 'aepsInquiry'])->middleware('eko');
     // Route::get('fund-settlement', [EkoAepsApiController::class, 'fundSettlement']);
-    Route::post('eko/aeps/mini-statement/{service_id}', [EkoAepsApiController::class, 'miniStatement']);
-    Route::post('eko/aeps/balance-enquiry/{service_id}', [EkoAepsApiController::class, 'balanceEnquiry']);
-    Route::get('eko/aeps/fetch-bank/{service_id}', [EkoAepsApiController::class, 'bankList']);
+    Route::post('eko/aeps/mini-statement/{service_id}', [EkoAepsApiController::class, 'miniStatement'])->middleware('eko');
+    Route::post('eko/aeps/balance-enquiry/{service_id}', [EkoAepsApiController::class, 'balanceEnquiry'])->middleware('eko');
+    Route::get('eko/aeps/fetch-bank/{service_id}', [EkoAepsApiController::class, 'bankList'])->middleware('eko');
     Route::get('users/{id}', [ProfileController::class, 'findUser']);
 
     Route::post('activate-service/{service_id}', [AttachServiceController::class, 'attachService'])->middleware('subscribe');
@@ -142,28 +151,28 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::get('eko/bbps/operators/categories', [BBPSController::class, 'operatorCategoryList']);
     Route::get('eko/bbps/operators/{category_id?}', [BBPSController::class, 'operators']);
     Route::get('eko/bbps/operators/fields/{operator_id}', [BBPSController::class, 'operatorField']);
-    Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill']);
+    Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill'])->middleware('eko');
     Route::post('eko/bbps/pay-bill/{service_code}', [BBPSController::class, 'paybill'])->middleware('mpin');
 
     /*------------------------EKO DMT------------------------*/
 
-    Route::post('eko/dmt/customer-info/{service_code}', [CustomerRecipientController::class, 'customerInfo']);
-    Route::post('eko/dmt/create-customer/{service_code}', [CustomerRecipientController::class, 'createCustomer']);
-    Route::post('eko/dmt/resend-otp/{service_code}', [CustomerRecipientController::class, 'resendOtp']);
-    Route::post('eko/dmt/verify-customer/{service_code}', [CustomerRecipientController::class, 'verifyCustomerIdentity']);
+    Route::post('eko/dmt/customer-info/{service_code}', [CustomerRecipientController::class, 'customerInfo'])->middleware('eko');
+    Route::post('eko/dmt/create-customer/{service_code}', [CustomerRecipientController::class, 'createCustomer'])->middleware('eko');
+    Route::post('eko/dmt/resend-otp/{service_code}', [CustomerRecipientController::class, 'resendOtp'])->middleware('eko');
+    Route::post('eko/dmt/verify-customer/{service_code}', [CustomerRecipientController::class, 'verifyCustomerIdentity'])->middleware('eko');
 
-    Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill']);
+    Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill'])->middleware('eko');
 
-    Route::get('eko/dmt/recipient-list/{service_code}', [CustomerRecipientController::class, 'recipientList']);
-    Route::get('eko/dmt/recipient-details/{service_code}', [CustomerRecipientController::class, 'recipientDetails']);
-    Route::post('eko/dmt/add-recipient/{service_code}', [CustomerRecipientController::class, 'addRecipient']);
+    Route::get('eko/dmt/recipient-list/{service_code}', [CustomerRecipientController::class, 'recipientList'])->middleware('eko');
+    Route::get('eko/dmt/recipient-details/{service_code}', [CustomerRecipientController::class, 'recipientDetails'])->middleware('eko');
+    Route::post('eko/dmt/add-recipient/{service_code}', [CustomerRecipientController::class, 'addRecipient'])->middleware('eko');
 
-    Route::get('eko/dmt/customer-info/{service_code}', [CustomerRecipientController::class, 'customerInfo']);
+    Route::get('eko/dmt/customer-info/{service_code}', [CustomerRecipientController::class, 'customerInfo'])->middleware('eko');
     // Route::post('eko/dmt/register-agent/{service_code}', [AgentCustomerController::class, 'dmtRegistration']);
     // Route::get('eko/dmt/fetch-agent/{service_code}', [AgentCustomerController::class, 'fetchAgent']);
 
-    Route::post('eko/dmt/initiate-payment/{service_code}', [TransactionController::class, 'initiateTransaction']);
-    Route::get('eko/dmt/transaction-inquiry/{transactionid}', [TransactionController::class, 'transactionInquiry']);
+    Route::post('eko/dmt/initiate-payment/{service_code}', [TransactionController::class, 'initiateTransaction'])->middleware('eko');
+    Route::get('eko/dmt/transaction-inquiry/{transactionid}', [TransactionController::class, 'transactionInquiry'])->middleware('eko');
     // Route::post('eko/dmt/transaction-refund/{tid}', [TransactionController::class, 'refund']);
     // Route::post('eko/dmt/transaction-refund-otp/{tid}', [TransactionController::class, 'refund']);
     Route::post('paysprint/bank/bank-verify', [DMTController::class, 'penneyDrop']);
