@@ -183,4 +183,10 @@ class GlobalServiceController extends Controller
 
         return $data;
     }
+
+    public function getOrganizations()
+    {
+        $data = DB::table('organizations')->get();
+        return $data;
+    }
 }

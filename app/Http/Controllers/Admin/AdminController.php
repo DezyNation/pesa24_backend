@@ -153,14 +153,21 @@ class AdminController extends Controller
     {
 
         if (is_null($request->page)) {
-            $data = DB::table('packages')
-                ->join('users', 'users.id', '=', 'packages.user_id')
-                ->where('packages.organization_id', auth()->user()->organization_id)->select('packages.id', 'packages.name', 'packages.is_default', 'packages.status', 'users.name as user_name')
+            $data = DB::table('packages AS p')
+                ->leftJoin('package_user AS pt', 'p.id', '=', 'pt.package_id')
+                ->leftJoin('users AS u', 'pt.user_id', '=', 'u.id')
+                ->join('users AS a', 'a.id', '=', 'p.user_id')
+                ->select('p.id', 'p.name', 'p.status', 'p.is_default', 'a.name AS user_name', DB::raw('COUNT(u.id) AS assigned_users_count'))
+                ->groupBy('p.id', 'p.name')
                 ->get();
         } else {
-            $data = DB::table('packages')
-                ->join('users', 'users.id', '=', 'packages.user_id')
-                ->where('packages.organization_id', auth()->user()->organization_id)->select('packages.name', 'packages.id', 'packages.is_default', 'packages.status', 'users.name as user_name')->paginate(20);
+            $data = DB::table('packages AS p')
+                ->leftJoin('package_user AS pt', 'p.id', '=', 'pt.package_id')
+                ->leftJoin('users AS u', 'pt.user_id', '=', 'u.id')
+                ->join('users AS a', 'a.id', '=', 'p.user_id')
+                ->select('p.id', 'p.name', 'p.status', 'p.is_default', 'a.name AS user_name', DB::raw('COUNT(u.id) AS assigned_users_count'))
+                ->groupBy('p.id', 'p.name')
+                ->paginate(20);
         }
         return $data;
     }
@@ -611,7 +618,7 @@ class AdminController extends Controller
 
         $users = $this->countLogins($tennure);
 
-        
+
 
         $array = [
             $aeps,
@@ -712,15 +719,15 @@ class AdminController extends Controller
         }
 
         $not_approved = DB::table('funds')
-        ->join('users', 'users.id', '=', 'funds.user_id')
+            ->join('users', 'users.id', '=', 'funds.user_id')
             ->whereBetween('funds.created_at', [$start, $end])
-            ->where(['funds.approved' => 0, 'users.organization_id'=>auth()->user()->id])->count();
+            ->where(['funds.approved' => 0, 'users.organization_id' => auth()->user()->id])->count();
 
         $all = DB::table('funds')
-        ->join('users', 'users.id', '=', 'funds.user_id')
-        ->whereBetween('funds.created_at', [$start, $end])
-        ->where('users.organization_id', auth()->user()->organization_id)
-        ->count();
+            ->join('users', 'users.id', '=', 'funds.user_id')
+            ->whereBetween('funds.created_at', [$start, $end])
+            ->where('users.organization_id', auth()->user()->organization_id)
+            ->count();
 
         return [
             'funds' => [
@@ -755,9 +762,9 @@ class AdminController extends Controller
         }
 
         $logins = DB::table('logins')->whereBetween('logins.created_at', [$start, $end])
-        ->join('users', 'users.id', '=', 'logins.user_id')
-        ->where('users.organization_id', auth()->user()->organization_id)
-        ->count();
+            ->join('users', 'users.id', '=', 'logins.user_id')
+            ->where('users.organization_id', auth()->user()->organization_id)
+            ->count();
         $registration = DB::table('users')->whereBetween('created_at', [$start, $end])->where('organization_id', auth()->user()->organization_id)->count();
         $support_tickets = DB::table('tickets')->whereBetween('created_at', [$start, $end])->where('organization_id', auth()->user()->organization_id)->count();
         return [
@@ -769,10 +776,10 @@ class AdminController extends Controller
         ];
     }
 
-    public function userPermission($id=null)
+    public function userPermission($id = null)
     {
-        
-        $user = User::find($id??auth()->user()->id);
+
+        $user = User::find($id ?? auth()->user()->id);
         $permissions = $user->getAllPermissions();
         return $permissions;
     }

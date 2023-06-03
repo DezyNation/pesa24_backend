@@ -339,6 +339,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('operators', [GlobalServiceController::class, 'getOperators']);
     Route::post('delete-operator', [GlobalServiceController::class, 'deleteOperator']);
     Route::post('create-organization', [GlobalServiceController::class, 'newOrganization']);
+    Route::get('organizations', [GlobalServiceController::class, 'getOrganizations']);
 });
 
 Route::get('transactions-period', [AdminTransactionController::class, 'dailySales']);
