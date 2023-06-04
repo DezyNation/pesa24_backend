@@ -157,6 +157,7 @@ class AdminController extends Controller
                 ->leftJoin('package_user AS pt', 'p.id', '=', 'pt.package_id')
                 ->leftJoin('users AS u', 'pt.user_id', '=', 'u.id')
                 ->join('users AS a', 'a.id', '=', 'p.user_id')
+                ->where('p.organization_id', auth()->user()->organization_id)
                 ->select('p.id', 'p.name', 'p.status', 'p.is_default', 'a.name AS user_name', DB::raw('COUNT(u.id) AS assigned_users_count'))
                 ->groupBy('p.id', 'p.name')
                 ->get();
@@ -165,6 +166,7 @@ class AdminController extends Controller
                 ->leftJoin('package_user AS pt', 'p.id', '=', 'pt.package_id')
                 ->leftJoin('users AS u', 'pt.user_id', '=', 'u.id')
                 ->join('users AS a', 'a.id', '=', 'p.user_id')
+                ->where('p.organization_id', auth()->user()->organization_id)
                 ->select('p.id', 'p.name', 'p.status', 'p.is_default', 'a.name AS user_name', DB::raw('COUNT(u.id) AS assigned_users_count'))
                 ->groupBy('p.id', 'p.name')
                 ->paginate(20);
