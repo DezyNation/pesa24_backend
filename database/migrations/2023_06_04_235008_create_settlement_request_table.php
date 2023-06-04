@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('api_records', function (Blueprint $table) {
+        Schema::create('settlement_request', function (Blueprint $table) {
             $table->id();
-            $table->string('refernce_id');
             $table->foreignId('user_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->foreignId('organization_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->string('provider');
-            $table->json('response');
+            $table->integer('amount');
+            $table->text('message')->nullable();
+            $table->text('admin_remarks')->nullable();
+            $table->string('status')->nullable();
+            $table->boolean('approved')->default(0);
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('api_records');
+        Schema::dropIfExists('settlement_request');
     }
 };

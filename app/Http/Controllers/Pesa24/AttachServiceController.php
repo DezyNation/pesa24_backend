@@ -63,7 +63,7 @@ class AttachServiceController extends Controller
             [
                 'paysprint_active' => 1,
                 'pesa24_active' => 1,
-                'eko_active' => 1,
+                'eko_active' => 0,
                 'created_at' => now(),
                 'updated_at' => now()
             ]
@@ -91,7 +91,7 @@ class AttachServiceController extends Controller
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
         $secret_key = base64_encode($signature);
 
-        $user = User::find(auth()->user()->id ?? 85);
+        $user = User::find(auth()->user()->id);
         $pan = $user->pan_photo;
         $aadhar_front = $user->aadhar_front;
         $aadhar_back = $user->aadhar_back;
@@ -136,6 +136,13 @@ class AttachServiceController extends Controller
 
         $response = curl_exec($ch);
         Log::channel('response')->info($response);
+        $arr = json_decode($response, true);
+        if ($arr['status'] == 0 || $arr['status'] == 1295) {
+            $response = $this->enableEko(24);
+            return $response;
+        } else {
+            return response("Could not activate at the moment", 502);
+        }
         return $response;
     }
 
@@ -164,6 +171,7 @@ class AttachServiceController extends Controller
 
     public function generalService($id)
     {
+        $service = Service::find($id);
         $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
@@ -171,10 +179,10 @@ class AttachServiceController extends Controller
         $secret_key = base64_encode($signature);
 
         $data = [
-            'service_code' => $id,
+            'service_code' => $service->eko_id,
             'initiator_id' => 9758105858,
             'user_code' => auth()->user()->user_code ?? 208991002,
-            'latlong' =>'28.728630,77.166050'
+            'latlong' => '28.728630,77.166050'
         ];
         $response = Http::asForm()->withHeaders([
             'developer_key' => "28fbc74a742123e19bcda26d05453a18",
@@ -182,13 +190,19 @@ class AttachServiceController extends Controller
             'secret-key' => $secret_key,
         ])->put('https://api.eko.in:25002/ekoicici/v1/user/service/activate', $data);
         Log::channel('response')->info($response);
-
-        return $response;
+        if (array_key_exists('status', $response->json())) {
+            if ($response['status'] == 0 || $response['status'] == 1295) {
+                $response = $this->enableEko($id);
+                return $response;
+            } else {
+                return response("Could not activate at the moment", 502);
+            }
+        }
     }
 
     public function ekoActicvateService($service_code)
     {
-        if ($service_code == 52) {
+        if ($service_code == 24) {
             $data = $this->aepsEnroll();
             return $data;
         } else {
@@ -212,5 +226,17 @@ class AttachServiceController extends Controller
         ])->get('https://api.eko.in:25002/ekoicici/v1/user/services?initiator_id=9758105858');
 
         return $response->json();
+    }
+
+    public function enableEko($service_id)
+    {
+        $data = DB::table('service_user')
+            ->where(['user_id' => auth()->user()->id, 'service_id' => $service_id])
+            ->update([
+                'eko_active' => 1,
+                'updated_at' => now()
+            ]);
+
+        return response("Service activated");
     }
 }

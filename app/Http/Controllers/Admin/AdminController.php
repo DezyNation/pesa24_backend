@@ -785,4 +785,33 @@ class AdminController extends Controller
         $permissions = $user->getAllPermissions();
         return $permissions;
     }
+
+    public function settlementRequest()
+    {
+        $data = DB::table('settlement_request')
+        ->join('users', 'users.id', '=', 'settlement_request.user_id')
+        ->where('users.organization_id', auth()->user()->organization_id)
+        ->select('user.name', 'user.email', 'user.phone_number', 'user.id as user_id', 'settlement_request.*')
+        ->get();
+
+        return $data;
+    }
+
+    public function updateSettlementRequest(Request $request)
+    {
+        $request->validate([
+            'adminRemarks' => 'required',
+            'status' => 'required',
+            'approved' => 'required'
+        ]);
+
+        $data = DB::table('settlement_request')->where('id', $request['id'])->update([
+            'admin_remarks' => $request['adminRemarks'],
+            'status' => $request['status'],
+            'approved' => $request['approved'],
+            'updated_at' => now()
+        ]);
+
+        return $data;
+    }
 }

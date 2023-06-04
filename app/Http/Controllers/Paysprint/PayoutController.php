@@ -153,35 +153,42 @@ class PayoutController extends CommissionController
     public function doTransaction(Request $request)
     {
         $token = $this->token();
-
+        $user = User::find($request['userId']);
         $data = [
-            'bene_id' => $request['beneId'] ?? '2043',
-            'amount' => $request['amount'] ?? 1000,
+            'bene_id' => $request['beneId'],
+            'amount' => $request['amount'],
             'refid' => uniqid(),
             'mode' => 'IMPS'
         ];
 
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
-            'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
+            'Authorisedkey' => env('AUTHORISED_KEY'),
             'Content-Type: application/json'
         ])->post('https://api.paysprint.in/api/v1/service/payout/payout/dotransaction', $data);
 
-        return $response;
-
         if ($response->json($key = 'status') == true) {
-            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $balance_left = $walletAmt[0] - $request['amount'];
+            $balance_left = $user->wallet - $request['amount'];
             $transaction_id = "PAY" . strtoupper(Str::random(9));
-            $metadata = [];
-            $this->transaction($request['amount'], 'Payout Transaction', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, json_encode($metadata), $balance_left);
-            User::where('id', auth()->user()->id)->update([
-                'wallet' => $balance_left
-            ]);
-            $this->payoutCommission(auth()->user()->id, $request['amount']);
+            $metadata = [
+                'status' => true,
+                'amount' => $request['amount'],
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number
+            ];
+            $this->transaction($request['amount'], 'Payout Transaction', 'payout', $request['userId'], $user->wallet, $transaction_id, $balance_left, json_encode($metadata));
+        } else {
+            $metadata = [
+                'status' => false,
+                'amount' => $request['amount'],
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number
+            ];
         }
 
-        return $response;
+        return ['metadata' => $metadata];
     }
 
     public function status(Request $request)

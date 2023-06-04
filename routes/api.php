@@ -108,6 +108,8 @@ Route::middleware(['auth:api'])->group(function () {
     /*-----------------------Fund Requests-----------------------*/
 
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
+    Route::post('fund/settlement-request', [UserDashboardController::class, 'settlementRequest']);
+    Route::get('fund/settlement-request', [UserDashboardController::class, 'settlementRequest']);
     Route::get('fund/fetch-parents', [FundController::class, 'parents']);
     Route::get('cms-records', function () {
         $data = DB::table('cms_records')->where('user_id', auth()->user()->id)->latest()->get();
@@ -132,7 +134,7 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
         }
     });
     Route::post('eko/verify-otp', [KycVerificationController::class, 'verifyMobile']);
-    Route::get('eko/onbaord', [KycVerificationController::class, 'userOnboard']);
+    Route::get('eko/onboard', [KycVerificationController::class, 'userOnboard']);
     Route::post('eko/send-otp', [KycVerificationController::class, 'sendEkoOtp']);
     Route::get('eko/attach-service/{service_code}', [AttachServiceController::class, 'ekoActicvateService'])->middleware('eko');
     /*-------------------------EKO ONBOARD-------------------------*/
@@ -304,6 +306,8 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
         $data = auth()->user()->credential_remarks;
         return $data;
     });
+    Route::get('settlement-request', [AdminController::class, 'settlementRequest']);
+    Route::post('settlement-request', [AdminController::class, 'updateSettlementRequest']);
     Route::post('new-admin', [AdminController::class, 'newAdmin'])->middleware('permission:assign-permission');
     Route::post('add-cms-billers', [AdminController::class, 'cmsBiller']);
     Route::delete('cms-biller/{id}', [AdminController::class, 'deleteCmsBiller']);
@@ -340,6 +344,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('operators', [GlobalServiceController::class, 'getOperators']);
     Route::post('delete-operator', [GlobalServiceController::class, 'deleteOperator']);
     Route::post('create-organization', [GlobalServiceController::class, 'newOrganization']);
+    Route::post('update-organization', [GlobalServiceController::class, 'updateOrganization']);
     Route::get('organizations', [GlobalServiceController::class, 'getOrganizations']);
 });
 

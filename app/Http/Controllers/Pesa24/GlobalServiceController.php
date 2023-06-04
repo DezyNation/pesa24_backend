@@ -189,4 +189,35 @@ class GlobalServiceController extends Controller
         $data = DB::table('organizations')->get();
         return $data;
     }
+
+    public function updateOrganization(Request $request)
+    {
+        $data = DB::table('organizations')->where('id', $request['organizationId'])
+        ->update([
+            'user_id' => $request['userId'],
+            'firm_name' => $request['firmName'],
+            'authorised_numbers' => $request['authorisedNumbers']??null,
+            'code' => $request['code'],
+            'firm_address' => $request['firmAddress'],
+            'email' => $request['email'],
+            'phone_number' => $request['phoneNumber'],
+            'coi' => $request['coi'],
+            // 'coi_attachment' => $request->file('coiAttachment')->store('coi'),
+            'gst' => $request['gst'],
+            // 'gst_attachment' => $request->file('gstAttachment')->store('gst'),
+            'mou' => $request['mou'],
+            // 'mou_attachment' => $request->file('mouAttachment')->store('mou'),
+            'aoa' => $request['aoa'],
+            // 'aoa_attachment' => $request->file('aoaAttachment')->store('aoa'),
+            'firm_pan' => $request['firmPan'],
+            // 'firm_pan_attachment' => $request->file('firmPanAttachment')->store('firm_pan'),
+            'signatory_pan' => $request['signatoryPan'],
+            // 'signatory_pan_attachment' => $request->file('signatoryPanAttachment')->store('signatory_pan'),
+            'signatory_aadhaar' => $request['signatoryAadhaar'],
+            // 'signatory_aadhaar_attachment' => $request->file('signatoryAadhaarAttachment')->store('signatory_aadhaar'),
+            // 'signatory_photo' => $request->file('signatoryPhoto')->store('signatory_photo'),
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+    }
 }

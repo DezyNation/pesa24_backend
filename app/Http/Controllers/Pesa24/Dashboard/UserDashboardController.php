@@ -142,4 +142,26 @@ class UserDashboardController extends Controller
             ]
         ];
     }
+
+    public function settlementRequest(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|integer'
+        ]);
+        $data = DB::table('settlement_request')->insert([
+            'user_id' => auth()->user()->id,
+            'amount' => $request['amount'],
+            'message' => $request['message']??null,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        return $data;
+    }
+
+    public function getSettlementRequest()
+    {
+        $data = DB::table('settlement_request')->where('user_id', auth()->user()->id)->get();
+        return $data;
+    }
 }

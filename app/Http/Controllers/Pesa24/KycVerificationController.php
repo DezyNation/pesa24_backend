@@ -192,7 +192,7 @@ class KycVerificationController extends Controller
             'email' => auth()->user()->email,
             'residence_address' => json_encode($residence_address),
             'dob' => auth()->user()->dob,
-            'shop_name' => auth()->user()->company_name,
+            'shop_name' => auth()->user()->company_name ?? 'PAYMONEY',
         ];
 
         Log::channel('response')->info('request', $data);
