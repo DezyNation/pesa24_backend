@@ -138,52 +138,6 @@ class KycVerificationController extends Controller
         return $jwt;
     }
 
-    public function userOnboard()
-    {
-
-        $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
-        $encodedKey = base64_encode($key);
-        $secret_key_timestamp = round(microtime(true) * 1000);
-        $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
-        $secret_key = base64_encode($signature);
-
-        $residence_address['line'] = strval(auth()->user()->line);
-        $residence_address['city'] = strval(auth()->user()->city);
-        $residence_address['state'] = strval(auth()->user()->state);
-        $residence_address['pincode'] = strval(auth()->user()->pincode);
-
-        $data = [
-            'initiator_id' => 9962981729,
-            'pan_number' => auth()->user()->pan_number,
-            'mobile' => auth()->user()->phone_number,
-            'first_name' => auth()->user()->first_name,
-            'middle_name' => auth()->user()->middle_name,
-            'last_name' => auth()->user()->last_name,
-            'email' => auth()->user()->email,
-            'residence_address' => json_encode($residence_address),
-            'dob' => auth()->user()->dob,
-            'shop_name' => auth()->user()->company_name ?? "PAYMONEY"
-        ];
-
-        Log::channel('response')->info('request', $data);
-
-        $response = Http::asForm()->withHeaders([
-            'developer_key' => '28fbc74a742123e19bcda26d05453a18',
-            'secret-key-timestamp' => $secret_key_timestamp,
-            'secret-key' => $secret_key,
-        ])->put('https://api.eko.in:25002/ekoicici/v1/user/onboard', $data);
-        Log::channel('response')->info($response);
-        return $response;
-
-        if (array_key_exists('user_code', $response->json($key = 'data'))) {
-            DB::table('users')->where('id', auth()->user()->id)->update([
-                'user_code' => $response['data']['usr_code']
-            ]);
-
-            return response("Onboard Success.");
-        }
-        return response("Onboard fail: {$response['message']}", 502);
-    }
 
     public function onboard()
     {
@@ -214,19 +168,31 @@ class KycVerificationController extends Controller
         return $response;
     }
 
-    public function panVerifyEko()
+    public function userOnboard()
     {
+
         $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
         $secret_key = base64_encode($signature);
 
+        $residence_address['line'] = strval(auth()->user()->line);
+        $residence_address['city'] = strval(auth()->user()->city);
+        $residence_address['state'] = strval(auth()->user()->state);
+        $residence_address['pincode'] = strval(auth()->user()->pincode);
+
         $data = [
-            'pan_number' => 'MFUPK1391B',
-            'purpose' => 1,
-            'initiator_id' => 9758105858,
-            'purpose_desc' => 'onboard'
+            'initiator_id' => 9962981729,
+            'pan_number' => auth()->user()->pan_number,
+            'mobile' => auth()->user()->phone_number,
+            'first_name' => auth()->user()->first_name,
+            'middle_name' => auth()->user()->middle_name,
+            'last_name' => auth()->user()->last_name,
+            'email' => auth()->user()->email,
+            'residence_address' => json_encode($residence_address),
+            'dob' => auth()->user()->dob,
+            'shop_name' => auth()->user()->company_name,
         ];
 
         Log::channel('response')->info('request', $data);
@@ -235,34 +201,18 @@ class KycVerificationController extends Controller
             'developer_key' => '28fbc74a742123e19bcda26d05453a18',
             'secret-key-timestamp' => $secret_key_timestamp,
             'secret-key' => $secret_key,
-        ])->post('https://api.eko.in:25002/ekoicici/v2/pan/verify', $data);
-
+        ])->put('https://api.eko.in:25002/ekoicici/v1/user/onboard', $data);
         Log::channel('response')->info($response);
-        return $response;
-    }
 
-    public function otpRequest(Request $request)
-    {
-        $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
-        $encodedKey = base64_encode($key);
-        $secret_key_timestamp = round(microtime(true) * 1000);
-        $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
-        $secret_key = base64_encode($signature);
 
-        $data = [
-            'initiator_id' => 9758105858,
-            'user_code' => auth()->user()->code,
-            'customer_id' => auth()->user()->phone_number,
-            'aadhar' => auth()->user()->aadhaar,
-            'latlong' => $request['latlong']
-        ];
+        if (array_key_exists('user_code', $response->json($key = 'data'))) {
+            DB::table('users')->where('id', auth()->user()->id)->update([
+                'user_code' => $response['data']['user_code']
+            ]);
 
-        $response = Http::asForm()->withHeaders([
-            'developer_key' => '28fbc74a742123e19bcda26d05453a18',
-            'secret-key-timestamp' => $secret_key_timestamp,
-            'secret-key' => $secret_key,
-        ])->post('https://staging.eko.in:25004/ekoapi/v2/aeps/otp');
-
+            return response("Onboard Success.");
+        }
+        return response("Onboard fail: {$response['message']}", 502);
     }
 
     public function sendEkoOtp()
@@ -275,28 +225,24 @@ class KycVerificationController extends Controller
 
         $data = [
             'initiator_id' => 9758105858,
-            'mobile' => auth()->user()->phone_number,
+            'mobile' => auth()->user()->phone_number ?? 9971412064,
         ];
 
         $response = Http::asForm()->withHeaders([
-            'cache-control'=> 'no-cache',
+            'cache-control' => 'no-cache',
             'developer_key' => '28fbc74a742123e19bcda26d05453a18',
             'secret-key-timestamp' => $secret_key_timestamp,
             'secret-key' => $secret_key,
         ])->put('https://api.eko.in:25002/ekoicici/v1/user/request/otp', $data);
 
-        if (is_null($response->json())||!array_key_exists('status', $response->json())) {
-            return response($response, 502);
-        }
-
-        if ($response['status'] == 0) {
-            return response("OTP sent");
-        }
-        return response($response['message']??"Could not sent OTP.", 502);
+        return response($response);
     }
 
     public function verifyMobile(Request $request)
     {
+        $request->validate([
+            'otp' => 'required|numeric'
+        ]);
         $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
@@ -329,3 +275,52 @@ class KycVerificationController extends Controller
         }
     }
 }
+
+            // public function panVerifyEko()
+            // {
+                //     $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
+                //     $encodedKey = base64_encode($key);
+                //     $secret_key_timestamp = round(microtime(true) * 1000);
+                //     $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
+                //     $secret_key = base64_encode($signature);
+
+                //     $data = [
+                    //         'pan_number' => 'MFUPK1391B',
+                    //         'purpose' => 1,
+                    //         'initiator_id' => 9758105858,
+                    //         'purpose_desc' => 'onboard'
+                    //     ];
+
+                    //     Log::channel('response')->info('request', $data);
+
+                    //     $response = Http::asForm()->withHeaders([
+                        //         'developer_key' => '28fbc74a742123e19bcda26d05453a18',
+                        //         'secret-key-timestamp' => $secret_key_timestamp,
+                        //         'secret-key' => $secret_key,
+                        //     ])->post('https://api.eko.in:25002/ekoicici/v2/pan/verify', $data);
+
+                        //     Log::channel('response')->info($response);
+                        //     return $response;
+                        // }
+                        // public function otpRequest(Request $request)
+                        // {
+                        //     $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
+                        //     $encodedKey = base64_encode($key);
+                        //     $secret_key_timestamp = round(microtime(true) * 1000);
+                        //     $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
+                        //     $secret_key = base64_encode($signature);
+
+                        //     $data = [
+                        //         'initiator_id' => 9758105858,
+                        //         'user_code' => auth()->user()->code,
+                        //         'customer_id' => auth()->user()->phone_number,
+                        //         'aadhar' => auth()->user()->aadhaar,
+                        //         'latlong' => $request['latlong']
+                        //     ];
+
+                        //     $response = Http::asForm()->withHeaders([
+                        //         'developer_key' => '28fbc74a742123e19bcda26d05453a18',
+                        //         'secret-key-timestamp' => $secret_key_timestamp,
+                        //         'secret-key' => $secret_key,
+                        //         ])->post('https://staging.eko.in:25004/ekoapi/v2/aeps/otp');
+                        //     }

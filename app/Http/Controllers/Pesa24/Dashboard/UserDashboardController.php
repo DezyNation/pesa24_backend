@@ -29,27 +29,27 @@ class UserDashboardController extends Controller
 
     public function overView(Request $request)
     {
-        $tennure = $request['tennure'];
+        $tenure = $request['tenure'];
 
-        $aeps = $this->userTable($tennure, 'aeps');
+        $aeps = $this->userTable($tenure, 'aeps');
 
-        $bbps = $this->userTable($tennure, 'bbps');;
+        $bbps = $this->userTable($tenure, 'bbps');;
 
-        $dmt = $this->userTable($tennure, 'dmt');;
+        $dmt = $this->userTable($tenure, 'dmt');;
 
-        $pan = $this->userTable($tennure, 'pan');;
+        $pan = $this->userTable($tenure, 'pan');;
 
-        $payout = $this->userTable($tennure, 'payout');;
+        $payout = $this->userTable($tenure, 'payout');;
 
-        $lic = $this->userTable($tennure, 'lic');;
+        $lic = $this->userTable($tenure, 'lic');;
 
-        $fastag = $this->userTable($tennure, 'fastag');
+        $fastag = $this->userTable($tenure, 'fastag');
 
-        $cms = $this->userTable($tennure, 'cms');
+        $cms = $this->userTable($tenure, 'cms');
 
-        $recharge = $this->userTable($tennure, 'recharge');
+        $recharge = $this->userTable($tenure, 'recharge');
 
-        $funds = $this->fundRequests($tennure);
+        $funds = $this->fundRequests($tenure);
 
         $array = [
             $aeps,
@@ -67,10 +67,10 @@ class UserDashboardController extends Controller
         return response($array);
     }
 
-    public function userTable($tennure, $category)
+    public function userTable($tenure, $category)
     {
-        $tennure;
-        switch ($tennure) {
+        $tenure;
+        switch ($tenure) {
             case 'week':
                 $start = Carbon::now()->startOfWeek();
                 $end = Carbon::now()->endOfWeek();
@@ -102,9 +102,9 @@ class UserDashboardController extends Controller
         ];
     }
 
-    public function fundRequests($tennure)
+    public function fundRequests($tenure)
     {
-        switch ($tennure) {
+        switch ($tenure) {
             case 'week':
                 $start = Carbon::now()->startOfWeek();
                 $end = Carbon::now()->endOfWeek();

@@ -131,8 +131,9 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
             return response(true);
         }
     });
-    Route::get('eko/onbaord', [KycVerificationController::class, 'onboard']);
     Route::post('eko/verify-otp', [KycVerificationController::class, 'verifyMobile']);
+    Route::get('eko/onbaord', [KycVerificationController::class, 'userOnboard']);
+    Route::post('eko/send-otp', [KycVerificationController::class, 'sendEkoOtp']);
     Route::get('eko/attach-service/{service_code}', [AttachServiceController::class, 'ekoActicvateService'])->middleware('eko');
     /*-------------------------EKO ONBOARD-------------------------*/
 
@@ -148,7 +149,7 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::post('eko/activate-service', [AgentManagementController::class, 'newService']);
 
     /*------------------------EKO BBPS------------------------*/
-    Route::get('eko/bbps/operators/categories', [BBPSController::class, 'operatorCategoryList']);
+    Route::get('eko/bbps/operators/categories', [BBPSController::class, 'operatorCategoryList'])->middleware('eko');
     Route::get('eko/bbps/operators/{category_id?}', [BBPSController::class, 'operators']);
     Route::get('eko/bbps/operators/fields/{operator_id}', [BBPSController::class, 'operatorField']);
     Route::post('eko/bbps/fetch-bill', [BBPSController::class, 'fetchBill'])->middleware('eko');
