@@ -306,8 +306,8 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
         $data = auth()->user()->credential_remarks;
         return $data;
     });
-    Route::get('settlement-request', [AdminController::class, 'settlementRequest']);
-    Route::post('settlement-request', [AdminController::class, 'updateSettlementRequest']);
+    Route::get('settlement-requests', [AdminController::class, 'settlementRequest']);
+    Route::post('settlement-requests', [AdminController::class, 'updateSettlementRequest']);
     Route::post('new-admin', [AdminController::class, 'newAdmin'])->middleware('permission:assign-permission');
     Route::post('add-cms-billers', [AdminController::class, 'cmsBiller']);
     Route::delete('cms-biller/{id}', [AdminController::class, 'deleteCmsBiller']);
