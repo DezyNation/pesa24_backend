@@ -115,14 +115,6 @@ class PayoutController extends CommissionController
 
         dd($response2);
 
-        // if ($doctype == 'PAN') {
-        //     $data['panimage'] = Storage::get($pan);
-        // }
-        // } else {
-        //     $data['front_image'] = Storage::get($user);
-        //     $data['back_image'] = Storage::get($pan);
-        // }
-
         $response = Http::asForm()->acceptJson()->withHeaders([
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',

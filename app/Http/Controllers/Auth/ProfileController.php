@@ -215,7 +215,7 @@ class ProfileController extends AgentManagementController
             'updated_at' => now()
         ]);
 
-        return response()->noContent();
+        return response(['message' => 'Bank details sent for review!']);
     }
 
     public function bank()

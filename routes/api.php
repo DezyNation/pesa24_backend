@@ -109,7 +109,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
     Route::post('fund/settlement-request', [UserDashboardController::class, 'settlementRequest']);
-    Route::get('fund/settlement-request', [UserDashboardController::class, 'settlementRequest']);
+    Route::get('fund/settlement-request', [UserDashboardController::class, 'getSettlementRequest']);
     Route::get('fund/fetch-parents', [FundController::class, 'parents']);
     Route::get('cms-records', function () {
         $data = DB::table('cms_records')->where('user_id', auth()->user()->id)->latest()->get();
