@@ -18,16 +18,16 @@ class AepsApiController extends CommissionController
 
     public function headerArray()
     {
-        $key = "d2fe1d99-6298-4af2-8cc5-d97dcf46df30";
+        $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
         $secret_key = base64_encode($signature);
 
         return [
-            'developer_key' => env('DEVELOPER_KEY'),
-            // 'secret-key' => $secret_key,
-            // 'secret-key-timestamp' => $secret_key_timestamp
+            'developer_key' => '28fbc74a742123e19bcda26d05453a18',
+            'secret-key' => $secret_key,
+            'secret-key-timestamp' => $secret_key_timestamp
         ];
     }
 
@@ -132,7 +132,6 @@ class AepsApiController extends CommissionController
             ];
             $this->transaction(0, 'AePS: Withdrawal', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $encryption['amount']);
             $this->aepsComission($encryption['amount'], auth()->user()->id);
-
         } else {
             $metadata = [
                 'status' => false,
@@ -351,12 +350,12 @@ class AepsApiController extends CommissionController
     public function bankList()
     {
         $data = [
-        'initiator_id' => 9962981729,
-        'user_code' => auth()->user()->user_code ?? 20810200
+            'initiator_id' => 9758105858,
+            'user_code' => auth()->user()->user_code
         ];
-        $response = Http::asForm()->withHeaders([
-            'developr_key' => env('DEVELOPER_KEY')
-        ])->get('http://staging.eko.in:8080/ekoapi/v2/banks', $data);
+        $response = Http::asForm()->withHeaders(
+            $this->headerArray()
+        )->get('https://api.eko.in:25002/ekoicici/v2/banks', $data);
         return $response;
     }
 }

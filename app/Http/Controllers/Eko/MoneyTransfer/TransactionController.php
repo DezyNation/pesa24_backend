@@ -12,32 +12,32 @@ class TransactionController extends CommissionController
 {
     public function headerArray()
     {
-        $key = "d2fe1d99-6298-4af2-8cc5-d97dcf46df30";
+        $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
         $secret_key = base64_encode($signature);
 
         return [
-            'developer_key' => env('DEVELOPER_KEY'),
-            // 'secret-key' => $secret_key,
-            // 'secret-key-timestamp' => $secret_key_timestamp
+            'developer_key' => '28fbc74a742123e19bcda26d05453a18',
+            'secret-key' => $secret_key,
+            'secret-key-timestamp' => $secret_key_timestamp
         ];
     }
 
-    public function splitAmount($recipient_id = 10011321, $amount = 5100, $customer_id = 8619485911)
+    public function splitAmount($recipient_id, $amount, $customer_id)
     {
         $data = [
             'recipient_id' => $recipient_id,
             'amount' => $amount,
             'customer_id' => $customer_id,
-            'initiator_id' => 9999912796,
+            'initiator_id' => 9758105858,
             'channel' => 2
         ];
 
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
-        )->get("http://staging.eko.in:8080/ekoapi/v1/transactions/split", $data);
+        )->get("https://api.eko.in:25002/ekoicici/v2/transactions/split", $data);
         return $response['data']['split_tid'];
     }
     /*------------------------------Initiate Transaction------------------------------*/
@@ -55,12 +55,12 @@ class TransactionController extends CommissionController
                 'timestamp' => time(),
                 'currency' => 'INR',
                 'customer_id' => $customer_id,
-                'initiator_id' => 9999912796,
+                'initiator_id' => 9758105858,
                 'client_ref_id' => substr(strtoupper(uniqid() . Str::random(10)), 0, 10),
                 'state' => 1,
                 'channel' => 2,
                 'latlong' => $request['latlong'],
-                'user_code' => 99029899,
+                'user_code' => auth()->user()->user_code,
                 'split_tid' => $split_tid
             ];
         } else {
@@ -70,18 +70,18 @@ class TransactionController extends CommissionController
                 'timestamp' => time(),
                 'currency' => 'INR',
                 'customer_id' => $customer_id,
-                'initiator_id' => 9999912796,
+                'initiator_id' => 9758105858,
                 'client_ref_id' => substr(strtoupper(uniqid() . Str::random(10)), 0, 10),
                 'state' => 1,
                 'channel' => 2,
                 'latlong' => $request['latlong'],
-                'user_code' => 99029899,
+                'user_code' => auth()->user()->user_code,
             ];
         }
 
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
-        )->post('http://staging.eko.in:8080/ekoapi/v2/transactions', $data);
+        )->post('https://api.eko.in:25002/ekoicici/v2/transactions', $data);
         $opening_balance = auth()->user()->wallet;
         $closing_balance = $opening_balance - $data['amount'];
         if (!array_key_exists('status', $response->json())) {
