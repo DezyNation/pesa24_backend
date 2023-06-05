@@ -277,7 +277,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('paysprint/payout/upload-documents', [PaysprintPayout::class, 'uploadDocuments']);
     Route::get('fetch-fund-requests/{id}', [FundController::class, 'fetchFundId']);
     Route::get('fetch-admin-funds', [FundController::class, 'reversalAndTransferFunds']);
-    Route::post('update-fund-requests', [FundController::class, 'updateFund'])->middleware(['permission:fund-request-edit', 'minimum_balance']);
+    Route::post('update-fund-requests', [FundController::class, 'updateFund'])->middleware(['minimum_balance']);
     Route::post('new-fund', [FundController::class, 'newFund'])->middleware(['permission:fund-transfer-create', 'minimum_balance', 'mpin']);
     Route::post('delete-fund', [FundController::class, 'deleteFund'])->middleware('permission:fund-transfer-create');
 
