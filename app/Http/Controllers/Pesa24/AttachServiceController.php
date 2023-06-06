@@ -98,6 +98,7 @@ class AttachServiceController extends Controller
         $pan_photo = "../storage/app/$pan";
         $aadhar_front_photo = "../storage/app/$aadhar_front";
         $aadhar_back_photo = "../storage/app/$aadhar_back";
+        return $aadhar_back_photo;
 
 
         $target_url = "https://api.eko.in:25002/ekoicici/v1/user/service/activate";
