@@ -152,6 +152,7 @@ class UserDashboardController extends Controller
             'user_id' => auth()->user()->id,
             'amount' => $request['amount'],
             'message' => $request['message']??null,
+            'status' => 'pending',
             'created_at' => now(),
             'updated_at' => now()
         ]);

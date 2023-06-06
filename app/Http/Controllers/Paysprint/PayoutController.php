@@ -53,7 +53,7 @@ class PayoutController extends CommissionController
         $token = $this->token();
         $data = [
             'bankid' => $user->paysprint_bank_code,
-            'merchant_code' => auth()->user()->paysprint_merchant ?? "1234",
+            'merchant_code' => $user->paysprint_merchant,
             'account' => $user->account_number,
             'ifsc' => $user->ifsc,
             'name' => $user->name,
@@ -64,7 +64,7 @@ class PayoutController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
             'Content-Type: application/json'
-        ])->post('https://api.paysprint.in/api/v1/service/payout/payout/add', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/add', $data);
 
         if (array_key_exists('bene_id', $response->json())) {
             $user->update(['paysprint_bene_id' => $response->json($key = 'bene_id')]);
@@ -144,10 +144,26 @@ class PayoutController extends CommissionController
 
     public function doTransaction(Request $request)
     {
+        $request->validate([
+            'userId' => 'required|exists:users,id',
+            'amount' => 'required|integer',
+        ]);
         $token = $this->token();
         $user = User::find($request['userId']);
+
+        $capped_amount = $user->minimum_balance;
+        $wallet = $user->wallet;
+        $balance_left = $wallet - $request['amount'];
+
+        if ($balance_left < 0 || $balance_left < $capped_amount) {
+            abort(400, "User does not have enough balance.");
+        } elseif (is_null($user->paysprint_bene_id)) {
+            abort(400, "Account not added yet.");
+        }
+
+
         $data = [
-            'bene_id' => $request['beneId'],
+            'bene_id' => $user->paysprint_bene_id,
             'amount' => $request['amount'],
             'refid' => uniqid(),
             'mode' => 'IMPS'
@@ -157,10 +173,9 @@ class PayoutController extends CommissionController
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'Content-Type: application/json'
-        ])->post('https://api.paysprint.in/api/v1/service/payout/payout/dotransaction', $data);
-
+        ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/dotransaction', $data);
+            $this->apiRecords($data['refid'], 'paysprint', $response);
         if ($response->json($key = 'status') == true) {
-            $balance_left = $user->wallet - $request['amount'];
             $transaction_id = "PAY" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => true,

@@ -791,7 +791,7 @@ class AdminController extends Controller
         $data = DB::table('settlement_request')
         ->join('users', 'users.id', '=', 'settlement_request.user_id')
         ->where('users.organization_id', auth()->user()->organization_id)
-        ->select('users.name', 'users.email', 'users.phone_number', 'users.id as user_id', 'settlement_request.*')
+        ->select('users.name', 'users.email', 'users.phone_number', 'users.id as user_id', 'users.account_number', 'users.ifsc', 'users.bank_name', 'users.paysprint_bank_code', 'settlement_request.*')
         ->get();
 
         return $data;
