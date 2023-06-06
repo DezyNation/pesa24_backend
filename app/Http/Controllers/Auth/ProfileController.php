@@ -81,11 +81,14 @@ class ProfileController extends AgentManagementController
 
         if ($request->hasFile('values.aadhaarFront')) {
             $aadhaar_front = $request->file('values.aadhaarFront')->store('aadhar_front');
-        } elseif ($request->hasFile('values.aadhaarBack')) {
+        }
+        if ($request->hasFile('values.aadhaarBack')) {
             $aadhaar_back = $request->file('values.aadhaarBack')->store('aadhar_back');
-        } elseif ($request->hasFile('values.panCard')) {
+        }
+        if ($request->hasFile('values.panCard')) {
             $pan_card = $request->file('values.panCard')->store('pan');
-        } elseif ($request->hasFile('values.profilePic')) {
+        }
+        if ($request->hasFile('values.profilePic')) {
             $profile = $request->file('values.profilePic')->store('profile');
         }
 
