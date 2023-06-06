@@ -12,6 +12,7 @@ use CURLFile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class PayoutController extends CommissionController
@@ -174,6 +175,7 @@ class PayoutController extends CommissionController
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'Content-Type: application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/dotransaction', $data);
+        Log::channel('response')->info($response);
             $this->apiRecords($data['refid'], 'paysprint', $response);
         if ($response->json($key = 'status') == true) {
             $transaction_id = "PAY" . strtoupper(Str::random(9));
