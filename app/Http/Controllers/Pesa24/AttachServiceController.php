@@ -95,7 +95,7 @@ class AttachServiceController extends Controller
         $pan = $user->pan_photo;
         $aadhar_front = $user->aadhar_front;
         $aadhar_back = $user->aadhar_back;
-        $pan_photo = "../storage/app/$pan";
+        $pan_photo = "./../storage/app/$pan";
         $aadhar_front_photo = "../storage/app/$aadhar_front";
         $aadhar_back_photo = "../storage/app/$aadhar_back";
         return $aadhar_back_photo;
