@@ -262,7 +262,6 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('get-users/{role_id}/{parent?}', [UserController::class, 'getUsers']);
     Route::get('users-list/{role}/{id?}', [UserController::class, 'userInfo']);
     // Route::get('all-users-list/{role}/{id?}', [UserController::class, 'userInfoPackage']);
-    Route::get('user/status/{id}/{bool}', [UserController::class, 'active']);
     Route::post('link-package', [AdminDashboardcontroller::class, 'packageService']);
 
     Route::get('payouts', [PayoutController::class, 'fetchPayoutAdmin']);
@@ -346,6 +345,8 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('create-organization', [GlobalServiceController::class, 'newOrganization']);
     Route::post('update-organization', [GlobalServiceController::class, 'updateOrganization']);
     Route::get('organizations', [GlobalServiceController::class, 'getOrganizations']);
+    Route::get('organizations/{id}', [GlobalServiceController::class, 'getOrganizationById']);
+    Route::get('permissions', [GlobalServiceController::class, 'permissions']);
 });
 
 Route::get('transactions-period', [AdminTransactionController::class, 'dailySales']);

@@ -16,7 +16,7 @@ class BankVerified
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = User::findOrFail(auth()->user()->id);
+        $user = User::findOrFail($request['userId']);
         if (!$user->is_verified) {
             return response("Bank not verified yet.", 400);
         }

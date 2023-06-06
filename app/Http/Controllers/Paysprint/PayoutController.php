@@ -182,15 +182,21 @@ class PayoutController extends CommissionController
             $metadata = [
                 'status' => true,
                 'amount' => $request['amount'],
+                'ackno' => $response['ackno'],
+                'transaction_for' => $user->name,
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number
             ];
+            User::where('id', $request['userId'])->update([
+                'wallet' => $balance_left
+            ]);
             $this->transaction($request['amount'], 'Payout Transaction', 'payout', $request['userId'], $user->wallet, $transaction_id, $balance_left, json_encode($metadata));
         } else {
             $metadata = [
                 'status' => false,
                 'amount' => $request['amount'],
+                'transaction_for' => $user->name,
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number
@@ -300,14 +306,14 @@ class PayoutController extends CommissionController
             'passbook' => file_get_contents("../storage/app/$user->passbook"),
             'panimage' => file_get_contents("../storage/app/$user->pan_photo"),
         ];
-    
+
         $response = Http::attach('passbook', $data2['passbook'], 'passbook.jpeg')->attach('panimage', $data2['panimage'], 'panimage.jpeg')
             ->acceptJson()->withHeaders([
                 'Token' => $token,
                 'Authorisedkey' => 'MzNkYzllOGJmZGVhNWRkZTc1YTgzM2Y5ZDFlY2EyZTQ=',
                 'Content-Type: application/json'
             ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/uploaddocument', $data);
-    
+
         return $response;
     }
 }

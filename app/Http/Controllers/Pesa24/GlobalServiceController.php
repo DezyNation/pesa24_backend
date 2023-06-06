@@ -190,6 +190,12 @@ class GlobalServiceController extends Controller
         return $data;
     }
 
+    public function getOrganizationById($id)
+    {
+        $data = DB::table('organizations')->where('id', $id)->get();
+        return $data;
+    }
+
     public function updateOrganization(Request $request)
     {
         $data = DB::table('organizations')->where('id', $request['organizationId'])
@@ -197,7 +203,6 @@ class GlobalServiceController extends Controller
             'user_id' => $request['userId'],
             'firm_name' => $request['firmName'],
             'authorised_numbers' => $request['authorisedNumbers']??null,
-            'code' => $request['code'],
             'firm_address' => $request['firmAddress'],
             'email' => $request['email'],
             'phone_number' => $request['phoneNumber'],
@@ -219,5 +224,10 @@ class GlobalServiceController extends Controller
             'created_at' => now(),
             'updated_at' => now()
         ]);
+    }
+
+    public function permissions()
+    {
+        $data = DB::table('permissions')->get();
     }
 }
