@@ -352,7 +352,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
             'uploadedFile' => 'required|file|mimes:png,jpg,jpeg|size:4096'
         ]);
 
-        $file = $request->file('uploadedFile')->store('general_image');
+        $file = $request->file('uploadedFile')->store('assets');
         $data = DB::table('general_image')->insert([
             'user_id' => auth()->user()->id,
             'organization_id' => auth()->user()->organization_id,
