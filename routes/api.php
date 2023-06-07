@@ -125,7 +125,7 @@ Route::post('eko/aeps/money-transfer/{service_id}', [EkoAepsApiController::class
 Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(function () {
     /*-------------------------EKO ONBOARD-------------------------*/
     Route::get('eko/send-otp', [KycVerificationController::class, 'sendEkoOtp']);
-    Route::get('eko-status', function() {
+    Route::get('eko-status', function () {
         $bool = is_null(auth()->user()->user_code);
         if ($bool) {
             return response(false);
@@ -347,6 +347,22 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('organizations', [GlobalServiceController::class, 'getOrganizations']);
     Route::get('organizations/{id}', [GlobalServiceController::class, 'getOrganizationById']);
     Route::get('permissions', [GlobalServiceController::class, 'permissions']);
+    Route::post('add-image', function (Request $request) {
+        $request->validate([
+            'uploadedFile' => 'required|file|mimes:png,jpg,jpeg|size:4096'
+        ]);
+
+        $file = $request->file('uploadedFile')->store('general_image');
+        $data = DB::table('general_image')->insert([
+            'user_id' => auth()->user()->id,
+            'organization_id' => auth()->user()->organization_id,
+            'path' => $file,
+            'creatd_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        return $data;
+    });
 });
 
 Route::get('transactions-period', [AdminTransactionController::class, 'dailySales']);
