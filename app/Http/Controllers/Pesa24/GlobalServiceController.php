@@ -76,6 +76,7 @@ class GlobalServiceController extends Controller
     {
         $data = DB::table('categories')->insert([
             'name' => $request['categoryName'],
+            'image_url' => $request['imageUrl'],
             'created_at' => now(),
             'updated_at' => now()
         ]);
