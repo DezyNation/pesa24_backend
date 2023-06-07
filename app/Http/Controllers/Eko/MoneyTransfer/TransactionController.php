@@ -82,6 +82,7 @@ class TransactionController extends CommissionController
         $response = Http::asForm()->withHeaders(
             $this->headerArray()
         )->post('https://api.eko.in:25002/ekoicici/v2/transactions', $data);
+        $this->apiRecords($data['client_ref_id'], 'api', $response);
         $opening_balance = auth()->user()->wallet;
         $closing_balance = $opening_balance - $data['amount'];
         if (!array_key_exists('status', $response->json())) {
