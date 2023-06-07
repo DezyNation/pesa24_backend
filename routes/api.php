@@ -352,7 +352,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
             'uploadedFile' => 'required|file|mimes:png,jpg,jpeg|size:4096'
         ]);
 
-        $file = $request->file('uploadedFile')->store('general_image');
+        $file = $request->file(' ')->store('general_image');
         $data = DB::table('general_image')->insert([
             'user_id' => auth()->user()->id,
             'organization_id' => auth()->user()->organization_id,
@@ -361,6 +361,11 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
             'updated_at' => now()
         ]);
 
+        return $data;
+    });
+
+    Route::get('get-images', function () {
+        $data = DB::table('general_image')->where('organization_id', auth()->user()->organization_id)->get();
         return $data;
     });
 });
