@@ -266,18 +266,14 @@ class CommissionController extends Controller
 
         $opening_balance = $user->wallet;
 
-        if ($is_flat) {
-            $debit =  $fixed_charge;
-            $credit = $role_commission - $role_commission * $gst / 100;
-            $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
-            $debit = $fixed_charge / 100;
-            $credit = $role_commission / 100 - $role_commission * $gst / 100;
-            $closing_balance = $opening_balance - $debit + $credit;
-        }
+        $debit =  $fixed_charge;
+        $credit = $role_commission - $role_commission * $gst / 100;
+        $closing_balance = $opening_balance - $debit + $credit;
+
 
         $metadata = [
-            'status' => true
+            'status' => true,
+            'event' => 'pan'
         ];
 
         $transaction_id = "PAN" . strtoupper(Str::random(9));
@@ -1667,11 +1663,11 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true,
             'event' => 'axis',
-            'amount' => $credit,
+            'amount' => $debit,
             'id' => $uniqid
         ];
         $transaction_id = "AXIS" . $uniqid;
-        $this->transaction($credit, 'Axis commission', 'axis', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $this->transaction($debit, 'Axis commission', 'axis', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -1717,10 +1713,10 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true,
             'event' => 'axis',
-            'amount' => $credit
+            'amount' => $debit
         ];
         $transaction_id = "AXIS" . strtoupper(Str::random(9));
-        $this->transaction($credit, 'Axis commission', 'axis', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $this->transaction($debit, 'Axis commission', 'axis', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);

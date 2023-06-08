@@ -46,13 +46,13 @@ class PANController extends CommissionController
         $data = [
             'refid' => "PESA24" . strtoupper(uniqid() . Str::random(12)),
             'title' => '1',
-            'firstname' => $request['firstName'] ?? 'Rishi',
-            'middlename' => $request['middleName'] ?? 'AS',
-            'lastname' => $request['lastName'] ?? 'Kumar',
+            'firstname' => $request['firstName'],
+            'middlename' => $request['middleName'],
+            'lastname' => $request['lastName'],
             'mode' => $request['mode'] ?? 'E',
             'gender' => $request['gender'] ?? 'M',
             'redirect_url' => 'https://pesa24.co.in',
-            'email' => 'rk3141508@gmail.com'
+            'email' => $request['email']
         ];
 
         $response = Http::acceptJson()->withHeaders([
