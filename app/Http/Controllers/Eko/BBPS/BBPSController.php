@@ -13,14 +13,14 @@ class BBPSController extends CommissionController
 
     public function headerArray()
     {
-        $key = "d2fe1d99-6298-4af2-8cc5-d97dcf46df30";
+        $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encodedKey, true);
         $secret_key = base64_encode($signature);
 
         return [
-            'developer_key' => "becbbce45f79c6f5109f848acd540567",
+            'developer_key' => "28fbc74a742123e19bcda26d05453a18",
             'secret-key' => $secret_key,
             'secret-key-timestamp' => $secret_key_timestamp
         ];
@@ -105,8 +105,7 @@ class BBPSController extends CommissionController
 
 
         $data = [
-            'user_code' => 20810200,
-            // auth()->user()->user_code,
+            'user_code' => auth()->user()->user_code,
             'client_ref_id' => uniqid(),
             'utility_acc_no' => $request['utility_acc_no'],
             'confirmation_mobile_no' => $request['confirmation_mobile_no']??auth()->user()->phone_number,
@@ -123,7 +122,7 @@ class BBPSController extends CommissionController
             'Connection' => 'Keep-Alive',
             'Accept-Encoding' => 'gzip',
             'User-Agent' => 'okhttp/3.9.0',
-        ]))->post("http://staging.eko.in:8080/ekoicici/v2/billpayments/paybill?initiator_id=9962981729", $data);
+        ]))->post("https://api.eko.in:25002/ekoicici/v2/billpayments/paybill?initiator_id=9758105858", $data);
         // return $response;
         $opening_balance = auth()->user()->wallet;
         $closing_balance = $opening_balance - $data['amount'];
