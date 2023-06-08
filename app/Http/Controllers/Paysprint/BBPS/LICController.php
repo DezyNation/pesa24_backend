@@ -82,6 +82,7 @@ class LICController extends CommissionController
         if ($response->json($key = 'response_code') == 1 || $response->json($key = 'response_code') == 0) {
             $metadata = [
                 'status' => $response['status'],
+                'canumber' => $data['canumber'],
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,

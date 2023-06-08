@@ -134,6 +134,8 @@ class BBPSController extends CommissionController
                 'amount' => $data['amount'],
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
+                'operator_id' => $request['operator_id'],
+                'canumber' => $request['utility_acc_no'],
                 'user_phone' => auth()->user()->phone_number,
                 'message' => $response['message']
             ];
@@ -145,7 +147,9 @@ class BBPSController extends CommissionController
                 'status' => true,
                 'sender_id' => $response['data']['sender_id'],
                 'user' => auth()->user()->name,
+                'canumber' => $request['utility_acc_no'],
                 'user_id' => auth()->user()->id,
+                'operator_id' => $request['operator_id'],
                 'user_phone' => auth()->user()->phone_number,
                 'amount' => $response['data']['amount'],
                 'operator_name' => $response['data']['operator_name'],
@@ -159,6 +163,8 @@ class BBPSController extends CommissionController
             $metadata = [
                 'status' => false,
                 'amount' => $data['amount'],
+                'canumber' => $request['utility_acc_no'],
+                'operator_id' => $request['operator_id'],
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,

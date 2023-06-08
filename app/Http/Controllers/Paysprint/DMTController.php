@@ -214,6 +214,7 @@ class DMTController extends CommissionController
             $metadata = [
                 'status' => $response['status'] ?? null,
                 'reference_id' => $data['referenceid'] ?? null,
+                'beneficiary_id' => $request['beneficiaryId'],
                 'amount' => $response['txn_amount'] ?? null,
                 'account_number' => $response['account_number'] ?? null,
                 'mobile' => $data['mobile'],
@@ -244,6 +245,7 @@ class DMTController extends CommissionController
             $metadata = [
                 'status' => false,
                 'account_number' => $data['accno'] ?? null,
+                'beneficiary_id' => $request['beneficiaryId'],
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,
@@ -252,15 +254,16 @@ class DMTController extends CommissionController
                 'reference_id' => $data['referenceid'] ?? null,
                 'beneficiary_name' => $data['benename'] ?? null
             ];
-            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $walletAmt = auth()->user()->wallet;
             $transaction_id = "DMT" . strtoupper(Str::random(9));
-            $this->transaction(0, 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+            $this->transaction(0, 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt, json_encode($metadata));
             return ['response' => $response->body(), 'metadata' => $metadata];
         } else {
 
             $metadata = [
                 'status' => false,
                 'account_number' => $data['accno'] ?? null,
+                'beneficiary_id' => $request['beneficiaryId'],
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,
@@ -269,9 +272,9 @@ class DMTController extends CommissionController
                 'reference_id' => $data['referenceid'] ?? null,
                 'beneficiary_name' => $data['benename'] ?? null
             ];
-            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $walletAmt = auth()->user()->wallet;
             $transaction_id = "DMT" . strtoupper(Str::random(9));
-            $this->transaction(0, 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+            $this->transaction(0, 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt, json_encode($metadata));
             return ['response' => $response->body(), 'metadata' => $metadata];
         }
 

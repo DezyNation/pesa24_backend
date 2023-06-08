@@ -124,6 +124,8 @@ class AepsApiController extends CommissionController
             $metadata = [
                 'status' => true,
                 'amount' => $encryption['amount'],
+                'aadhaar_number' => $request['aadhaarNo'],
+                'bank_code' => $request['bankCode'],
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
                 'user_id' => auth()->user()->id,
@@ -136,6 +138,8 @@ class AepsApiController extends CommissionController
             $metadata = [
                 'status' => false,
                 'amount' => $encryption['amount'],
+                'aadhaar_number' => $request['aadhaarNo'],
+                'bank_code' => $request['bankCode'],
                 'user_name' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'message' => $response['message']
@@ -182,7 +186,9 @@ class AepsApiController extends CommissionController
                 'status' => true,
                 'user_id' => auth()->user()->id,
                 'user_name' => auth()->user()->name,
+                'aadhaar_number' => $request['aadhaarNo'],
                 'user_phone' => auth()->user()->phone_number,
+                'bank_code' => $request['bankCode'],
                 'bank_ref_num' => $response['data']['bank_ref_num'],
                 'mini_statment' => $response['data']['mini_statement_list'],
                 'message' => $response['message']
@@ -193,6 +199,8 @@ class AepsApiController extends CommissionController
             $metadata = [
                 'status' => false,
                 'user_id' => auth()->user()->id,
+                'bank_code' => $request['bankCode'],
+                'aadhaar_number' => $request['aadhaarNo'],
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
                 'message' => $response['message']
@@ -242,6 +250,8 @@ class AepsApiController extends CommissionController
                 'customer_balance' => $response['data']['customer_balance'],
                 'bank_ref_num' => $response['data']['bank_ref_num'],
                 'aadhar' => $response['data']['aadhar'],
+                'aadhaar_number' => $request['aadhaarNo'],
+                'bank_code' => $request['bankCode'],
                 // 'merchantname' => $response['data']['merchantname'],
                 'message' => $response['message'],
                 'user_id' => auth()->user()->id,
@@ -254,6 +264,8 @@ class AepsApiController extends CommissionController
             $metadata = [
                 'status' => false,
                 'message' => $response['message'],
+                'aadhaar_number' => $request['aadhaarNo'],
+                'bank_code' => $request['bankCode'],
                 'user_id' => auth()->user()->id,
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
