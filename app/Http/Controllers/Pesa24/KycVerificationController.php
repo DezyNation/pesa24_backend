@@ -204,13 +204,15 @@ class KycVerificationController extends Controller
         ])->put('https://api.eko.in:25002/ekoicici/v1/user/onboard', $data);
         Log::channel('response')->info($response);
 
+        if (array_key_exists('data', $response->json())) {
 
-        if (array_key_exists('user_code', $response->json($key = 'data'))) {
-            DB::table('users')->where('id', auth()->user()->id)->update([
-                'user_code' => $response['data']['user_code']
-            ]);
+            if (array_key_exists('user_code', $response->json($key = 'data'))) {
+                DB::table('users')->where('id', auth()->user()->id)->update([
+                    'user_code' => $response['data']['user_code']
+                ]);
 
-            return response("Onboard Success.");
+                return response("Onboard Success.");
+            }
         }
         return response("Onboard fail: {$response['message']}", 502);
     }
