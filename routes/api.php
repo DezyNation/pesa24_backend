@@ -72,6 +72,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('money-transfer', [PaysprintPayout::class, 'moneyTransfer'])->middleware(['mpin', 'minimum_balance']);
     Route::get('money-transfer', [PaysprintPayout::class, 'fetchMoneyTransfer']);
     Route::get('user/bank', [ProfileController::class, 'bank']);
+    Route::get('user/daily-sales', [UserDashboardController::class, 'dailySales']);
     Route::get('user/services', [ProfileController::class, 'userServices']);
     Route::get('user/ledger/{name?}', [UserDashboardController::class, 'transactionLedger']);
     Route::post('user/wallet', [ProfileController::class, 'wallet']);
@@ -369,5 +370,3 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
         return $data;
     });
 });
-
-Route::get('transactions-period', [AdminTransactionController::class, 'dailySales']);

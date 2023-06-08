@@ -165,4 +165,10 @@ class UserDashboardController extends Controller
         $data = DB::table('settlement_request')->where('user_id', auth()->user()->id)->get();
         return $data;
     }
+
+    public function dailySales()
+    {
+        $data = DB::table('transactions')->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->get();
+        return $data;
+    }
 }
