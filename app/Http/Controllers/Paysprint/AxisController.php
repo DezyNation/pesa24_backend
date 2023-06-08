@@ -6,8 +6,9 @@ use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\CommissionController;
 
-class AxisController extends Controller
+class AxisController extends CommissionController
 {
     public function token()
     {
@@ -29,7 +30,7 @@ class AxisController extends Controller
         ]);
         $token = $this->token();
         $data = [
-            'merchantcode' => auth()->user()->paysprint_merchant ?? 1232232,
+            'merchantcode' => auth()->user()->paysprint_merchant,
             'type' => $request['type']
         ];
 
@@ -38,6 +39,12 @@ class AxisController extends Controller
             'Authorisedkey' => env('AUTHORISED_KEY'),
             'Content-Type: application/json'
         ])->post('https://api.paysprint.in/api/v1/service/axisbank-utm/axisutm/generateurl', $data);
+        if ($response['status'] == true) {
+
+            $uniqid = uniqid();
+            $this->apiRecords($uniqid, 'paysprint', $response);
+            $this->axisCommission(auth()->user()->id, $uniqid);
+        }
 
         return $response;
     }

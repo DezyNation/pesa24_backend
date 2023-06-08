@@ -1531,7 +1531,7 @@ class CommissionController extends Controller
     {
         $table = DB::table('cms_commissions')
             ->join('package_user', 'package_user.package_id', '=', 'cms_commissions.package_id')
-            ->where(['package_user.user_id'=> $user_id, 'cms_commissions.provider' => $provider, 'cms_biller_id', $biller_id])->where('cms_commissions.from', '<', $amount)
+            ->where(['package_user.user_id' => $user_id, 'cms_commissions.provider' => $provider, 'cms_biller_id' => $biller_id])->where('cms_commissions.from', '<', $amount)
             ->where('cms_commissions.to', '>=', $amount)
             ->get();
 
@@ -1585,56 +1585,155 @@ class CommissionController extends Controller
     public function cmsParentCommission($user_id, $amount, $provider)
     {
         $table = DB::table('cms_commissions')
-        ->join('package_user', 'package_user.package_id', '=', 'cms_commissions.package_id')
-        ->where(['package_user.user_id'=> $user_id, 'cms_commissions.provider' => $provider])->where('cms_commissions.from', '<', $amount)
-        ->where('cms_commissions.to', '>=', $amount)
-        ->get();
+            ->join('package_user', 'package_user.package_id', '=', 'cms_commissions.package_id')
+            ->where(['package_user.user_id' => $user_id, 'cms_commissions.provider' => $provider])->where('cms_commissions.from', '<', $amount)
+            ->where('cms_commissions.to', '>=', $amount)
+            ->get();
 
-    if ($table->isEmpty()) {
-        return response("No commissions for this transactions.");
+        if ($table->isEmpty()) {
+            return response("No commissions for this transactions.");
+        }
+
+        $table = $table[0];
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = 0;
+        $is_flat = $table->is_flat;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->$role_commission_name;
+        $opening_balance = $user->wallet;
+
+        if ($is_flat) {
+            $debit = $fixed_charge;
+            $credit = $role_commission - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance + $credit - $debit;
+        } elseif (!$is_flat) {
+            $debit = $amount * $fixed_charge / 100;
+            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance + $credit - $debit;
+        }
+        $metadata = [
+            'status' => true,
+            'event' => 'cms',
+            'amount' => $amount
+        ];
+        $transaction_id = "CMS" . strtoupper(Str::random(9));
+        $this->transaction($credit, 'CMS commission', 'cms', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
+
+        if (!$table->parents) {
+            return response("No commissions to parent users.");
+        }
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+
+        if (!$parent->exists()) {
+            return response("No commissions to parent users.");
+        }
+        $parent_id = $parent->pluck('parent_id');
+        $this->cmsParentCommission($parent_id, $amount, $provider);
+        return $table;
     }
 
-    $table = $table[0];
-    $user = User::findOrFail($user_id);
-    $role = $user->getRoleNames()[0];
+    public function axisCommission($user_id, $uniqid)
+    {
+        $table = DB::table('axis_commissions')
+            ->join('package_user', 'package_user.package_id', '=', 'axis_commissions.package_id')
+            ->where(['package_user.user_id' => $user_id])
+            ->get();
 
-    $fixed_charge = 0;
-    $is_flat = $table->is_flat;
-    $gst = $table->gst;
-    $role_commission_name = $role . "_commission";
-    $role_commission = $table->$role_commission_name;
-    $opening_balance = $user->wallet;
+        if ($table->isEmpty()) {
+            return response("No commissions for this transactions.");
+        }
 
-    if ($is_flat) {
+        $table = $table[0];
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = $table->fixed_charge;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->$role_commission_name;
+        $opening_balance = $user->wallet;
+
+
         $debit = $fixed_charge;
         $credit = $role_commission - $role_commission * $gst / 100;
         $closing_balance = $opening_balance + $credit - $debit;
-    } elseif (!$is_flat) {
-        $debit = $amount * $fixed_charge / 100;
-        $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+
+        $metadata = [
+            'status' => true,
+            'event' => 'axis',
+            'amount' => $credit,
+            'id' => $uniqid
+        ];
+        $transaction_id = "AXIS" . $uniqid;
+        $this->transaction($credit, 'Axis commission', 'axis', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
+
+        if (!$table->parents) {
+            return response("No commissions to parent users.");
+        }
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+        if (!$parent->exists()) {
+            return response("No commissions to parent users.");
+        }
+        $parent_id = $parent->pluck('parent_id');
+        $this->axisParentCommission($parent_id);
+        return $table;
+    }
+
+    public function axisParentCommission($user_id)
+    {
+        $table = DB::table('axis_commissions')
+            ->join('package_user', 'package_user.package_id', '=', 'axis_commissions.package_id')
+            ->where(['package_user.user_id' => $user_id])
+            ->get();
+
+        if ($table->isEmpty()) {
+            return response("No commissions for this transactions.");
+        }
+
+        $table = $table[0];
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = 0;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->$role_commission_name;
+        $opening_balance = $user->wallet;
+
+
+        $debit = $fixed_charge;
+        $credit = $role_commission - $role_commission * $gst / 100;
         $closing_balance = $opening_balance + $credit - $debit;
-    }
-    $metadata = [
-        'status' => true,
-        'event' => 'cms',
-        'amount' => $amount
-    ];
-    $transaction_id = "CMS" . strtoupper(Str::random(9));
-    $this->transaction($credit, 'CMS commission', 'cms', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
-    $user->update([
-        'wallet' => $closing_balance
-    ]);
 
-    if (!$table->parents) {
-        return response("No commissions to parent users.");
-    }
-    $parent = DB::table('user_parent')->where('user_id', $user_id);
+        $metadata = [
+            'status' => true,
+            'event' => 'axis',
+            'amount' => $credit
+        ];
+        $transaction_id = "AXIS" . strtoupper(Str::random(9));
+        $this->transaction($credit, 'Axis commission', 'axis', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $user->update([
+            'wallet' => $closing_balance
+        ]);
 
-    if (!$parent->exists()) {
-        return response("No commissions to parent users.");
-    }
-    $parent_id = $parent->pluck('parent_id');
-    $this->cmsParentCommission($parent_id, $amount, $provider);
-    return $table;
+        if (!$table->parents) {
+            return response("No commissions to parent users.");
+        }
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+        if (!$parent->exists()) {
+            return response("No commissions to parent users.");
+        }
+        $parent_id = $parent->pluck('parent_id');
+        $this->axisParentCommission($parent_id);
+        return $table;
     }
 }
