@@ -138,7 +138,7 @@ class AuthenticatedSessionController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'profile_pic' => auth()->user()->profile_pic], 200);
+                return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'paysprint_id' => auth()->user()->paysprint_merchant, 'eko_id' => auth()->user()->user_code, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'profile_pic' => auth()->user()->profile_pic], 200);
             } else {
                 $creds = $request->only(['phone_number', 'password']);
                 $user = User::where('phone_number', $request['phone_number'])->first();
@@ -165,7 +165,7 @@ class AuthenticatedSessionController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'profile_pic' => auth()->user()->profile_pic], 200);
+                return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'paysprint_id' => auth()->user()->paysprint_merchant, 'eko_id' => auth()->user()->user_code, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'profile_pic' => auth()->user()->profile_pic], 200);
             }
         } else {
             if ($request['authMethod'] == 'email') {
@@ -195,7 +195,7 @@ class AuthenticatedSessionController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'profile_pic' => auth()->user()->profile_pic, 'wallet' => auth()->user()->wallet], 200);
+                return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'paysprint_id' => auth()->user()->paysprint_merchant, 'eko_id' => auth()->user()->user_code, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'profile_pic' => auth()->user()->profile_pic, 'wallet' => auth()->user()->wallet], 200);
             } else {
                 $creds = $request->only(['phone_number', 'password']);
                 $user = User::where('phone_number', $request['phone_number'])->first();
@@ -222,7 +222,7 @@ class AuthenticatedSessionController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'profile_pic' => auth()->user()->profile_pic], 200);
+                return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'paysprint_id' => auth()->user()->paysprint_merchant, 'eko_id' => auth()->user()->user_code, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'profile_pic' => auth()->user()->profile_pic], 200);
             }
         }
 

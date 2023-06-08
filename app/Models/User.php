@@ -95,7 +95,6 @@ class User extends Authenticatable implements JWTSubject
         'mpin',
         'created_at',
         'has_parent',
-        'user_code',
         'alternate_phone',
         'kyc',
         'organization_id',
