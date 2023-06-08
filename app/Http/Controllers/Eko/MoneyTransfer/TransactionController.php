@@ -102,6 +102,8 @@ class TransactionController extends CommissionController
             $metadata = [
                 'status' => true,
                 'amount' => $response['data']['amount'],
+                'recipient_id' => $recipient_id,
+                'customer_id' => $customer_id,
                 'reference_id' => $response['data']['client_ref_id'],
                 'message' => $response['message'],
                 'user_id' => auth()->user()->id,
@@ -118,6 +120,8 @@ class TransactionController extends CommissionController
             $metadata = [
                 'status' => false,
                 'amount' => $request['amount'],
+                'recipient_id' => $recipient_id,
+                'customer_id' => $customer_id,
                 'reference_id' => $data['client_ref_id'],
                 'message' => $response['message'],
                 'user_id' => auth()->user()->id,
