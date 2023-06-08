@@ -16,14 +16,14 @@ class UserDashboardController extends Controller
         return ['credit_amount' => $credit_sum, 'debit_amount' > $debit_sum];
     }
 
-    public function transactionLedger($name = null)
+    public function transactionLedger(Request $request, $name = null)
     {
         if (is_null($name)) {
-            $data = DB::table('transactions')->where('trigered_by', auth()->user()->id)->latest()->paginate(20);
+            $data = DB::table('transactions')->whereBetween('created_at', [$requst['from']??Carbon::today(), $requst['to']??Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->latest()->paginate(20);
             return $data;
         }
 
-        $data = DB::table('transactions')->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->paginate(20);
+        $data = DB::table('transactions')->whereBetween('created_at', [$requst['from']??Carbon::today(), $requst['to']??Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->paginate(20);
         return $data;
     }
 
@@ -168,7 +168,7 @@ class UserDashboardController extends Controller
 
     public function dailySales()
     {
-        $data = DB::table('transactions')->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->get();
+        $data = DB::table('transactions')->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()])->where(['trigered_by', auth()->user()->id])->whereJsonContains('metadata->status', true)->get();
         return $data;
     }
 }
