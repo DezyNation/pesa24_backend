@@ -48,8 +48,9 @@ class RegisteredUserController extends Controller
         $name = $request['first_name'] . " " . $request['last_name'];
         $password = Str::random(8);
         $user = User::create([
-            'name' => $request['first_name'] . " " . $request['last_name'],
+            'name' => $request['first_name'] . " " . $request['middle_name'] . " " . $request['last_name'],
             'first_name' => $request['first_name'],
+            'middle_name' => $request['middle_name'],
             'last_name' => $request['last_name'],
             'email' => $request['email'],
             'phone_number' => $request['phone'],
@@ -108,7 +109,7 @@ class RegisteredUserController extends Controller
         $pan_card = $request->file('pan')->store('pan');
 
         $email = $request['userEmail'];
-        $name =  $request['firstName'] . " " . $request['lastName'];
+        $name =  $request['firstName'] . " " . $request['middleName'] . " " . $request['lastName'];
         $mpin = rand(1001, 9999);
         $password = Str::random(8);
 
@@ -118,6 +119,7 @@ class RegisteredUserController extends Controller
             'name' => $name,
             'email' => $email,
             'phone_number' => $request['userPhone'],
+            'middle_name' => $request['middleName'],
             'alternate_phone' => $request['alternatePhone'],
             'password' => Hash::make($password),
             'mpin' => Hash::make($mpin),
