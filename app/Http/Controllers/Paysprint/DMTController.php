@@ -215,6 +215,7 @@ class DMTController extends CommissionController
                 'status' => $response['status'] ?? null,
                 'reference_id' => $data['referenceid'] ?? null,
                 'beneficiary_id' => $request['beneficiaryId'],
+                'utrnumber' => $response['utr'],
                 'amount' => $response['txn_amount'] ?? null,
                 'account_number' => $response['account_number'] ?? null,
                 'mobile' => $data['mobile'],
