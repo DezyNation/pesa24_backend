@@ -178,7 +178,7 @@ class AepsApiController extends CommissionController
 
         $response = Http::withHeaders(array_merge($this->headerArray(), [
             'Content-Type' => 'application/json',
-            // 'request_hash' => $encryption['request_hash']
+            'request_hash' => $encryption['request_hash']
         ]))->post('https://api.eko.in:25002/ekoapi/v2/aeps', $data);
         Log::channel('response')->info($response);
         $this->apiRecords($data['client_ref_id'], 'eko', $response);
