@@ -168,7 +168,7 @@ class UserDashboardController extends Controller
 
     public function dailySales()
     {
-        $data = DB::table('transactions')->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()])->where(['trigered_by'=> auth()->user()->id])->whereJsonContains('metadata->status', true)->get();
+        $data = DB::table('transactions')->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()])->where(['trigered_by'=> auth()->user()->id])->whereJsonContains('metadata->status', true)->paginate(100);
         return $data;
     }
 }
