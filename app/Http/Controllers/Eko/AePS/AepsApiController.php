@@ -182,7 +182,6 @@ class AepsApiController extends CommissionController
             'request_hash' => $encryption['request_hash']
         ]))->post('https://api.eko.in:25002/ekoapi/v2/aeps', $data);
         Log::channel('response')->info('response', $response->json());
-        $this->apiRecords($data['client_ref_id'], 'eko', $response);
         $transaction_id = "AEP" . strtoupper(Str::random(5));
         $opening_balance = auth()->user()->wallet;
         if (!array_key_exists('status', $response->json())) {
@@ -198,6 +197,7 @@ class AepsApiController extends CommissionController
             ];
             $this->transaction(0, 'AePS: Balance Enquiry', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
         }
+        $this->apiRecords($data['client_ref_id'], 'eko', $response);
         if ($response['status'] == 0) {
             $metadata = [
                 'status' => true,
