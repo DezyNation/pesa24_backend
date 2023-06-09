@@ -202,7 +202,7 @@ class AttachServiceController extends Controller
 
     public function ekoActicvateService($service_code)
     {
-        if ($service_code == 24) {
+        if ($service_code == 20) {
             $data = $this->aepsEnroll();
             return $data;
         } else {
