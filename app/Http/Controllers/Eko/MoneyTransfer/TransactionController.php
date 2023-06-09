@@ -89,6 +89,7 @@ class TransactionController extends CommissionController
             $metadata = [
                 'status' => false,
                 'message' => $response['message'],
+                'bank_name' => $request['bankName']??null,
                 'account_number' => $request['accountNumber']??null,
                 'ifsc' => $request['ifsc']??null,
                 'user_id' => auth()->user()->id,
@@ -106,6 +107,7 @@ class TransactionController extends CommissionController
                 'amount' => $response['data']['amount'],
                 'recipient_id' => $recipient_id,
                 'customer_id' => $customer_id,
+                'bank_name' => $request['bankName']??null,
                 'account_number' => $request['accountNumber']??null,
                 'ifsc' => $request['ifsc']??null,
                 'reference_id' => $response['data']['client_ref_id'],
@@ -126,6 +128,7 @@ class TransactionController extends CommissionController
                 'amount' => $request['amount'],
                 'recipient_id' => $recipient_id,
                 'customer_id' => $customer_id,
+                'bank_name' => $request['bankName']??null,
                 'account_number' => $request['accountNumber']??null,
                 'ifsc' => $request['ifsc']??null,
                 'reference_id' => $data['client_ref_id'],
