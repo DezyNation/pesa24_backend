@@ -111,6 +111,7 @@ class TransactionController extends CommissionController
                 'account_number' => $request['accountNumber']??null,
                 'ifsc' => $request['ifsc']??null,
                 'reference_id' => $response['data']['client_ref_id'],
+                'utrnumber' => $response['data']['utrnumber'],
                 'message' => $response['message'],
                 'user_id' => auth()->user()->id,
                 'user' => auth()->user()->name,
