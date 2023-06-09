@@ -180,6 +180,7 @@ class AepsApiController extends CommissionController
             'Content-Type' => 'application/json',
             // 'request_hash' => $encryption['request_hash']
         ]))->post('https://api.eko.in:25002/ekoapi/v2/aeps', $data);
+        Log::channel('response')->info($response);
         $this->apiRecords($data['client_ref_id'], 'eko', $response);
         $transaction_id = "AEP" . strtoupper(Str::random(5));
         $opening_balance = auth()->user()->wallet;
