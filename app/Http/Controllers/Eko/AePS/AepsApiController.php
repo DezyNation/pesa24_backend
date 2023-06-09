@@ -113,7 +113,7 @@ class AepsApiController extends CommissionController
         $response = Http::withHeaders(array_merge($this->headerArray(), [
             'Content-Type' => 'application/json',
             // 'request_hash' => $encryption['request_hash']
-        ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
+        ]))->post('https://api.eko.in:25002/ekoapi/v2/aeps', $data);
         $transaction_id = "AEP" . strtoupper(Str::random(5));
         $opening_balance = auth()->user()->wallet;
         $closing_balance = $opening_balance + $encryption['amount'];
@@ -177,7 +177,7 @@ class AepsApiController extends CommissionController
         $response = Http::withHeaders(array_merge($this->headerArray(), [
             'Content-Type' => 'application/json',
             // 'request_hash' => $encryption['request_hash']
-        ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
+        ]))->post('https://api.eko.in:25002/ekoapi/v2/aeps', $data);
         $this->apiRecords($data['client_ref_id'], 'eko', $response);
         $transaction_id = "AEP" . strtoupper(Str::random(5));
         $opening_balance = auth()->user()->wallet;
@@ -240,7 +240,7 @@ class AepsApiController extends CommissionController
         $response = Http::withHeaders(array_merge($this->headerArray(), [
             'Content-Type' => 'application/json',
             // 'request_hash' => $encryption['request_hash']
-        ]))->post('http://staging.eko.in:8080/ekoapi/v2/aeps', $data);
+        ]))->post('https://api.eko.in:25002/ekoapi/v2/aeps', $data);
         $this->apiRecords($data['client_ref_id'], 'eko', $response);
         $transaction_id = "AEP" . strtoupper(Str::random(5));
         $opening_balance = auth()->user()->wallet;
@@ -297,7 +297,7 @@ class AepsApiController extends CommissionController
 
     //     $response = Http::asForm()->withHeaders(
     //         $this->headerArray()
-    //     )->put('http://staging.eko.in:8080/ekoapi/v1/user/service/activate', $data);
+    //     )->put('https://api.eko.in:25002/ekoapi/v1/user/service/activate', $data);
     //     return $response;
     //     $this->apiRecords($data['user_code'], 'eko', $response);
     // }
@@ -320,7 +320,7 @@ class AepsApiController extends CommissionController
 
         $response = Http::asForm()->withHeaders([
             'developer_key' => 'becbbce45f79c6f5109f848acd540567'
-        ])->put("http://staging.eko.in:8080/ekoapi/v1/agent/user_code:$user_code/settlementaccount", $data);
+        ])->put("https://api.eko.in:25002/ekoapi/v1/agent/user_code:$user_code/settlementaccount", $data);
         return $response;
         $this->apiRecords($data['user_code'], 'eko', $response);
     }
@@ -335,7 +335,7 @@ class AepsApiController extends CommissionController
         $user_code = auth()->user()->user_code;
         $response = Http::asForm()->withHeaders([
             'developer_key' => '28fbc74a742123e19bcda26d05453a18'
-        ])->get("http://staging.eko.in:8080/ekoapi/v1/agent/user_code:$user_code/settlementaccounts", $data);
+        ])->get("https://api.eko.in:25002/ekoapi/v1/agent/user_code:$user_code/settlementaccounts", $data);
 
         return $response;
     }
@@ -354,7 +354,7 @@ class AepsApiController extends CommissionController
 
         $response = Http::asForm()->withHeaders(array_merge($this->headerArray(), [
             'cache-control' => 'no-cache',
-        ]))->post("http://staging.eko.in:8080/ekoapi/v1/agent/user_code:$usercode/settlement", $data);
+        ]))->post("https://api.eko.in:25002/ekoapi/v1/agent/user_code:$usercode/settlement", $data);
         return $response;
         $this->apiRecords($data['client_ref_id'], 'eko', $response);
     }
