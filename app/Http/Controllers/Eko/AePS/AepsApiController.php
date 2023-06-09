@@ -53,10 +53,10 @@ class AepsApiController extends CommissionController
 
     public function requestHash(Request $request)
     {
-        $aadhar = $request['aadhaarNo'] ?? 715547838073;
+        $aadhar = $request['aadhaarNo'];
         $amount = $request['amount'] ?? 0;
-        $usercode = 20810200;
-        $key = "f74c50a1-f705-4634-9cda-30a477df91b7";
+        $usercode = auth()->user()->user_code;
+        $key = "12e848e9-a3a5-425e-93e9-2f4548625409";
         $encodedKey = base64_encode($key);
         $secret_key_timestamp = round(microtime(true) * 1000);
         $string = $secret_key_timestamp . $aadhar . $amount . $usercode;
@@ -94,11 +94,11 @@ class AepsApiController extends CommissionController
 
         $data = [
             "service_type" => "2",
-            "initiator_id" => env('INITIATOR_ID'),
-            "user_code" => $encryption['user_code'] ?? 20810200,
-            "customer_id" => $request['customerId'] ?? 9971412064,
-            "bank_code" => $request['bankCode'] ?? 'HDFC',
-            "amount" => $encryption['amount'] ?? 100,
+            "initiator_id" => 9758105858,
+            "user_code" => $encryption['user_code'],
+            "customer_id" => $request['customerId'],
+            "bank_code" => $request['bankCode'],
+            "amount" => $encryption['amount'],
             "client_ref_id" => "PESA24AEPS" . strtoupper(uniqid()),
             "pipe" => "0",
             "aadhar" => $encryption['encrypted_aadhaar'],
@@ -158,11 +158,11 @@ class AepsApiController extends CommissionController
 
         $data = [
             "service_type" => "4",
-            "initiator_id" => 9962981729,
-            "user_code" => $encryption['user_code'] ?? 20810200,
-            "customer_id" => $request['customerId'] ?? 9971412064,
-            "bank_code" => $request['bankCode'] ?? 'HDFC',
-            "amount" => $encryption['amount'] ?? 0,
+            "initiator_id" => 9758105858,
+            "user_code" => $encryption['user_code'],
+            "customer_id" => $request['customerId'],
+            "bank_code" => $request['bankCode'],
+            "amount" => $encryption['amount'],
             "client_ref_id" => "PESA24AEPSM" . strtoupper(uniqid()),
             "pipe" => "0",
             "aadhar" => $encryption['encrypted_aadhaar'],
@@ -221,10 +221,10 @@ class AepsApiController extends CommissionController
 
         $data = [
             "service_type" => "3",
-            "initiator_id" => 9962981729,
-            "user_code" => $encryption['user_code'] ?? 20810200,
-            "customer_id" => $request['customerId'] ?? 9971412064,
-            "bank_code" => $request['bankCode'] ?? 'HDFC',
+            "initiator_id" => 9758105858,
+            "user_code" => $encryption['user_code'] ,
+            "customer_id" => $request['customerId'] ,
+            "bank_code" => $request['bankCode'] ,
             "amount" => $encryption['amount'],
             "client_ref_id" => "PESA24AEPSB" . strtoupper(uniqid()),
             "pipe" => "0",
@@ -277,7 +277,7 @@ class AepsApiController extends CommissionController
 
     public function aepsInquiry(Request $request)
     {
-        $initiator_id = 9962981729;
+        $initiator_id = 9758105858;
         $transaction_id = $request['transction_id'];
 
         $response = Http::withHeaders(
@@ -305,7 +305,7 @@ class AepsApiController extends CommissionController
     public function bankSettlement(Request $request)
     {
 
-        $initiator_id = 7411111111;
+        $initiator_id = 9758105858;
 
         $data = [
             'service_code' => 39,
@@ -316,7 +316,7 @@ class AepsApiController extends CommissionController
             'account' => $request['acc_num'] ?? 34567891238,
         ];
 
-        $user_code = 20810200;
+        $user_code = auth()->user()->user_code;
 
         $response = Http::asForm()->withHeaders([
             'developer_key' => 'becbbce45f79c6f5109f848acd540567'
@@ -327,14 +327,14 @@ class AepsApiController extends CommissionController
 
     public function getSttlmentAccount(Request $request)
     {
-        $initiator_id = 7411111111;
+        $initiator_id = 9758105858;
         $data = [
             'service_code' => 39,
             'initiator_id' => $initiator_id,
         ];
-        $user_code = 20810200;
+        $user_code = auth()->user()->user_code;
         $response = Http::asForm()->withHeaders([
-            'developer_key' => 'becbbce45f79c6f5109f848acd540567'
+            'developer_key' => '28fbc74a742123e19bcda26d05453a18'
         ])->get("http://staging.eko.in:8080/ekoapi/v1/agent/user_code:$user_code/settlementaccounts", $data);
 
         return $response;
@@ -342,10 +342,10 @@ class AepsApiController extends CommissionController
 
     public function initiateSettlement(Request $request)
     {
-        $usercode = auth()->user()->user_code ?? 20810200;
+        $usercode = auth()->user()->user_code;
         $data = [
             'service_code' => 39,
-            'initiator_id' => 7411111111,
+            'initiator_id' => 9758105858,
             'amount' => $request['amount'] ?? 100,
             'recipient_id' => $request['recipient_id'] ?? 9971412064,
             'payment_mode' => 5,
