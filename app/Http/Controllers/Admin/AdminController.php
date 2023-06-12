@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Spatie\Permission\Models\Permission;
 
 class AdminController extends Controller
@@ -789,10 +790,10 @@ class AdminController extends Controller
     public function settlementRequest()
     {
         $data = DB::table('settlement_request')
-        ->join('users', 'users.id', '=', 'settlement_request.user_id')
-        ->where('users.organization_id', auth()->user()->organization_id)
-        ->select('users.name', 'users.email', 'users.phone_number', 'users.id as user_id', 'users.account_number', 'users.ifsc', 'users.bank_name', 'users.paysprint_bank_code', 'users.wallet', 'settlement_request.*')
-        ->get();
+            ->join('users', 'users.id', '=', 'settlement_request.user_id')
+            ->where('users.organization_id', auth()->user()->organization_id)
+            ->select('users.name', 'users.email', 'users.phone_number', 'users.id as user_id', 'users.account_number', 'users.ifsc', 'users.bank_name', 'users.paysprint_bank_code', 'users.wallet', 'settlement_request.*')
+            ->get();
 
         return $data;
     }
@@ -813,5 +814,31 @@ class AdminController extends Controller
         ]);
 
         return $data;
+    }
+
+    public function pendingRequest(): array
+    {
+        $accounts = DB::table('users')->where(['organization_id' => auth()->user()->organization_id, 'paysprint_bene_id' => null])->count();
+        $kyc = DB::table('users')->where(['organization_id' => auth()->user()->organization_id, 'profile' => 0])->count();
+        $tickets = DB::table('tickets')
+            ->join('users', 'users.id', '=', 'tickets.user_id')
+            ->where(['users.organization_id' => auth()->user()->organization_id, 'tickets.status' => 'created'])->count();
+        $bbps = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->where(['users.organization_id' => auth()->user()->organization_id, 'transactions.service_type' => 'bbps'])->whereJsonContains('transactions.metadata->status', 'pending')->count();
+        $recharge = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->where(['users.organization_id' => auth()->user()->organization_id, 'transactions.service_type' => 'recharge'])->whereJsonContains('transactions.metadata->status', 'pending')->count();
+        $dmt = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->where(['users.organization_id' => auth()->user()->organization_id, 'transactions.service_type' => 'dmt'])->whereJsonContains('transactions.metadata->status', 'pending')->count();
+        return [
+            'accounts' => $accounts,
+            'tickets' => $tickets,
+            'profile' => $kyc,
+            'bbps' => $bbps,
+            'dmt' => $dmt,
+            'rcharge' => $recharge
+        ];
     }
 }
