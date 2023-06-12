@@ -823,6 +823,9 @@ class AdminController extends Controller
         $tickets = DB::table('tickets')
             ->join('users', 'users.id', '=', 'tickets.user_id')
             ->where(['users.organization_id' => auth()->user()->organization_id, 'tickets.status' => 'created'])->count();
+        $funds = DB::table('funds')
+            ->join('users', 'users.id', '=', 'funds.user_id')
+            ->where(['users.organization_id' => auth()->user()->organization_id, 'funds.status' => 'pending'])->count();
         $bbps = DB::table('transactions')
             ->join('users', 'users.id', '=', 'transactions.trigered_by')
             ->where(['users.organization_id' => auth()->user()->organization_id, 'transactions.service_type' => 'bbps'])->whereJsonContains('transactions.metadata->status', 'pending')->count();
@@ -838,7 +841,8 @@ class AdminController extends Controller
             'profile' => $kyc,
             'bbps' => $bbps,
             'dmt' => $dmt,
-            'rcharge' => $recharge
+            'rcharge' => $recharge,
+            'funds' => $funds
         ];
     }
 }
