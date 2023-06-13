@@ -256,7 +256,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('role-count/{role}', [AdminController::class, 'roleCount']);
     Route::get('sum-amounts', [AdminController::class, 'sumAmounts']);
     Route::get('overview', [AdminController::class, 'sumCategory']);
-    Route::get('pending-requsts', [AdminController::class, 'pendingRequest']);
+    Route::get('pending-requests', [AdminController::class, 'pendingRequest']);
     Route::get('users/{id}', [UserController::class, 'show']);
     Route::get('tickets', [TicketController::class, 'adminTicket']);
     Route::post('tickets', [TicketController::class, 'adminUpdateTicket']);
