@@ -55,13 +55,14 @@ class LICController extends CommissionController
             'canumber' => 'required',
             'latlong' => 'required',
             'bill' => 'required',
+            'transactionType' => 'required',
             'amount' => 'required'
         ]);
         $latlong = explode(",", $request['latlong']);
         $token = $this->token();
         $data = [
                 'canumber' => $request['canumber'],
-                'mode' => 'online',
+                'mode' => $request['transactionType'],
                 'amount' => $request['amount'],
                 'ad1' => $request['ad1'],
                 'ad2' => $request['ad2'],
