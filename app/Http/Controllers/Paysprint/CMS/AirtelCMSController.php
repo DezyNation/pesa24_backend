@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Paysprint\CMS;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 
@@ -31,13 +32,14 @@ class AirtelCMSController extends Controller
         ];
 
         $token = $this->token();
-
+        Log::channel('response')->info('request', $request->all());
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://api.paysprint.in/api/v1/service/airtelcms/airtel/generate_url', $data);
-
+        ])->post('https://paysprint.in/service-api/api/v1/service/airtelcms/airtel/generate_url', $data);
+        Log::channel('response')->info('response', $response->json());
+            $this->apiRecords($data['transaction_id'], 'paysprint', $response);
         if ($response['response_code'] == 1) {
             DB::table('cms_records')->insert([
                 'user_id' => auth()->user()->id,
