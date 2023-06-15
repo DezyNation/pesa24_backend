@@ -61,9 +61,9 @@ class FinoCMSController extends Controller
         ];
 
         if ($request['provider'] == 'fino') {
-            $url = 'https://api.paysprint.in/api/v1/service/finocms/fino/status';
+            $url = 'https://paysprint.in/service-api/api/v1/service/finocms/fino/status';
         } else {
-            $url = 'https://api.paysprint.in/api/v1/service/airtelcms/airtel/status';
+            $url = 'https://paysprint.in/service-api/api/v1/service/airtelcms/airtel/status';
         }
 
         $token = $this->token();
