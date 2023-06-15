@@ -37,7 +37,7 @@ class FinoCMSController extends Controller
             'Token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY')
-        ])->post('https://api.paysprint.in/api/v1/service/finocms/fino/generate_url', $data);
+        ])->post('https://paysprint.in/service-api/api/v1/service/finocms/fino/generate_url', $data);
         Log::channel('response')->info('response', $response->json());
         $this->apiRecords($data['transaction_id'], 'paysprint', $response);
         if ($response['response_code'] == 1) {
