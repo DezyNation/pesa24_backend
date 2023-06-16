@@ -44,6 +44,7 @@ class PayoutController extends CommissionController
             'tax' => $transfer['tax'] ?? 0,
             'status' => $transfer['status'] ?? 0,
             'utr' => $transfer['utr'] ?? null ?? 0,
+            'ifsc' => $account_details['ifsc'],
             'mode' => $transfer['mode'] ?? 0,
             'purpose' => $transfer['purpose'] ?? 0,
             'reference_id' => $transfer['reference_id'] ?? 0,
@@ -106,6 +107,9 @@ class PayoutController extends CommissionController
             'beneficiary_name',
             'account_number',
             'amount',
+            'utr',
+            'account_number',
+            'beneficiary_name',
             'status',
             'created_at'
         ]);
