@@ -14,7 +14,7 @@ use App\Http\Controllers\CommissionController;
 
 class PayoutController extends CommissionController
 {
-    public function bankPayout(Response $request, $amount)
+    public function bankPayout(Response $request, $amount, array $account_details)
     {
         $data = [
             'account_number' => '409001982207',
@@ -66,11 +66,14 @@ class PayoutController extends CommissionController
             $metadata = [
                 'status' => true,
                 'amount' => $amount,
+                'account_number' => $request['bank_account']['account_number'],
+                'ifsc' => $account_details['ifsc'],
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,
                 'reference_id' => $data['reference_id'],
                 'to' => $request['bank_account']['name'] ?? null,
+                'created_at' => date('Y-m-d H:i:s')
             ];
             $this->transaction($amount, 'Bank Payout', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             return response(['Transaction sucessfull', 'metadata' => $metadata], 200);
@@ -78,12 +81,15 @@ class PayoutController extends CommissionController
             $metadata = [
                 'status' => false,
                 'amount' => $data['amount'] / 100,
+                'account_number' => $request['bank_account']['account_number'],
+                'ifsc' => $account_details['ifsc'],
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,
                 'reference_id' => $data['reference_id'],
                 'to' => $request['bank_account']['name'] ?? null,
-                'r_status' => $transfer->status()
+                'r_status' => $transfer->status(),
+                'created_at' => date('Y-m-d H:i:s')
             ];
             $this->transaction(0, 'Bank Payout', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             return response(['Transaction sucessfull', 'metadata' => $metadata], 200);

@@ -41,7 +41,7 @@ class FundAccountController extends PayoutController
             if (isset($response['error'])) {
                 return response()->json(['message' => $response['error']['description']], 400);
             }
-        return $this->bankPayout($response, $request['amount']);
+        return $this->bankPayout($response, $request['amount'], $account_details);
     }
 
 }
