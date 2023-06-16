@@ -13,6 +13,7 @@ class WebhookController extends CommissionController
 {
     public function confirmPayout(Request $request)
     {
+        Log::channel('response')->info('callback-razorpay', $request->all());
         $payout_id = $request['payload.payout.entity.id'];
         $data = DB::table('payouts')->where('payout_id', $payout_id);
         $data->update([
