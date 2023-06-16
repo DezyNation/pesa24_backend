@@ -50,7 +50,7 @@ use App\Http\Controllers\Pesa24\Dashboard\UserDashboardController;
 */
 
 Route::get('/', function () {
-    return ['Application' => 'Pesa24'];
+    return ['Application' => 'Janpay'];
 });
 
 Route::get('inquiry', [BBPSController::class, 'payBill']);
