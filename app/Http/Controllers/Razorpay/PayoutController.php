@@ -14,7 +14,7 @@ use App\Http\Controllers\CommissionController;
 
 class PayoutController extends CommissionController
 {
-    public function bankPayout(Response $request, $amount, $service_id)
+    public function bankPayout(Response $request, $amount)
     {
         $data = [
             'account_number' => '409001982207',

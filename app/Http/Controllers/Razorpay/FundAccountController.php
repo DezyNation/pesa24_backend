@@ -14,7 +14,7 @@ class FundAccountController extends PayoutController
 {
 
 
-    public function createFundAcc(Request $request, $service_id)
+    public function createFundAcc(Request $request)
     {
 
         if(!Hash::check($request['mpin'], auth()->user()->mpin)){
@@ -29,7 +29,7 @@ class FundAccountController extends PayoutController
 
 
         $data = [
-            'contact_id' => 'cont_LLryH8Bm2cJaPz',
+            'contact_id' => auth()->user()->rzp_contact_id,
             'account_type' => 'bank_account',
             'bank_account' => $account_details
         ];
@@ -41,7 +41,7 @@ class FundAccountController extends PayoutController
                 return response()->json(['message' => $response['error']['description']], 400);
             }
             Log::channel('response')->info($response);
-        return $this->bankPayout($response, $request['amount'], $service_id);
+        return $this->bankPayout($response, $request['amount']);
     }
 
 }
