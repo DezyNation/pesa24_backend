@@ -331,7 +331,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
 });
 
 Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);
-Route::any('payout-callback-paysprint', [WebhookController::class, 'confirmPayout']);
+Route::any('payout-callback', [WebhookController::class, 'confirmPayout']);
 Route::any('onboard-callback-paysprint', [CallbackController::class, 'onboardCallback']);
 
 Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
