@@ -123,7 +123,7 @@ Route::middleware(['auth:api'])->group(function () {
 });
 
 Route::post('eko/aeps/money-transfer/{service_id}', [EkoAepsApiController::class, 'moneyTransfer'])->middleware(['auth:api', 'profile', 'kyc']);
-Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(function () {
+Route::middleware(['auth:api', 'minimum_balance', 'kyc'])->group(function () {
     /*-------------------------EKO ONBOARD-------------------------*/
     Route::get('eko/send-otp', [KycVerificationController::class, 'sendEkoOtp']);
     Route::get('eko-status', function () {
