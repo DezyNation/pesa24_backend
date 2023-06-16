@@ -61,7 +61,7 @@ class PayoutController extends CommissionController
         $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
         $balance_left = $walletAmt[0] - $amount;
         $transaction_id = "PAY" . strtoupper(Str::random(5));
-        $this->apiRecords($data['reference_id'], 'razorpay', $transfer->json());
+        $this->apiRecords($data['reference_id'], 'razorpay', $transfer);
         if ($transfer->status() == 200) {
             $metadata = [
                 'status' => true,
