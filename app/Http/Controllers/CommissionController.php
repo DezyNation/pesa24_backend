@@ -496,7 +496,11 @@ class CommissionController extends Controller
         }
 
         $metadata = [
-            'status' => true
+            'status' => true,
+            'event' => 'payout commission',
+            'credit' => $credit,
+            'debit' => $debit,
+            'amount' => $amount
         ];
 
         $transaction_id = "PAYOUT" . strtoupper(Str::random(9));
