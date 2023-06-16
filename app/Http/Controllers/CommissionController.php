@@ -542,7 +542,7 @@ class CommissionController extends Controller
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
-        $role_commission = $table->pluck($role_commission_name);
+        $role_commission = $table->$role_commission_name;
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
@@ -556,7 +556,11 @@ class CommissionController extends Controller
         }
 
         $metadata = [
-            'status' => true
+            'status' => true,
+            'event' => 'payout commission',
+            'credit' => $credit,
+            'debit' => $debit,
+            'amount' => $amount
         ];
 
         $transaction_id = "PAY" . strtoupper(Str::random(9));

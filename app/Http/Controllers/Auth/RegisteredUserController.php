@@ -85,14 +85,14 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'firstName' => ['required', 'string', 'max:255'],
-            'lastName' => ['required', 'string', 'max:255'],
+            // 'lastName' => ['required', 'string', 'max:255'],
             'userEmail' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
             'userPhone' => ['required', 'digits:10', Rule::unique('users', 'phone_number')],
             'alternatePhone' => ['required', 'digits:10', Rule::unique('users', 'alternate_phone')],
-            'dob' => ['required', 'date'],
-            'gender' => ['required', 'string', 'max:255'],
-            'firmName' => ['required', 'string', 'max:255'],
-            'companyType' => ['required', 'string', 'max:255'],
+            // 'dob' => ['required', 'date'],
+            // 'gender' => ['required', 'string', 'max:255'],
+            // 'firmName' => ['required', 'string', 'max:255'],
+            // 'companyType' => ['required', 'string', 'max:255'],
             'aadhaarNum' => ['required', 'digits:12', Rule::unique('users', 'aadhaar')],
             'panNum' => ['required', 'max:10', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')],
             'gst' => ['string'],
@@ -104,8 +104,21 @@ class RegisteredUserController extends Controller
             'pincode' => ['required', 'integer'],
         ]);
 
-        $aadhaar_front = $request->file('aadhaarFront')->store('aadhar_front');
-        $aadhaar_back = $request->file('aadhaarBack')->store('aadhar_back');
+        if ($request->hasFile('aadhaarFront')) {
+            $aadhaar_front = $request->file('aadhaarFront')->store('aadhar_front');
+        } else {
+            $aadhaar_front = null;
+        }
+        if ($request->hasFile('aadhaarBack')) {
+            $aadhaar_back = $request->file('aadhaarBack')->store('aadhar_back');
+        } else {
+            $aadhaar_back = null;
+        }
+        if ($request->hasFile('pan')) {
+            $pan_card = $request->file('pan')->store('pan');
+        } else {
+            $pan_card = null;
+        }
         $pan_card = $request->file('pan')->store('pan');
 
         $email = $request['userEmail'];
@@ -136,10 +149,10 @@ class RegisteredUserController extends Controller
             'pan_number' => $request['pan'],
             'company_name' => $request['companyName'],
             'firm_type' => $request['companyName'],
-            'profile' => 1,
-            'aadhaar_front' => $aadhaar_front,
-            'aadhaar_back' => $aadhaar_back,
-            'pan_photo' => $pan_card,
+            'profile' => 0,
+            'aadhaar_front' => $aadhaar_front ?? null,
+            'aadhaar_back' => $aadhaar_back ?? null,
+            'pan_photo' => $pan_card ?? null,
             'organization_id' => auth()->user()->organization_id
         ])->assignRole('retailer');
 
