@@ -184,23 +184,23 @@ class RegisteredUserController extends Controller
 
         $request->validate([
             'firstName' => ['required', 'string', 'max:255'],
-            'lastName' => ['required', 'string', 'max:255'],
+            // 'lastName' => ['required', 'string', 'max:255'],
             'userEmail' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($request['userId'])],
             'userPhone' => ['required', 'digits:10', Rule::unique('users', 'phone_number')->ignore($request['userId'])],
             // 'alternatePhone' => ['integer'],
-            'dob' => ['required', 'date'],
+            // 'dob' => ['required', 'date'],
             // 'gender' => ['required', 'string', 'max:255'],
             // 'firmName' => ['string', 'max:255'],
             // 'companyType' => ['string', 'max:255'],
-            'aadhaarNum' => ['required', 'digits:12', Rule::unique('users', 'aadhaar')->ignore($request['userId'])],
-            'panNum' => ['required', 'max:10', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')->ignore($request['userId'])],
+            // 'aadhaarNum' => ['required', 'digits:12', Rule::unique('users', 'aadhaar')->ignore($request['userId'])],
+            // 'panNum' => ['required', 'max:10', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')->ignore($request['userId'])],
             // 'gst' => ['string'],
             'isActive' => ['required', 'boolean'],
             'capAmount' => ['required', 'integer'],
-            'line' => ['required', 'string'],
-            'city' => ['required', 'string'],
-            'state' => ['required', 'string'],
-            'pincode' => ['required', 'integer'],
+            // 'line' => ['required', 'string'],
+            // 'city' => ['required', 'string'],
+            // 'state' => ['required', 'string'],
+            // 'pincode' => ['required', 'integer'],
         ]);
 
         $user = User::where('organization_id', auth()->user()->organization_id)->findOrFail($request['userId']);
