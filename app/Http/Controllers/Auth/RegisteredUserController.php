@@ -76,8 +76,8 @@ class RegisteredUserController extends Controller
         });
 
         $newmsg = "Dear $username , Welcome to Rpay. You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Now you can login https://rpay.live/. From'-P24 Technology Pvt. Ltd";
-        Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
-
+        $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
+        Log::channel('response')->info('sms-creds', $sms->json());
         return response()->noContent();
     }
 
@@ -125,6 +125,8 @@ class RegisteredUserController extends Controller
         $name =  $request['firstName'] . " " . $request['middleName'] . " " . $request['lastName'];
         $mpin = rand(1001, 9999);
         $password = Str::random(8);
+        $username = $request['first_name'];
+        $phone = $request['userPhone'];
 
         $user = User::create([
             'first_name' => $request['firstName'],
@@ -170,6 +172,9 @@ class RegisteredUserController extends Controller
             $message->subject('Welcome to Pesa24');
             $message->priority(1);
         });
+        $newmsg = "Dear $username , Welcome to Rpay. You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Now you can login https://rpay.live/. From'-P24 Technology Pvt. Ltd";
+        $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
+        Log::channel('response')->info('sms-creds', $sms->json());
 
         return response()->noContent();
     }
