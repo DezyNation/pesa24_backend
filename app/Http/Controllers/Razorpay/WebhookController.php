@@ -17,9 +17,12 @@ class WebhookController extends CommissionController
         $payout_id = $request['payload.payout.entity.id'];
         $data = DB::table('payouts')->where('payout_id', $payout_id);
         $data->update([
-            'status' => $request['payload.payout.entity.status']
+            'status' => $request['payload.payout.entity.status'],
+            'utr' => $request['payload.payout.entity.utr'],
+            'updated_at' => now(),
         ]);
 
+        DB::table('transactions')->where('transaction_id', $request['payload.payout.entity.reference_id'])->update(['metadata->utr' => $request['payload.payout.entity.utr']]);
 
         if ($request['payload.payout.entity.status'] == 'processed') {
             $result = $data->get();

@@ -23,7 +23,7 @@ class PayoutController extends CommissionController
             'currency' => 'INR',
             'mode' => 'IMPS',
             'purpose' => 'payout',
-            'reference_id' => uniqid(),
+            'reference_id' => "JANPAY".uniqid(),
         ];
 
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
@@ -60,7 +60,7 @@ class PayoutController extends CommissionController
 
         $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
         $balance_left = $walletAmt[0] - $amount;
-        $transaction_id = "PAY" . strtoupper(Str::random(5));
+        $transaction_id = $data['reference_id'];
         $this->apiRecords($data['reference_id'], 'razorpay', $transfer);
         if ($transfer->status() == 200) {
             $metadata = [
@@ -68,6 +68,7 @@ class PayoutController extends CommissionController
                 'amount' => $amount,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
+                'utr' => null,
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,
@@ -83,6 +84,7 @@ class PayoutController extends CommissionController
                 'amount' => $data['amount'] / 100,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
+                'utr' => null,
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,
