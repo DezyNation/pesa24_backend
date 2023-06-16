@@ -17,7 +17,7 @@ class PayoutController extends CommissionController
     public function bankPayout(Response $request, $amount, $service_id)
     {
         $data = [
-            'account_number' => '2323230013085171',
+            'account_number' => '409001982207',
             'fund_account_id' => $request['id'],
             'amount' => $amount * 100,
             'currency' => 'INR',
@@ -60,8 +60,8 @@ class PayoutController extends CommissionController
 
         $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
         $balance_left = $walletAmt[0] - $amount;
+        $transaction_id = "PAY" . strtoupper(Str::random(5));
         if ($transfer->status() == 200) {
-            $transaction_id = "PAY" . strtoupper(Str::random(5));
             $metadata = [
                 'status' => true,
                 'amount' => $amount,
@@ -84,6 +84,7 @@ class PayoutController extends CommissionController
                 'to' => $request['bank_account']['name'] ?? null,
                 'r_status' => $transfer->status()
             ];
+            $this->transaction(0, 'Bank Payout', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             return response(['Transaction sucessfull', 'metadata' => $metadata], 200);
         }
     }
