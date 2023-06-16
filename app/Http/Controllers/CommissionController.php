@@ -482,7 +482,7 @@ class CommissionController extends Controller
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
-        $role_commission = $table->pluck($role_commission_name);
+        $role_commission = $table->$role_commission_name;
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
