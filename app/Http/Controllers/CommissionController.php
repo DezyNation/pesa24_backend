@@ -499,7 +499,7 @@ class CommissionController extends Controller
             'status' => true
         ];
 
-        $transaction_id = "PAN" . strtoupper(Str::random(9));
+        $transaction_id = "PAYOUT" . strtoupper(Str::random(9));
         $this->transaction($amount, 'Payout Commission', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
