@@ -19,7 +19,9 @@ class FundController extends Controller
 
     public function fetchFund()
     {
-        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['users.organization_id' => auth()->user()->organization_id])->select('funds.*', 'users.name', 'users.phone_number')->latest()->paginate(20);
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+        ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+        ->where(['users.organization_id' => auth()->user()->organization_id])->select('funds.*', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(20);
         return $data;
     }
 
@@ -31,8 +33,10 @@ class FundController extends Controller
 
     public function reversalAndTransferFunds()
     {
-        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where('transaction_type', 'transfer')->orWhere('transaction_type', 'reversal')
-            ->select('users.name', 'users.phone_number', 'funds.transaction_id', 'funds.user_id', 'funds.amount', 'funds.remarks', 'funds.transaction_type', 'funds.created_at')
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+        ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+        ->where('transaction_type', 'transfer')->orWhere('transaction_type', 'reversal')
+            ->select('users.name', 'users.phone_number', 'funds.transaction_id', 'funds.user_id', 'funds.amount', 'funds.remarks', 'funds.transaction_type', 'funds.created_at', 'admin.name as admin_name', 'admin.id as admin_id')
             ->paginate(20);
         return $data;
     }
@@ -48,6 +52,7 @@ class FundController extends Controller
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id])->update([
             'funds.admin_remarks' => $request['remarks'] ?? null,
             'funds.status' => $request['status'],
+            'funds.parent_id' => auth()->user()->id,
             'funds.updated_at' => now()
         ]);
 
