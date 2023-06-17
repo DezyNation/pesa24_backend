@@ -27,7 +27,7 @@ class AdminController extends Controller
             $data = DB::table('logins')
                 ->join('users', 'users.id', '=', 'logins.user_id')
                 ->select('users.name', 'users.phone_number', 'logins.*')
-                ->paginate($count);
+                ->latest()->take($count)->get();
         } else {
             $data = DB::table('logins')
                 ->join('users', 'users.id', '=', 'logins.user_id')
