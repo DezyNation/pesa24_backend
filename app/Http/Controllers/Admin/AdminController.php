@@ -599,23 +599,25 @@ class AdminController extends Controller
     {
         $tennure = $request['tennure'];
 
-        $aeps = $this->table($tennure, 'aeps');
+        // $aeps = $this->table($tennure, 'aeps');
 
-        $bbps = $this->table($tennure, 'bbps');;
+        // $bbps = $this->table($tennure, 'bbps');;
 
-        $dmt = $this->table($tennure, 'dmt');;
+        // $dmt = $this->table($tennure, 'dmt');;
 
-        $pan = $this->table($tennure, 'pan');;
+        // $pan = $this->table($tennure, 'pan');;
 
-        $payout = $this->table($tennure, 'payout');;
+        $payout = $this->table($tennure, 'payout');
 
-        $lic = $this->table($tennure, 'lic');;
+        $wallet = $this->roleWalletSum();
 
-        $fastag = $this->table($tennure, 'fastag');
+        // $lic = $this->table($tennure, 'lic');;
 
-        $cms = $this->table($tennure, 'cms');
+        // $fastag = $this->table($tennure, 'fastag');
 
-        $recharge = $this->table($tennure, 'recharge');
+        // $cms = $this->table($tennure, 'cms');
+
+        // $recharge = $this->table($tennure, 'recharge');
 
         $funds = $this->fundRequestCount($tennure);
 
@@ -624,15 +626,16 @@ class AdminController extends Controller
 
 
         $array = [
-            $aeps,
-            $bbps,
-            $dmt,
-            $pan,
+            // $aeps,
+            // $bbps,
+            // $dmt,
+            // $pan,
             $payout,
-            $lic,
-            $fastag,
-            $cms,
-            $recharge,
+            // $lic,
+            // $fastag,
+            // $cms,
+            // $recharge,
+            $wallet,
             $funds,
             $users
         ];
@@ -843,6 +846,18 @@ class AdminController extends Controller
             'dmt' => $dmt,
             'rcharge' => $recharge,
             'funds' => $funds
+        ];
+    }
+
+    public function roleWalletSum(): array {
+        $retailer = User::role('retailer')->sum('wallet');
+        $distributor = User::role('distributor')->sum('wallet');
+        $super_distributor = User::role('super_distributor')->sum('wallet');
+
+        return [
+            'retailer' => $retailer,
+            'distributor' => $distributor,
+            'super_distributor' => $super_distributor
         ];
     }
 }

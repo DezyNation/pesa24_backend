@@ -462,7 +462,7 @@ class CommissionController extends Controller
 
     /*-------------------------------------Payout Commissions-------------------------------------*/
 
-    public function payoutCommission($user_id, $amount)
+    public function payoutCommission($user_id, $amount, $transaction_id)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -502,8 +502,6 @@ class CommissionController extends Controller
             'debit' => $debit,
             'amount' => $amount
         ];
-
-        $transaction_id = "PAYOUT" . strtoupper(Str::random(9));
         $this->transaction($debit, 'Payout Commission', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
@@ -517,13 +515,13 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->payoutParentCommission($parent_id, $amount);
+            $this->payoutParentCommission($parent_id, $amount, $transaction_id);
         }
 
         return $table;
     }
 
-    public function payoutParentCommission($user_id, $amount)
+    public function payoutParentCommission($user_id, $amount, $transaction_id)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -562,8 +560,7 @@ class CommissionController extends Controller
             'debit' => $debit,
             'amount' => $amount
         ];
-
-        $transaction_id = "PAY" . strtoupper(Str::random(9));
+        
         $this->transaction($amount, 'Payout Comissions', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
