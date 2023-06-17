@@ -62,10 +62,7 @@ class FundController extends Controller
                 'transaction_from' => auth()->user()->name
             ];
             $this->transaction(0, 'Fund transfered to user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
-            DB::table('users')->where('id', $request['beneficiaryId'])->update([
-                'wallet' => $amount,
-                'updated_at' => now()
-            ]);
+
             $amount = auth()->user()->wallet - $request['amount'];
             $transaction_id = "FUND" . strtoupper(Str::random(5));
             $metadata = [
@@ -75,10 +72,6 @@ class FundController extends Controller
                 'transaction_from' => auth()->user()->name
             ];
             $this->transaction($request['amount'], 'Fund added to user`s wallet', 'funds', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
-            DB::table('users')->where('id', auth()->user()->id)->update([
-                'wallet' => $amount,
-                'updated_at' => now()
-            ]);
         }
 
         return $data;
