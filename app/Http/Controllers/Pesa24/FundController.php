@@ -184,12 +184,15 @@ class FundController extends Controller
             $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
             $amount = $wallet[0] - $request['amount'];
 
+            $metadata = [
+                'status' => true,
+                'amount_reversed' => $request['amount'],
+                'reference_id' => $transaction_id,
+                'transaction_from' => auth()->user()->name
+            ];
 
             $transaction_id = "FUND" . strtoupper(Str::random(5));
-            $this->transaction($request['amount'], 'Fund reversed from user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, 0, auth()->user()->id);
-            DB::table('users')->where('id', $request['beneficiaryId'])->update([
-                'wallet' => $amount
-            ]);
+            $this->transaction($request['amount'], 'Fund reversed from user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata));
         }
 
         return $data;
