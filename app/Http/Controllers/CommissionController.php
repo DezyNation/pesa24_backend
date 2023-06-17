@@ -151,7 +151,7 @@ class CommissionController extends Controller
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
+        } else {
             $debit = $fixed_charge;
             $credit = $role_commission  - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
@@ -321,7 +321,7 @@ class CommissionController extends Controller
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
+        } else {
             $debit = $fixed_charge;
             $credit = $role_commission / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
@@ -376,7 +376,7 @@ class CommissionController extends Controller
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
+        } else {
             $debit = $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
@@ -489,7 +489,7 @@ class CommissionController extends Controller
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
+        } else {
             $debit =  $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
@@ -549,7 +549,7 @@ class CommissionController extends Controller
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
+        } else {
             $debit = $fixed_charge;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
