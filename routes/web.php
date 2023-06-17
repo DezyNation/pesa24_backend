@@ -52,7 +52,6 @@ use App\Http\Controllers\Pesa24\Dashboard\UserDashboardController;
 Route::get('/', function () {
     return ['Application' => 'Janpay'];
 });
-Route::get('commission/{user_id}/{amount}', [CommissionController::class, 'payoutCommission']);
 
 // Route::get('inquiry', [BBPSController::class, 'payBill']);
 // Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
