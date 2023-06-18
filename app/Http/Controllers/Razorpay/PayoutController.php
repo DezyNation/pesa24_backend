@@ -63,7 +63,7 @@ class PayoutController extends CommissionController
         $balance_left = $walletAmt[0] - $amount;
         $transaction_id = $data['reference_id'];
         $this->apiRecords($data['reference_id'], 'razorpay', $transfer);
-        if ($transfer->status() == 200) {
+        if ($transfer['status'] == 'processing'||$transfer['status'] == 'processed') {
             $metadata = [
                 'status' => true,
                 'amount' => $amount,
