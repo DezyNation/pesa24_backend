@@ -25,8 +25,10 @@ class FundRequestController extends Controller
             $imgPath = $request->file('receipt')->store('receipt');
         }
 
+        $id = auth()->user()->id;
         DB::table('funds')->insert([
-            'user_id' => auth()->user()->id,
+            'user_id' => $id,
+            'parent_id' => $id,
             'amount' => $request['amount'],
             'bank_name' => $request['bankName'],
             'transaction_type' => $request['transactionType'],
@@ -118,7 +120,7 @@ class FundRequestController extends Controller
             'mpin' => 'required|digits:4',
             'amount' => 'required|integer',
             'to' => 'required|integer',
-            'remark' => 'string', 
+            'remark' => 'string',
         ]);
         if (!Hash::check($request['mpin'], auth()->user()->mpin)) {
             return response()->json(['message' => 'Wrong MPIN']);
