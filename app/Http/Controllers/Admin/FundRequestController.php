@@ -24,10 +24,12 @@ class FundRequestController extends Controller
         if ($request->hasFile('receipt')) {
             $imgPath = $request->file('receipt')->store('receipt');
         }
-
+        $amount = $request['amount'];
+        $id = auth()->user()->id;
         DB::table('funds')->insert([
-            'user_id' => auth()->user()->id,
-            'amount' => $request['amount'],
+            'user_id' => $id,
+            'parent_id' => $id,
+            'amount' => $amount,
             'bank_name' => $request['bankName'],
             'transaction_type' => $request['transactionType'],
             'transaction_id' => $request['transactionId'],
@@ -39,8 +41,13 @@ class FundRequestController extends Controller
 
         $today = today();
         $balance = auth()->user()->wallet;
+        $time = $time = date('h:i:s a');
+        $date = date('d-m-Y');
         $phone = 9759048362;
-        $message = "Hello ADMIN, Your fund request has been raised and Now Your Bal $balance on the date of $today. -From P24 Technology Pvt. Ltd.";
+        $user_phone = auth()->user()->phone_number;
+        $name = auth()->user()->name;
+        $message = "$name mob $user_phone Raised a fund request amt $request, on date:$date $time.-From P24 Pvt. Ltd.";
+        // $message = "Hello ADMIN, Your fund request has been raised and Now Your Bal $balance on the date of $today. -From P24 Technology Pvt. Ltd.";
         Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$message", []);
 
         return response('Request sent', 200);
@@ -118,7 +125,7 @@ class FundRequestController extends Controller
             'mpin' => 'required|digits:4',
             'amount' => 'required|integer',
             'to' => 'required|integer',
-            'remark' => 'string', 
+            'remark' => 'string',
         ]);
         if (!Hash::check($request['mpin'], auth()->user()->mpin)) {
             return response()->json(['message' => 'Wrong MPIN']);
