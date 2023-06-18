@@ -52,6 +52,8 @@ class FundController extends Controller
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id])->update([
             'funds.admin_remarks' => $request['remarks'] ?? null,
             'funds.status' => $request['status'],
+            'funds.approved' => $request['approved'],
+            'funds.declined' => $request['declined'],
             'funds.parent_id' => auth()->user()->id,
             'funds.updated_at' => now()
         ]);
@@ -66,7 +68,7 @@ class FundController extends Controller
                 'reference_id' => $transaction_id,
                 'transaction_from' => auth()->user()->name
             ];
-            $this->transaction(0, 'Fund transfered to user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
+            $this->transaction(0, 'Fund transfered to user`s wallet', 'fund-request', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
 
             $amount = auth()->user()->wallet - $request['amount'];
             $transaction_id = "FUND" . strtoupper(Str::random(5));
@@ -76,7 +78,7 @@ class FundController extends Controller
                 'reference_id' => $transaction_id,
                 'transaction_from' => auth()->user()->name
             ];
-            $this->transaction($request['amount'], 'Fund added to user`s wallet', 'funds', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
+            $this->transaction($request['amount'], 'Fund added to user`s wallet', 'fund-request', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
         }
 
         return $data;
