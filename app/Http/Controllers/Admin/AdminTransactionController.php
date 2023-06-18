@@ -99,7 +99,7 @@ class AdminTransactionController extends Controller
         $data = DB::table('transactions')
             ->join('users', 'users.id', '=', 'transactions.trigered_by')
             ->join('users as beneficiaries', 'beneficiaries.id', '=', 'transactions.user_id')
-            ->select('transactions.*', 'users.name as trigered_by_name', 'users.phone_number as trigered_by_phone', 'users.organization_id', 'beneficiaries.name', 'beneficiaries.phone_number')
+            ->select('transactions.*', 'users.name as trigered_by_name', 'users.phone_number as trigered_by_phone', 'users.organization_id', 'beneficiaries.name', 'beneficiaries.phone_number', 'users.wallet as wallet_amount')
             ->where('users.organization_id', auth()->user()->organization_id)
             ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
             ->get();
