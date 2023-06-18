@@ -506,7 +506,7 @@ class CommissionController extends Controller
             'debit' => $debit,
             'amount' => $amount
         ];
-        $this->transaction($debit, 'Payout Commission', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Payout Commission', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -565,7 +565,7 @@ class CommissionController extends Controller
             'amount' => $amount
         ];
 
-        $this->transaction($amount, 'Payout Comissions', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($amount, 'Payout Comissions', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
