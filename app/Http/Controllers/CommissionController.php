@@ -349,7 +349,7 @@ class CommissionController extends Controller
 
     /*-------------------------------------DMT Commissions-------------------------------------*/
 
-    public function dmtCommission($user_id, $amount)
+    public function dmtCommission($user_id, $amount, $transaction_id)
     {
         $table = DB::table('d_m_t_s')
             ->join('package_user', 'package_user.package_id', '=', 'd_m_t_s.package_id')
@@ -383,10 +383,12 @@ class CommissionController extends Controller
         }
 
         $metadata = [
-            'status' => true
+            'status' => true,
+            'event' => 'dmt-commission',
+            'credit' => $credit,
+            'debit' => $debit
         ];
 
-        $transaction_id = "DMT" . strtoupper(Str::random(9));
         $this->transaction($debit, 'DMT Commission', 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
@@ -397,13 +399,13 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->dmtParentCommission($parent_id[0], $amount);
+            $this->dmtParentCommission($parent_id[0], $amount, $transaction_id);
         }
 
         return true;
     }
 
-    public function dmtParentCommission($user_id, $amount)
+    public function dmtParentCommission($user_id, $amount, $transaction_id)
     {
         $table = DB::table('d_m_t_s')
             ->join('package_user', 'package_user.package_id', '=', 'd_m_t_s.package_id')
@@ -430,17 +432,19 @@ class CommissionController extends Controller
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
+        } else {
             $debit = $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
         $metadata = [
-            'status' => true
+            'status' => true,
+            'event' => 'dmt-commission',
+            'credit' => $credit,
+            'debit' => $debit
         ];
 
-        $transaction_id = "DMT" . strtoupper(Str::random(9));
         $this->transaction($debit, 'DMT Commission', 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
@@ -451,7 +455,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->dmtParentCommission($parent_id[0], $amount);
+            $this->dmtParentCommission($parent_id[0], $amount, $transaction_id);
         }
 
         return true;
@@ -560,7 +564,7 @@ class CommissionController extends Controller
             'debit' => $debit,
             'amount' => $amount
         ];
-        
+
         $this->transaction($amount, 'Payout Comissions', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance

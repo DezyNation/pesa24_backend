@@ -192,7 +192,7 @@ class DMTController extends CommissionController
             'mobile' => $request['customerId'],
             'accno' => $request['accountNumber'],
             'benename' => $request['beneficiaryName'],
-            'referenceid' => uniqid(),
+            'referenceid' => "JANPAY" . uniqid(),
             'pincode' => auth()->user()->pincode,
             'address' => auth()->user()->line,
             'bankid' => $request['selectedBankCode'],
@@ -210,7 +210,8 @@ class DMTController extends CommissionController
             'content-type' => 'application/json',
         ])->post('https://api.paysprint.in/api/v1/service/dmt/transact/transact', $data);
 
-        if ($response->json($key = 'status') == true) {
+        $transaction_id = $data['referenceid'];
+        if ($response->json($key = 'txn_status') == 1) {
             $metadata = [
                 'status' => $response['status'] ?? null,
                 'reference_id' => $data['referenceid'] ?? null,
@@ -232,10 +233,34 @@ class DMTController extends CommissionController
                 'wallet' => $balance_left,
                 'updated_at' => now()
             ]);
-            $transaction_id = "DMT" . strtoupper(Str::random(9));
+
             $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
-            $this->dmtCommission(auth()->user()->id, $request['amount']);
-        } elseif($response['status'] == false) {
+            $this->dmtCommission(auth()->user()->id, $request['amount'], $transaction_id);
+        } elseif ($response['txn_status'] == 2) {
+            $metadata = [
+                'status' => $response['status'] ?? null,
+                'reference_id' => $data['referenceid'] ?? null,
+                'beneficiary_id' => $request['beneficiaryId'],
+                'utrnumber' => $response['utr'],
+                'amount' => $response['txn_amount'] ?? null,
+                'account_number' => $response['account_number'] ?? null,
+                'mobile' => $data['mobile'],
+                'remitter' => $response['remitter'] ?? null,
+                'beneficiary_name' => $response['benename'] ?? null,
+                'acknowldgement_number' => $response['ackno'] ?? null,
+                'remarks' => $response['remarks'] ?? null,
+                'message' => $response['message'] ?? null
+            ];
+
+            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
+            $balance_left = $walletAmt[0] - $request['amount'];
+            DB::table('users')->where('id', auth()->user()->id)->update([
+                'wallet' => $balance_left,
+                'updated_at' => now()
+            ]);
+
+            $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+        } elseif ($response['txn_status'] == 0 || $response['txn_status'] == 5) {
             if ($response['response_code'] == 13) {
                 $metadata = [
                     'status' => false,
@@ -256,7 +281,6 @@ class DMTController extends CommissionController
                 'beneficiary_name' => $data['benename'] ?? null
             ];
             $walletAmt = auth()->user()->wallet;
-            $transaction_id = "DMT" . strtoupper(Str::random(9));
             $this->transaction(0, 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt, json_encode($metadata));
             return ['response' => $response->body(), 'metadata' => $metadata];
         } else {
@@ -274,7 +298,6 @@ class DMTController extends CommissionController
                 'beneficiary_name' => $data['benename'] ?? null
             ];
             $walletAmt = auth()->user()->wallet;
-            $transaction_id = "DMT" . strtoupper(Str::random(9));
             $this->transaction(0, 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt, json_encode($metadata));
             return ['response' => $response->body(), 'metadata' => $metadata];
         }
