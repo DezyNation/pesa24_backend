@@ -47,7 +47,7 @@ class PayoutController extends CommissionController
             'ifsc' => $account_details['ifsc'],
             'mode' => $transfer['mode'] ?? 0,
             'purpose' => $transfer['purpose'] ?? 0,
-            'reference_id' => $transfer['reference_id'] ?? 0,
+            'reference_id' => $data['reference_id'] ?? 0,
             'narration' => $transfer['narration'] ?? 0,
             'batch_id' => $transfer['batch_id'] ?? 0,
             'description' => $transfer['status_details']['description'] ?? 0,
