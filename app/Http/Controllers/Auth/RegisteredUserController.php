@@ -67,7 +67,7 @@ class RegisteredUserController extends Controller
                 ''
             ]
         ];
-        Http::post('https://janpay-webhooks.vercel.app/api/users', $data);
+        Http::post('https://janpay-webhooks.vercel.app/api/users', json_encode($data));
         Mail::raw("Hello Your one time password is $password and Mpin'-$mpin", function ($message) use ($email, $name) {
             $message->from('info@pesa24.co.in', 'John Doe');
             $message->to($email, $name);
@@ -165,7 +165,7 @@ class RegisteredUserController extends Controller
             'user_name' => $user->name,
             'organisation_code' => $request['organization_code']
         ];
-        Http::post('https://janpay-webhooks.vercel.app/api/users', $data);
+        Http::post('https://janpay-webhooks.vercel.app/api/users', json_encode($data));
         Mail::raw("Hello Your one time password is $password and Mpin'-$mpin", function ($message) use ($email, $name) {
             $message->from('info@pesa24.co.in', 'RPay');
             $message->to($email, $name);
