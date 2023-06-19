@@ -135,6 +135,7 @@ class PayoutController extends CommissionController
             'account_number',
             'amount',
             'utr',
+            'reference_id',
             'ifsc',
             'account_number',
             'beneficiary_name',
