@@ -67,10 +67,27 @@ class UserController extends Controller
         ]);
         $id = auth()->user()->organization_id;
 
-        $pan = $request->file('pan')->store('pan');
-        $aadhar_front = $request->file('aadhaarFront')->store('aadhar_front');
-        $aadhar_back = $request->file('aadhaarBack')->store('aadhar_back');
-        $profile = $request->file('profilePic')->store('profile');
+        if ($request->hasFile('pan')) {
+            $pan = $request->file('pan')->store('pan');
+        } else {
+            $pan = null;
+        }
+        if ($request->hasFile('aadhaarFront')) {
+            $aadhar_front = $request->file('aadhaarFront')->store('aadhar_front');
+        } else {
+            $aadhar_front = null;
+        }
+        if ($request->hasFile('aadhaarBack')) {
+            $aadhar_back = $request->file('aadhaarBack')->store('aadhar_back');
+        } else {
+            $aadhar_back = null;
+        }
+        if ($request->hasFile('profilePic')) {
+            $profile = $request->file('profilePic')->store('profile');
+        } else {
+            $profile = null;
+        }
+
 
         $password = Str::random(8);
         $mpin = rand(1001, 9999);
