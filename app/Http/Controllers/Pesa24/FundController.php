@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 
 class FundController extends Controller
 {
@@ -47,6 +48,7 @@ class FundController extends Controller
         $request->validate([
             'amount' => 'required|integer',
             'status' => 'required',
+            'beneficiaryId' => 'required|exists:users,id'
         ]);
 
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id])->update([
@@ -55,6 +57,7 @@ class FundController extends Controller
             'funds.parent_id' => auth()->user()->id,
             'funds.updated_at' => now()
         ]);
+
 
         if ($request['status'] == 'approved') {
             $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
@@ -78,6 +81,15 @@ class FundController extends Controller
             ];
             $this->transaction($request['amount'], 'Fund added to user`s wallet', 'funds', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
         }
+
+        $user = User::find($request['beneficiaryId']);
+        $name = $user->name;
+        $wallet = $user->wallet;
+        $phone = $user->phone_number;
+        $status = $request['status'];
+        $time = date('d-m-Y h:i:s A');
+        $newmsg = "Hello $name, Your fund request has been $status and Now Your Bal $wallet on the date of $time. '-From P24 Technology Pvt. Ltd";
+        $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
 
         return $data;
     }

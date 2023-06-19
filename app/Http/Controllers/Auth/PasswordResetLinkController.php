@@ -53,7 +53,7 @@ class PasswordResetLinkController extends Controller
             'password' => Hash::make($password)
         ]);
         Mail::raw("Dear User, Your new password for Login to Pesa24 is $password", function ($message) use ($request) {
-            $message->from('info@pesa24.co.in', 'Pesa24');
+            $message->from('info@pesa24.co.in', 'JANPAY');
             $message->to($request['email'], 'User');
             $message->subject('Password reset');
             $message->priority(1);
