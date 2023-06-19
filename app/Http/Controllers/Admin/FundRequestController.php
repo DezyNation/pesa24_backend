@@ -39,14 +39,12 @@ class FundRequestController extends Controller
             'updated_at' => now()
         ]);
 
-        $today = today();
-        $balance = auth()->user()->wallet;
         $time = $time = date('h:i:s a');
         $date = date('d-m-Y');
-        $phone = 9759048362;
+        $phone = 7017200263;
         $user_phone = auth()->user()->phone_number;
         $name = auth()->user()->name;
-        $message = "$name mob $user_phone Raised a fund request amt $request, on date:$date $time.-From P24 Pvt. Ltd.";
+        $message = "$name mob $user_phone Raised a fund request amt $amount, on date:$date $time.'-From P24 Pvt. Ltd.";
         // $message = "Hello ADMIN, Your fund request has been raised and Now Your Bal $balance on the date of $today. -From P24 Technology Pvt. Ltd.";
         Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$message", []);
 
