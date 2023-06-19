@@ -12,6 +12,7 @@ use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\v1\UserResource;
 use Illuminate\Support\Facades\Session;
@@ -144,6 +145,8 @@ class UserController extends Controller
             );
         }
 
+        $name = $user->name;
+        $phone = $user->phone_number;
         DB::table('package_user')->insert([
             'user_id' => $user->id,
             'package_id' => $request['userPlan'],
@@ -154,6 +157,8 @@ class UserController extends Controller
         if (!$request['isActive']) {
             return response()->json(['message' => 'User created Successfully']);
         }
+        $newmsg = "Dear $name , You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Don't Share anyone. From'-P24 Technology Pvt. Ltd";
+        $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
         Mail::raw("Hello Your one time password is $password and MPIN is $mpin", function ($message) use ($to, $name) {
             $message->from('info@pesa24.co.in', 'John Doe');
             $message->to($to, $name);
