@@ -75,7 +75,7 @@ class RegisteredUserController extends Controller
             $message->priority(1);
         });
 
-        $newmsg = "Dear $name , You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Don't Share anyone.. From'-P24 Technology Pvt. Ltd";
+        $newmsg = "Dear $name , You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Don't Share anyone. From'-P24 Technology Pvt. Ltd";
         $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
         Log::channel('response')->info('sms-creds', $sms->json());
         return response()->noContent();
@@ -173,7 +173,7 @@ class RegisteredUserController extends Controller
             $message->priority(1);
         });
         // Dear {#var#} , You have registered sucessfully, your ID-{#var#}, Password-{#var#}, Mpin-{#var#} Don't Share anyone. From-P24 Technology Pvt. Ltd
-        $newmsg = "Dear $name , You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Don't Share anyone.. From'-P24 Technology Pvt. Ltd";
+        $newmsg = "Dear $name , You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Don't Share anyone. From'-P24 Technology Pvt. Ltd";
         $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
         Log::channel('response')->info('sms-creds', $sms->json());
 
