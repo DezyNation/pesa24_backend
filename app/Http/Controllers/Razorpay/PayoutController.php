@@ -77,8 +77,22 @@ class PayoutController extends CommissionController
                 'to' => $request['bank_account']['name'] ?? null,
                 'created_at' => date('Y-m-d H:i:s')
             ];
+            $metadata2 = [
+                'status' => true,
+                'amount' => $amount,
+                'account_number' => $request['bank_account']['account_number'],
+                'ifsc' => $account_details['ifsc'],
+                // 'utr' => null,
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
+                'reference_id' => $data['reference_id'],
+                'to' => $request['bank_account']['name'] ?? null,
+                'created_at' => date('Y-m-d H:i:s')
+            ];
             $this->transaction($amount, 'Bank Payout', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
-            return response(['Transaction sucessfull', 'metadata' => $metadata], 200);
+            $this->payoutCommission(auth()->user()->id, $amount, $transaction_id);
+            return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         } else {
             $metadata = [
                 'status' => false,
@@ -94,8 +108,22 @@ class PayoutController extends CommissionController
                 'r_status' => $transfer->status(),
                 'created_at' => date('Y-m-d H:i:s')
             ];
+            $metadata2 = [
+                'status' => false,
+                'amount' => $data['amount'] / 100,
+                'account_number' => $request['bank_account']['account_number'],
+                'ifsc' => $account_details['ifsc'],
+                // 'utr' => null,
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
+                'reference_id' => $data['reference_id'],
+                'to' => $request['bank_account']['name'] ?? null,
+                'r_status' => $transfer->status(),
+                'created_at' => date('Y-m-d H:i:s')
+            ];
             $this->transaction(0, 'Bank Payout', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
-            return response(['Transaction sucessfull', 'metadata' => $metadata], 200);
+            return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         }
     }
 
