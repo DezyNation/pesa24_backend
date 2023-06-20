@@ -184,6 +184,7 @@ Route::middleware(['auth:api', 'minimum_balance'])->group(function () {
     /*-----------------------Razorpay Payout-----------------------*/
     Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact']);
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser']);
+    Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall']);
     /*-----------------------Razorpay Payout-----------------------*/
 
     /*-----------------------Pysprint AePS-----------------------*/

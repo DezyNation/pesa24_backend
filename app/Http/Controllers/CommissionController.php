@@ -1200,7 +1200,7 @@ class CommissionController extends Controller
         return response()->json(['message' => 'True']);
     }
 
-    public function razorpayReversal($amount, $user_id)
+    public function razorpayReversal($amount, $user_id, $transaction_id)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -1220,15 +1220,15 @@ class CommissionController extends Controller
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
-        $role_commission = $table->pluck($role_commission_name);
+        $role_commission = $table->$role_commission_name;
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
-            $debit = $amount + $fixed_charge;
+            $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $credit + $debit;
-        } elseif (!$is_flat) {
-            $debit = $amount + $amount * $fixed_charge / 100;
+        } else {
+            $debit = $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $credit + $debit;
         }
@@ -1237,22 +1237,20 @@ class CommissionController extends Controller
             'event' => 'refund',
             'amount' => $amount
         ];
-        $transaction_id = "REV" . strtoupper(Str::random(9));
-        $this->transaction($credit, 'Commissions Reversal', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
-        $user->update([
-            'wallet' => $closing_balance
-        ]);
+        $this->transaction($credit, 'Commissions Reversal', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
 
         if (!$table->parents) {
             return response("No commissions to parent users.");
         }
         $parent = DB::table('user_parent')->where('user_id', $user_id);
-        $parent_id = $parent->pluck('parent_id');
-        $this->payoutReversalParent($parent_id, $amount);
+        if ($parent->exists()) {
+            $parent_id = $parent->pluck('parent_id');
+            $this->payoutReversalParent($parent_id, $amount, $transaction_id);
+        }
         return $table;
     }
 
-    public function payoutReversalParent($user_id, $amount)
+    public function payoutReversalParent($user_id, $amount, $transaction_id)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -1271,15 +1269,15 @@ class CommissionController extends Controller
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
-        $role_commission = $table->pluck($role_commission_name);
+        $role_commission = $table->role_commission_name;
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
             $debit = 0;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $credit + $debit;
-        } elseif (!$is_flat) {
-            $debit = $amount + $amount * $fixed_charge / 100;
+        } else {
+            $debit = $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $credit + $debit;
         }
@@ -1288,7 +1286,6 @@ class CommissionController extends Controller
             'event' => 'refund',
             'amount' => $amount
         ];
-        $transaction_id = "REV" . strtoupper(Str::random(9));
         $this->transaction($credit, 'Commissions Reversal', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
         $user->update([
             'wallet' => $closing_balance
@@ -1302,7 +1299,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->payoutReversalParent($parent_id, $amount);
+            $this->payoutReversalParent($parent_id, $amount, $transaction_id);
         }
 
         return $table;

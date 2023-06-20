@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\CommissionController;
+use Illuminate\Validation\Rule;
 
 class PayoutController extends CommissionController
 {
@@ -169,17 +170,40 @@ class PayoutController extends CommissionController
         return $payout;
     }
 
-    public function payoutCall()
+    public function payoutCall(Request $request)
     {
-        $id = 'pout_00000000000001';
+        $request->validate([
+            'payoutId' => ['required', 'exists:payouts,payout_id']
+        ]);
+        $id = $request['payoutId'];
+        $payout = DB::table('payouts')->where('payout_id', $id)->get();
+        if ($payout->status !== 'processing') {
+            return response($payout);
+        }
         $transfer =  Http::withBasicAuth('rzp_test_f76VR5UvDUksZJ', 'pCcVlr5pRFcBZxAH4xBqGY62')->withHeaders([
             'Content-Type' => 'application/json'
         ])->post("https://api.razorpay.com/v1/payouts/$id");
 
         DB::table('payouts')->where('payout_id', $id)->update([
             'status' => $transfer['status'],
+            'utr' => $transfer['utr'],
             'updated_at' => now()
         ]);
+
+        if ($transfer['status'] == 'processed') {
+            $this->payoutCommission($payout->user_id, $payout->amount, $payout->reference_id);
+        } elseif ($transfer['status'] == 'rejected' ||$transfer['status'] == 'reversed' || $transfer['status'] == 'cancelled') {
+            $user = User::find($payout->user_id);
+            $closing_balance = $user->wallet+$payout->amount;
+            $metadata = [
+                'status' => $transfer['status'],
+                'utr' => $transfer['utr'],
+                'reference_id' => $payout->reference_id,
+                'amount' => $payout->amount
+            ];
+            $this->transaction(0, "Payout Reversal", 'payout', $payout->user_id, $user->wallet, $payout->reference_id, $closing_balance, json_encode($metadata), $payout->amount);
+            $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $payout->reference_id);
+        }
 
         return $transfer['status'];
     }
