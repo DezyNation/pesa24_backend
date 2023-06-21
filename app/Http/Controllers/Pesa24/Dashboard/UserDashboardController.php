@@ -19,11 +19,11 @@ class UserDashboardController extends Controller
     public function transactionLedger(Request $request, $name = null)
     {
         if (is_null($name)) {
-            $data = DB::table('transactions')->whereBetween('created_at', [$request['from']??Carbon::today(), $request['to']??Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->latest()->paginate(20);
+            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->latest()->paginate(20);
             return $data;
         }
 
-        $data = DB::table('transactions')->whereBetween('created_at', [$request['from']??Carbon::today(), $request['to']??Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->paginate(20);
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->paginate(20);
         return $data;
     }
 
@@ -127,12 +127,12 @@ class UserDashboardController extends Controller
 
         $not_approved = DB::table('funds')
             ->whereBetween('created_at', [$start, $end])
-            ->where(['funds.approved' => 0, 'funds.user_id'=>auth()->user()->id])->count();
+            ->where(['funds.approved' => 0, 'funds.user_id' => auth()->user()->id])->count();
 
         $all = DB::table('funds')
-        ->whereBetween('created_at', [$start, $end])
-        ->where('funds.user_id', auth()->user()->id)
-        ->count();
+            ->whereBetween('created_at', [$start, $end])
+            ->where('funds.user_id', auth()->user()->id)
+            ->count();
 
         return [
             'funds' => [
@@ -151,7 +151,7 @@ class UserDashboardController extends Controller
         $data = DB::table('settlement_request')->insert([
             'user_id' => auth()->user()->id,
             'amount' => $request['amount'],
-            'message' => $request['message']??null,
+            'message' => $request['message'] ?? null,
             'status' => 'pending',
             'created_at' => now(),
             'updated_at' => now()
@@ -168,7 +168,25 @@ class UserDashboardController extends Controller
 
     public function dailySales(Request $request)
     {
-        $data = DB::table('transactions')->whereBetween('created_at', [$request['from']??Carbon::today(), $request['to']??Carbon::tomorrow()])->where(['trigered_by'=> auth()->user()->id])->whereJsonContains('metadata->status', true)->paginate(100);
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => auth()->user()->id])->whereJsonContains('metadata->status', true)->paginate(100);
+        return $data;
+    }
+
+    public function claim(Request $request): int
+    {
+        $request->validate([
+            'transactionId' => 'required|exists:transactions,transaction_id',
+            'claim' => 'required'
+        ]);
+        $data = DB::table('transactions')
+            ->where(['user_id' => auth()->user()->id, 'transaction_id' => $request['transactionId']])
+            ->update(
+                [
+                    'claim' => $request['claim'],
+                    'updated_at' => now()
+                ]
+            );
+
         return $data;
     }
 }
