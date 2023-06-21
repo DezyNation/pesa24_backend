@@ -71,6 +71,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('user/info', [ProfileController::class, 'info']);
     Route::post('money-transfer', [PaysprintPayout::class, 'moneyTransfer'])->middleware(['mpin', 'minimum_balance']);
     Route::get('money-transfer', [PaysprintPayout::class, 'fetchMoneyTransfer']);
+    Route::post('transaction/claim', [UserDashboardController::class, 'claim']);
     Route::get('user/bank', [ProfileController::class, 'bank']);
     Route::get('user/daily-sales', [UserDashboardController::class, 'dailySales']);
     Route::get('user/services', [ProfileController::class, 'userServices']);
@@ -181,8 +182,9 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     // Route::post('eko/dmt/transaction-refund-otp/{tid}', [TransactionController::class, 'refund']);
     Route::post('paysprint/bank/bank-verify', [DMTController::class, 'penneyDrop']);
     /*-----------------------Razorpay Payout-----------------------*/
-    Route::post('razorpay/payout/new-payout/{service_id}', [FundAccountController::class, 'createFundAcc']);
+    Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact']);
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser']);
+    Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall']);
     /*-----------------------Razorpay Payout-----------------------*/
 
     /*-----------------------Pysprint AePS-----------------------*/
@@ -331,7 +333,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
 });
 
 Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);
-Route::any('payout-callback-paysprint', [WebhookController::class, 'confirmPayout']);
+Route::any('payout-callback', [WebhookController::class, 'confirmPayout']);
 Route::any('onboard-callback-paysprint', [CallbackController::class, 'onboardCallback']);
 
 Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
