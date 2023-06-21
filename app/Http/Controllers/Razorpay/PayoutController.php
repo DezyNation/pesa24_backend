@@ -192,6 +192,8 @@ class PayoutController extends CommissionController
             'updated_at' => now()
         ]);
 
+        DB::table('transactions')->where('transaction_id', $payout->reference_id)->update(['metadata->utr' == $transfer['utr']]);
+
         if ($transfer['status'] == 'processed') {
             $this->payoutCommission($payout->user_id, $payout->amount, $payout->reference_id);
         } elseif ($transfer['status'] == 'rejected' || $transfer['status'] == 'reversed' || $transfer['status'] == 'cancelled') {
