@@ -42,7 +42,7 @@ class AirtelCMSController extends Controller
         ])->post('https://paysprint.in/service-api/api/v1/service/airtelcms/V2/airtel/index', $data);
         Log::channel('response')->info('response', $response->json());
             $this->apiRecords($data['transaction_id'], 'paysprint', $response);
-        if ($response['response_code'] == 1) {
+        if ($response['responsecode'] == 1) {
             DB::table('cms_records')->insert([
                 'user_id' => auth()->user()->id,
                 'reference_id' => $data['refid'],
