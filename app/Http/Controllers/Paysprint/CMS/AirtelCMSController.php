@@ -29,6 +29,8 @@ class AirtelCMSController extends Controller
         $data = [
             'transaction_id' => $request['transactionId'],
             'refid' => uniqid(),
+            'latitude' => $request['latitude'],
+            'longitude' => $request['longitude'],
         ];
 
         $token = $this->token();
