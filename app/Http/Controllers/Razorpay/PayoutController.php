@@ -186,6 +186,8 @@ class PayoutController extends CommissionController
             'Content-Type' => 'application/json'
         ])->post("https://api.razorpay.com/v1/payouts/$id");
 
+        $this->apiRecords($payout->reference_id, 'razorpay', $transfer);
+
         DB::table('payouts')->where('payout_id', $id)->update([
             'status' => $transfer['status'],
             'utr' => $transfer['utr'],
