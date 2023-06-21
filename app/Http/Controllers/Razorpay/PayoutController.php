@@ -24,7 +24,7 @@ class PayoutController extends CommissionController
             'currency' => 'INR',
             'mode' => 'IMPS',
             'purpose' => 'payout',
-            'reference_id' => "JANPAY".uniqid(),
+            'reference_id' => "JANPAY" . uniqid(),
         ];
 
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
@@ -64,7 +64,7 @@ class PayoutController extends CommissionController
         $balance_left = $walletAmt[0] - $amount;
         $transaction_id = $data['reference_id'];
         $this->apiRecords($data['reference_id'], 'razorpay', $transfer);
-        if ($transfer['status'] == 'processing'||$transfer['status'] == 'processed') {
+        if ($transfer['status'] == 'processing' || $transfer['status'] == 'processed') {
             $metadata = [
                 'status' => true,
                 'amount' => $amount,
@@ -176,10 +176,12 @@ class PayoutController extends CommissionController
             'payoutId' => ['required', 'exists:payouts,payout_id']
         ]);
         $id = $request['payoutId'];
-        $payout = DB::table('payouts')->where('payout_id', $id)->get();
-        if ($payout->status !== 'processing') {
-            return response($payout);
+        $get_payout = DB::table('payouts')->where(['payout_id' => $id, 'status' => 'processing']);
+        if (!$get_payout->exists()) {
+            return response($get_payout->get());
         }
+        $payout = $get_payout->get();
+        $payout = $get_payout[0];
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
             'Content-Type' => 'application/json'
         ])->post("https://api.razorpay.com/v1/payouts/$id");
@@ -192,9 +194,9 @@ class PayoutController extends CommissionController
 
         if ($transfer['status'] == 'processed') {
             $this->payoutCommission($payout->user_id, $payout->amount, $payout->reference_id);
-        } elseif ($transfer['status'] == 'rejected' ||$transfer['status'] == 'reversed' || $transfer['status'] == 'cancelled') {
+        } elseif ($transfer['status'] == 'rejected' || $transfer['status'] == 'reversed' || $transfer['status'] == 'cancelled') {
             $user = User::find($payout->user_id);
-            $closing_balance = $user->wallet+$payout->amount;
+            $closing_balance = $user->wallet + $payout->amount;
             $metadata = [
                 'status' => $transfer['status'],
                 'utr' => $transfer['utr'],
