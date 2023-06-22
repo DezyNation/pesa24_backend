@@ -642,7 +642,8 @@ class AdminController extends Controller
             $wallet,
             $funds,
             $users,
-            $payout_commission
+            $payout_commission,
+            $payout_transaction
         ];
 
         return response($array);
