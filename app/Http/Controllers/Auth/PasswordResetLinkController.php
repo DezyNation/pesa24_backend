@@ -79,9 +79,10 @@ class PasswordResetLinkController extends Controller
             // 'credential_remarks' => $request['remarks']
         ]);
 
-        $phone = $user->get();
-        $phone = $phone[0]->phone_number;
-        $name = $phone[0]->name;
+        $new_user = User::where('email', $email)->get();
+        // $phone = $user->get();
+        $phone = $new_user[0]->phone_number;
+        $name = $new_user[0]->name;
         // SMS api
 
         $newmsg = "Dear $name , You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Don't Share anyone. From'-P24 Technology Pvt. Ltd";
