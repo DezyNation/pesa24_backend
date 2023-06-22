@@ -12,20 +12,20 @@ use Illuminate\Support\Facades\Log;
 
 class FundAccountController extends PayoutController
 {
-    
-    
-    public function createFundAcc(Request $request, $service_id)
+
+
+    public function createFundAcc(Request $request)
     {
-        
-        if(!Hash::check($request['mpin'], auth()->user()->mpin)){
+
+        if (!Hash::check($request['mpin'], auth()->user()->mpin)) {
             return response('MPIN did not match', 400);
         }
-        
-            $account_details = [
-                'name' => $request['beneficiaryName'],
-                'ifsc' => $request['ifsc'],
-                'account_number' => $request['account']
-            ];
+
+        $account_details = [
+            'name' => $request['beneficiaryName'],
+            'ifsc' => $request['ifsc'],
+            'account_number' => $request['account']
+        ];
 
 
         $data = [
@@ -36,12 +36,11 @@ class FundAccountController extends PayoutController
 
         $response = Http::withBasicAuth('rzp_test_f76VR5UvDUksZJ', 'pCcVlr5pRFcBZxAH4xBqGY62')
             ->post('https://api.razorpay.com/v1/fund_accounts', $data);
-    
-            if (isset($response['error'])) {
-                return response()->json(['message' => $response['error']['description']], 400);
-            }
-            Log::channel('response')->info($response);
-        return $this->bankPayout($response, $request['amount'], $service_id);
+
+        if (isset($response['error'])) {
+            return response()->json(['message' => $response['error']['description']], 400);
+        }
+        Log::channel('response')->info($response);
+        return $this->bankPayout($response, $request['amount'], $account_details);
     }
-    
 }
