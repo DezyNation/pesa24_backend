@@ -181,7 +181,7 @@ class PayoutController extends CommissionController
             return response($get_payout->get());
         }
         $payout = $get_payout->get();
-        $payout = $get_payout[0];
+        $payout = $payout[0];
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
             'Content-Type' => 'application/json'
         ])->post("https://api.razorpay.com/v1/payouts/$id");
