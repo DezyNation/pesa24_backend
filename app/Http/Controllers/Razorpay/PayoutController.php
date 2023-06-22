@@ -165,7 +165,7 @@ class PayoutController extends CommissionController
     {
         $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')->where([
             'users.organization_id' => auth()->user()->organization_id
-        ])->select('payouts.*', 'users.name')->paginate(20);
+        ])->select('payouts.*', 'users.name')->latest()->paginate(20);
 
         return $payout;
     }
