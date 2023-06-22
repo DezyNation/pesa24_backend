@@ -31,23 +31,25 @@ class UserDashboardController extends Controller
     {
         $tenure = $request['tenure'];
 
-        $aeps = $this->userTable($tenure, 'aeps');
+        $aeps = $this->userTable($tenure, 'aeps', $request);
 
-        $bbps = $this->userTable($tenure, 'bbps');;
+        $bbps = $this->userTable($tenure, 'bbps', $request);
 
-        $dmt = $this->userTable($tenure, 'dmt');;
+        $dmt = $this->userTable($tenure, 'dmt', $request);
 
-        $pan = $this->userTable($tenure, 'pan');;
+        $pan = $this->userTable($tenure, 'pan', $request);
 
-        $payout = $this->userTable($tenure, 'payout');;
+        $payout = $this->userTable($tenure, 'payout', $request);
 
-        $lic = $this->userTable($tenure, 'lic');;
+        $lic = $this->userTable($tenure, 'lic', $request);
 
-        $fastag = $this->userTable($tenure, 'fastag');
+        $fastag = $this->userTable($tenure, 'fastag', $request);
 
-        $cms = $this->userTable($tenure, 'cms');
+        $cms = $this->userTable($tenure, 'cms', $request);
 
-        $recharge = $this->userTable($tenure, 'recharge');
+        $cms = $this->userTable($tenure, 'payout-commission', $request);
+
+        $recharge = $this->userTable($tenure, 'recharge', $request);
 
         $funds = $this->fundRequests($tenure);
 
@@ -67,7 +69,7 @@ class UserDashboardController extends Controller
         return response($array);
     }
 
-    public function userTable($tenure, $category)
+    public function userTable($tenure, $category, $request)
     {
         $tenure;
         switch ($tenure) {
@@ -86,8 +88,8 @@ class UserDashboardController extends Controller
                 $end = Carbon::now()->endOfYear();
                 break;
             default:
-                $start = Carbon::today();
-                $end = Carbon::tomorrow();
+                $start = $request['from'] ?? Carbon::today();
+                $end = $request['to'] ?? Carbon::tomorrow();
                 break;
         }
         $table = DB::table('transactions')

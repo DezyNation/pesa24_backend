@@ -607,7 +607,9 @@ class AdminController extends Controller
 
         // $pan = $this->table($tennure, 'pan');;
 
-        $payout = $this->table($tennure, 'payout');
+        $payout = $this->table($tennure, 'payout', $request);
+        
+        $payout_commission = $this->table($tennure, 'payout-commission', $request);
 
         $wallet = $this->roleWalletSum();
 
@@ -637,7 +639,8 @@ class AdminController extends Controller
             // $recharge,
             $wallet,
             $funds,
-            $users
+            $users,
+            $payout_commission
         ];
 
         return response($array);
@@ -665,7 +668,7 @@ class AdminController extends Controller
         return $data;
     }
 
-    public function table($tennure, $category)
+    public function table($tennure, $category, $request)
     {
         $tennure;
         switch ($tennure) {
@@ -684,8 +687,8 @@ class AdminController extends Controller
                 $end = Carbon::now()->endOfYear();
                 break;
             default:
-                $start = Carbon::today();
-                $end = Carbon::tomorrow();
+                $start = $request['from'] ?? Carbon::today();
+                $end = $request['to'] ?? Carbon::tomorrow();
                 break;
         }
         $table = DB::table('transactions')
@@ -849,7 +852,8 @@ class AdminController extends Controller
         ];
     }
 
-    public function roleWalletSum(): array {
+    public function roleWalletSum(): array
+    {
         $retailer = User::role('retailer')->sum('wallet');
         $distributor = User::role('distributor')->sum('wallet');
         $super_distributor = User::role('super_distributor')->sum('wallet');
