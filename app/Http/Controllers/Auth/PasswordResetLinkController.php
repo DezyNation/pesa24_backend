@@ -80,8 +80,8 @@ class PasswordResetLinkController extends Controller
         ]);
 
         $phone = $user->get();
-        $phone = $phone->phone_number;
-        $name = $phone->name;
+        $phone = $phone[0]->phone_number;
+        $name = $phone[0]->name;
         // SMS api
 
         $newmsg = "Dear $name , You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Don't Share anyone. From'-P24 Technology Pvt. Ltd";
