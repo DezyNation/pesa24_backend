@@ -608,10 +608,12 @@ class AdminController extends Controller
         // $pan = $this->table($tennure, 'pan');;
 
         $payout = $this->table($tennure, 'payout', $request);
-        
+
         $payout_commission = $this->table($tennure, 'payout-commission', $request);
 
         $wallet = $this->roleWalletSum();
+
+        $payout_transaction = $this->payoutTransactions();
 
         // $lic = $this->table($tennure, 'lic');;
 
@@ -621,7 +623,7 @@ class AdminController extends Controller
 
         // $recharge = $this->table($tennure, 'recharge');
 
-        $funds = $this->fundRequestCount($tennure);
+        $funds = $this->fundRequestCount();
 
         $users = $this->countLogins($tennure);
 
@@ -704,37 +706,14 @@ class AdminController extends Controller
         ];
     }
 
-    public function fundRequestCount($tennure)
+    public function fundRequestCount()
     {
-        switch ($tennure) {
-            case 'week':
-                $start = Carbon::now()->startOfWeek();
-                $end = Carbon::now()->endOfWeek();
-                break;
-
-            case 'month':
-                $start = Carbon::now()->startOfMonth();
-                $end = Carbon::now()->endOfMonth();
-                break;
-
-            case 'year':
-                $start = Carbon::now()->startOfYear();
-                $end = Carbon::now()->endOfYear();
-                break;
-            default:
-                $start = Carbon::today();
-                $end = Carbon::tomorrow();
-                break;
-        }
-
         $not_approved = DB::table('funds')
             ->join('users', 'users.id', '=', 'funds.user_id')
-            ->whereBetween('funds.created_at', [$start, $end])
             ->where(['funds.approved' => 0, 'users.organization_id' => auth()->user()->id])->count();
 
         $all = DB::table('funds')
             ->join('users', 'users.id', '=', 'funds.user_id')
-            ->whereBetween('funds.created_at', [$start, $end])
             ->where('users.organization_id', auth()->user()->organization_id)
             ->count();
 
@@ -863,5 +842,43 @@ class AdminController extends Controller
             'distributor' => $distributor,
             'super_distributor' => $super_distributor
         ];
+    }
+
+    public function payoutTransactions()
+    {
+        $processing = DB::table('payouts')
+            ->join('users', 'users.id', '=', 'payouts.user_id')
+            ->where(['users.organization_id' => auth()->user()->organization_id, 'payouts.status' => 'processing']);
+
+        $processing = collect($processing);
+
+        $processed = DB::table('payouts')
+            ->join('users', 'users.id', '=', 'payouts.user_id')
+            ->where(['users.organization_id' => auth()->user()->organization_id, 'payouts.status' => 'processed'])->count();
+
+        $processed = collect($processed);
+
+        $reversed = DB::table('payouts')
+            ->join('users', 'users.id', '=', 'payouts.user_id')
+            ->where(['users.organization_id' => auth()->user()->organization_id, 'payouts.status' => 'reversed'])->count();
+
+        $reversed = collect($reversed);
+
+        $payout_status = [
+            'processing_payouts' => [
+                'count' => $processing->count(),
+                'sum' => $processing->sum('amount')
+            ],
+            'processed_payouts' => [
+                'count' => $processed->count(),
+                'sum' => $processed->sum('amount')
+            ],
+            'reversed_payouts' => [
+                'count' => $reversed->count(),
+                'sum' => $reversed->sum('amount')
+            ]
+        ];
+
+        return $payout_status;
     }
 }
