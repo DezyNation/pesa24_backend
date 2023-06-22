@@ -196,7 +196,7 @@ class PayoutController extends CommissionController
 
         $reference_id = $payout->reference_id;
 
-        DB::table('transactions')->where('transaction_id', $reference_id)->update(['metadata->utr' == $transfer['utr']]);
+        DB::table('transactions')->where('transaction_id', $reference_id)->update(['metadata->utr' => $transfer['utr']]);
 
         if ($transfer['status'] == 'processed') {
             $this->payoutCommission($payout->user_id, $payout->amount, $reference_id);
