@@ -265,11 +265,11 @@ class UserController extends Controller
     {
         $org_id = auth()->user()->organization_id;
         if (is_null($id)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->paginate(20);
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->paginate(100);
             return $user;
         }
 
-        $user = User::role($role)->with('packages:name')->where(['id' => $id, 'organization_id' => $org_id])->paginate(20);
+        $user = User::role($role)->with('packages:name')->where(['id' => $id, 'organization_id' => $org_id])->paginate(100);
         return $user;
     }
 

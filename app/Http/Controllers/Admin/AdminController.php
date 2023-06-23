@@ -16,7 +16,7 @@ class AdminController extends Controller
 {
     public function roleUser($role)
     {
-        $role = User::role($role)->paginate(20);
+        $role = User::role($role)->paginate(100);
 
         return $role;
     }
@@ -170,7 +170,7 @@ class AdminController extends Controller
                 ->where('p.organization_id', auth()->user()->organization_id)
                 ->select('p.id', 'p.name', 'p.status', 'p.is_default', 'a.name AS user_name', DB::raw('COUNT(u.id) AS assigned_users_count'))
                 ->groupBy('p.id', 'p.name')
-                ->paginate(20);
+                ->paginate(100);
         }
         return $data;
     }

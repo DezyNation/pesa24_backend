@@ -231,7 +231,7 @@ class PayoutController extends CommissionController
             ->where('money_transfers.sender_id', auth()->user()->id)
             ->select('recievers.name', 'recievers.phone_number', 'recievers.id as reciever_id', 'money_transfers.*')
             ->latest()
-            ->paginate(20);
+            ->paginate(100);
 
         return $data;
     }

@@ -161,11 +161,24 @@ class PayoutController extends CommissionController
         return $payout;
     }
 
-    public function fetchPayoutAdmin()
+    public function fetchPayoutAdmin($processing = null)
     {
-        $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')->where([
-            'users.organization_id' => auth()->user()->organization_id
-        ])->select('payouts.*', 'users.name')->latest()->paginate(80);
+        if ($processing == 'processing') {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->where('payout.status', 'processing')
+                ->select('payouts.*', 'users.name')->latest()->paginate(80);
+
+            return $payout;
+        }
+        $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+            ->where([
+                'users.organization_id' => auth()->user()->organization_id
+            ])
+            ->where('payout.status', '!=', 'processing')
+            ->select('payouts.*', 'users.name')->latest()->paginate(80);
 
         return $payout;
     }

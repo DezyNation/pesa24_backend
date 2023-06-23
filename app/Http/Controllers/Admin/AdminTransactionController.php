@@ -17,7 +17,7 @@ class AdminTransactionController extends Controller
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
             ->select('users.name', 'transactions.*', 'admin.first_name as done_by', 'admin.phone_number as done_by_phone')
             ->latest()
-            ->paginate(20);
+            ->paginate(100);
         return $data;
     }
 
@@ -33,7 +33,7 @@ class AdminTransactionController extends Controller
                 ->where(['transactions.service_type' => $data])
                 ->select('users.name', 'transactions.*', 'admin.organization_id', 'admin.first_name as done_by', 'admin.phone_number as done_by_phone')
                 ->latest()
-                ->paginate(20);
+                ->paginate(100);
             return $data;
         }
 
@@ -44,7 +44,7 @@ class AdminTransactionController extends Controller
             ->whereBetween('transactions.created_at', [$from, $to])
             ->select('users.name', 'transactions.*', 'admin.organization_id', 'admin.first_name as done_by', 'admin.phone_number as done_by_phone')
             ->latest()
-            ->paginate(20);
+            ->paginate(100);
         return $data;
     }
 
@@ -55,7 +55,7 @@ class AdminTransactionController extends Controller
                 ->join('users', 'users.id', '=', 'transactions.user_id')
                 ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
                 ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
-                ->paginate(20);
+                ->paginate(100);
 
             return $data;
         }
@@ -65,7 +65,7 @@ class AdminTransactionController extends Controller
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
             ->where('transactions.id', $id)
             ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
-            ->paginate(20);
+            ->paginate(100);
 
 
         return $data;
@@ -77,7 +77,7 @@ class AdminTransactionController extends Controller
             ->join('users', 'users.id', '=', 'transactions.user_id')
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
             ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone')
-            ->where('transactions.trigered_by', $id)->latest('transactions.created_at')->paginate(20);
+            ->where('transactions.trigered_by', $id)->latest('transactions.created_at')->paginate(100);
         return $data;
     }
 
@@ -89,7 +89,7 @@ class AdminTransactionController extends Controller
             ->select('users.name', 'transactions.*', 'admin.first_name', 'admin.phone_number')
             ->where('created_at', '>=', Carbon::now()->subDay()->toDateTimeString())
             ->whereJsonContains('transactions.metadata->status', 'true')
-            ->latest()->paginate(20);
+            ->latest()->paginate(100);
         return $data;
     }
 

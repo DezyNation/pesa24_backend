@@ -19,11 +19,11 @@ class UserDashboardController extends Controller
     public function transactionLedger(Request $request, $name = null)
     {
         if (is_null($name)) {
-            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->latest()->paginate(20);
+            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->latest()->paginate(100);
             return $data;
         }
 
-        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->paginate(20);
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->paginate(100);
         return $data;
     }
 
