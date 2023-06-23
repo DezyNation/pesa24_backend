@@ -711,7 +711,7 @@ class AdminController extends Controller
     {
         $not_approved = DB::table('funds')
             ->join('users', 'users.id', '=', 'funds.user_id')
-            ->where(['funds.approved' => 0, 'users.organization_id' => auth()->user()->id])->count();
+            ->where(['funds.status' => 'approved', 'users.organization_id' => auth()->user()->id])->count();
 
         $all = DB::table('funds')
             ->join('users', 'users.id', '=', 'funds.user_id')
