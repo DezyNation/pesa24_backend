@@ -168,7 +168,7 @@ class PayoutController extends CommissionController
                 ->where([
                     'users.organization_id' => auth()->user()->organization_id
                 ])
-                ->where('payout.status', 'processing')
+                ->where('payouts.status', 'processing')
                 ->select('payouts.*', 'users.name')->latest()->paginate(80);
 
             return $payout;
@@ -177,7 +177,7 @@ class PayoutController extends CommissionController
             ->where([
                 'users.organization_id' => auth()->user()->organization_id
             ])
-            ->where('payout.status', '!=', 'processing')
+            ->where('payouts.status', '!=', 'processing')
             ->select('payouts.*', 'users.name')->latest()->paginate(80);
 
         return $payout;

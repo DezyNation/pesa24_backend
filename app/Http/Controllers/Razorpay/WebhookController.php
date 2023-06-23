@@ -15,7 +15,15 @@ class WebhookController extends CommissionController
     {
         Log::channel('response')->info('callback-razorpay', $request->all());
         $payout_id = $request['payload.payout.entity.id'];
-        $payout = 
+        $payout = DB::table('payouts')->where('payout_id', $payout_id)->get();
+        if ($payout[0]->status == 'processed') {
+            $array = [
+                'status' => true,
+                'message' => 'transaction was processed already'
+            ];
+            Log::channel('response')->info('callback-razorpay', $array);
+            return response("Transaction Processed Already");
+        }
         $data = DB::table('payouts')->where('payout_id', $payout_id);
         $data->update([
             'status' => $request['payload.payout.entity.status'],
@@ -40,5 +48,4 @@ class WebhookController extends CommissionController
 
         return response()->noContent();
     }
-
 }
