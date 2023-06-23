@@ -92,7 +92,6 @@ class PayoutController extends CommissionController
                 'created_at' => date('Y-m-d H:i:s')
             ];
             $this->transaction($amount, 'Bank Payout', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
-            $this->payoutCommission(auth()->user()->id, $amount, $transaction_id);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         } else {
             $metadata = [
@@ -169,7 +168,7 @@ class PayoutController extends CommissionController
                     'users.organization_id' => auth()->user()->organization_id
                 ])
                 ->where('payouts.status', 'processing')
-                ->select('payouts.*', 'users.name')->latest()->paginate(80);
+                ->select('payouts.*', 'users.name')->latest()->get();
 
             return $payout;
         }
