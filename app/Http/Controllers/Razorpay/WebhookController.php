@@ -35,6 +35,7 @@ class WebhookController extends CommissionController
 
         if ($request['payload.payout.entity.status'] == 'processed') {
             $result = $data->get();
+            $this->payoutCommission($result[0]->user_id, $request['payload.payout.entity.amount'] / 100, $request['payload.payout.entity.reference_id']);
         }
         if ($request['payload.payout.entity.status'] == 'reversed') {
             $result = $data->get();
