@@ -56,7 +56,7 @@ return [
             'channels' => ['single'],
             'ignore_exceptions' => false,
         ],
-        
+
         'pesa24' => [
             'driver' => 'single',
             'path' => storage_path('logs/pesa24.log'),
@@ -66,6 +66,12 @@ return [
         'response' => [
             'driver' => 'single',
             'path' => storage_path('logs/response.log'),
+            'level' => 'info',
+        ],
+
+        'callback' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/razorpay.log'),
             'level' => 'info',
         ],
 
