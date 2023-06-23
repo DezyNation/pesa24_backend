@@ -16,7 +16,7 @@ class WebhookController extends CommissionController
         Log::channel('response')->info('callback-razorpay', $request->all());
         $payout_id = $request['payload.payout.entity.id'];
         $payout = DB::table('payouts')->where('payout_id', $payout_id)->get();
-        if ($payout[0]->status == 'processed') {
+        if ($payout[0]->status == 'processed' || $payout[0]->status == 'reveresed' || $payout[0]->status == 'cancelled') {
             $array = [
                 'status' => true,
                 'message' => 'transaction was processed already'
@@ -37,7 +37,7 @@ class WebhookController extends CommissionController
             $result = $data->get();
             $this->payoutCommission($result[0]->user_id, $request['payload.payout.entity.amount'] / 100, $request['payload.payout.entity.reference_id']);
         }
-        if ($request['payload.payout.entity.status'] == 'reversed') {
+        if ($request['payload.payout.entity.status'] == 'reversed' || $request['payload.payout.entity.status'] == 'cancelled') {
             $result = $data->get();
             $user = User::findOrFail($result[0]->user_id);
             $opening_balance = $user->wallet;
