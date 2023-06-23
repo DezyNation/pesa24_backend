@@ -44,7 +44,7 @@ class WebhookController extends CommissionController
             $closing_balance = $opening_balance + $request['payload.payout.entity.amount'] / 100;
             $transaction_id = $request['payload.payout.entity.reference_id'];
             $this->transaction(0, "Payout Reversal", 'payout', $result[0]->user_id, $opening_balance, $transaction_id, $closing_balance, $request['payload.payout.entity.amount'] / 100);
-            $commission = $this->razorpayReversal($result[0]->amount / 100, $result[0]->user_id, $transaction_id);
+            $commission = $this->razorpayReversal($result[0]->amount, $result[0]->user_id, $transaction_id);
         }
 
         return response()->noContent();
