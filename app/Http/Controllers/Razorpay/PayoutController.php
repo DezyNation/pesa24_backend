@@ -219,6 +219,11 @@ class PayoutController extends CommissionController
 
         $reference_id = $payout->reference_id;
 
+        $array = [
+            'event' => 'admin update payout',
+            'status' => $transfer['status'],
+        ];
+        $this->apiRecords($reference_id, 'janpay', json_encode($array));
         DB::table('transactions')->where('transaction_id', $reference_id)->update(['metadata->utr' => $transfer['utr']]);
 
         if ($transfer['status'] == 'processed') {
