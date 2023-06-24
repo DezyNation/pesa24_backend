@@ -506,7 +506,7 @@ class CommissionController extends Controller
             'debit' => $debit,
             'amount' => $amount
         ];
-        $this->transaction($debit, 'Payout Commission', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->notAdmintransaction($debit, 'Payout Commission', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -565,7 +565,7 @@ class CommissionController extends Controller
             'amount' => $amount
         ];
 
-        $this->transaction($amount, 'Payout Comissions', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->notAdmintransaction($amount, 'Payout Comissions', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -1237,7 +1237,7 @@ class CommissionController extends Controller
             'event' => 'refund',
             'amount' => $amount
         ];
-        $this->transaction($credit, 'Commissions Reversal', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $this->notAdmintransaction($credit, 'Commissions Reversal', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
 
         if (!$table->parents) {
             return response("No commissions to parent users.");
@@ -1286,7 +1286,7 @@ class CommissionController extends Controller
             'event' => 'refund',
             'amount' => $amount
         ];
-        $this->transaction($credit, 'Commissions Reversal', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $this->notAdmintransaction($credit, 'Commissions Reversal', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
         $user->update([
             'wallet' => $closing_balance
         ]);
