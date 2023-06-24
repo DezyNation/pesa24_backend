@@ -105,8 +105,8 @@ Route::middleware(['auth:api'])->group(function () {
     /*-----------------------Tickets-----------------------*/
 
     /*-----------------------Password and MPIN-----------------------*/
-    Route::post('user/new-mpin', [ProfileController::class, 'newMpin']);
-    Route::post('user/new-password', [ProfileController::class, 'newPass']);
+    Route::post('user/new-mpin', [ProfileController::class, 'newMpin'])->middleware('otp');
+    Route::post('user/new-password', [ProfileController::class, 'newPass'])->middleware('otp');
     /*-----------------------Fund Requests-----------------------*/
 
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
