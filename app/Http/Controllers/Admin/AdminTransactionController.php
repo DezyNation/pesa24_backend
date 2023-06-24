@@ -48,8 +48,20 @@ class AdminTransactionController extends Controller
         return $data;
     }
 
-    public function view($id = null)
+    public function view(Request $request, $id = null)
     {
+        $search = $request['search'];
+        if (!empty($search)) {
+            $data = DB::table('transactions')
+                ->join('users', 'users.id', '=', 'transactions.user_id')
+                ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
+                ->where('transactions.transaction_for', 'like', "%$search%")
+                ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
+                ->latest('transactions.created_at')
+                ->paginate(100);
+
+            return $data;
+        }
         if (is_null($id)) {
             $data = DB::table('transactions')
                 ->join('users', 'users.id', '=', 'transactions.user_id')
@@ -107,8 +119,8 @@ class AdminTransactionController extends Controller
             ->latest('transactions.created_at')
             ->get();
 
-            $collection = collect($data);
-            $data = $collection->groupBy(['trigered_by', 'service_type']);
+        $collection = collect($data);
+        $data = $collection->groupBy(['trigered_by', 'service_type']);
 
         // $data2 = DB::table('users')
         //     ->join('transactions', 'transactions.trigered_by', '=', 'users.id')
