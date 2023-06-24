@@ -169,7 +169,7 @@ class PayoutController extends CommissionController
                     'users.organization_id' => auth()->user()->organization_id
                 ])
                 ->where("payouts.account_number", 'LIKE', '%'.$search.'%')->orWhere("payouts.reference_id", 'LIKE', '%'.$search.'%')
-                ->select('payouts.*', 'users.name')->latest()->get();
+                ->select('payouts.*', 'users.name')->latest()->paginate(100);
 
             return $payout;
         }
