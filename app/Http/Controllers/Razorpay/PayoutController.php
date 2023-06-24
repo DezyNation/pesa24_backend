@@ -91,7 +91,7 @@ class PayoutController extends CommissionController
                 'to' => $request['bank_account']['name'] ?? null,
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->transaction($amount, 'Bank Payout', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction($amount, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         } else {
             $metadata = [
@@ -122,7 +122,7 @@ class PayoutController extends CommissionController
                 'r_status' => $transfer->status(),
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->transaction(0, 'Bank Payout', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction(0, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         }
     }
@@ -221,7 +221,8 @@ class PayoutController extends CommissionController
                 'reference_id' => $reference_id,
                 'amount' => $payout->amount
             ];
-            $this->transaction(0, "Payout Reversal", 'payout', $payout->user_id, $user->wallet, $reference_id, $closing_balance, json_encode($metadata), $payout->amount);
+            $account_number = $payout->account_number;
+            $this->transaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $closing_balance, json_encode($metadata), $payout->amount);
             $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id);
         }
 
