@@ -18,6 +18,11 @@ class UserDashboardController extends Controller
 
     public function transactionLedger(Request $request, $name = null)
     {
+        $search = $request['search'];
+        if (!empty($search) || !is_null($search)) {
+            $data = DB::table('transactions')->where('trigered_by', auth()->user()->id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->latest()->paginate(100);
+            return $data;
+        }
         if (is_null($name)) {
             $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->latest()->paginate(100);
             return $data;
