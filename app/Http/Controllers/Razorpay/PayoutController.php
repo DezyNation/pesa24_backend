@@ -66,7 +66,7 @@ class PayoutController extends CommissionController
         $this->apiRecords($data['reference_id'], 'razorpay', $transfer);
         if ($transfer['status'] == 'processing' || $transfer['status'] == 'processed') {
             $metadata = [
-                'status' => true,
+                'status' => $transfer['status'],
                 'amount' => $amount,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
@@ -79,7 +79,7 @@ class PayoutController extends CommissionController
                 'created_at' => date('Y-m-d H:i:s')
             ];
             $metadata2 = [
-                'status' => true,
+                'status' => $transfer['status'],
                 'amount' => $amount,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
@@ -95,7 +95,7 @@ class PayoutController extends CommissionController
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         } else {
             $metadata = [
-                'status' => false,
+                'status' => $transfer['status'],
                 'amount' => $data['amount'] / 100,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
@@ -109,7 +109,7 @@ class PayoutController extends CommissionController
                 'created_at' => date('Y-m-d H:i:s')
             ];
             $metadata2 = [
-                'status' => false,
+                'status' => $transfer['status'],
                 'amount' => $data['amount'] / 100,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
