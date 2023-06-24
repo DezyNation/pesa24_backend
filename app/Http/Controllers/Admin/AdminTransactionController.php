@@ -55,6 +55,7 @@ class AdminTransactionController extends Controller
                 ->join('users', 'users.id', '=', 'transactions.user_id')
                 ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
                 ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
+                ->latest('transactions.created_at')
                 ->paginate(100);
 
             return $data;
@@ -102,6 +103,7 @@ class AdminTransactionController extends Controller
             ->select('transactions.*', 'users.name as trigered_by_name', 'users.phone_number as trigered_by_phone', 'users.organization_id', 'beneficiaries.name', 'beneficiaries.phone_number', 'users.wallet as wallet_amount')
             ->where('users.organization_id', auth()->user()->organization_id)
             ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+            ->latest('transactions.created_at')
             ->get();
 
             $collection = collect($data);
