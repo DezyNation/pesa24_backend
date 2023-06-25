@@ -15,13 +15,16 @@ Route::post('/register', [RegisteredUserController::class, 'store'])
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware(['guest', 'normal'])
     ->name('login');
-    
+
 Route::post('admin/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware(['guest', 'admin'])
     ->name('login');
 
 Route::post('/send-otp', [AuthenticatedSessionController::class, 'sendOtp'])
     ->middleware('guest');
+
+Route::post('password/send-otp', [AuthenticatedSessionController::class, 'sendOtp'])
+    ->middleware('auth:api');
 
 Route::post('admin-register', [RegisteredUserController::class, 'registerAdmin'])->middleware('permission:user-create');
 Route::post('admin-update-user', [RegisteredUserController::class, 'adminUpdate'])->middleware(['auth:api','permission:user-edit']);
