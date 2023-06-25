@@ -466,7 +466,7 @@ class CommissionController extends Controller
 
     /*-------------------------------------Payout Commissions-------------------------------------*/
 
-    public function payoutCommission($user_id, $amount, $transaction_id)
+    public function payoutCommission($user_id, $amount, $transaction_id, $account_number)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -506,7 +506,7 @@ class CommissionController extends Controller
             'debit' => $debit,
             'amount' => $amount
         ];
-        $this->notAdmintransaction($debit, 'Payout Commission', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->notAdmintransaction($debit, "Payout Commission for $account_number", 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -519,13 +519,13 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->payoutParentCommission($parent_id, $amount, $transaction_id);
+            $this->payoutParentCommission($parent_id, $amount, $transaction_id, $account_number);
         }
 
         return $table;
     }
 
-    public function payoutParentCommission($user_id, $amount, $transaction_id)
+    public function payoutParentCommission($user_id, $amount, $transaction_id, $account_number)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -579,7 +579,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->payotCommission($parent_id, $amount);
+            $this->payoutParentCommission($parent_id, $amount, $transaction_id, $account_number);
         }
 
         return $table;
