@@ -23,7 +23,7 @@ Route::post('admin/login', [AuthenticatedSessionController::class, 'store'])
 Route::post('/send-otp', [AuthenticatedSessionController::class, 'sendOtp'])
     ->middleware('guest');
 
-Route::post('password/send-otp', [AuthenticatedSessionController::class, 'sendOtp'])
+Route::post('password/send-otp', [AuthenticatedSessionController::class, 'passOtp'])
     ->middleware('auth:api');
 
 Route::post('admin-register', [RegisteredUserController::class, 'registerAdmin'])->middleware('permission:user-create');
