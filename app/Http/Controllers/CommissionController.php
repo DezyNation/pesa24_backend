@@ -1523,11 +1523,11 @@ class CommissionController extends Controller
         return $table;
     }
 
-    public function cmsCommission($user_id, $amount, $provider, $biller_id)
+    public function cmsCommission($user_id, $amount, $biller_id)
     {
         $table = DB::table('cms_commissions')
             ->join('package_user', 'package_user.package_id', '=', 'cms_commissions.package_id')
-            ->where(['package_user.user_id' => $user_id, 'cms_commissions.provider' => $provider, 'cms_biller_id' => $biller_id])->where('cms_commissions.from', '<', $amount)
+            ->where(['package_user.user_id' => $user_id, 'cms_biller_id' => $biller_id])->where('cms_commissions.from', '<', $amount)
             ->where('cms_commissions.to', '>=', $amount)
             ->get();
 
@@ -1550,7 +1550,7 @@ class CommissionController extends Controller
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance + $credit - $debit;
-        } elseif (!$is_flat) {
+        } else {
             $debit = $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance + $credit - $debit;
@@ -1574,15 +1574,15 @@ class CommissionController extends Controller
             return response("No commissions to parent users.");
         }
         $parent_id = $parent->pluck('parent_id');
-        $this->cmsParentCommission($parent_id, $amount, $provider);
+        $this->cmsParentCommission($parent_id, $amount, $biller_id);
         return $table;
     }
 
-    public function cmsParentCommission($user_id, $amount, $provider)
+    public function cmsParentCommission($user_id, $amount, $biller_id)
     {
         $table = DB::table('cms_commissions')
             ->join('package_user', 'package_user.package_id', '=', 'cms_commissions.package_id')
-            ->where(['package_user.user_id' => $user_id, 'cms_commissions.provider' => $provider])->where('cms_commissions.from', '<', $amount)
+            ->where(['package_user.user_id' => $user_id, 'cms_biller_id' => $biller_id])->where('cms_commissions.from', '<', $amount)
             ->where('cms_commissions.to', '>=', $amount)
             ->get();
 
@@ -1605,7 +1605,7 @@ class CommissionController extends Controller
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance + $credit - $debit;
-        } elseif (!$is_flat) {
+        } else {
             $debit = $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance + $credit - $debit;
@@ -1630,7 +1630,7 @@ class CommissionController extends Controller
             return response("No commissions to parent users.");
         }
         $parent_id = $parent->pluck('parent_id');
-        $this->cmsParentCommission($parent_id, $amount, $provider);
+        $this->cmsParentCommission($parent_id, $amount, $biller_id);
         return $table;
     }
 

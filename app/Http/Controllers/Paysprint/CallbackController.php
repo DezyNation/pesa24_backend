@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Log;
 
 class CallbackController extends CommissionController
@@ -15,6 +16,41 @@ class CallbackController extends CommissionController
     public function onboardCallback(Request $request)
     {
         Log::info('request', $request->all());
+
+        $case = $request['event'];
+        switch ($case) {
+            case 'CMS_BALANCE_DEBIT':
+                $transaction = DB::table('cms_records')->where('reference_id', $request['param']['ref_id'])->get();
+                $user = User::find($transaction[0]->user_id);
+                $opening_balance = $user->wallet;
+                $amount = $request['param']['amount'];
+                $closing_balance = $opening_balance - $amount;
+                $metadata = [
+                    'status' => true,
+                    'amount' => $amount,
+                    'user' => $user->name,
+                    'user_id' => $user->id,
+                    'user_phone' => $user->phone_number,
+                    'transaction_id' => $request['param']['ref_id']
+                ];
+                $this->transaction($amount, "Airtel CMS for {$request['param']['biller_name']}, {$request['param']['mobile_number']}", 'airtel-cms', $transaction[0]->user_id, $opening_balance, $request['param']['ref_id'], $closing_balance, json_encode($metadata));
+                $this->cmsCommission($user->id, $amount, $request['param']['biller_id']);
+                $metadata = [
+                    'status' => 200,
+                    'message' => "Transaction Completed successfully"
+                ];
+                echo json_encode($metadata);
+                break;
+
+            default:
+                $metadata = [
+                    'status' => 200,
+                    'message' => "Transaction Completed successfully"
+                ];
+                echo json_encode($metadata);
+                break;
+        }
+
         $metadata = [
             'status' => 200,
             'message' => "Transaction Completed successfully"

@@ -28,7 +28,7 @@ class AirtelCMSController extends Controller
     {
         $data = [
             'transaction_id' => $request['transactionId'],
-            'refid' => uniqid(),
+            'refid' => "PESA24".uniqid(),
             'latitude' => $request['latitude'],
             'longitude' => $request['longitude'],
         ];
