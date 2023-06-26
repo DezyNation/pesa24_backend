@@ -34,7 +34,7 @@ class AirtelCMSController extends Controller
         ];
 
         $token = $this->token();
-        Log::channel('response')->info('request', $request->all());
+        Log::channel('response')->info('request', $data);
         $response = Http::acceptJson()->withHeaders([
             'Token' => $token,
             'content-type' => 'application/json',
