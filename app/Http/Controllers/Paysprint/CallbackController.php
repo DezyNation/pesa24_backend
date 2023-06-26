@@ -17,12 +17,12 @@ class CallbackController extends CommissionController
         Log::info('request', $request->all());
         $metadata = [
             'status' => 200,
-            'message' => "Transaction Done"
+            'message' => "Transaction Completed successfully"
         ];
 
         echo json_encode($metadata);
 
-        return redirect('dashboard.pesa24.in');
+        // return redirect('dashboard.pesa24.in');
     }
 
     public function dmtCallback(Request $request)
