@@ -19,7 +19,7 @@ class CallbackController extends CommissionController
 
         $case = $request['event'];
         if ($case == 'CMS_BALANCE_DEBIT') {
-            $transaction = DB::table('cms_records')->where('reference_id', $request['param']['ref_id'])->get();
+            $transaction = DB::table('cms_records')->where('reference_id', $request['param']['refid'])->get();
             $user = User::find($transaction[0]->user_id);
             $opening_balance = $user->wallet;
             $amount = $request['param']['amount'];
@@ -30,9 +30,9 @@ class CallbackController extends CommissionController
                 'user' => $user->name,
                 'user_id' => $user->id,
                 'user_phone' => $user->phone_number,
-                'transaction_id' => $request['param']['ref_id']
+                'transaction_id' => $request['param']['refid']
             ];
-            $this->transaction($amount, "Airtel CMS for {$request['param']['biller_name']}, {$request['param']['mobile_number']}", 'airtel-cms', $transaction[0]->user_id, $opening_balance, $request['param']['ref_id'], $closing_balance, json_encode($metadata));
+            $this->transaction($amount, "Airtel CMS for {$request['param']['biller_name']}, {$request['param']['mobile_number']}", 'airtel-cms', $transaction[0]->user_id, $opening_balance, $request['param']['refid'], $closing_balance, json_encode($metadata));
             $this->cmsCommission($user->id, $amount, $request['param']['biller_id']);
             $metadata = [
                 'status' => 200,
