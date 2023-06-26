@@ -15,6 +15,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         '/api*',
+        'password/send-otp',
         'register',
         'login',
         'send-otp',
