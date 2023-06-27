@@ -179,7 +179,7 @@ class PayoutController extends CommissionController
                 ->where([
                     'users.organization_id' => auth()->user()->organization_id
                 ])
-                ->where('payouts.status', 'processing')
+                ->where('payouts.status', 'processing')->orWhere('payouts.status', 'pending')->orWhere('payouts.status', 'queued')
                 ->select('payouts.*', 'users.name')->latest()->get();
 
             return $payout;
