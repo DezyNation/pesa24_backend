@@ -122,7 +122,7 @@ class PayoutController extends CommissionController
                 'r_status' => $transfer->status(),
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->transaction(0, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction($data['amount'] / 100, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         }
     }
