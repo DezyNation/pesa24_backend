@@ -227,7 +227,7 @@ class PayoutController extends CommissionController
         DB::table('transactions')->where('transaction_id', $reference_id)->update(['metadata->utr' => $transfer['utr']]);
 
         if ($transfer['status'] == 'processed') {
-            $this->payoutCommission($payout->user_id, $payout->amount, $reference_id);
+            $this->payoutCommission($payout->user_id, $payout->amount, $reference_id, $payout->account_number);
         } elseif ($transfer['status'] == 'rejected' || $transfer['status'] == 'reversed' || $transfer['status'] == 'cancelled') {
             $user = User::find($payout->user_id);
             $closing_balance = $user->wallet + $payout->amount;
