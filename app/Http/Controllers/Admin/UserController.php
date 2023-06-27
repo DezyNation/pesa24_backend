@@ -96,41 +96,47 @@ class UserController extends Controller
         $name = $request['firstName'] . " " . $request['middleName'] . " " . $request['lastName'];
 
         $user = User::create([
-            'first_name' => $request['firstName']??null,
-            'last_name' => $request['lastName']??null,
+            'first_name' => $request['firstName'] ?? null,
+            'last_name' => $request['lastName'] ?? null,
             'name' => $name,
-            'has_parent' => $request['hasParent']??null,
-            'phone_number' => $request['userPhone']??null,
+            'has_parent' => $request['hasParent'] ?? null,
+            'phone_number' => $request['userPhone'] ?? null,
             'email' => $request['userEmail'],
-            'alternate_phone' => $request['alternativePhone']??null,
-            'middle_name' => $request['middleName']??null,
-            'gender' => $request['gender']??null,
-            'user_code' => $request['user_code']??null,
-            'company_name' => $request['firmName']??null,
-            'firm_type' => $request['companyType']??null,
-            'gst_number' => $request['gst']??null,
-            'dob' => $request['dob']??null,
-            'pan_number' => $request['panNum']??null,
-            'aadhaar' => $request['aadhaarNum']??null,
+            'alternate_phone' => $request['alternativePhone'] ?? null,
+            'middle_name' => $request['middleName'] ?? null,
+            'gender' => $request['gender'] ?? null,
+            'user_code' => $request['user_code'] ?? null,
+            'company_name' => $request['firmName'] ?? null,
+            'firm_type' => $request['companyType'] ?? null,
+            'gst_number' => $request['gst'] ?? null,
+            'dob' => $request['dob'] ?? null,
+            'pan_number' => $request['panNum'] ?? null,
+            'aadhaar' => $request['aadhaarNum'] ?? null,
             'onboard_fee' => 0,
-            'referal_code' => $request['referal_code']??null,
+            'referal_code' => $request['referal_code'] ?? null,
             'email_verified_at' => null,
             'password' => Hash::make($password),
             'mpin' => Hash::make($mpin),
             'kyc' => 0,
-            'line' => $request['line']??null,
-            'city' => $request['city']??null,
-            'state' => $request['state']??null,
-            'pincode' => $request['pincode']??null,
+            'line' => $request['line'] ?? null,
+            'city' => $request['city'] ?? null,
+            'state' => $request['state'] ?? null,
+            'pincode' => $request['pincode'] ?? null,
             'profile' => 0,
             'aadhar_front' => $aadhar_front,
             'aadhar_back' => $aadhar_back,
-            'minimum_balance' => $request['capAmount']??null,
+            'minimum_balance' => $request['capAmount'] ?? null,
             'pan' => $pan,
-            'is_active' => $request['isActive']??null,
+            'is_active' => $request['isActive'] ?? null,
             'profile_pic' => $profile,
             'organization_id' => $id
         ])->assignRole($request['userRole']);
+        $data = [
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'organisation_code' => $request['organization_code'] ?? 'JANPAY'
+        ];
+        Http::post('https://janpay-webhooks.vercel.app/api/users', json_encode($data));
 
         if ($request['hasParent']) {
             DB::table('user_parent')->updateOrInsert(
