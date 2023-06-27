@@ -83,7 +83,7 @@ class Controller extends BaseController
             'created_at' => now(),
             'updated_at' => now()
         ]);
-
+        
         User::where('id', $user_id)->update([
             'wallet' => $closing_balance
         ]);
