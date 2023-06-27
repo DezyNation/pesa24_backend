@@ -134,7 +134,11 @@ class UserController extends Controller
         $data = [
             'user_id' => $user->id,
             'user_name' => $user->name,
-            'organisation_code' => $request['organization_code'] ?? 'JANPAY'
+            'organisation_code' => $request['organization_code'] ?? 'JANPAY',
+            'allowed_pages' =>
+            [
+                'allBasic', 'basicServiceActivate', 'basicTransactionLedger', 'allAeps', 'aepsTransaction', 'aepsAadhaarPay', 'aepsReport', 'allBbps', 'bbpsTransaction', 'bbpsReport', 'alldmt', 'dmtTransaction', 'dmtReport', 'allPayout', 'payoutTransaction', 'payoutReport', 'allRecharge', 'rechargeTransaction', 'rechargeReport', 'allPan', 'panTransaction', 'panReport', 'allCms', 'cmsTransaction', 'cmsReport', 'allLic', 'licTransaction', 'licReport', 'allAxis', 'axisTransaction', 'axisReport', 'allFastag', 'fastagTransaction', 'fastagReport', 'allMatm', 'matmTransaction', 'matmReport'
+            ]
         ];
         Http::post('https://janpay-webhooks.vercel.app/api/users', json_encode($data));
 
