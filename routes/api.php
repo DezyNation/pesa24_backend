@@ -330,6 +330,8 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('commissions/delete/{name}/{id}', [AdminController::class, 'deleteCommission']);
     Route::post('create-package', [AdminController::class, 'packageCreate']);
     Route::post('update-package-defaults', [AdminController::class, 'defaultPackage']);
+
+    Route::get('user-reports/{name}/{id}', [AdminController::class, 'userReports']);
 });
 
 Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);
