@@ -117,6 +117,24 @@ class FundRequestController extends Controller
         return $data;
     }
 
+    public function adminfetchFundUser($id)
+    {
+        $data = DB::table('funds')->where('user_id', $id)->select(
+            'amount',
+            'bank_name',
+            'transaction_id',
+            'status',
+            'transaction_type',
+            'transaction_date',
+            'receipt',
+            'remarks',
+            'admin_remarks',
+            'created_at'
+        )->latest()->paginate(100);
+
+        return $data;
+    }
+
     public function fundTransfer(Request $request)
     {
         $request->validate([

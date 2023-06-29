@@ -255,6 +255,7 @@ Route::get('parent/users-transactions/{id?}', [UserController::class, 'userRepor
 Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
     Route::get('users', [UserController::class, 'index']);
+    Route::get('fund/fetch-fund/{id}', [FundRequestController::class, 'adminfetchFundUser']);
     Route::get('role-count/{role}', [AdminController::class, 'roleCount']);
     Route::get('sum-amounts', [AdminController::class, 'sumAmounts']);
     Route::get('overview', [AdminController::class, 'sumCategory']);
