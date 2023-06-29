@@ -274,12 +274,12 @@ class UserController extends Controller
 
     public function userInfo(Request $request, string $role, $id = null)
     {
-        Log::info("269");
+
         $search = $request['search'];
         $org_id = auth()->user()->organization_id;
 
         if (!empty($search) || !is_null($search)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->get();
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->paginate(100);
             return $user;
         }
         if (is_null($id)) {
