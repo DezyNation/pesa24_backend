@@ -21,16 +21,22 @@ class FundController extends Controller
     public function fetchFund()
     {
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
-        ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
-        ->where(['users.organization_id' => auth()->user()->organization_id])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(100);
+            ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+            ->where(['users.organization_id' => auth()->user()->organization_id])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(100);
         return $data;
     }
 
     public function pendingfetchFund($type)
     {
+        if ($type == 'pending') {
+            $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                ->where(['users.organization_id' => auth()->user()->organization_id, 'funds.status' => 'pending'])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(100);
+            return $data;
+        }
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
-        ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
-        ->where(['users.organization_id' => auth()->user()->organization_id, 'funds.status' => $type])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(100);
+            ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+            ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!==', 'pending')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(100);
         return $data;
     }
 
@@ -43,8 +49,8 @@ class FundController extends Controller
     public function reversalAndTransferFunds()
     {
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
-        ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
-        ->where('transaction_type', 'transfer')->orWhere('transaction_type', 'reversal')
+            ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+            ->where('transaction_type', 'transfer')->orWhere('transaction_type', 'reversal')
             ->select('users.name', 'users.phone_number', 'funds.transaction_id', 'funds.user_id', 'funds.amount', 'funds.remarks', 'funds.transaction_type', 'funds.created_at', 'admin.name as admin_name', 'admin.id as admin_id', 'funds.id')
             ->paginate(100);
         return $data;
