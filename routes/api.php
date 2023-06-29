@@ -276,7 +276,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('razorpay/fetch-payout/{processing?}', [PayoutController::class, 'fetchPayoutAdmin']);
     Route::post('user/info/{id}', [ProfileController::class, 'adminUser']);
     Route::get('fetch-fund-requests', [FundController::class, 'fetchFund']);
-    Route::get('fetch-fund-pending', [FundController::class, 'pendingfetchFund']);
+    Route::get('fetch-fund/{type}', [FundController::class, 'pendingfetchFund']);
     Route::get('users-list/{role}', [AdminController::class, 'roleUser']);
     Route::get('logins/{count?}', [AdminController::class, 'logins']);
 
