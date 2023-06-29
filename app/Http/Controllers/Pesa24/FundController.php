@@ -26,6 +26,14 @@ class FundController extends Controller
         return $data;
     }
 
+    public function pendingfetchFund()
+    {
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+        ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+        ->where(['users.organization_id' => auth()->user()->organization_id, 'funds.status' => 'pending'])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(100);
+        return $data;
+    }
+
     public function fetchFundId($id)
     {
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $id, 'users.organization_id' => auth()->user()->organization_id])->paginate(100);
