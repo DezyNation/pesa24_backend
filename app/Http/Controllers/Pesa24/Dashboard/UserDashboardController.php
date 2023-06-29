@@ -255,6 +255,12 @@ class UserDashboardController extends Controller
         return $data;
     }
 
+    public function adminDailySales(Request $request, $id)
+    {
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => $id])->whereJsonContains('metadata->status', true)->paginate(100);
+        return $data;
+    }
+
     public function claim(Request $request): int
     {
         $request->validate([
