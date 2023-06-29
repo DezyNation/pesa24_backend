@@ -109,6 +109,41 @@ class UserDashboardController extends Controller
         ];
     }
 
+    public function adminUserTable($tenure, $category, $request, $user_id)
+    {
+        $tenure;
+        switch ($tenure) {
+            case 'week':
+                $start = Carbon::now()->startOfWeek();
+                $end = Carbon::now()->endOfWeek();
+                break;
+
+            case 'month':
+                $start = Carbon::now()->startOfMonth();
+                $end = Carbon::now()->endOfMonth();
+                break;
+
+            case 'year':
+                $start = Carbon::now()->startOfYear();
+                $end = Carbon::now()->endOfYear();
+                break;
+            default:
+                $start = $request['from'] ?? Carbon::today();
+                $end = $request['to'] ?? Carbon::tomorrow();
+                break;
+        }
+        $table = DB::table('transactions')
+            ->whereBetween('transactions.created_at', [$start, $end])
+            ->where(['transactions.trigered_by' => $user_id, 'service_type' => $category]);
+        return [
+            $category => [
+                'credit' => $table->sum('credit_amount'),
+                'debit' => $table->sum('debit_amount'),
+                'count' => $table->count()
+            ]
+        ];
+    }
+
     public function fundRequests($tenure)
     {
         switch ($tenure) {
@@ -139,6 +174,47 @@ class UserDashboardController extends Controller
         $all = DB::table('funds')
             ->whereBetween('created_at', [$start, $end])
             ->where('funds.user_id', auth()->user()->id)
+            ->count();
+
+        return [
+            'funds' => [
+                'approved' => $all - $not_approved,
+                'not_approved' => $not_approved,
+                'all' => $all
+            ]
+        ];
+    }
+
+    public function adminFundRequests($tenure, $user_id)
+    {
+        switch ($tenure) {
+            case 'week':
+                $start = Carbon::now()->startOfWeek();
+                $end = Carbon::now()->endOfWeek();
+                break;
+
+            case 'month':
+                $start = Carbon::now()->startOfMonth();
+                $end = Carbon::now()->endOfMonth();
+                break;
+
+            case 'year':
+                $start = Carbon::now()->startOfYear();
+                $end = Carbon::now()->endOfYear();
+                break;
+            default:
+                $start = Carbon::today();
+                $end = Carbon::tomorrow();
+                break;
+        }
+
+        $not_approved = DB::table('funds')
+            ->whereBetween('created_at', [$start, $end])
+            ->where(['funds.approved' => 0, 'funds.user_id' => $user_id])->count();
+
+        $all = DB::table('funds')
+            ->whereBetween('created_at', [$start, $end])
+            ->where('funds.user_id', $user_id)
             ->count();
 
         return [
@@ -195,5 +271,47 @@ class UserDashboardController extends Controller
             );
 
         return $data;
+    }
+
+    public function adminOverview(Request $request, $user_id)
+    {
+        $tenure = $request['tenure'];
+
+        $aeps = $this->adminUserTable($tenure, 'aeps', $request, $user_id);
+
+        $bbps = $this->adminUserTable($tenure, 'bbps', $request, $user_id);
+
+        $dmt = $this->adminUserTable($tenure, 'dmt', $request, $user_id);
+
+        $pan = $this->adminUserTable($tenure, 'pan', $request, $user_id);
+
+        $payout = $this->adminUserTable($tenure, 'payout', $request, $user_id);
+
+        $lic = $this->adminUserTable($tenure, 'lic', $request, $user_id);
+
+        $fastag = $this->adminUserTable($tenure, 'fastag', $request, $user_id);
+
+        $cms = $this->adminUserTable($tenure, 'cms', $request, $user_id);
+
+        $cms = $this->adminUserTable($tenure, 'payout-commission', $request, $user_id);
+
+        $recharge = $this->adminUserTable($tenure, 'recharge', $request, $user_id);
+
+        $funds = $this->adminFundRequests($tenure, $user_id);
+
+        $array = [
+            $aeps,
+            $bbps,
+            $dmt,
+            $pan,
+            $payout,
+            $lic,
+            $fastag,
+            $cms,
+            $recharge,
+            $funds,
+        ];
+
+        return response($array);
     }
 }

@@ -332,6 +332,8 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('update-package-defaults', [AdminController::class, 'defaultPackage']);
 
     Route::get('user-reports/{name}/{id}', [AdminController::class, 'userReports']);
+
+    Route::get('user/overview/{user_id}', [UserDashboardController::class, 'overView']);
 });
 
 Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);
