@@ -891,6 +891,11 @@ class AdminController extends Controller
             return $data;
         }
 
+        if ($name == 'all') {
+            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => $id])->latest()->paginate(100);
+            return $data;            
+        }
+
         $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => $id])->latest()->paginate(100);
         return $data;
     }
