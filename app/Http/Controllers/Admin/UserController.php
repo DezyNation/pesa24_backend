@@ -283,9 +283,14 @@ class UserController extends Controller
         return $user;
     }
 
-    public function userInfoPackage(string $role, $id = null)
+    public function userInfoPackage(Request $request, string $role, $id = null)
     {
+        $search = $request['search'];
         $org_id = auth()->user()->organization_id;
+        if (!empty($search)||!is_null($search)) {
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('id', 'like', '%'.$search.'%')->orWhere('phone_number', 'like', '%'.$search.'%')->get();
+            return $user;
+        }
         if (is_null($id)) {
             $user = User::role($role)->where(['organization_id' => $org_id])->get(['users.id', 'users.name', 'users.profile_pic']);
             return $user;
