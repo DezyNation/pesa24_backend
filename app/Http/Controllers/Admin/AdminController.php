@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Permission;
 
 class AdminController extends Controller
 {
     public function roleUser(Request $request, $role)
     {
+        Log::info("279");
         $search = $request['search'];
         $org_id = auth()->user()->organization_id;
         if (!empty($search) || !is_null($search)) {
