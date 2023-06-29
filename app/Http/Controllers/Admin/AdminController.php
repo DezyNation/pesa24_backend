@@ -14,8 +14,14 @@ use Spatie\Permission\Models\Permission;
 
 class AdminController extends Controller
 {
-    public function roleUser($role)
+    public function roleUser(Request $request, $role)
     {
+        $search = $request['search'];
+        $org_id = auth()->user()->organization_id;
+        if (!empty($search)||!is_null($search)) {
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('id', 'like', '%'.$search.'%')->orWhere('phone_number', 'like', '%'.$search.'%')->get();
+            return $user;
+        }
         $role = User::role($role)->paginate(100);
 
         return $role;
@@ -893,7 +899,7 @@ class AdminController extends Controller
 
         if ($name == 'all') {
             $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => $id])->latest()->paginate(100);
-            return $data;            
+            return $data;
         }
 
         $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => $id])->latest()->paginate(100);
