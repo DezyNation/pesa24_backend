@@ -18,8 +18,8 @@ class AdminController extends Controller
     {
         $search = $request['search'];
         $org_id = auth()->user()->organization_id;
-        if (!empty($search)||!is_null($search)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('id', 'like', '%'.$search.'%')->orWhere('phone_number', 'like', '%'.$search.'%')->get();
+        if (!empty($search) || !is_null($search)) {
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.id', 'like', '%' . $search . '%')->orWhere('users.phone_number', 'like', '%' . $search . '%')->get();
             return $user;
         }
         $role = User::role($role)->paginate(100);
