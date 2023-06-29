@@ -275,14 +275,14 @@ class UserController extends Controller
     {
         $search = $request['search'];
         $org_id = auth()->user()->organization_id;
-        
+
         if (is_null($id)) {
             $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->paginate(100);
             return $user;
         }
 
         if (!empty($search) || !is_null($search)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('id', 'like', '%' . $search . '%')->orWhere('phone_number', 'like', '%' . $search . '%')->get();
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->get();
             return $user;
         }
 
@@ -295,7 +295,7 @@ class UserController extends Controller
         $search = $request['search'];
         $org_id = auth()->user()->organization_id;
         if (!empty($search) || !is_null($search)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('id', 'like', '%' . $search . '%')->orWhere('phone_number', 'like', '%' . $search . '%')->get();
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->get();
             return $user;
         }
         if (is_null($id)) {
