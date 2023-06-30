@@ -64,6 +64,18 @@ class AuthenticatedSessionController extends Controller
         }
     }
 
+    public function passOtp()
+    {
+        $phone = auth()->user()->phone_number;
+        $user = User::where('phone_number', $phone)->first();
+        $otp = rand(1000, 9999);
+        $user->update(['otp' => Hash::make($otp)]);
+        $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
+        $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
+        // return response("OTP sent on your phone", 200);
+        return 'OTP was sent.';
+    }
+
     public function adminSendOtp(LoginRequest $request)
     {
         if ($request['authMethod'] == 'email') {

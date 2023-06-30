@@ -231,7 +231,7 @@ class PayoutController extends CommissionController
             ->where('money_transfers.sender_id', auth()->user()->id)
             ->select('recievers.name', 'recievers.phone_number', 'recievers.id as reciever_id', 'money_transfers.*')
             ->latest()
-            ->paginate(20);
+            ->paginate(100);
 
         return $data;
     }
@@ -270,7 +270,7 @@ class PayoutController extends CommissionController
         ]);
 
         $final_amount = $user->wallet + $request['amount'];
-        $this->transaction(0, 'Money Transfer to your account', 'payout', $request['beneficiaryId'], $user->wallet, $transaction_id, $final_amount, json_encode($metadata), $request['amount']);
+        $this->transaction(0, 'Money Transfer to your account', 'fund-transfer', $request['beneficiaryId'], $user->wallet, $transaction_id, $final_amount, json_encode($metadata), $request['amount']);
         $user->update(['wallet' => $final_amount]);
 
         $metadata = [
@@ -285,8 +285,7 @@ class PayoutController extends CommissionController
         ];
         $user = User::findOrFail(auth()->user()->id);
         $final_amount = $user->wallet - $request['amount'];
-        $transaction_id = strtoupper(uniqid() . Str::random(8));
-        $this->transaction($request['amount'], 'Money Transfer to User account', 'payout', auth()->user()->id, $user->wallet, $transaction_id, $final_amount, json_encode($metadata));
+        $this->transaction($request['amount'], 'Money Transfer to User account', 'fund-transfer', auth()->user()->id, $user->wallet, $transaction_id, $final_amount, json_encode($metadata));
         $user->update(['wallet' => $final_amount]);
         return response()->json(['message' => "Successfull", 'metadata' => $metadata]);
     }

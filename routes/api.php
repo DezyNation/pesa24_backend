@@ -72,6 +72,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('money-transfer', [PaysprintPayout::class, 'moneyTransfer'])->middleware(['mpin', 'minimum_balance']);
     Route::get('money-transfer', [PaysprintPayout::class, 'fetchMoneyTransfer']);
     Route::post('transaction/claim', [UserDashboardController::class, 'claim']);
+    Route::post('transaction/claim', [UserDashboardController::class, 'claim']);
     Route::get('user/bank', [ProfileController::class, 'bank']);
     Route::get('user/daily-sales', [UserDashboardController::class, 'dailySales']);
     Route::get('user/services', [ProfileController::class, 'userServices']);
@@ -105,8 +106,8 @@ Route::middleware(['auth:api'])->group(function () {
     /*-----------------------Tickets-----------------------*/
 
     /*-----------------------Password and MPIN-----------------------*/
-    Route::post('user/new-mpin', [ProfileController::class, 'newMpin']);
-    Route::post('user/new-password', [ProfileController::class, 'newPass']);
+    Route::post('user/new-mpin', [ProfileController::class, 'newMpin'])->middleware('otp');
+    Route::post('user/new-password', [ProfileController::class, 'newPass'])->middleware('otp');
     /*-----------------------Fund Requests-----------------------*/
 
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
@@ -124,7 +125,7 @@ Route::middleware(['auth:api'])->group(function () {
 });
 
 Route::post('eko/aeps/money-transfer/{service_id}', [EkoAepsApiController::class, 'moneyTransfer'])->middleware(['auth:api', 'profile', 'kyc']);
-Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(function () {
+Route::middleware(['auth:api', 'minimum_balance'])->group(function () {
     /*-------------------------EKO ONBOARD-------------------------*/
     Route::get('eko/send-otp', [KycVerificationController::class, 'sendEkoOtp']);
     Route::get('eko-status', function () {
@@ -183,7 +184,9 @@ Route::middleware(['auth:api', 'profile', 'minimum_balance', 'kyc'])->group(func
     Route::post('paysprint/bank/bank-verify', [DMTController::class, 'penneyDrop']);
     /*-----------------------Razorpay Payout-----------------------*/
     Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact']);
+    Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact']);
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser']);
+    Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall']);
     Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall']);
     /*-----------------------Razorpay Payout-----------------------*/
 
@@ -255,7 +258,9 @@ Route::get('parent/users-transactions/{id?}', [UserController::class, 'userRepor
 Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
     Route::get('users', [UserController::class, 'index']);
+    Route::get('fund/fetch-fund/{id}', [FundRequestController::class, 'adminfetchFundUser']);
     Route::get('role-count/{role}', [AdminController::class, 'roleCount']);
+    Route::get('user/daily-sales/{id}', [UserDashboardController::class, 'adminDailySales']);
     Route::get('sum-amounts', [AdminController::class, 'sumAmounts']);
     Route::get('overview', [AdminController::class, 'sumCategory']);
     Route::get('pending-requests', [AdminController::class, 'pendingRequest']);
@@ -265,15 +270,15 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('packages/{id}', [PackageController::class, 'parentPackage']);
     Route::get('get-users/{role_id}/{parent?}', [UserController::class, 'getUsers']);
     Route::get('users-list/{role}/{id?}', [UserController::class, 'userInfo']);
-    // Route::get('all-users-list/{role}/{id?}', [UserController::class, 'userInfoPackage']);
     Route::post('link-package', [AdminDashboardcontroller::class, 'packageService']);
 
-    Route::get('payouts', [PayoutController::class, 'fetchPayoutAdmin']);
+    Route::get('payouts/{processing?}', [PayoutController::class, 'fetchPayoutAdmin']);
     Route::get('fetch-fund-requests/{id}', [FundRequestController::class, 'fetchFundId']);
 
-    Route::post('razorpay/fetch-payout', [PayoutController::class, 'fetchPayoutAdmin']);
+    Route::post('razorpay/fetch-payout/{processing?}', [PayoutController::class, 'fetchPayoutAdmin']);
     Route::post('user/info/{id}', [ProfileController::class, 'adminUser']);
     Route::get('fetch-fund-requests', [FundController::class, 'fetchFund']);
+    Route::get('fetch-fund/{type}', [FundController::class, 'pendingfetchFund']);
     Route::get('users-list/{role}', [AdminController::class, 'roleUser']);
     Route::get('logins/{count?}', [AdminController::class, 'logins']);
 
@@ -330,6 +335,10 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('commissions/delete/{name}/{id}', [AdminController::class, 'deleteCommission']);
     Route::post('create-package', [AdminController::class, 'packageCreate']);
     Route::post('update-package-defaults', [AdminController::class, 'defaultPackage']);
+
+    Route::get('user-reports/{name}/{id}', [AdminController::class, 'userReports']);
+
+    Route::get('user/overview/{user_id}', [UserDashboardController::class, 'overView']);
 });
 
 Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);

@@ -18,12 +18,17 @@ class UserDashboardController extends Controller
 
     public function transactionLedger(Request $request, $name = null)
     {
+        $search = $request['search'];
+        if (!empty($search) || !is_null($search)) {
+            $data = DB::table('transactions')->where('trigered_by', auth()->user()->id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->latest()->paginate(100);
+            return $data;
+        }
         if (is_null($name)) {
-            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->latest()->paginate(20);
+            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->latest()->paginate(100);
             return $data;
         }
 
-        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->paginate(20);
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->paginate(100);
         return $data;
     }
 
@@ -31,23 +36,25 @@ class UserDashboardController extends Controller
     {
         $tenure = $request['tenure'];
 
-        $aeps = $this->userTable($tenure, 'aeps');
+        $aeps = $this->userTable($tenure, 'aeps', $request);
 
-        $bbps = $this->userTable($tenure, 'bbps');;
+        $bbps = $this->userTable($tenure, 'bbps', $request);
 
-        $dmt = $this->userTable($tenure, 'dmt');;
+        $dmt = $this->userTable($tenure, 'dmt', $request);
 
-        $pan = $this->userTable($tenure, 'pan');;
+        $pan = $this->userTable($tenure, 'pan', $request);
 
-        $payout = $this->userTable($tenure, 'payout');;
+        $payout = $this->userTable($tenure, 'payout', $request);
 
-        $lic = $this->userTable($tenure, 'lic');;
+        $lic = $this->userTable($tenure, 'lic', $request);
 
-        $fastag = $this->userTable($tenure, 'fastag');
+        $fastag = $this->userTable($tenure, 'fastag', $request);
 
-        $cms = $this->userTable($tenure, 'cms');
+        $cms = $this->userTable($tenure, 'cms', $request);
 
-        $recharge = $this->userTable($tenure, 'recharge');
+        $cms = $this->userTable($tenure, 'payout-commission', $request);
+
+        $recharge = $this->userTable($tenure, 'recharge', $request);
 
         $funds = $this->fundRequests($tenure);
 
@@ -67,7 +74,7 @@ class UserDashboardController extends Controller
         return response($array);
     }
 
-    public function userTable($tenure, $category)
+    public function userTable($tenure, $category, $request)
     {
         $tenure;
         switch ($tenure) {
@@ -86,13 +93,48 @@ class UserDashboardController extends Controller
                 $end = Carbon::now()->endOfYear();
                 break;
             default:
-                $start = Carbon::today();
-                $end = Carbon::tomorrow();
+                $start = $request['from'] ?? Carbon::today();
+                $end = $request['to'] ?? Carbon::tomorrow();
                 break;
         }
         $table = DB::table('transactions')
             ->whereBetween('transactions.created_at', [$start, $end])
             ->where(['transactions.trigered_by' => auth()->user()->id, 'service_type' => $category]);
+        return [
+            $category => [
+                'credit' => $table->sum('credit_amount'),
+                'debit' => $table->sum('debit_amount'),
+                'count' => $table->count()
+            ]
+        ];
+    }
+
+    public function adminUserTable($tenure, $category, $request, $user_id)
+    {
+        $tenure;
+        switch ($tenure) {
+            case 'week':
+                $start = Carbon::now()->startOfWeek();
+                $end = Carbon::now()->endOfWeek();
+                break;
+
+            case 'month':
+                $start = Carbon::now()->startOfMonth();
+                $end = Carbon::now()->endOfMonth();
+                break;
+
+            case 'year':
+                $start = Carbon::now()->startOfYear();
+                $end = Carbon::now()->endOfYear();
+                break;
+            default:
+                $start = $request['from'] ?? Carbon::today();
+                $end = $request['to'] ?? Carbon::tomorrow();
+                break;
+        }
+        $table = DB::table('transactions')
+            ->whereBetween('transactions.created_at', [$start, $end])
+            ->where(['transactions.trigered_by' => $user_id, 'service_type' => $category]);
         return [
             $category => [
                 'credit' => $table->sum('credit_amount'),
@@ -143,6 +185,47 @@ class UserDashboardController extends Controller
         ];
     }
 
+    public function adminFundRequests($tenure, $user_id)
+    {
+        switch ($tenure) {
+            case 'week':
+                $start = Carbon::now()->startOfWeek();
+                $end = Carbon::now()->endOfWeek();
+                break;
+
+            case 'month':
+                $start = Carbon::now()->startOfMonth();
+                $end = Carbon::now()->endOfMonth();
+                break;
+
+            case 'year':
+                $start = Carbon::now()->startOfYear();
+                $end = Carbon::now()->endOfYear();
+                break;
+            default:
+                $start = Carbon::today();
+                $end = Carbon::tomorrow();
+                break;
+        }
+
+        $not_approved = DB::table('funds')
+            ->whereBetween('created_at', [$start, $end])
+            ->where(['funds.approved' => 0, 'funds.user_id' => $user_id])->count();
+
+        $all = DB::table('funds')
+            ->whereBetween('created_at', [$start, $end])
+            ->where('funds.user_id', $user_id)
+            ->count();
+
+        return [
+            'funds' => [
+                'approved' => $all - $not_approved,
+                'not_approved' => $not_approved,
+                'all' => $all
+            ]
+        ];
+    }
+
     public function settlementRequest(Request $request)
     {
         $request->validate([
@@ -172,6 +255,12 @@ class UserDashboardController extends Controller
         return $data;
     }
 
+    public function adminDailySales(Request $request, $id)
+    {
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => $id])->whereJsonContains('metadata->status', true)->paginate(100);
+        return $data;
+    }
+
     public function claim(Request $request): int
     {
         $request->validate([
@@ -188,5 +277,47 @@ class UserDashboardController extends Controller
             );
 
         return $data;
+    }
+
+    public function adminOverview(Request $request, $user_id)
+    {
+        $tenure = $request['tenure'];
+
+        $aeps = $this->adminUserTable($tenure, 'aeps', $request, $user_id);
+
+        $bbps = $this->adminUserTable($tenure, 'bbps', $request, $user_id);
+
+        $dmt = $this->adminUserTable($tenure, 'dmt', $request, $user_id);
+
+        $pan = $this->adminUserTable($tenure, 'pan', $request, $user_id);
+
+        $payout = $this->adminUserTable($tenure, 'payout', $request, $user_id);
+
+        $lic = $this->adminUserTable($tenure, 'lic', $request, $user_id);
+
+        $fastag = $this->adminUserTable($tenure, 'fastag', $request, $user_id);
+
+        $cms = $this->adminUserTable($tenure, 'cms', $request, $user_id);
+
+        $cms = $this->adminUserTable($tenure, 'payout-commission', $request, $user_id);
+
+        $recharge = $this->adminUserTable($tenure, 'recharge', $request, $user_id);
+
+        $funds = $this->adminFundRequests($tenure, $user_id);
+
+        $array = [
+            $aeps,
+            $bbps,
+            $dmt,
+            $pan,
+            $payout,
+            $lic,
+            $fastag,
+            $cms,
+            $recharge,
+            $funds,
+        ];
+
+        return response($array);
     }
 }

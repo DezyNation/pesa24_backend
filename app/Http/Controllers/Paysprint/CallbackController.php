@@ -46,10 +46,20 @@ class CallbackController extends CommissionController
                 'message' => "Transaction Completed successfully"
             ];
 
-            echo json_encode($metadata);
+        if ($request['event'] == 'DMT') {
+            $transaction = DB::table('transactions')->where('transaction_id', $request['param']['refid'])->get();
+            DB::table('transactions')->where('transaction_id', $request['param']['refid'])
+                ->update(
+                    [
+                        'metadata->utrnumber' => $request['param']['utr'],
+                        'metadata->status' => $request['param']['status'],
+                        'updated_at' => now()
+                    ]
+                );
+            $this->dmtCommission($transaction->trigered_by, $transaction->debit_amount, $request['param']['refid']);
         }
 
-
+        echo json_encode($metadata);
 
         // return redirect('dashboard.pesa24.in');
     }

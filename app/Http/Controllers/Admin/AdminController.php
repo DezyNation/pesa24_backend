@@ -10,13 +10,20 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Permission;
 
 class AdminController extends Controller
 {
-    public function roleUser($role)
+    public function roleUser(Request $request, $role)
     {
-        $role = User::role($role)->paginate(20);
+        $search = $request['search'];
+        $org_id = auth()->user()->organization_id;
+        if (!empty($search) || !is_null($search)) {
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->paginate(100);
+            return $user;
+        }
+        $role = User::role($role)->paginate(100);
 
         return $role;
     }
@@ -27,7 +34,7 @@ class AdminController extends Controller
             $data = DB::table('logins')
                 ->join('users', 'users.id', '=', 'logins.user_id')
                 ->select('users.name', 'users.phone_number', 'logins.*')
-                ->paginate($count);
+                ->latest()->take($count)->get();
         } else {
             $data = DB::table('logins')
                 ->join('users', 'users.id', '=', 'logins.user_id')
@@ -170,7 +177,7 @@ class AdminController extends Controller
                 ->where('p.organization_id', auth()->user()->organization_id)
                 ->select('p.id', 'p.name', 'p.status', 'p.is_default', 'a.name AS user_name', DB::raw('COUNT(u.id) AS assigned_users_count'))
                 ->groupBy('p.id', 'p.name')
-                ->paginate(20);
+                ->paginate(100);
         }
         return $data;
     }
@@ -599,42 +606,51 @@ class AdminController extends Controller
     {
         $tennure = $request['tennure'];
 
-        $aeps = $this->table($tennure, 'aeps');
+        // $aeps = $this->table($tennure, 'aeps');
 
-        $bbps = $this->table($tennure, 'bbps');;
+        // $bbps = $this->table($tennure, 'bbps');;
 
-        $dmt = $this->table($tennure, 'dmt');;
+        // $dmt = $this->table($tennure, 'dmt');;
 
-        $pan = $this->table($tennure, 'pan');;
+        // $pan = $this->table($tennure, 'pan');;
 
-        $payout = $this->table($tennure, 'payout');;
+        $payout = $this->table($tennure, 'payout', $request);
 
-        $lic = $this->table($tennure, 'lic');;
+        $payout_commission = $this->table($tennure, 'payout-commission', $request);
 
-        $fastag = $this->table($tennure, 'fastag');
+        $wallet = $this->roleWalletSum();
 
-        $cms = $this->table($tennure, 'cms');
+        $payout_transaction = $this->payoutTransactions();
 
-        $recharge = $this->table($tennure, 'recharge');
+        // $lic = $this->table($tennure, 'lic');;
 
-        $funds = $this->fundRequestCount($tennure);
+        // $fastag = $this->table($tennure, 'fastag');
+
+        // $cms = $this->table($tennure, 'cms');
+
+        // $recharge = $this->table($tennure, 'recharge');
+
+        $funds = $this->fundRequestCount();
 
         $users = $this->countLogins($tennure);
 
 
 
         $array = [
-            $aeps,
-            $bbps,
-            $dmt,
-            $pan,
+            // $aeps,
+            // $bbps,
+            // $dmt,
+            // $pan,
             $payout,
-            $lic,
-            $fastag,
-            $cms,
-            $recharge,
+            // $lic,
+            // $fastag,
+            // $cms,
+            // $recharge,
+            $wallet,
             $funds,
-            $users
+            $users,
+            $payout_commission,
+            $payout_transaction
         ];
 
         return response($array);
@@ -662,7 +678,7 @@ class AdminController extends Controller
         return $data;
     }
 
-    public function table($tennure, $category)
+    public function table($tennure, $category, $request)
     {
         $tennure;
         switch ($tennure) {
@@ -681,8 +697,8 @@ class AdminController extends Controller
                 $end = Carbon::now()->endOfYear();
                 break;
             default:
-                $start = Carbon::today();
-                $end = Carbon::tomorrow();
+                $start = $request['from'] ?? Carbon::today();
+                $end = $request['to'] ?? Carbon::tomorrow();
                 break;
         }
         $table = DB::table('transactions')
@@ -698,37 +714,14 @@ class AdminController extends Controller
         ];
     }
 
-    public function fundRequestCount($tennure)
+    public function fundRequestCount()
     {
-        switch ($tennure) {
-            case 'week':
-                $start = Carbon::now()->startOfWeek();
-                $end = Carbon::now()->endOfWeek();
-                break;
-
-            case 'month':
-                $start = Carbon::now()->startOfMonth();
-                $end = Carbon::now()->endOfMonth();
-                break;
-
-            case 'year':
-                $start = Carbon::now()->startOfYear();
-                $end = Carbon::now()->endOfYear();
-                break;
-            default:
-                $start = Carbon::today();
-                $end = Carbon::tomorrow();
-                break;
-        }
-
         $not_approved = DB::table('funds')
             ->join('users', 'users.id', '=', 'funds.user_id')
-            ->whereBetween('funds.created_at', [$start, $end])
-            ->where(['funds.approved' => 0, 'users.organization_id' => auth()->user()->id])->count();
+            ->where(['users.organization_id' => auth()->user()->id])->where('funds.status', '!==', 'approved')->count();
 
         $all = DB::table('funds')
             ->join('users', 'users.id', '=', 'funds.user_id')
-            ->whereBetween('funds.created_at', [$start, $end])
             ->where('users.organization_id', auth()->user()->organization_id)
             ->count();
 
@@ -844,5 +837,73 @@ class AdminController extends Controller
             'rcharge' => $recharge,
             'funds' => $funds
         ];
+    }
+
+    public function roleWalletSum(): array
+    {
+        $retailer = User::role('retailer')->sum('wallet');
+        $distributor = User::role('distributor')->sum('wallet');
+        $super_distributor = User::role('super_distributor')->sum('wallet');
+
+        return [
+            'retailer' => $retailer,
+            'distributor' => $distributor,
+            'super_distributor' => $super_distributor
+        ];
+    }
+
+    public function payoutTransactions()
+    {
+        $processing = DB::table('payouts')
+            ->join('users', 'users.id', '=', 'payouts.user_id')
+            ->where(['users.organization_id' => auth()->user()->organization_id, 'payouts.status' => 'processing']);
+
+        $processing = collect($processing);
+
+        $processed = DB::table('payouts')
+            ->join('users', 'users.id', '=', 'payouts.user_id')
+            ->where(['users.organization_id' => auth()->user()->organization_id, 'payouts.status' => 'processed'])->count();
+
+        $processed = collect($processed);
+
+        $reversed = DB::table('payouts')
+            ->join('users', 'users.id', '=', 'payouts.user_id')
+            ->where(['users.organization_id' => auth()->user()->organization_id, 'payouts.status' => 'reversed'])->count();
+
+        $reversed = collect($reversed);
+
+        $payout_status = [
+            'processing_payouts' => [
+                'count' => $processing->count(),
+                'sum' => $processing->sum('amount')
+            ],
+            'processed_payouts' => [
+                'count' => $processed->count(),
+                'sum' => $processed->sum('amount')
+            ],
+            'reversed_payouts' => [
+                'count' => $reversed->count(),
+                'sum' => $reversed->sum('amount')
+            ]
+        ];
+
+        return $payout_status;
+    }
+
+    public function userReports(Request $request, $name, $id,)
+    {
+        $search = $request['search'];
+        if (!empty($search) || !is_null($search)) {
+            $data = DB::table('transactions')->where('trigered_by', $id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->latest()->paginate(100);
+            return $data;
+        }
+
+        if ($name == 'all') {
+            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => $id])->latest()->paginate(100);
+            return $data;
+        }
+
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => $id])->latest()->paginate(100);
+        return $data;
     }
 }

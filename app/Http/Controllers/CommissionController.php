@@ -151,7 +151,7 @@ class CommissionController extends Controller
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
+        } else {
             $debit = $fixed_charge;
             $credit = $role_commission  - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
@@ -321,7 +321,7 @@ class CommissionController extends Controller
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
+        } else {
             $debit = $fixed_charge;
             $credit = $role_commission / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
@@ -349,7 +349,7 @@ class CommissionController extends Controller
 
     /*-------------------------------------DMT Commissions-------------------------------------*/
 
-    public function dmtCommission($user_id, $amount)
+    public function dmtCommission($user_id, $amount, $transaction_id)
     {
         $table = DB::table('d_m_t_s')
             ->join('package_user', 'package_user.package_id', '=', 'd_m_t_s.package_id')
@@ -376,17 +376,19 @@ class CommissionController extends Controller
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
+        } else {
             $debit = $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
         $metadata = [
-            'status' => true
+            'status' => true,
+            'event' => 'dmt-commission',
+            'credit' => $credit,
+            'debit' => $debit
         ];
 
-        $transaction_id = "DMT" . strtoupper(Str::random(9));
         $this->transaction($debit, 'DMT Commission', 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
@@ -397,13 +399,13 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->dmtParentCommission($parent_id[0], $amount);
+            $this->dmtParentCommission($parent_id[0], $amount, $transaction_id);
         }
 
         return true;
     }
 
-    public function dmtParentCommission($user_id, $amount)
+    public function dmtParentCommission($user_id, $amount, $transaction_id)
     {
         $table = DB::table('d_m_t_s')
             ->join('package_user', 'package_user.package_id', '=', 'd_m_t_s.package_id')
@@ -430,17 +432,19 @@ class CommissionController extends Controller
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
+        } else {
             $debit = $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
         $metadata = [
-            'status' => true
+            'status' => true,
+            'event' => 'dmt-commission',
+            'credit' => $credit,
+            'debit' => $debit
         ];
 
-        $transaction_id = "DMT" . strtoupper(Str::random(9));
         $this->transaction($debit, 'DMT Commission', 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
@@ -451,7 +455,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->dmtParentCommission($parent_id[0], $amount);
+            $this->dmtParentCommission($parent_id[0], $amount, $transaction_id);
         }
 
         return true;
@@ -462,7 +466,7 @@ class CommissionController extends Controller
 
     /*-------------------------------------Payout Commissions-------------------------------------*/
 
-    public function payoutCommission($user_id, $amount)
+    public function payoutCommission($user_id, $amount, $transaction_id, $account_number)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -482,25 +486,27 @@ class CommissionController extends Controller
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
-        $role_commission = $table->pluck($role_commission_name);
+        $role_commission = $table->$role_commission_name;
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
-            $debit = $amount + $fixed_charge;
+            $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
-            $debit = $amount + $amount * $fixed_charge / 100;
+        } else {
+            $debit =  $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
         $metadata = [
-            'status' => true
+            'status' => true,
+            'event' => 'payout commission',
+            'credit' => $credit,
+            'debit' => $debit,
+            'amount' => $amount
         ];
-
-        $transaction_id = "PAN" . strtoupper(Str::random(9));
-        $this->transaction($amount, 'Payout Commission', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->notAdmintransaction($debit, "Payout Commission for $account_number", 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -513,13 +519,13 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->payoutParentCommission($parent_id, $amount);
+            $this->payoutParentCommission($parent_id, $amount, $transaction_id, $account_number);
         }
 
         return $table;
     }
 
-    public function payoutParentCommission($user_id, $amount)
+    public function payoutParentCommission($user_id, $amount, $transaction_id, $account_number)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -538,25 +544,28 @@ class CommissionController extends Controller
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
-        $role_commission = $table->pluck($role_commission_name);
+        $role_commission = $table->$role_commission_name;
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
+        } else {
             $debit = $fixed_charge;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
         $metadata = [
-            'status' => true
+            'status' => true,
+            'event' => 'payout commission',
+            'credit' => $credit,
+            'debit' => $debit,
+            'amount' => $amount
         ];
 
-        $transaction_id = "PAY" . strtoupper(Str::random(9));
-        $this->transaction($amount, 'Payout Comissions', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->notAdmintransaction($amount, 'Payout Comissions', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -570,7 +579,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->payotCommission($parent_id, $amount);
+            $this->payoutParentCommission($parent_id, $amount, $transaction_id, $account_number);
         }
 
         return $table;
@@ -1191,7 +1200,7 @@ class CommissionController extends Controller
         return response()->json(['message' => 'True']);
     }
 
-    public function razorpayReversal($amount, $user_id)
+    public function razorpayReversal($amount, $user_id, $transaction_id)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -1211,15 +1220,15 @@ class CommissionController extends Controller
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
-        $role_commission = $table->pluck($role_commission_name);
+        $role_commission = $table->$role_commission_name;
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
-            $debit = $amount + $fixed_charge;
+            $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $credit + $debit;
-        } elseif (!$is_flat) {
-            $debit = $amount + $amount * $fixed_charge / 100;
+        } else {
+            $debit = $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $credit + $debit;
         }
@@ -1228,22 +1237,20 @@ class CommissionController extends Controller
             'event' => 'refund',
             'amount' => $amount
         ];
-        $transaction_id = "REV" . strtoupper(Str::random(9));
-        $this->transaction($credit, 'Commissions Reversal', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
-        $user->update([
-            'wallet' => $closing_balance
-        ]);
+        $this->notAdmintransaction($credit, 'Commissions Reversal', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
 
         if (!$table->parents) {
             return response("No commissions to parent users.");
         }
         $parent = DB::table('user_parent')->where('user_id', $user_id);
-        $parent_id = $parent->pluck('parent_id');
-        $this->payoutReversalParent($parent_id, $amount);
+        if ($parent->exists()) {
+            $parent_id = $parent->pluck('parent_id');
+            $this->payoutReversalParent($parent_id, $amount, $transaction_id);
+        }
         return $table;
     }
 
-    public function payoutReversalParent($user_id, $amount)
+    public function payoutReversalParent($user_id, $amount, $transaction_id)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -1262,15 +1269,15 @@ class CommissionController extends Controller
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
-        $role_commission = $table->pluck($role_commission_name);
+        $role_commission = $table->role_commission_name;
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
             $debit = 0;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $credit + $debit;
-        } elseif (!$is_flat) {
-            $debit = $amount + $amount * $fixed_charge / 100;
+        } else {
+            $debit = $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $credit + $debit;
         }
@@ -1279,8 +1286,7 @@ class CommissionController extends Controller
             'event' => 'refund',
             'amount' => $amount
         ];
-        $transaction_id = "REV" . strtoupper(Str::random(9));
-        $this->transaction($credit, 'Commissions Reversal', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $this->notAdmintransaction($credit, 'Commissions Reversal', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -1293,7 +1299,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->payoutReversalParent($parent_id, $amount);
+            $this->payoutReversalParent($parent_id, $amount, $transaction_id);
         }
 
         return $table;

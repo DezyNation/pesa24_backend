@@ -28,7 +28,7 @@ class AirtelCMSController extends Controller
     {
         $data = [
             'transaction_id' => $request['transactionId'],
-            'refid' => "PESA24".uniqid(),
+            'refid' => "PESA24" . uniqid(),
             'latitude' => $request['latitude'],
             'longitude' => $request['longitude'],
         ];
@@ -41,18 +41,18 @@ class AirtelCMSController extends Controller
             'Authorisedkey' => env('AUTHORISED_KEY')
         ])->post('https://paysprint.in/service-api/api/v1/service/airtelcms/V2/airtel/index', $data);
         Log::channel('response')->info('response', $response->json());
-            $this->apiRecords($data['transaction_id'], 'paysprint', $response);
-            if (array_key_exists('responsecode', $response->json())) {
+        $this->apiRecords($data['transaction_id'], 'paysprint', $response);
+        if (array_key_exists('responsecode', $response->json())) {
 
-                if ($response['responsecode'] == 1) {
-                    DB::table('cms_records')->insert([
-                        'user_id' => auth()->user()->id,
-                        'reference_id' => $data['refid'],
-                        'biller_id' => $request['billerId'],
-                        'transaction_id' => $data['transaction_id'],
-                        'created_at' => now(),
-                        'provider' => 'airtel'
-                    ]);
+            if ($response['responsecode'] == 1) {
+                DB::table('cms_records')->insert([
+                    'user_id' => auth()->user()->id,
+                    'reference_id' => $data['refid'],
+                    'biller_id' => $request['billerId'],
+                    'transaction_id' => $data['transaction_id'],
+                    'created_at' => now(),
+                    'provider' => 'airtel'
+                ]);
             } else {
                 $response = $response['message'];
             }

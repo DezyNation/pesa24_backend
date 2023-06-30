@@ -84,7 +84,31 @@ class Controller extends BaseController
             'updated_at' => now()
         ]);
 
-        User::where('id', auth()->user()->id)->update([
+        User::where('id', $user_id)->update([
+            'wallet' => $closing_balance
+        ]);
+
+        return response()->json(['message' => 'Transaction successful.']);
+    }
+
+    public function notAdmintransaction(float $amount, string $service, string $service_type, float $user_id, float $opening_balance, string $transaction_id, float $closing_balance, string $metadata, float $credit = 0)
+    {
+        DB::table('transactions')->insert([
+            'debit_amount' => $amount,
+            'transaction_for' => $service,
+            'user_id' => $user_id,
+            'trigered_by' => $user_id,
+            'credit_amount' => $credit,
+            'opening_balance' => $opening_balance,
+            'closing_balance' => $closing_balance,
+            'service_type' => $service_type,
+            'metadata' => $metadata,
+            'transaction_id' => $transaction_id,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        User::where('id', $user_id)->update([
             'wallet' => $closing_balance
         ]);
 

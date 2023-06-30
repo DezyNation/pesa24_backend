@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 
 class FundController extends Controller
 {
@@ -19,21 +20,39 @@ class FundController extends Controller
 
     public function fetchFund()
     {
-        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['users.organization_id' => auth()->user()->organization_id])->select('funds.*', 'users.name', 'users.phone_number')->latest()->paginate(20);
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+            ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+            ->where(['users.organization_id' => auth()->user()->organization_id])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(100);
+        return $data;
+    }
+
+    public function pendingfetchFund($type)
+    {
+        if ($type == 'pending') {
+            $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                ->where(['users.organization_id' => auth()->user()->organization_id, 'funds.status' => 'pending'])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(100);
+            return $data;
+        }
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+            ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+            ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(100);
         return $data;
     }
 
     public function fetchFundId($id)
     {
-        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $id, 'users.organization_id' => auth()->user()->organization_id])->paginate(20);
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $id, 'users.organization_id' => auth()->user()->organization_id])->paginate(100);
         return $data;
     }
 
     public function reversalAndTransferFunds()
     {
-        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where('transaction_type', 'transfer')->orWhere('transaction_type', 'reversal')
-            ->select('users.name', 'users.phone_number', 'funds.transaction_id', 'funds.user_id', 'funds.amount', 'funds.remarks', 'funds.transaction_type', 'funds.created_at')
-            ->paginate(20);
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+            ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+            ->where('transaction_type', 'transfer')->orWhere('transaction_type', 'reversal')
+            ->select('users.name', 'users.phone_number', 'funds.transaction_id', 'funds.user_id', 'funds.amount', 'funds.remarks', 'funds.transaction_type', 'funds.created_at', 'admin.name as admin_name', 'admin.id as admin_id', 'funds.id')
+            ->paginate(100);
         return $data;
     }
 
@@ -43,13 +62,18 @@ class FundController extends Controller
         $request->validate([
             'amount' => 'required|integer',
             'status' => 'required',
+            'beneficiaryId' => 'required|exists:users,id'
         ]);
 
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id])->update([
             'funds.admin_remarks' => $request['remarks'] ?? null,
             'funds.status' => $request['status'],
+            'funds.approved' => $request['approved'],
+            'funds.declined' => $request['declined'],
+            'funds.parent_id' => auth()->user()->id,
             'funds.updated_at' => now()
         ]);
+
 
         if ($request['status'] == 'approved') {
             $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
@@ -61,11 +85,8 @@ class FundController extends Controller
                 'reference_id' => $transaction_id,
                 'transaction_from' => auth()->user()->name
             ];
-            $this->transaction(0, 'Fund transfered to user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
-            DB::table('users')->where('id', $request['beneficiaryId'])->update([
-                'wallet' => $amount,
-                'updated_at' => now()
-            ]);
+            $this->transaction(0, 'Fund transfered to user`s wallet', 'fund-request', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
+
             $amount = auth()->user()->wallet - $request['amount'];
             $transaction_id = "FUND" . strtoupper(Str::random(5));
             $metadata = [
@@ -74,12 +95,17 @@ class FundController extends Controller
                 'reference_id' => $transaction_id,
                 'transaction_from' => auth()->user()->name
             ];
-            $this->transaction($request['amount'], 'Fund added to user`s wallet', 'funds', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
-            DB::table('users')->where('id', auth()->user()->id)->update([
-                'wallet' => $amount,
-                'updated_at' => now()
-            ]);
+            $this->transaction($request['amount'], 'Fund added to user`s wallet', 'fund-request', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
         }
+
+        $user = User::find($request['beneficiaryId']);
+        $name = $user->name;
+        $wallet = $user->wallet;
+        $phone = $user->phone_number;
+        $status = $request['status'];
+        $time = date('d-m-Y h:i:s A');
+        $newmsg = "Hello $name, Your fund request has been $status and Now Your Bal $wallet on the date of $time. '-From P24 Technology Pvt. Ltd";
+        $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
 
         return $data;
     }
@@ -99,7 +125,7 @@ class FundController extends Controller
             'admin_remarks'
         )
             ->latest()
-            ->paginate(20);
+            ->paginate(100);
 
         return $data;
     }
@@ -191,12 +217,15 @@ class FundController extends Controller
             $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
             $amount = $wallet[0] - $request['amount'];
 
+            $metadata = [
+                'status' => true,
+                'amount_reversed' => $request['amount'],
+                'reference_id' => $transaction_id,
+                'transaction_from' => auth()->user()->name
+            ];
 
             $transaction_id = "FUND" . strtoupper(Str::random(5));
-            $this->transaction($request['amount'], 'Fund reversed from user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, 0, auth()->user()->id);
-            DB::table('users')->where('id', $request['beneficiaryId'])->update([
-                'wallet' => $amount
-            ]);
+            $this->transaction($request['amount'], 'Fund reversed from user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata));
         }
 
         return $data;

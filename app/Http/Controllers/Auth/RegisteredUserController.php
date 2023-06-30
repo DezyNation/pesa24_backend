@@ -63,11 +63,12 @@ class RegisteredUserController extends Controller
             'user_id' => $user->id,
             'user_name' => $user->name,
             'organisation_code' => $request['organization_code'],
+            'allowed_pages' =>
             [
-                ''
+                'allBasic', 'basicServiceActivate', 'basicTransactionLedger', 'allAeps', 'aepsTransaction', 'aepsAadhaarPay', 'aepsReport', 'allBbps', 'bbpsTransaction', 'bbpsReport', 'alldmt', 'dmtTransaction', 'dmtReport', 'allPayout', 'payoutTransaction', 'payoutReport', 'allRecharge', 'rechargeTransaction', 'rechargeReport', 'allPan', 'panTransaction', 'panReport', 'allCms', 'cmsTransaction', 'cmsReport', 'allLic', 'licTransaction', 'licReport', 'allAxis', 'axisTransaction', 'axisReport', 'allFastag', 'fastagTransaction', 'fastagReport', 'allMatm', 'matmTransaction', 'matmReport'
             ]
         ];
-        Http::post('https://pesa24-webhooks.vercel.app/api/users', $data);
+        Http::post('https://janpay-webhooks.vercel.app/api/users', json_encode($data));
         Mail::raw("Hello Your one time password is $password and Mpin'-$mpin", function ($message) use ($email, $name) {
             $message->from('info@pesa24.co.in', 'John Doe');
             $message->to($email, $name);
@@ -75,9 +76,8 @@ class RegisteredUserController extends Controller
             $message->priority(1);
         });
 
-        $newmsg = "Dear $username , Welcome to Rpay. You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Now you can login https://rpay.live/. From'-P24 Technology Pvt. Ltd";
-        Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
-
+        $newmsg = "Dear $name , You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Don't Share anyone. From'-P24 Technology Pvt. Ltd";
+        $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
         return response()->noContent();
     }
 
@@ -85,33 +85,48 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'firstName' => ['required', 'string', 'max:255'],
-            'lastName' => ['required', 'string', 'max:255'],
+            // 'lastName' => ['required', 'string', 'max:255'],
             'userEmail' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
             'userPhone' => ['required', 'digits:10', Rule::unique('users', 'phone_number')],
-            'alternatePhone' => ['required', 'digits:10', Rule::unique('users', 'alternate_phone')],
-            'dob' => ['required', 'date'],
-            'gender' => ['required', 'string', 'max:255'],
-            'firmName' => ['required', 'string', 'max:255'],
-            'companyType' => ['required', 'string', 'max:255'],
-            'aadhaarNum' => ['required', 'digits:12', Rule::unique('users', 'aadhaar')],
-            'panNum' => ['required', 'max:10', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')],
-            'gst' => ['string'],
+            // 'alternatePhone' => ['required', 'digits:10', Rule::unique('users', 'alternate_phone')],
+            // 'dob' => ['required', 'date'],
+            // 'gender' => ['required', 'string', 'max:255'],
+            // 'firmName' => ['required', 'string', 'max:255'],
+            // 'companyType' => ['required', 'string', 'max:255'],
+            // 'aadhaarNum' => ['required', 'digits:12', Rule::unique('users', 'aadhaar')],
+            // 'panNum' => ['required', 'max:10', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')],
+            // 'gst' => ['string'],
             'isActive' => ['required', 'boolean'],
             'capAmount' => ['required', 'integer'],
-            'line' => ['required', 'string'],
-            'city' => ['required', 'string'],
-            'state' => ['required', 'string'],
-            'pincode' => ['required', 'integer'],
+            // 'line' => ['required', 'string'],
+            // 'city' => ['required', 'string'],
+            // 'state' => ['required', 'string'],
+            // 'pincode' => ['required', 'integer'],
         ]);
 
-        $aadhaar_front = $request->file('aadhaarFront')->store('aadhar_front');
-        $aadhaar_back = $request->file('aadhaarBack')->store('aadhar_back');
+        if ($request->hasFile('aadhaarFront')) {
+            $aadhaar_front = $request->file('aadhaarFront')->store('aadhar_front');
+        } else {
+            $aadhaar_front = null;
+        }
+        if ($request->hasFile('aadhaarBack')) {
+            $aadhaar_back = $request->file('aadhaarBack')->store('aadhar_back');
+        } else {
+            $aadhaar_back = null;
+        }
+        if ($request->hasFile('pan')) {
+            $pan_card = $request->file('pan')->store('pan');
+        } else {
+            $pan_card = null;
+        }
         $pan_card = $request->file('pan')->store('pan');
 
         $email = $request['userEmail'];
         $name =  $request['firstName'] . " " . $request['middleName'] . " " . $request['lastName'];
         $mpin = rand(1001, 9999);
         $password = Str::random(8);
+        $username = $request['first_name'];
+        $phone = $request['userPhone'];
 
         $user = User::create([
             'first_name' => $request['firstName'],
@@ -136,10 +151,10 @@ class RegisteredUserController extends Controller
             'pan_number' => $request['pan'],
             'company_name' => $request['companyName'],
             'firm_type' => $request['companyName'],
-            'profile' => 1,
-            'aadhaar_front' => $aadhaar_front,
-            'aadhaar_back' => $aadhaar_back,
-            'pan_photo' => $pan_card,
+            'profile' => 0,
+            'aadhaar_front' => $aadhaar_front ?? null,
+            'aadhaar_back' => $aadhaar_back ?? null,
+            'pan_photo' => $pan_card ?? null,
             'organization_id' => auth()->user()->organization_id
         ])->assignRole('retailer');
 
@@ -148,15 +163,22 @@ class RegisteredUserController extends Controller
         $data = [
             'user_id' => $user->id,
             'user_name' => $user->name,
-            'organisation_code' => $request['organization_code']
+            'organisation_code' => $request['organization_code'] ?? 'JANPAY',
+            'allowed_pages' =>
+            [
+                'allBasic', 'basicServiceActivate', 'basicTransactionLedger', 'allAeps', 'aepsTransaction', 'aepsAadhaarPay', 'aepsReport', 'allBbps', 'bbpsTransaction', 'bbpsReport', 'alldmt', 'dmtTransaction', 'dmtReport', 'allPayout', 'payoutTransaction', 'payoutReport', 'allRecharge', 'rechargeTransaction', 'rechargeReport', 'allPan', 'panTransaction', 'panReport', 'allCms', 'cmsTransaction', 'cmsReport', 'allLic', 'licTransaction', 'licReport', 'allAxis', 'axisTransaction', 'axisReport', 'allFastag', 'fastagTransaction', 'fastagReport', 'allMatm', 'matmTransaction', 'matmReport'
+            ]
         ];
-        Http::post('https://pesa24-webhooks.vercel.app/api/users', $data);
+        Http::post('https://janpay-webhooks.vercel.app/api/users', json_encode($data));
         Mail::raw("Hello Your one time password is $password and Mpin'-$mpin", function ($message) use ($email, $name) {
-            $message->from('info@pesa24.co.in', 'RPay');
+            $message->from('info@pesa24.co.in', 'JANPAY');
             $message->to($email, $name);
             $message->subject('Welcome to Pesa24');
             $message->priority(1);
         });
+        // Dear {#var#} , You have registered sucessfully, your ID-{#var#}, Password-{#var#}, Mpin-{#var#} Don't Share anyone. From-P24 Technology Pvt. Ltd
+        $newmsg = "Dear $name , You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Don't Share anyone. From'-P24 Technology Pvt. Ltd";
+        $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
 
         return response()->noContent();
     }
@@ -166,23 +188,23 @@ class RegisteredUserController extends Controller
 
         $request->validate([
             'firstName' => ['required', 'string', 'max:255'],
-            'lastName' => ['required', 'string', 'max:255'],
+            // 'lastName' => ['required', 'string', 'max:255'],
             'userEmail' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($request['userId'])],
             'userPhone' => ['required', 'digits:10', Rule::unique('users', 'phone_number')->ignore($request['userId'])],
             // 'alternatePhone' => ['integer'],
-            'dob' => ['required', 'date'],
+            // 'dob' => ['required', 'date'],
             // 'gender' => ['required', 'string', 'max:255'],
             // 'firmName' => ['string', 'max:255'],
             // 'companyType' => ['string', 'max:255'],
-            'aadhaarNum' => ['required', 'digits:12', Rule::unique('users', 'aadhaar')->ignore($request['userId'])],
-            'panNum' => ['required', 'max:10', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')->ignore($request['userId'])],
+            // 'aadhaarNum' => ['required', 'digits:12', Rule::unique('users', 'aadhaar')->ignore($request['userId'])],
+            // 'panNum' => ['required', 'max:10', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')->ignore($request['userId'])],
             // 'gst' => ['string'],
             'isActive' => ['required', 'boolean'],
             'capAmount' => ['required', 'integer'],
-            'line' => ['required', 'string'],
-            'city' => ['required', 'string'],
-            'state' => ['required', 'string'],
-            'pincode' => ['required', 'integer'],
+            // 'line' => ['required', 'string'],
+            // 'city' => ['required', 'string'],
+            // 'state' => ['required', 'string'],
+            // 'pincode' => ['required', 'integer'],
         ]);
 
         $user = User::where('organization_id', auth()->user()->organization_id)->findOrFail($request['userId']);

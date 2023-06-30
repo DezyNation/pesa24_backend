@@ -9,9 +9,11 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\v1\UserResource;
 use Illuminate\Support\Facades\Session;
@@ -38,39 +40,56 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'parent' => ['integer'],
+            // 'parent' => ['integer'],
             'userPlan' => ['required', 'integer'],
             'firstName' => ['required', 'string'],
-            'lastName' => ['required', 'string'],
+            // 'lastName' => ['required', 'string'],
             'userEmail' => ['required', 'email', 'unique:users,email'],
             'userPhone' => ['required', 'digits:10', 'unique:users,phone_number'],
-            'alternativePhone' => ['digits:10'],
-            'dob' => ['required', 'date', 'before_or_equal:-18 years'],
-            'gender' => ['required', 'alpha'],
-            'aadhaarNum' => ['required', 'digits:12', 'unique:users,aadhaar'],
-            'panNum' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')],
+            // 'alternativePhone' => ['digits:10'],
+            // 'dob' => ['required', 'date', 'before_or_equal:-18 years'],
+            // 'gender' => ['required', 'alpha'],
+            // 'aadhaarNum' => ['required', 'digits:12', 'unique:users,aadhaar'],
+            // 'panNum' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}/', Rule::unique('users', 'pan_number')],
             'capAmount' => ['required', 'integer'],
-            'phoneVerified' => ['required'],
-            'emailVerified' => ['required'],
-            'line' => ['required', 'string'],
-            'city' => ['required', 'string'],
-            'state' => ['required', 'string'],
-            // 'firmName' => ['string'],
-            'pincode' => ['required', 'string'],
-            'isActive' => ['required', 'boolean'],
-            // 'gst' => 'string',
-            'hasParent' => 'required', 'boolean',
-            'pan' => 'required',
-            'aadhaarFront' => 'required',
-            'aadhaarBack' => 'required',
-            'profilePic' => 'required'
+            // 'phoneVerified' => ['required'],
+            // 'emailVerified' => ['required'],
+            'userRole' => ['required', 'exists:roles,name'],
+            // 'line' => ['required', 'string'],
+            // 'city' => ['required', 'string'],
+            // 'state' => ['required', 'string'],
+            // // 'firmName' => ['string'],
+            // 'pincode' => ['required', 'string'],
+            // 'isActive' => ['required', 'boolean'],
+            // // 'gst' => 'string',
+            // 'pan' => 'required',
+            // 'aadhaarFront' => 'required',
+            // 'aadhaarBack' => 'required',
+            // 'profilePic' => 'required'
         ]);
         $id = auth()->user()->organization_id;
 
-        $pan = $request->file('pan')->store('pan');
-        $aadhar_front = $request->file('aadhaarFront')->store('aadhar_front');
-        $aadhar_back = $request->file('aadhaarBack')->store('aadhar_back');
-        $profile = $request->file('profilePic')->store('profile');
+        if ($request->hasFile('pan')) {
+            $pan = $request->file('pan')->store('pan');
+        } else {
+            $pan = null;
+        }
+        if ($request->hasFile('aadhaarFront')) {
+            $aadhar_front = $request->file('aadhaarFront')->store('aadhar_front');
+        } else {
+            $aadhar_front = null;
+        }
+        if ($request->hasFile('aadhaarBack')) {
+            $aadhar_back = $request->file('aadhaarBack')->store('aadhar_back');
+        } else {
+            $aadhar_back = null;
+        }
+        if ($request->hasFile('profilePic')) {
+            $profile = $request->file('profilePic')->store('profile');
+        } else {
+            $profile = null;
+        }
+
 
         $password = Str::random(8);
         $mpin = rand(1001, 9999);
@@ -78,41 +97,51 @@ class UserController extends Controller
         $name = $request['firstName'] . " " . $request['middleName'] . " " . $request['lastName'];
 
         $user = User::create([
-            'first_name' => $request['firstName'],
-            'last_name' => $request['lastName'],
+            'first_name' => $request['firstName'] ?? null,
+            'last_name' => $request['lastName'] ?? null,
             'name' => $name,
-            'has_parent' => $request['hasParent'],
-            'phone_number' => $request['userPhone'],
+            'has_parent' => $request['hasParent'] ?? null,
+            'phone_number' => $request['userPhone'] ?? null,
             'email' => $request['userEmail'],
-            'alternate_phone' => $request['alternativePhone'],
-            'middle_name' => $request['middleName'],
-            'gender' => $request['gender'],
-            'user_code' => $request['user_code'],
-            'company_name' => $request['firmName'],
-            'firm_type' => $request['companyType'],
-            'gst_number' => $request['gst'],
-            'dob' => $request['dob'],
-            'pan_number' => $request['panNum'],
-            'aadhaar' => $request['aadhaarNum'],
+            'alternate_phone' => $request['alternativePhone'] ?? null,
+            'middle_name' => $request['middleName'] ?? null,
+            'gender' => $request['gender'] ?? null,
+            'user_code' => $request['user_code'] ?? null,
+            'company_name' => $request['firmName'] ?? null,
+            'firm_type' => $request['companyType'] ?? null,
+            'gst_number' => $request['gst'] ?? null,
+            'dob' => $request['dob'] ?? null,
+            'pan_number' => $request['panNum'] ?? null,
+            'aadhaar' => $request['aadhaarNum'] ?? null,
             'onboard_fee' => 0,
-            'referal_code' => $request['referal_code'],
+            'referal_code' => $request['referal_code'] ?? null,
             'email_verified_at' => null,
             'password' => Hash::make($password),
             'mpin' => Hash::make($mpin),
             'kyc' => 0,
-            'line' => $request['line'],
-            'city' => $request['city'],
-            'state' => $request['state'],
-            'pincode' => $request['pincode'],
+            'line' => $request['line'] ?? null,
+            'city' => $request['city'] ?? null,
+            'state' => $request['state'] ?? null,
+            'pincode' => $request['pincode'] ?? null,
             'profile' => 0,
             'aadhar_front' => $aadhar_front,
             'aadhar_back' => $aadhar_back,
-            'minimum_balance' => $request['capAmount'],
+            'minimum_balance' => $request['capAmount'] ?? null,
             'pan' => $pan,
-            'is_active' => $request['isActive'],
+            'is_active' => $request['isActive'] ?? null,
             'profile_pic' => $profile,
             'organization_id' => $id
         ])->assignRole($request['userRole']);
+        $data = [
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'organisation_code' => $request['organization_code'] ?? 'JANPAY',
+            'allowed_pages' =>
+            [
+                'allBasic', 'basicServiceActivate', 'basicTransactionLedger', 'allAeps', 'aepsTransaction', 'aepsAadhaarPay', 'aepsReport', 'allBbps', 'bbpsTransaction', 'bbpsReport', 'alldmt', 'dmtTransaction', 'dmtReport', 'allPayout', 'payoutTransaction', 'payoutReport', 'allRecharge', 'rechargeTransaction', 'rechargeReport', 'allPan', 'panTransaction', 'panReport', 'allCms', 'cmsTransaction', 'cmsReport', 'allLic', 'licTransaction', 'licReport', 'allAxis', 'axisTransaction', 'axisReport', 'allFastag', 'fastagTransaction', 'fastagReport', 'allMatm', 'matmTransaction', 'matmReport'
+            ]
+        ];
+        Http::post('https://janpay-webhooks.vercel.app/api/users', json_encode($data));
 
         if ($request['hasParent']) {
             DB::table('user_parent')->updateOrInsert(
@@ -127,6 +156,8 @@ class UserController extends Controller
             );
         }
 
+        $name = $user->name;
+        $phone = $user->phone_number;
         DB::table('package_user')->insert([
             'user_id' => $user->id,
             'package_id' => $request['userPlan'],
@@ -137,6 +168,8 @@ class UserController extends Controller
         if (!$request['isActive']) {
             return response()->json(['message' => 'User created Successfully']);
         }
+        $newmsg = "Dear $name , You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Don't Share anyone. From'-P24 Technology Pvt. Ltd";
+        $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
         Mail::raw("Hello Your one time password is $password and MPIN is $mpin", function ($message) use ($to, $name) {
             $message->from('info@pesa24.co.in', 'John Doe');
             $message->to($to, $name);
@@ -239,21 +272,34 @@ class UserController extends Controller
         return $user;
     }
 
-    public function userInfo(string $role, $id = null)
+    public function userInfo(Request $request, string $role, $id = null)
     {
+
+        $search = $request['search'];
         $org_id = auth()->user()->organization_id;
+
+        if (!empty($search) || !is_null($search)) {
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->paginate(100);
+            return $user;
+        }
         if (is_null($id)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->paginate(20);
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->paginate(100);
             return $user;
         }
 
-        $user = User::role($role)->with('packages:name')->where(['id' => $id, 'organization_id' => $org_id])->paginate(20);
+
+        $user = User::role($role)->with('packages:name')->where(['id' => $id, 'organization_id' => $org_id])->paginate(100);
         return $user;
     }
 
-    public function userInfoPackage(string $role, $id = null)
+    public function userInfoPackage(Request $request, string $role, $id = null)
     {
+        $search = $request['search'];
         $org_id = auth()->user()->organization_id;
+        if (!empty($search) || !is_null($search)) {
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->get();
+            return $user;
+        }
         if (is_null($id)) {
             $user = User::role($role)->where(['organization_id' => $org_id])->get(['users.id', 'users.name', 'users.profile_pic']);
             return $user;

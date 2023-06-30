@@ -15,6 +15,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         '/api*',
+        'password/send-otp',
         'register',
         'login',
         'send-otp',
@@ -23,7 +24,7 @@ class VerifyCsrfToken extends Middleware
         'logout',
         'admin/login',
         'admin/send-otp',
-        'file-test'
+        'admin-send-creds',
     ];
 
 
@@ -35,7 +36,7 @@ class VerifyCsrfToken extends Middleware
 
     //             $this->except[] = route('logout');
 
-    //         }   
+    //         }
 
     //     }
 

@@ -64,9 +64,9 @@ class PayoutController extends CommissionController
         $balance_left = $walletAmt[0] - $amount;
         $transaction_id = $data['reference_id'];
         $this->apiRecords($data['reference_id'], 'razorpay', $transfer);
-        if ($transfer['status'] == 'processing' || $transfer['status'] == 'processed') {
+        if ($transfer['status'] == 'processing' || $transfer['status'] == 'processed' || $transfer['status'] == 'queued' || $transfer['status'] == 'pending') {
             $metadata = [
-                'status' => true,
+                'status' => $transfer['status'],
                 'amount' => $amount,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
@@ -79,7 +79,7 @@ class PayoutController extends CommissionController
                 'created_at' => date('Y-m-d H:i:s')
             ];
             $metadata2 = [
-                'status' => true,
+                'status' => $transfer['status'],
                 'amount' => $amount,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
@@ -91,12 +91,11 @@ class PayoutController extends CommissionController
                 'to' => $request['bank_account']['name'] ?? null,
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->transaction($amount, 'Bank Payout', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
-            $this->payoutCommission(auth()->user()->id, $amount, $transaction_id);
+            $this->transaction($amount, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         } else {
             $metadata = [
-                'status' => false,
+                'status' => $transfer['status'],
                 'amount' => $data['amount'] / 100,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
@@ -110,7 +109,7 @@ class PayoutController extends CommissionController
                 'created_at' => date('Y-m-d H:i:s')
             ];
             $metadata2 = [
-                'status' => false,
+                'status' => $transfer['status'],
                 'amount' => $data['amount'] / 100,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
@@ -123,7 +122,9 @@ class PayoutController extends CommissionController
                 'r_status' => $transfer->status(),
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->transaction(0, 'Bank Payout', 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction($data['amount'] / 100, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $balance_left = $walletAmt[0] + $amount;
+            $this->transaction(0, "Refund Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata), $data['amount'] / 100);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         }
     }
@@ -161,11 +162,35 @@ class PayoutController extends CommissionController
         return $payout;
     }
 
-    public function fetchPayoutAdmin()
+    public function fetchPayoutAdmin(Request $request, $processing = null)
     {
-        $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')->where([
-            'users.organization_id' => auth()->user()->organization_id
-        ])->select('payouts.*', 'users.name')->paginate(20);
+        $search = $request['search'];
+        if (!empty($search)) {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->where("payouts.account_number", 'LIKE', '%'.$search.'%')->orWhere("payouts.reference_id", 'LIKE', '%'.$search.'%')
+                ->select('payouts.*', 'users.name')->latest()->paginate(100);
+
+            return $payout;
+        }
+        if ($processing == 'processing') {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->where('payouts.status', 'processing')->orWhere('payouts.status', 'pending')->orWhere('payouts.status', 'queued')
+                ->select('payouts.*', 'users.name')->latest()->get();
+
+            return $payout;
+        }
+        $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+            ->where([
+                'users.organization_id' => auth()->user()->organization_id
+            ])
+            ->where('payouts.status', '!=', 'processing')
+            ->select('payouts.*', 'users.name')->latest()->paginate(80);
 
         return $payout;
     }
@@ -181,10 +206,10 @@ class PayoutController extends CommissionController
             return response($get_payout->get());
         }
         $payout = $get_payout->get();
-        $payout = $get_payout[0];
+        $payout = $payout[0];
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
             'Content-Type' => 'application/json'
-        ])->post("https://api.razorpay.com/v1/payouts/$id");
+        ])->get("https://api.razorpay.com/v1/payouts/$id");
 
         $this->apiRecords($payout->reference_id, 'razorpay', $transfer);
 
@@ -194,21 +219,29 @@ class PayoutController extends CommissionController
             'updated_at' => now()
         ]);
 
-        DB::table('transactions')->where('transaction_id', $payout->reference_id)->update(['metadata->utr' == $transfer['utr']]);
+        $reference_id = $payout->reference_id;
+
+        $array = [
+            'event' => 'admin update payout',
+            'status' => $transfer['status'],
+        ];
+        $this->apiRecords($reference_id, 'janpay', json_encode($array));
+        DB::table('transactions')->where('transaction_id', $reference_id)->update(['metadata->utr' => $transfer['utr']]);
 
         if ($transfer['status'] == 'processed') {
-            $this->payoutCommission($payout->user_id, $payout->amount, $payout->reference_id);
+            $this->payoutCommission($payout->user_id, $payout->amount, $reference_id, $payout->account_number);
         } elseif ($transfer['status'] == 'rejected' || $transfer['status'] == 'reversed' || $transfer['status'] == 'cancelled') {
             $user = User::find($payout->user_id);
             $closing_balance = $user->wallet + $payout->amount;
             $metadata = [
                 'status' => $transfer['status'],
                 'utr' => $transfer['utr'],
-                'reference_id' => $payout->reference_id,
+                'reference_id' => $reference_id,
                 'amount' => $payout->amount
             ];
-            $this->transaction(0, "Payout Reversal", 'payout', $payout->user_id, $user->wallet, $payout->reference_id, $closing_balance, json_encode($metadata), $payout->amount);
-            $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $payout->reference_id);
+            $account_number = $payout->account_number;
+            $this->notAdmintransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $closing_balance, json_encode($metadata), $payout->amount);
+            $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id);
         }
 
         return $transfer['status'];
