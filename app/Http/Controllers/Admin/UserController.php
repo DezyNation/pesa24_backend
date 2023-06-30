@@ -141,7 +141,7 @@ class UserController extends Controller
                 'allBasic', 'basicServiceActivate', 'basicTransactionLedger', 'allAeps', 'aepsTransaction', 'aepsAadhaarPay', 'aepsReport', 'allBbps', 'bbpsTransaction', 'bbpsReport', 'alldmt', 'dmtTransaction', 'dmtReport', 'allPayout', 'payoutTransaction', 'payoutReport', 'allRecharge', 'rechargeTransaction', 'rechargeReport', 'allPan', 'panTransaction', 'panReport', 'allCms', 'cmsTransaction', 'cmsReport', 'allLic', 'licTransaction', 'licReport', 'allAxis', 'axisTransaction', 'axisReport', 'allFastag', 'fastagTransaction', 'fastagReport', 'allMatm', 'matmTransaction', 'matmReport'
             ]
         ];
-        Http::post('https://janpay-webhooks.vercel.app/api/users', json_encode($data));
+        Http::post('https://pesa24-webhooks.vercel.app/api/users', json_encode($data));
 
         if ($request['hasParent']) {
             DB::table('user_parent')->updateOrInsert(
