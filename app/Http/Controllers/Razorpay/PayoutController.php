@@ -24,7 +24,7 @@ class PayoutController extends CommissionController
             'currency' => 'INR',
             'mode' => 'IMPS',
             'purpose' => 'payout',
-            'reference_id' => "JANPAY" . uniqid(),
+            'reference_id' => "PESA24" . uniqid(),
         ];
 
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
