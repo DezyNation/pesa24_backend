@@ -53,7 +53,7 @@ class PasswordResetLinkController extends Controller
             'password' => Hash::make($password)
         ]);
         Mail::raw("Dear User, Your new password for Login to Pesa24 is $password", function ($message) use ($request) {
-            $message->from('info@pesa24.co.in', 'JANPAY');
+            $message->from('info@pesa24.co.in', 'Flywid');
             $message->to($request['email'], 'User');
             $message->subject('Password reset');
             $message->priority(1);
@@ -88,8 +88,8 @@ class PasswordResetLinkController extends Controller
         $newmsg = "Dear $name , You have registered sucessfully, your ID'-$phone, Password'-$password, Mpin'-$mpin Don't Share anyone. From'-P24 Technology Pvt. Ltd";
         $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
         // Log::channel('response')->info('sms-creds', $sms->json());
-        Mail::raw("Dear User, Your new password for Login to Janpay is $password and MPIN is $mpin", function ($message) use ($request) {
-            $message->from('info@pesa24.co.in', 'Janpay');
+        Mail::raw("Dear User, Your new password for Login to Flywid is $password and MPIN is $mpin", function ($message) use ($request) {
+            $message->from('info@pesa24.co.in', 'Flywid');
             $message->to($request['email'], $request['name']);
             $message->subject('Password reset');
             $message->priority(1);

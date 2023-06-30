@@ -18,7 +18,7 @@ class ContactController extends FundAccountController
             'email' => auth()->user()->email,
             'contact' => auth()->user()->phone_number,
             'type' => 'employee',
-            'reference_id' =>  "JANPAY".uniqid(),
+            'reference_id' =>  "FLYWID".uniqid(),
         ];
 
         $response = Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([

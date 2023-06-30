@@ -68,7 +68,7 @@ class RegisteredUserController extends Controller
                 'allBasic', 'basicServiceActivate', 'basicTransactionLedger', 'allAeps', 'aepsTransaction', 'aepsAadhaarPay', 'aepsReport', 'allBbps', 'bbpsTransaction', 'bbpsReport', 'alldmt', 'dmtTransaction', 'dmtReport', 'allPayout', 'payoutTransaction', 'payoutReport', 'allRecharge', 'rechargeTransaction', 'rechargeReport', 'allPan', 'panTransaction', 'panReport', 'allCms', 'cmsTransaction', 'cmsReport', 'allLic', 'licTransaction', 'licReport', 'allAxis', 'axisTransaction', 'axisReport', 'allFastag', 'fastagTransaction', 'fastagReport', 'allMatm', 'matmTransaction', 'matmReport'
             ]
         ];
-        Http::post('https://janpay-webhooks.vercel.app/api/users', json_encode($data));
+        Http::post('https://flywid-webhooks.vercel.app/api/users', json_encode($data));
         Mail::raw("Hello Your one time password is $password and Mpin'-$mpin", function ($message) use ($email, $name) {
             $message->from('info@pesa24.co.in', 'John Doe');
             $message->to($email, $name);
@@ -163,15 +163,15 @@ class RegisteredUserController extends Controller
         $data = [
             'user_id' => $user->id,
             'user_name' => $user->name,
-            'organisation_code' => $request['organization_code'] ?? 'JANPAY',
+            'organisation_code' => $request['organization_code'] ?? 'FLYWID',
             'allowed_pages' =>
             [
                 'allBasic', 'basicServiceActivate', 'basicTransactionLedger', 'allAeps', 'aepsTransaction', 'aepsAadhaarPay', 'aepsReport', 'allBbps', 'bbpsTransaction', 'bbpsReport', 'alldmt', 'dmtTransaction', 'dmtReport', 'allPayout', 'payoutTransaction', 'payoutReport', 'allRecharge', 'rechargeTransaction', 'rechargeReport', 'allPan', 'panTransaction', 'panReport', 'allCms', 'cmsTransaction', 'cmsReport', 'allLic', 'licTransaction', 'licReport', 'allAxis', 'axisTransaction', 'axisReport', 'allFastag', 'fastagTransaction', 'fastagReport', 'allMatm', 'matmTransaction', 'matmReport'
             ]
         ];
-        Http::post('https://janpay-webhooks.vercel.app/api/users', json_encode($data));
+        Http::post('https://flywid-webhooks.vercel.app/api/users', json_encode($data));
         Mail::raw("Hello Your one time password is $password and Mpin'-$mpin", function ($message) use ($email, $name) {
-            $message->from('info@pesa24.co.in', 'JANPAY');
+            $message->from('info@pesa24.co.in', 'FLYWID');
             $message->to($email, $name);
             $message->subject('Welcome to Pesa24');
             $message->priority(1);

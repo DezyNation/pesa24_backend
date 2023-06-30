@@ -192,7 +192,7 @@ class DMTController extends CommissionController
             'mobile' => $request['customerId'],
             'accno' => $request['accountNumber'],
             'benename' => $request['beneficiaryName'],
-            'referenceid' => "JANPAY" . uniqid(),
+            'referenceid' => "FLYWID" . uniqid(),
             'pincode' => auth()->user()->pincode,
             'address' => auth()->user()->line,
             'bankid' => $request['selectedBankCode'],
