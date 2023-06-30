@@ -49,7 +49,7 @@ class WebhookController extends CommissionController
             ];
             $account_number = $result[0]->account_number;
             $this->transaction(0, "Payout Reversal for account $account_number", 'payout', $result[0]->user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $request['payload.payout.entity.amount'] / 100);
-            $commission = $this->razorpayReversal($result[0]->amount, $result[0]->user_id, $transaction_id);
+            // $commission = $this->razorpayReversal($result[0]->amount, $result[0]->user_id, $transaction_id);
         }
 
         return response()->noContent();
