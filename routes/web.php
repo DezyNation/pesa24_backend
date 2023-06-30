@@ -51,7 +51,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayo
 */
 
 Route::get('/', function () {
-    return ['Application' => 'Janpay'];
+    return ['Application' => 'Flywid'];
 });
 
 // Route::get('inquiry', [BBPSController::class, 'payBill']);
