@@ -24,10 +24,11 @@ class PayoutController extends CommissionController
             'currency' => 'INR',
             'mode' => 'IMPS',
             'purpose' => 'payout',
+            'narration' => 'pesa24',
             'reference_id' => "PESA24" . uniqid(),
         ];
 
-        $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl35', '1vrEAOIW45345HUQdKrnSWlF')->withHeaders([
+        $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBdsPIl35', '1vrEAOIW45345HsUQdKrnSWlF')->withHeaders([
             'Content-Type' => 'application/json'
         ])->post('https://api.razorpay.com/v1/payouts', $data);
 
