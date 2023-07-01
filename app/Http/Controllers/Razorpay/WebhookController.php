@@ -23,6 +23,7 @@ class WebhookController extends CommissionController
                 'payout_id' => $payout_id
             ];
             Log::channel('callback')->info('payout-not-found', $array);
+            return response("Transaction Not found");
         }
         $payout = $payout->get();
         if ($payout[0]->status == 'processed' || $payout[0]->status == 'reveresed' || $payout[0]->status == 'cancelled' || $payout[0]->status == 'failed') {
