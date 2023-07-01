@@ -24,6 +24,7 @@ class PayoutController extends CommissionController
             'currency' => 'INR',
             'mode' => 'IMPS',
             'purpose' => 'payout',
+            'narration' => 'Flywid',
             'reference_id' => "PESA24" . uniqid(),
         ];
 
