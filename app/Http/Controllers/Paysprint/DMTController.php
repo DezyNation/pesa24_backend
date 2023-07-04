@@ -211,6 +211,28 @@ class DMTController extends CommissionController
         ])->post('https://api.paysprint.in/api/v1/service/dmt/transact/transact', $data);
 
         $transaction_id = $data['referenceid'];
+        $this->apiRecords($transaction_id, 'paysprint', $response);
+        if (!array_key_exists($transaction_id, $response->json())) {
+            $metadata = [
+                'status' => $response['status'] ?? null,
+                'reference_id' => $data['referenceid'] ?? null,
+                'beneficiary_id' => $request['beneficiaryId'],
+                'utrnumber' => $response['utr'] ?? null,
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
+                'amount' => $response['txn_amount'] ?? null,
+                'account_number' => $response['account_number'] ?? null,
+                'mobile' => $data['mobile'],
+                'remitter' => $response['remitter'] ?? null,
+                'beneficiary_name' => $response['benename'] ?? null,
+                'acknowldgement_number' => $response['ackno'] ?? null,
+                'remarks' => $response['remarks'] ?? null,
+                'message' => $response['message'] ?? null
+            ];
+
+            return ['metadata' => $metadata];
+        }
         if ($response->json($key = 'txn_status') == 1) {
             $metadata = [
                 'status' => $response['status'] ?? null,
