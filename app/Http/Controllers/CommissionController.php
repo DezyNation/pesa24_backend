@@ -506,7 +506,7 @@ class CommissionController extends Controller
             'debit' => $debit,
             'amount' => $amount
         ];
-        $this->notAdmintransaction($debit, "Payout Commission for $account_number", 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->notAdmintransaction($debit, "Payout Charge for $account_number", 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -565,7 +565,7 @@ class CommissionController extends Controller
             'amount' => $amount
         ];
 
-        $this->notAdmintransaction($amount, 'Payout Comissions', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->notAdmintransaction($amount, "Payout Charge for $account_number", 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -1195,7 +1195,7 @@ class CommissionController extends Controller
             'starus' => true,
             'event' => 'refund'
         ];
-        $this->transaction($credit, "Commission reversal for DMT", 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $this->transaction($credit, "Charge reversal for DMT", 'dmt', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
 
         return response()->json(['message' => 'True']);
     }
@@ -1237,7 +1237,7 @@ class CommissionController extends Controller
             'event' => 'refund',
             'amount' => $amount
         ];
-        $this->notAdmintransaction($credit, "Commissions Reversal for $account_number", 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $this->notAdmintransaction($credit, "Charge Reversal for $account_number", 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
 
         if (!$table->parents) {
             return response("No commissions to parent users.");
@@ -1286,7 +1286,7 @@ class CommissionController extends Controller
             'event' => 'refund',
             'amount' => $amount
         ];
-        $this->notAdmintransaction($credit, "Commissions Reversal for $account_number", 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $this->notAdmintransaction($credit, "Charge Reversal for $account_number", 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
         $user->update([
             'wallet' => $closing_balance
         ]);
