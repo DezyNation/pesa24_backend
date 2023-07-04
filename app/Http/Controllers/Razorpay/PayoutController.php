@@ -23,6 +23,7 @@ class PayoutController extends CommissionController
             'amount' => $amount * 100,
             'currency' => 'INR',
             'mode' => 'IMPS',
+            'queue_if_low_balance'=> false,
             'purpose' => 'payout',
             // 'narrartion' => 'JANPAY',
             'reference_id' => "JANPAY" . uniqid(),
