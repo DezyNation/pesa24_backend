@@ -47,7 +47,7 @@ class WebhookController extends CommissionController
             $result = $data->get();
             // $this->payoutCommission($result[0]->user_id, $request['payload.payout.entity.amount'] / 100, $request['payload.payout.entity.reference_id'], $result[0]->account_number);
         }
-        if ($request['payload.payout.entity.status'] == 'reversed' || $request['payload.payout.entity.status'] == 'cancelled') {
+        if ($request['payload.payout.entity.status'] == 'reversed' || $request['payload.payout.entity.status'] == 'cancelled' || $request['payload.payout.entity.status'] == 'failed' || $request['payload.payout.entity.status'] == 'rejected') {
             $result = $data->get();
             $user = User::findOrFail($result[0]->user_id);
             $opening_balance = $user->wallet;
