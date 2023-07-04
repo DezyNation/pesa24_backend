@@ -246,7 +246,7 @@ class PayoutController extends CommissionController
             ];
             $account_number = $payout->account_number;
             $this->notAdmintransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $closing_balance, json_encode($metadata), $payout->amount);
-            $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id);
+            // $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id);
         }
 
         return $transfer['status'];
