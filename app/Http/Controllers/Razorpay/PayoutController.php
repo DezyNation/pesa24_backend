@@ -203,12 +203,15 @@ class PayoutController extends CommissionController
             'payoutId' => ['required', 'exists:payouts,payout_id']
         ]);
         $id = $request['payoutId'];
-        $get_payout = DB::table('payouts')->where(['payout_id' => $id, 'status' => 'processing']);
+        $get_payout = DB::table('payouts')->where(['payout_id' => $id]);
         if (!$get_payout->exists()) {
             return response($get_payout->get());
         }
         $payout = $get_payout->get();
         $payout = $payout[0];
+        if ($payout->status == 'reversed' || $payout->status == 'cancelled' || $payout->status == 'processed') {
+            return response($payout->status);
+        }
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
             'Content-Type' => 'application/json'
         ])->get("https://api.razorpay.com/v1/payouts/$id");
