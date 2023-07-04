@@ -236,7 +236,7 @@ class PayoutController extends CommissionController
 
         if ($transfer['status'] == 'processed') {
             // $this->payoutCommission($payout->user_id, $payout->amount, $reference_id, $payout->account_number);
-        } elseif ($transfer['status'] == 'rejected' || $transfer['status'] == 'reversed' || $transfer['status'] == 'cancelled' || $request['payload.payout.entity.status'] == 'failed') {
+        } elseif ($transfer['status'] == 'rejected' || $transfer['status'] == 'reversed' || $transfer['status'] == 'cancelled' || $transfer['status'] == 'failed') {
             $user = User::find($payout->user_id);
             $closing_balance = $user->wallet + $payout->amount;
             $metadata = [
