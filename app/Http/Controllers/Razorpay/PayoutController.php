@@ -23,7 +23,7 @@ class PayoutController extends CommissionController
             'amount' => $amount * 100,
             'currency' => 'INR',
             'mode' => 'IMPS',
-            'queue_if_low_balance'=> false,
+            'queue_if_low_balance' => false,
             'purpose' => 'payout',
             // 'narrartion' => 'JANPAY',
             'reference_id' => "JANPAY" . uniqid(),
@@ -172,7 +172,7 @@ class PayoutController extends CommissionController
                 ->where([
                     'users.organization_id' => auth()->user()->organization_id
                 ])
-                ->where("payouts.account_number", 'LIKE', '%'.$search.'%')->orWhere("payouts.reference_id", 'LIKE', '%'.$search.'%')
+                ->where("payouts.account_number", 'LIKE', '%' . $search . '%')->orWhere("payouts.reference_id", 'LIKE', '%' . $search . '%')
                 ->select('payouts.*', 'users.name')->latest()->paginate(100);
 
             return $payout;
@@ -209,7 +209,7 @@ class PayoutController extends CommissionController
         }
         $payout = $get_payout->get();
         $payout = $payout[0];
-        if ($payout->status == 'reversed' || $payout->status == 'cancelled' || $payout->status == 'processed') {
+        if ($payout->status == 'reversed' || $payout->status == 'cancelled' || $payout->status == 'processed' || $payout->status == 'rejected') {
             return response($payout->status);
         }
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
