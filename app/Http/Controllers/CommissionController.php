@@ -1200,7 +1200,7 @@ class CommissionController extends Controller
         return response()->json(['message' => 'True']);
     }
 
-    public function razorpayReversal($amount, $user_id, $transaction_id)
+    public function razorpayReversal($amount, $user_id, $transaction_id, $account_number)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -1237,7 +1237,7 @@ class CommissionController extends Controller
             'event' => 'refund',
             'amount' => $amount
         ];
-        $this->notAdmintransaction($credit, 'Commissions Reversal', 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $this->notAdmintransaction($credit, "Commissions Reversal for $account_number", 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
 
         if (!$table->parents) {
             return response("No commissions to parent users.");
@@ -1245,12 +1245,12 @@ class CommissionController extends Controller
         $parent = DB::table('user_parent')->where('user_id', $user_id);
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->payoutReversalParent($parent_id, $amount, $transaction_id);
+            $this->payoutReversalParent($parent_id, $amount, $transaction_id, $account_number);
         }
         return $table;
     }
 
-    public function payoutReversalParent($user_id, $amount, $transaction_id)
+    public function payoutReversalParent($user_id, $amount, $transaction_id, $account_number)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -1286,7 +1286,7 @@ class CommissionController extends Controller
             'event' => 'refund',
             'amount' => $amount
         ];
-        $this->notAdmintransaction($credit, 'Commissions Reversal', 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+        $this->notAdmintransaction($credit, "Commissions Reversal for $account_number", 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -1299,7 +1299,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->payoutReversalParent($parent_id, $amount, $transaction_id);
+            $this->payoutReversalParent($parent_id, $amount, $transaction_id, $account_number);
         }
 
         return $table;

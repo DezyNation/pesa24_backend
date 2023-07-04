@@ -45,7 +45,7 @@ class WebhookController extends CommissionController
 
         if ($request['payload.payout.entity.status'] == 'processed') {
             $result = $data->get();
-            $this->payoutCommission($result[0]->user_id, $request['payload.payout.entity.amount'] / 100, $request['payload.payout.entity.reference_id'], $result[0]->account_number);
+            // $this->payoutCommission($result[0]->user_id, $request['payload.payout.entity.amount'] / 100, $request['payload.payout.entity.reference_id'], $result[0]->account_number);
         }
         if ($request['payload.payout.entity.status'] == 'reversed' || $request['payload.payout.entity.status'] == 'cancelled') {
             $result = $data->get();
@@ -59,7 +59,7 @@ class WebhookController extends CommissionController
             ];
             $account_number = $result[0]->account_number;
             $this->transaction(0, "Payout Reversal for account $account_number", 'payout', $result[0]->user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $request['payload.payout.entity.amount'] / 100);
-            // $commission = $this->razorpayReversal($result[0]->amount, $result[0]->user_id, $transaction_id);
+            $commission = $this->razorpayReversal($result[0]->amount, $result[0]->user_id, $transaction_id, $result[0]->account_number);
         }
 
         return response()->noContent();
