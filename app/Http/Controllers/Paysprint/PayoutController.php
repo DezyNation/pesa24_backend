@@ -158,7 +158,8 @@ class PayoutController extends CommissionController
 
         if ($balance_left < 0 || $balance_left < $capped_amount) {
             abort(400, "User does not have enough balance.");
-        } elseif (is_null($user->paysprint_bene_id)) {
+        }
+        if (is_null($user->paysprint_bene_id)) {
             abort(400, "Account not added yet.");
         }
 
@@ -176,7 +177,7 @@ class PayoutController extends CommissionController
             'Content-Type: application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/dotransaction', $data);
         Log::channel('response')->info($response);
-            $this->apiRecords($data['refid'], 'paysprint', $response);
+        $this->apiRecords($data['refid'], 'paysprint', $response);
         if ($response->json($key = 'status') == true) {
             $transaction_id = "PAY" . strtoupper(Str::random(9));
             $metadata = [
