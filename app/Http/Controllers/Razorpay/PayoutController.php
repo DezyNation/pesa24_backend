@@ -26,7 +26,7 @@ class PayoutController extends CommissionController
             'queue_if_low_balance' => false,
             'purpose' => 'payout',
             // 'narrartion' => 'JANPAY',
-            'reference_id' => "JANPAY" . uniqid(),
+            'reference_id' => "JND" . uniqid(),
         ];
 
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([

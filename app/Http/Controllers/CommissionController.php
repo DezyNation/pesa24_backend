@@ -538,14 +538,14 @@ class CommissionController extends Controller
         }
         $table = $table[0];
         $user = User::findOrFail($user_id);
-        $role = $user->getRoleNames()[0];
+        $role = $user[0]->getRoleNames()[0];
 
         $fixed_charge = 0;
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
         $role_commission = $table->$role_commission_name;
-        $opening_balance = $user->wallet;
+        $opening_balance = $user[0]->wallet;
 
         if ($is_flat) {
             $debit = $fixed_charge;
@@ -565,8 +565,8 @@ class CommissionController extends Controller
             'amount' => $amount
         ];
 
-        $this->notAdmintransaction($amount, "Payout Charge for $account_number", 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
-        $user->update([
+        $this->notAdmintransaction($amount, "Payout Charge for $account_number", 'payout-commission', $user[0]->id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $user[0]->update([
             'wallet' => $closing_balance
         ]);
 

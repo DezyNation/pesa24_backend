@@ -596,9 +596,9 @@ class AdminController extends Controller
 
     public function sumAmounts()
     {
-        $table = DB::table('users')->where('organization_id', auth()->user()->organization_id);
-        $capped_sum = $table->sum('minimum_balance');
-        $wallet_sum = $table->sum('wallet');
+        $wallet_sum = User::role(['retailer', 'distributor', 'super_distributor'])->sum('wallet');
+        $capped_sum = User::role(['retailer', 'distributor', 'super_distributor'])->sum('minimum_balance');
+        // $wallet_sum = $table->sum('wallet');
         return ['capping_sum' => $capped_sum, 'wallet_sum' => $wallet_sum];
     }
 
