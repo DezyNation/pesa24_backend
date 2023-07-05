@@ -1256,7 +1256,7 @@ class CommissionController extends Controller
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
             ->where('package_user.user_id', $user_id)->where('payoutcommissions.from', '<=', $amount)
             ->where('payoutcommissions.to', '>=', $amount)
-            ->get()[0];
+            ->get();
 
         if ($table->isEmpty()) {
             return response("No commissions for this transactions.");
