@@ -565,7 +565,7 @@ class CommissionController extends Controller
             'amount' => $amount
         ];
 
-        $this->notAdmintransaction($amount, "Payout Charge for $account_number", 'payout-commission', $user[0]->id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->notAdmintransaction($debit, "Payout Charge for $account_number", 'payout-commission', $user[0]->id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user[0]->update([
             'wallet' => $closing_balance
         ]);
