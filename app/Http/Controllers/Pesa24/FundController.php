@@ -74,34 +74,36 @@ class FundController extends Controller
             'funds.updated_at' => now()
         ]);
 
+        $user = User::find($request['beneficiaryId']);
+        $name = $user->name;
+        $phone = $user->phone_number;
 
+        $transaction_id = "FUND" . strtoupper(Str::random(5));
         if ($request['status'] == 'approved') {
-            $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
-            $amount = $wallet[0] + $request['amount'];
-            $transaction_id = "FUND" . strtoupper(Str::random(5));
-            $metadata = [
-                'status' => true,
-                'amount_added' => $request['amount'],
-                'reference_id' => $transaction_id,
-                'transaction_from' => auth()->user()->name
-            ];
-            $this->transaction(0, 'Fund transfered to user`s wallet', 'fund-request', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
-
             $amount = auth()->user()->wallet - $request['amount'];
-            $transaction_id = "FUND" . strtoupper(Str::random(5));
             $metadata = [
                 'status' => true,
                 'amount_transfered' => $request['amount'],
                 'reference_id' => $transaction_id,
                 'transaction_from' => auth()->user()->name
             ];
-            $this->transaction($request['amount'], 'Fund added to user`s wallet', 'fund-request', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
+            $this->transaction($request['amount'], "Fund request approved for $name - $phone", 'fund-request', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
+
+            $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
+            $amount = $wallet[0] + $request['amount'];
+            $metadata = [
+                'status' => true,
+                'amount_added' => $request['amount'],
+                'reference_id' => $transaction_id,
+                'transaction_from' => auth()->user()->name,
+                'phone_number' => auth()->user()->phone_number
+            ];
+            $this->notAdmintransaction(0, "Fund request approved by {$metadata['transaction_from']} - {$metadata['phone_number']}", 'fund-request', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
         }
 
-        $user = User::find($request['beneficiaryId']);
         $name = $user->name;
-        $wallet = $user->wallet;
         $phone = $user->phone_number;
+        $wallet = $user->wallet;
         $status = $request['status'];
         $time = date('d-m-Y h:i:s A');
         $newmsg = "Hello $name, Your fund request has been $status and Now Your Bal $wallet on the date of $time. '-From P24 Technology Pvt. Ltd";
@@ -182,24 +184,10 @@ class FundController extends Controller
             'updated_at' => now()
         ]);
 
+        $user = User::find($request['beneficiaryId']);
         if ($request['transactionType'] == 'transfer') {
-            $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
-            $amount = $wallet[0] + $request['amount'];
-            $transaction_id = "FUND" . strtoupper(Str::random(5));
-            $metadata = [
-                'status' => true,
-                'amount_added' => $request['amount'],
-                'reference_id' => $transaction_id,
-                'transaction_from' => auth()->user()->name
-            ];
-            $this->transaction(0, 'Fund added to user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
-            DB::table('users')->where('id', $request['beneficiaryId'])->update([
-                'wallet' => $amount,
-                'updated_at' => now()
-            ]);
-
             $amount = auth()->user()->wallet - $request['amount'];
-            $transaction_id = "FUND" . strtoupper(Str::random(5));
+            $user = User::find($request['beneficiaryId']);
             $metadata = [
                 'status' => true,
                 'amount_transfered' => $request['amount'],
@@ -212,7 +200,17 @@ class FundController extends Controller
                 'updated_at' => now()
             ]);
 
-            $this->transaction($request['amount'], 'Fund added to user`s wallet', 'funds', auth()->user()->id, $wallet[0], $transaction_id, $amount, json_encode($metadata));
+            $this->transaction($request['amount'], "Fund transfer initiated for user {$user->name} - {$user->phone_number}", 'funds', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
+            $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
+            $amount = $wallet[0] + $request['amount'];
+            $metadata = [
+                'status' => true,
+                'amount_added' => $request['amount'],
+                'reference_id' => $transaction_id,
+                'transaction_from' => auth()->user()->name,
+                'phone_number' => auth()->user()->phone_number
+            ];
+            $this->notAdmintransaction(0, "Fund transfered initiated by admin {$metadata['transaction_from']} - {$metadata['phone_number']}", 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
         } else {
             $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
             $amount = $wallet[0] - $request['amount'];
@@ -225,7 +223,7 @@ class FundController extends Controller
             ];
 
             $transaction_id = "FUND" . strtoupper(Str::random(5));
-            $this->transaction($request['amount'], 'Fund reversed from user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata));
+            $this->transaction($request['amount'], "Fund reversed from {$user->name} {$user->phone_number} wallet", 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata));
         }
 
         return $data;
