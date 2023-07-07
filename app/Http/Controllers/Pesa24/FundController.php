@@ -49,11 +49,12 @@ class FundController extends Controller
         return $data;
     }
 
-    public function reversalAndTransferFunds()
+    public function reversalAndTransferFunds(Request $request)
     {
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
             ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
             ->where('transaction_type', 'transfer')->orWhere('transaction_type', 'reversal')
+            ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
             ->select('users.name', 'users.phone_number', 'funds.transaction_id', 'funds.user_id', 'funds.amount', 'funds.remarks', 'funds.transaction_type', 'funds.created_at', 'admin.name as admin_name', 'admin.id as admin_id', 'funds.id')
             ->latest('funds.created_at')
             ->paginate(100);
