@@ -84,6 +84,7 @@ class FundController extends Controller
             $metadata = [
                 'status' => true,
                 'amount_transfered' => $request['amount'],
+                'remarks' => $request['remarks'] ?? null,
                 'reference_id' => $transaction_id,
                 'transaction_from' => auth()->user()->name
             ];
@@ -94,6 +95,7 @@ class FundController extends Controller
             $metadata = [
                 'status' => true,
                 'amount_added' => $request['amount'],
+                'remarks' => $request['remarks'] ?? null,
                 'reference_id' => $transaction_id,
                 'transaction_from' => auth()->user()->name,
                 'phone_number' => auth()->user()->phone_number
