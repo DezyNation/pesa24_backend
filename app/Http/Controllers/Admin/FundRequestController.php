@@ -116,7 +116,7 @@ class FundRequestController extends Controller
             'remarks',
             'admin_remarks',
             'created_at'
-        )->latest()->paginate(200);
+        )->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
 
         return $data;
     }
