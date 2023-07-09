@@ -24,11 +24,11 @@ class UserDashboardController extends Controller
             return $data;
         }
         if (is_null($name)) {
-            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->latest()->paginate(200);
+            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])->where('trigered_by', auth()->user()->id)->latest()->paginate(200);
             return $data;
         }
 
-        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->paginate(200);
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->paginate(200);
         return $data;
     }
 
@@ -251,13 +251,13 @@ class UserDashboardController extends Controller
 
     public function dailySales(Request $request)
     {
-        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => auth()->user()->id])->whereJsonContains('metadata->status', true)->paginate(200);
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])->where(['trigered_by' => auth()->user()->id])->whereJsonContains('metadata->status', true)->paginate(200);
         return $data;
     }
 
     public function adminDailySales(Request $request, $id)
     {
-        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => $id])->whereJsonContains('metadata->status', true)->paginate(200);
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])->where(['trigered_by' => $id])->whereJsonContains('metadata->status', true)->paginate(200);
         return $data;
     }
 
