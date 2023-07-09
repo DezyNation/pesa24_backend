@@ -168,7 +168,7 @@ class PayoutController extends CommissionController
 
     public function fetchPayoutAdmin(Request $request, $processing = null)
     {
-        if (!empty($request['userId'])) {
+        if (!empty($request['userId']) || !is_null($request['userId'])) {
             $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
             ->where([
                 'users.organization_id' => auth()->user()->organization_id,
