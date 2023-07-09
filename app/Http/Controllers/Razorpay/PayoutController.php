@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Razorpay;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\CommissionController;
-use Illuminate\Validation\Rule;
 
 class PayoutController extends CommissionController
 {
@@ -167,6 +168,15 @@ class PayoutController extends CommissionController
 
     public function fetchPayoutAdmin(Request $request, $processing = null)
     {
+        if ($request->has('userId')) {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+            ->where([
+                'users.organization_id' => auth()->user()->organization_id,
+                'payouts.user_id' => $request['userId']
+            ])
+            ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+            ->select('payouts.*', 'users.name')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
+        }
         $search = $request['search'];
         if (!empty($search)) {
             $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
@@ -193,6 +203,7 @@ class PayoutController extends CommissionController
                 'users.organization_id' => auth()->user()->organization_id
             ])
             ->where('payouts.status', '!=', 'processing')
+            ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
             ->select('payouts.*', 'users.name')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
 
         return $payout;
