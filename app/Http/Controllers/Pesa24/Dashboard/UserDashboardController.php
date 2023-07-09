@@ -24,11 +24,11 @@ class UserDashboardController extends Controller
             return $data;
         }
         if (is_null($name)) {
-            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])->where('trigered_by', auth()->user()->id)->latest()->paginate(200);
+            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])->where('trigered_by', auth()->user()->id)->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
             return $data;
         }
 
-        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->paginate(200);
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
         return $data;
     }
 
