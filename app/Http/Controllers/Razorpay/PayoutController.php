@@ -199,8 +199,8 @@ class PayoutController extends CommissionController
                 ->select('payouts.*', 'users.name')->latest()->get();
 
             return $payout;
-        }
-        $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+        } else {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
             ->where([
                 'users.organization_id' => auth()->user()->organization_id
             ])
@@ -209,6 +209,7 @@ class PayoutController extends CommissionController
             ->select('payouts.*', 'users.name')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
 
         return $payout;
+        }
     }
 
     public function payoutCall(Request $request)
