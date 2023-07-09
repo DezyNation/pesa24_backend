@@ -278,7 +278,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('fetch-fund/{type}/{id?}', [FundController::class, 'pendingfetchFund']);
     Route::get('users-list/{role}', [AdminController::class, 'roleUser']);
     Route::get('logins/{count?}', [AdminController::class, 'logins']);
-    Route::get('wallet-transfers/{id?}', [AdminController::class, 'walletTransfers']);
+    Route::get('wallet-transfers/{id?}', [AdminController::class, 'walletTransfers'])->middleware('permission:wallet-transfers-view');
 
     Route::post('paysprint/payout/upload-documents', [PaysprintPayout::class, 'uploadDocuments']);
     Route::get('fetch-fund-requests/{id}', [FundController::class, 'fetchFundId']);
