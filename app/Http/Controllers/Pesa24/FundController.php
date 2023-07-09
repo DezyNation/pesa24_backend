@@ -57,8 +57,20 @@ class FundController extends Controller
         return $data;
     }
 
-    public function reversalAndTransferFunds(Request $request)
+    public function reversalAndTransferFunds(Request $request, $id = null)
     {
+
+        if (!is_null($id)) {
+            $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                ->where('funds.user_id', $id)
+                ->where('transaction_type', 'transfer')->orWhere('transaction_type', 'reversal')
+                ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->select('users.name', 'users.phone_number', 'funds.transaction_id', 'funds.user_id', 'funds.amount', 'funds.remarks', 'funds.transaction_type', 'funds.created_at', 'admin.name as admin_name', 'admin.id as admin_id', 'admin.phone_number as admin_phone', 'funds.id')
+                ->latest('funds.updated_at')
+                ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
+            return $data;
+        }
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
             ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
             ->where('transaction_type', 'transfer')->orWhere('transaction_type', 'reversal')
