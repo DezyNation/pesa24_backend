@@ -38,6 +38,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
 use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayoutController;
+use App\Http\Controllers\Razorpay\PayoutController as RazorpayPayoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,8 @@ use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayo
 Route::get('/', function () {
     return ['Application' => 'Janpay'];
 });
+
+Route::post('test',  [RazorpayPayoutController::class, 'test'])->middleware('charge');
 
 // Route::get('inquiry', [BBPSController::class, 'payBill']);
 // Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
