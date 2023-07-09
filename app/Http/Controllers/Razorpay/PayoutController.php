@@ -174,7 +174,7 @@ class PayoutController extends CommissionController
                 'users.organization_id' => auth()->user()->organization_id,
                 'payouts.user_id' => $request['userId']
             ])
-            ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+            ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
             ->select('payouts.*', 'users.name')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
         }
         $search = $request['search'];
@@ -203,7 +203,7 @@ class PayoutController extends CommissionController
                 'users.organization_id' => auth()->user()->organization_id
             ])
             ->where('payouts.status', '!=', 'processing')
-            ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+            ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
             ->select('payouts.*', 'users.name')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
 
         return $payout;
