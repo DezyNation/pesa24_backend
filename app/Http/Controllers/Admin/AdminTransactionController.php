@@ -80,6 +80,7 @@ class AdminTransactionController extends Controller
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
             ->where('transactions.id', $id)
             ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
+            ->latest('transactions.created_at')
             ->paginate(100);
 
 
