@@ -55,8 +55,6 @@ Route::get('/', function () {
     return ['Application' => 'Janpay'];
 });
 
-Route::post('test',  [RazorpayPayoutController::class, 'test'])->middleware('charge');
-
 // Route::get('inquiry', [BBPSController::class, 'payBill']);
 // Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
 // Route::get('pan', [BBPSController::class, 'payBill']);
