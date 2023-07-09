@@ -176,6 +176,8 @@ class PayoutController extends CommissionController
             ])
             ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
             ->select('payouts.*', 'users.name')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
+
+            return $payout;
         }
         $search = $request['search'];
         if (!empty($search)) {
