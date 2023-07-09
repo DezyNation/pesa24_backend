@@ -20,7 +20,7 @@ class Charge
         $request->validate([
             'amount' => 'required'
         ]);
-        $user_id = 95;
+        $user_id = auth()->user()->id;
         $amount = $request->amount;
         $table = DB::table('payoutcommissions')
         ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
