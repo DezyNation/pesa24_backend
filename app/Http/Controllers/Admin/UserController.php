@@ -279,16 +279,16 @@ class UserController extends Controller
         $org_id = auth()->user()->organization_id;
 
         if (!empty($search) || !is_null($search)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->paginate(100);
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->paginate(200);
             return $user;
         }
         if (is_null($id)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->paginate(100);
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->paginate(200);
             return $user;
         }
 
 
-        $user = User::role($role)->with('packages:name')->where(['id' => $id, 'organization_id' => $org_id])->paginate(100);
+        $user = User::role($role)->with('packages:name')->where(['id' => $id, 'organization_id' => $org_id])->paginate(200);
         return $user;
     }
 

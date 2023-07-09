@@ -17,7 +17,7 @@ class AdminTransactionController extends Controller
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
             ->select('users.name', 'transactions.*', 'admin.first_name as done_by', 'admin.phone_number as done_by_phone')
             ->latest()
-            ->paginate(100);
+            ->paginate(200);
         return $data;
     }
 
@@ -33,7 +33,7 @@ class AdminTransactionController extends Controller
                 ->where(['transactions.service_type' => $data])
                 ->select('users.name', 'transactions.*', 'admin.organization_id', 'admin.first_name as done_by', 'admin.phone_number as done_by_phone')
                 ->latest()
-                ->paginate(100);
+                ->paginate(200);
             return $data;
         }
 
@@ -44,7 +44,7 @@ class AdminTransactionController extends Controller
             ->whereBetween('transactions.created_at', [$from, $to])
             ->select('users.name', 'transactions.*', 'admin.organization_id', 'admin.first_name as done_by', 'admin.phone_number as done_by_phone')
             ->latest()
-            ->paginate(100);
+            ->paginate(200);
         return $data;
     }
 
@@ -59,7 +59,7 @@ class AdminTransactionController extends Controller
                 ->where('transactions.transaction_for', 'LIKE', '%' . $search . '%')->orWhere('transactions.transaction_id', 'LIKE', '%' . $search . '%')
                 ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
                 ->latest('transactions.created_at')
-                ->paginate(100)->appends(['from' => $request['from'], 'to' => $request['to']]);
+                ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
 
             return $data;
         }
@@ -70,7 +70,7 @@ class AdminTransactionController extends Controller
                 ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
                 ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
                 ->latest('transactions.created_at')
-                ->paginate(100)->appends(['from' => $request['from'], 'to' => $request['to']]);
+                ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
 
             return $data;
         }
@@ -81,7 +81,7 @@ class AdminTransactionController extends Controller
             ->where('transactions.id', $id)
             ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
             ->latest('transactions.created_at')
-            ->paginate(100);
+            ->paginate(200);
 
 
         return $data;
@@ -94,7 +94,7 @@ class AdminTransactionController extends Controller
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
             ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
             ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.created_at', 'transactions.updated_at', 'transactions.transaction_for as description')
-            ->where('transactions.trigered_by', $id)->latest('transactions.created_at')->paginate(100)->appends(['from' => $request['from'], 'to' => $request['to']]);
+            ->where('transactions.trigered_by', $id)->latest('transactions.created_at')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
         return $data;
     }
 
@@ -107,7 +107,7 @@ class AdminTransactionController extends Controller
             ->select('users.name', 'transactions.*', 'admin.first_name', 'admin.phone_number')
             ->where('created_at', '>=', Carbon::now()->subDay()->toDateTimeString())
             ->whereJsonContains('transactions.metadata->status', 'true')
-            ->latest()->paginate(100);
+            ->latest()->paginate(200);
         return $data;
     }
 
