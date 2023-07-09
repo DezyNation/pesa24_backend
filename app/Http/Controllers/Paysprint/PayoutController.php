@@ -224,11 +224,12 @@ class PayoutController extends CommissionController
         return $response;
     }
 
-    public function fetchMoneyTransfer()
+    public function fetchMoneyTransfer(Request $request)
     {
         $data = DB::table('money_transfers')
             ->join('users as recievers', 'recievers.id', '=', 'money_transfers.reciever_id')
             ->where('money_transfers.sender_id', auth()->user()->id)
+            ->whereBetween('money_transfers.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
             ->select('recievers.name', 'recievers.phone_number', 'recievers.id as reciever_id', 'money_transfers.*')
             ->latest()
             ->paginate(200);

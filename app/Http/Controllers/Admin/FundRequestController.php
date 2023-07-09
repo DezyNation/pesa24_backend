@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -99,9 +100,12 @@ class FundRequestController extends Controller
         return $data;
     }
 
-    public function fetchFundUser()
+    public function fetchFundUser(Request $request)
     {
-        $data = DB::table('funds')->where('user_id', auth()->user()->id)->select(
+        $data = DB::table('funds')
+        ->where('user_id', auth()->user()->id)
+        ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+        ->select(
             'amount',
             'bank_name',
             'transaction_id',
