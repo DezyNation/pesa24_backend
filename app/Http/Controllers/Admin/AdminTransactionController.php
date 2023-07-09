@@ -59,7 +59,7 @@ class AdminTransactionController extends Controller
                 ->where('transactions.transaction_for', 'LIKE', '%' . $search . '%')->orWhere('transactions.transaction_id', 'LIKE', '%' . $search . '%')
                 ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
                 ->latest('transactions.created_at')
-                ->paginate(100);
+                ->paginate(100)->appends(['from' => $request['from'], 'to' => $request['to']]);
 
             return $data;
         }
@@ -70,7 +70,7 @@ class AdminTransactionController extends Controller
                 ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
                 ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
                 ->latest('transactions.created_at')
-                ->paginate(100);
+                ->paginate(100)->appends(['from' => $request['from'], 'to' => $request['to']]);
 
             return $data;
         }
@@ -117,8 +117,11 @@ class AdminTransactionController extends Controller
         $data = DB::table('transactions')
             ->join('users', 'users.id', '=', 'transactions.trigered_by')
             ->join('users as beneficiaries', 'beneficiaries.id', '=', 'transactions.user_id')
+            ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
+            ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
             ->select('transactions.*', 'users.name as trigered_by_name', 'users.phone_number as trigered_by_phone', 'users.organization_id', 'beneficiaries.name', 'beneficiaries.phone_number', 'users.wallet as wallet_amount')
             ->where('users.organization_id', auth()->user()->organization_id)
+            ->where('roles.name', '!=', 'admin')
             ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
             ->latest('transactions.created_at')
             ->get();
