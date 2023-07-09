@@ -906,4 +906,16 @@ class AdminController extends Controller
         $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => $id])->latest()->paginate(200);
         return $data;
     }
+
+    public function walletTransfers()
+    {
+        $data = DB::table('money_transfers')
+        ->join('users as recievers', 'recievers.id', '=', 'money_transfers.reciever_id')
+        ->join('users as senders', 'senders.id', '=', 'money_transfers.sender_id')
+        ->where('money_transfers.sender_id', auth()->user()->id)
+        ->whereBetween('money_transfers.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+        ->select('recievers.name as reciever_name', 'recievers.phone_number as reciever_phone', 'recievers.id as reciever_id', 'money_transfers.*', 'senders.name as sender_name', 'senders.id as sender_id', 'senders.phone_number as sender_phone')
+        ->latest()
+        ->paginate(200);
+    }
 }
