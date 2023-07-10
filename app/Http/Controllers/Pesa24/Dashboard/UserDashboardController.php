@@ -46,6 +46,8 @@ class UserDashboardController extends Controller
 
         $payout = $this->userTable($tenure, 'payout', $request);
 
+        $payout_charge = $this->userTable($tenure, 'payout-charge', $request);
+
         $lic = $this->userTable($tenure, 'lic', $request);
 
         $fastag = $this->userTable($tenure, 'fastag', $request);
@@ -69,6 +71,7 @@ class UserDashboardController extends Controller
             $cms,
             $recharge,
             $funds,
+            $payout_charge
         ];
 
         return response($array);
