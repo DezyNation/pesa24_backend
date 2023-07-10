@@ -63,7 +63,7 @@ class AdminTransactionController extends Controller
 
             return $data;
         }
-        if (!is_null($request['userId'] || !empty($request['userId']))) {
+        if (!is_null($request['userId']) || !empty($request['userId'])) {
             $data = DB::table('transactions')
                 ->join('users', 'users.id', '=', 'transactions.user_id')
                 ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
@@ -76,7 +76,7 @@ class AdminTransactionController extends Controller
 
             return $data;
         }
-        
+
         $data = DB::table('transactions')
             ->join('users', 'users.id', '=', 'transactions.user_id')
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
