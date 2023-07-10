@@ -909,7 +909,7 @@ class AdminController extends Controller
 
     public function walletTransfers(Request $request, $id = null)
     {
-        if (!is_null($id)) {
+        if (!is_null($request['userId']) || !empty($request['userId'])) {
             $request->validate([
                 'userType' => 'required'
             ]);
@@ -921,7 +921,7 @@ class AdminController extends Controller
             $data = DB::table('money_transfers')
                 ->join('users as recievers', 'recievers.id', '=', 'money_transfers.reciever_id')
                 ->join('users as senders', 'senders.id', '=', 'money_transfers.sender_id')
-                ->where("money_transfers.$query_for", $id)
+                ->where("money_transfers.$query_for", $request['userId'])
                 ->whereBetween('money_transfers.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
                 ->select('recievers.name as reciever_name', 'recievers.phone_number as reciever_phone', 'recievers.id as reciever_id', 'money_transfers.*', 'senders.name as sender_name', 'senders.id as sender_id', 'senders.phone_number as sender_phone')
                 ->latest()

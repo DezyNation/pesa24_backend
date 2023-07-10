@@ -29,7 +29,7 @@ class FundController extends Controller
 
     public function pendingfetchFund(Request $request, $type, $id = null)
     {
-        if (!is_null($id)) {
+        if (!empty($request['userId']) || !is_null($request['userId'])) {
             $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
                 ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
                 ->where('funds.user_id', $id)
@@ -60,7 +60,7 @@ class FundController extends Controller
     public function reversalAndTransferFunds(Request $request, $id = null)
     {
 
-        if (!is_null($id)) {
+        if (!is_null($request['userId']) || !empty($request['userId'])) {
             $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
                 ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
                 ->where('transaction_type', 'transfer')
