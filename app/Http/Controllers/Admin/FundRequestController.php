@@ -104,6 +104,7 @@ class FundRequestController extends Controller
     {
         $data = DB::table('funds')
         ->where('user_id', auth()->user()->id)
+        ->where('transaction_type', '!=', 'transfer')->where('transaction_type', '!=', 'reversal')
         ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
         ->select(
             'amount',
