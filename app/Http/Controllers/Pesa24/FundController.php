@@ -33,7 +33,8 @@ class FundController extends Controller
             $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
             ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
             ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
-            ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at');
+            ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
+            return $data;
         }
         if (!empty($request['userId']) || !is_null($request['userId'])) {
             $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
