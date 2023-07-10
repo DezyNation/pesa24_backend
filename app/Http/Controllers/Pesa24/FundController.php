@@ -32,9 +32,9 @@ class FundController extends Controller
         if (!empty($request['userId']) || !is_null($request['userId'])) {
             $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
                 ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
-                ->where('funds.user_id', $id)
+                ->where('funds.user_id', $request['userId'])
                 ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
-                ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
+                ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userId' => $request['userId']]);
             return $data;
         }
         if ($type == 'pending') {
@@ -68,7 +68,7 @@ class FundController extends Controller
                 ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
                 ->select('users.name', 'users.phone_number', 'funds.transaction_id', 'funds.user_id', 'funds.amount', 'funds.remarks', 'funds.transaction_type', 'funds.created_at', 'admin.name as admin_name', 'admin.id as admin_id', 'admin.phone_number as admin_phone', 'funds.id')
                 ->latest('funds.updated_at')
-                ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
+                ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userId' => $request['userId']]);
             return $data;
         }
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')

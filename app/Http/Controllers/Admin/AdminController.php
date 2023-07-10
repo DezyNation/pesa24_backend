@@ -925,7 +925,7 @@ class AdminController extends Controller
                 ->whereBetween('money_transfers.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
                 ->select('recievers.name as reciever_name', 'recievers.phone_number as reciever_phone', 'recievers.id as reciever_id', 'money_transfers.*', 'senders.name as sender_name', 'senders.id as sender_id', 'senders.phone_number as sender_phone')
                 ->latest()
-                ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userType' => $request['userType']]);
+                ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userType' => $request['userType'], 'userId' => $request['userId']]);
         } else {
             $data = DB::table('money_transfers')
                 ->join('users as recievers', 'recievers.id', '=', 'money_transfers.reciever_id')
