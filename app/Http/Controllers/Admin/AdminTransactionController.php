@@ -63,27 +63,27 @@ class AdminTransactionController extends Controller
 
             return $data;
         }
-        if (is_null($request['userId'] || empty($request['userId']))) {
+        if (!is_null($request['userId'] || !empty($request['userId']))) {
             $data = DB::table('transactions')
                 ->join('users', 'users.id', '=', 'transactions.user_id')
                 ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
+                ->where('transactions.trigered_by', $request['userId'])
                 ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
                 ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
                 ->latest('transactions.created_at')
-                ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
+                ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userId' => $request['userId']]);
+
 
             return $data;
         }
-
+        
         $data = DB::table('transactions')
             ->join('users', 'users.id', '=', 'transactions.user_id')
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
-            ->where('transactions.trigered_by', $request['userId'])
             ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
             ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
             ->latest('transactions.created_at')
-            ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userId' =>$request['userId']]);
-
+            ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
 
         return $data;
     }
