@@ -269,7 +269,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('users-list/{role}/{id?}', [UserController::class, 'userInfo']);
     Route::post('link-package', [AdminDashboardcontroller::class, 'packageService']);
 
-    Route::get('payouts/{processing?}', [PayoutController::class, 'fetchPayoutAdmin']);
+    Route::get('payouts/{processing}', [PayoutController::class, 'fetchPayoutAdmin']);
     Route::get('fetch-fund-requests/{id}', [FundRequestController::class, 'fetchFundId']);
 
     Route::post('razorpay/fetch-payout/{processing?}', [PayoutController::class, 'fetchPayoutAdmin']);

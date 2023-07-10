@@ -103,11 +103,12 @@ class FundRequestController extends Controller
     public function fetchFundUser(Request $request)
     {
         $search = $request['search'];
-        if (!empty($search)) {
+        $status = $request['status'];
+        if (!empty($status)) {
             $data = DB::table('funds')
                 ->where('user_id', auth()->user()->id)
                 ->where('transaction_type', '!=', 'transfer')->where('transaction_type', '!=', 'reversal')
-                ->where('transaction_id', 'like', "%" . $search . "%")->orWhere('status', 'like', "%" . $search . "%")
+                ->where('status', $status)
                 ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
                 ->select(
                     'amount',
@@ -121,7 +122,29 @@ class FundRequestController extends Controller
                     'admin_remarks',
                     'created_at',
                     'updated_at'
-                )->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
+                )->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $status, 'search' => $search]);
+                return $data;
+        }
+        if (!empty($search)) {
+            $data = DB::table('funds')
+                ->where('user_id', auth()->user()->id)
+                ->where('transaction_type', '!=', 'transfer')->where('transaction_type', '!=', 'reversal')
+                ->where('transaction_id', 'like', "%" . $search . "%")
+                ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->select(
+                    'amount',
+                    'bank_name',
+                    'transaction_id',
+                    'status',
+                    'transaction_type',
+                    'transaction_date',
+                    'receipt',
+                    'remarks',
+                    'admin_remarks',
+                    'created_at',
+                    'updated_at'
+                )->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $status, 'search' => $search]);
+                return $data;
         }
         $data = DB::table('funds')
             ->where('user_id', auth()->user()->id)
@@ -139,7 +162,7 @@ class FundRequestController extends Controller
                 'admin_remarks',
                 'created_at',
                 'updated_at'
-            )->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
+            )->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $status, 'search' => $search]);
 
         return $data;
     }
