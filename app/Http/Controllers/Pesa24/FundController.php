@@ -107,10 +107,11 @@ class FundController extends Controller
     public function reversalAndTransferFunds(Request $request, $id = null)
     {
 
-        if (!is_null($request['search']) || !empty($request['search'])) {
+        $search = $request['search'];
+        if (!is_null($search) || !empty($search)) {
             $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
                 ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
-                ->where('funds.transaction_id', 'like', "%" . $request['search'] . "%")
+                ->where('funds.transaction_id', 'like', '%' . $search . '%')
                 ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
                 ->select('users.name', 'users.phone_number', 'funds.transaction_id', 'funds.user_id', 'funds.amount', 'funds.remarks', 'funds.transaction_type', 'funds.created_at', 'admin.name as admin_name', 'admin.id as admin_id', 'admin.phone_number as admin_phone', 'funds.id')
                 ->latest('funds.updated_at')
