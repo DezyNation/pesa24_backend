@@ -36,13 +36,13 @@ class FundController extends Controller
                     ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
                     ->where('funds.transaction_id', 'like', '%' . $request['status'] . '%')
                     ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
-                    ->where(['users.organization_id' => auth()->user()->organization_id])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
+                    ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
             } else {
                 $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
                     ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
                     ->where('funds.transaction_id', 'like', '%' . $request['status'] . '%')
                     ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
-                    ->where(['users.organization_id' => auth()->user()->organization_id])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'pageSize' => $request['pageSize'], 'status' => $request['status'], 'search' => $request['search']]);
+                    ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'pageSize' => $request['pageSize'], 'status' => $request['status'], 'search' => $request['search']]);
             }
 
             return $data;
