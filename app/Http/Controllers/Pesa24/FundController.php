@@ -68,7 +68,15 @@ class FundController extends Controller
             }
 
             if (empty($request['pageSize'])) {
+                if (!empty($request['status']) || !is_null($request['status'])) {
 
+                    $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                        ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                        ->where('funds.user_id', $request['userId'])
+                        ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                        ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', $request['status'])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
+                    return $data;
+                }
                 $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
                     ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
                     ->where('funds.user_id', $request['userId'])
@@ -76,6 +84,14 @@ class FundController extends Controller
                     ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
                 return $data;
             } else {
+                if (!empty($request['status']) || !is_null($request['status'])) {
+                    $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                        ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                        ->where('funds.user_id', $request['userId'])
+                        ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                        ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', $request['status'])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userId' => $request['userId'], 'pageSize' => $request['pageSize'], 'search' => $request['search'], 'status' => $request['status']]);
+                    return $data;
+                }
                 $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
                     ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
                     ->where('funds.user_id', $request['userId'])
