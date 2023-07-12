@@ -335,6 +335,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::post('update-package-defaults', [AdminController::class, 'defaultPackage']);
 
     Route::get('user-reports/{name}/{id}', [AdminController::class, 'userReports']);
+    Route::get('print-report', [AdminController::class, 'printReports']);
 
     Route::get('user/overview/{user_id}', [UserDashboardController::class, 'overView']);
 });
