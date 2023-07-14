@@ -32,7 +32,7 @@ class Kernel extends ConsoleKernel
                 'updated_at' => now()
             ]);
         })
-        ->dailyAt('02:35');
+        ->dailyAt('02:37');
         // $schedule->command('inspire')->hourly();
     }
 
