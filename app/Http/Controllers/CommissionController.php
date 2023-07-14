@@ -1263,7 +1263,7 @@ class CommissionController extends Controller
         }
         $table = $table[0];
         $user = User::findOrFail($user_id);
-        $role = $user->getRoleNames()[0];
+        $role = $user[0]->getRoleNames()[0];
 
         $fixed_charge = $table->fixed_charge;
         $is_flat = $table->is_flat;
