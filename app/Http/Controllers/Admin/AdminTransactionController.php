@@ -58,7 +58,7 @@ class AdminTransactionController extends Controller
                 ->where('transactions.transaction_for', 'LIKE', '%' . $search . '%')->orWhere('transactions.transaction_id', 'LIKE', '%' . $search . '%')
                 ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
                 ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
-                ->latest('transactions.created_at')
+                ->latest('transactions.created_at')->orderByDesc('transactions.id')
                 ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
 
             return $data;
@@ -68,9 +68,10 @@ class AdminTransactionController extends Controller
                 ->join('users', 'users.id', '=', 'transactions.user_id')
                 ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
                 ->where('transactions.trigered_by', $request['userId'])
+                ->orWhere('transactions.user_id', $request['userId'])
                 ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
                 ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
-                ->latest('transactions.created_at')
+                ->latest('transactions.created_at')->orderByDesc('transactions.id')
                 ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userId' => $request['userId']]);
 
 
@@ -82,7 +83,7 @@ class AdminTransactionController extends Controller
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
             ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
             ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
-            ->latest('transactions.created_at')
+            ->latest('transactions.created_at')->orderByDesc('transactions.id')
             ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
 
         return $data;
