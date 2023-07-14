@@ -20,7 +20,7 @@ class UserDashboardController extends Controller
     {
         $search = $request['search'];
         if (!empty($search) || !is_null($search)) {
-            $data = DB::table('transactions')->where('trigered_by', auth()->user()->id)->orWhere('user_id', auth()->user()->id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->latest()->get();
+            $data = DB::table('transactions')->where('trigered_by', auth()->user()->id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->latest()->get();
             // ->paginate(200);
             return $data;
         }
@@ -28,15 +28,15 @@ class UserDashboardController extends Controller
             if (!is_null($request['status']) || !empty($request['status'])) {
                 // $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])->where(['trigered_by' => auth()->user()->id, 'service_type' => $name])->orWhere(['user_id' =>  auth()->user()->id, 'service_type' => $name])->whereJsonContains('metadata->status', $request['status'])->latest()->get();
                 $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])->where('service_type', $name)->where(function ($q) {
-                    $q->where('trigered_by', auth()->user()->id)
-                        ->orWhere('user_id', auth()->user()->id);
+                    $q->where('trigered_by', auth()->user()->id);
+                        // ->orWhere('user_id', auth()->user()->id);
                 })->whereJsonContains('metadata->status', $request['status'])->latest()->get();
                 // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $request['status']]);
                 return $data;
             }
             $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])->where('service_type', $name)->where(function ($q) {
-                $q->where('trigered_by', auth()->user()->id)
-                    ->orWhere('user_id', auth()->user()->id);
+                $q->where('trigered_by', auth()->user()->id);
+                    // ->orWhere('user_id', auth()->user()->id);
             })->latest()->get();
             // $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])->where(['trigered_by' => auth()->user()->id, 'service_type' => $name])->orWhere(['user_id' =>  auth()->user()->id, 'service_type' => $name])->latest()->get();
             // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $request['status']]);
