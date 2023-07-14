@@ -57,8 +57,6 @@ Route::get('/', function () {
     return ['Application' => 'Janpay'];
 });
 
-Route::get('test', [AdminController::class, 'userMarket']);
-
 // Route::get('inquiry', [BBPSController::class, 'payBill']);
 // Route::get('dmt', [TransactionController::class, 'initiateTransaction']);
 // Route::get('pan', [BBPSController::class, 'payBill']);

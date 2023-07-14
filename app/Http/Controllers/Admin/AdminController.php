@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
@@ -998,6 +999,9 @@ class AdminController extends Controller
 
     public function userMarket(Request $request)
     {
+
+        $transaction = Transaction::whereDate('created_at', '2023-07-14')->orderByDesc('id')->groupBy('trigered_by')->get();
+        return $transaction;
         $today = '2023-07-14T00:00';
         $tomorrow = '2023-07-14T23:59';
         // $today = Carbon::createFromFormat('Y-m-d H:i:s');
@@ -1009,10 +1013,10 @@ class AdminController extends Controller
             ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
             ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
             // ->whereBetween('transactions.created_at', [Carbon::today(), Carbon::tomorrow()])
-             ->whereBetween('transactions.created_at', [$today, $tomorrow])
+            ->whereDate('transactions.created_at', '2023-07-14')
+            ->orderByDesc('transactions.id')
             ->groupBy('transactions.trigered_by')
-            // ->selectRaw('*,max(transactions.id) as last')
-            ->select('transactions.*', 'users.name as user_name', 'users.id as retailer_id')
+            ->select('transactions.*')
             ->get();
         return $data;
     }
