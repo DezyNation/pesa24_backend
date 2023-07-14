@@ -899,11 +899,18 @@ class AdminController extends Controller
         }
 
         if ($name == 'all') {
-            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => $id])->orWhere('user_id', $id)->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
+            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(function ($q) use ($id) {
+                $q->where('trigered_by', $id)
+                    ->orWhere('user_id', $id);
+            })->latest()->get();
+
             return $data;
         }
 
-        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => $id])->orWhere('user_id', $id)->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('service_type', $name)->where(function ($q) use ($id) {
+            $q->where('trigered_by', $id)
+                ->orWhere('user_id', $id);
+        })->latest()->get();
         return $data;
     }
 
