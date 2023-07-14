@@ -40,7 +40,7 @@ class PayoutStatusUpdated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('janpay-01-development'),
+            new PrivateChannel('janpay-01-production'),
         ];
     }
 }
