@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Razorpay;
 
-use App\Http\Controllers\CommissionController;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Events\PayoutStatusUpdated;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\CommissionController;
 
 class WebhookController extends CommissionController
 {
@@ -45,6 +46,8 @@ class WebhookController extends CommissionController
 
         if ($request['payload.payout.entity.status'] == 'processed') {
             $result = $data->get();
+            $utr = $request['payload.payout.entity.utr'] ?? 'No UTR';
+            event(new PayoutStatusUpdated("Ref.ID {$request['payload.payout.entity.id']} ($utr)", $content = "Payout {$request['payload.payout.entity.id']} {$request['payload.payout.entity.status']}", $result[0]->user_id));
             // $this->payoutCommission($result[0]->user_id, $request['payload.payout.entity.amount'] / 100, $request['payload.payout.entity.reference_id'], $result[0]->account_number);
         }
         if ($request['payload.payout.entity.status'] == 'reversed' || $request['payload.payout.entity.status'] == 'cancelled' || $request['payload.payout.entity.status'] == 'failed' || $request['payload.payout.entity.status'] == 'rejected') {
@@ -60,6 +63,8 @@ class WebhookController extends CommissionController
             $account_number = $result[0]->account_number;
             $this->transaction(0, "Payout Reversal for account $account_number", 'payout', $result[0]->user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $request['payload.payout.entity.amount'] / 100);
             $commission = $this->razorpayReversal($result[0]->amount, $result[0]->user_id, $transaction_id, $result[0]->account_number);
+            $utr = $request['payload.payout.entity.utr'] ?? 'No UTR';
+            event(new PayoutStatusUpdated("Ref.ID {$request['payload.payout.entity.id']} ($utr)", "Payout {$request['payload.payout.entity.id']} {$request['payload.payout.entity.status']}", $result[0]->user_id));
         }
 
         return response()->noContent();

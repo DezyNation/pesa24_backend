@@ -184,18 +184,26 @@ class FundController extends Controller
             'beneficiaryId' => 'required|exists:users,id'
         ]);
 
+        $user = User::find($request['beneficiaryId']);
+        $name = $user->name;
+        $wallet = $user->wallet;
+        $phone = $user->phone_number;
+
+        if ($request['status'] = 'approved') {
+            $closing_balance = $wallet + $request['amount'];
+        } else {
+            $closing_balance = $wallet;
+        }
+
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id])->update([
             'funds.admin_remarks' => $request['remarks'] ?? null,
             'funds.status' => $request['status'],
             'funds.approved' => $request['approved'],
             'funds.declined' => $request['declined'],
+            'funds.closing_balance' => $closing_balance,
             'funds.parent_id' => auth()->user()->id,
             'funds.updated_at' => now()
         ]);
-
-        $user = User::find($request['beneficiaryId']);
-        $name = $user->name;
-        $phone = $user->phone_number;
 
         $transaction_id = "FUND" . strtoupper(Str::random(5));
         if ($request['status'] == 'approved') {
@@ -289,6 +297,14 @@ class FundController extends Controller
             return response("You can not send to money to yourself.", 403);
         }
 
+        $user = User::find($request['beneficiaryId']);
+        if ($request['transactionType'] == 'transfer') {
+            $opening_balance = $user->wallet;
+            $closing_balance = $user->wallet + $request['amount'];
+        } else {
+            $opening_balance = $user->wallet;
+            $closing_balance = $user->wallet - $request['amount'];
+        }
         $transaction_id = "FUND" . strtoupper(Str::random(5));
 
         $data = DB::table('funds')->insert([
@@ -300,12 +316,13 @@ class FundController extends Controller
             'transaction_date' => date('Y-m-d H:i:s'),
             'approved' => 1,
             'status' => 'approved',
+            'opening_balance' => $opening_balance,
+            'closing_balance' => $closing_balance,
             'remarks' => $request['remarks'] ?? null,
             'created_at' => now(),
             'updated_at' => now()
         ]);
 
-        $user = User::find($request['beneficiaryId']);
         if ($request['transactionType'] == 'transfer') {
             $amount = auth()->user()->wallet - $request['amount'];
             $user = User::find($request['beneficiaryId']);

@@ -35,6 +35,8 @@ class FundRequestController extends Controller
             'transaction_type' => $request['transactionType'],
             'transaction_id' => $request['transactionId'],
             'transaction_date' => $request['transactionDate'],
+            'opening_balance' => auth()->user()->wallet,
+            'closing_balance' => auth()->user()->wallet,
             'receipt' => $imgPath ?? null,
             'created_at' => now(),
             'updated_at' => now()
