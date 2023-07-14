@@ -995,4 +995,25 @@ class AdminController extends Controller
             return $data;
         }
     }
+
+    public function userMarket(Request $request)
+    {
+        $today = '2023-07-14T00:00';
+        $tomorrow = '2023-07-14T23:59';
+        // $today = Carbon::createFromFormat('Y-m-d H:i:s');
+        // $tomorrow = Carbon::tomorrow();
+
+        // return ['today' => $today, 'tomorrow' => $tomorrow];
+        $data = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
+            ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+            // ->whereBetween('transactions.created_at', [Carbon::today(), Carbon::tomorrow()])
+             ->whereBetween('transactions.created_at', [$today, $tomorrow])
+            ->groupBy('transactions.trigered_by')
+            // ->selectRaw('*,max(transactions.id) as last')
+            ->select('transactions.*', 'users.name as user_name', 'users.id as retailer_id')
+            ->get();
+        return $data;
+    }
 }

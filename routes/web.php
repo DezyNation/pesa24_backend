@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Models\User;
 use App\Models\Package;
 use App\Models\ParentUser;
@@ -55,6 +56,8 @@ use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayo
 Route::get('/', function () {
     return ['Application' => 'Janpay'];
 });
+
+Route::get('test', [AdminController::class, 'userMarket']);
 
 // Route::get('inquiry', [BBPSController::class, 'payBill']);
 // Route::get('dmt', [TransactionController::class, 'initiateTransaction']);

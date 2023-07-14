@@ -338,6 +338,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], 
     Route::get('print-report', [AdminController::class, 'printReports']);
 
     Route::get('user/overview/{user_id}', [UserDashboardController::class, 'overView']);
+    Route::get('user/market-balance', [AdminController::class, 'userMarket']);
 });
 
 Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);
