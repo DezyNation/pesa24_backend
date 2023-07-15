@@ -1017,7 +1017,7 @@ class AdminController extends Controller
         $request->validate([
             'report' => 'required'
         ]);
-        $search = $request['search'];
+        
         $user_id = $request['userId'];
         $status = $request['status'];
         $report = $request['report'];
@@ -1045,42 +1045,29 @@ class AdminController extends Controller
 
                 return $payout;
             }
+        }
+
+        if ($report == 'all') {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->where('payouts.status', '!=', 'processing')
+                ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                ->select('payouts.*', 'users.name')->latest()->get();
+
+            return $payout;
+
         } else {
-            # code...
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                ->where('payouts.status', $report)
+                ->select('payouts.*', 'users.name')->latest()->get();
 
-
-            if ($report == 'all') {
-                $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
-                    ->where([
-                        'users.organization_id' => auth()->user()->organization_id
-                    ])
-                    ->where('payouts.status', '!=', 'processing')
-                    ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
-                    ->select('payouts.*', 'users.name')->latest()->get();
-
-                return $payout;
-            } elseif ($report == 'processing') {
-
-                $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
-                    ->where([
-                        'users.organization_id' => auth()->user()->organization_id
-                    ])
-                    ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
-                    ->where('payouts.status', 'processing')->orWhere('payouts.status', 'pending')->orWhere('payouts.status', 'queued')
-                    ->select('payouts.*', 'users.name')->latest()->get();
-
-                return $payout;
-            } else {
-                $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
-                    ->where([
-                        'users.organization_id' => auth()->user()->organization_id
-                    ])
-                    ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
-                    ->where('payouts.status', $report)
-                    ->select('payouts.*', 'users.name')->latest()->get();
-
-                return $payout;
-            }
+            return $payout;
         }
     }
 
