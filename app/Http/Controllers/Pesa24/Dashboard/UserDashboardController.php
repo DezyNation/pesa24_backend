@@ -49,6 +49,7 @@ class UserDashboardController extends Controller
 
     public function overView(Request $request, $user_id)
     {
+        $user_id = auth()->user()->id;
         $tenure = $request['tenure'];
 
         $aeps = $this->userTable($tenure, 'aeps', $request, $user_id);
