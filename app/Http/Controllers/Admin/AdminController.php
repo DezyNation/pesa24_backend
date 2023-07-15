@@ -1024,7 +1024,7 @@ class AdminController extends Controller
                         'payouts.user_id' => $request['userId']
                     ])
                     ->where('payouts.status', $request['status'])
-                    ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                    ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
                     ->select('payouts.*', 'users.name')->latest()->get();
 
                 return $payout;
@@ -1034,7 +1034,7 @@ class AdminController extends Controller
                         'users.organization_id' => auth()->user()->organization_id,
                         'payouts.user_id' => $request['userId']
                     ])
-                    ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                    ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
                     ->select('payouts.*', 'users.name')->latest()->get();
 
                 return $payout;
@@ -1057,7 +1057,7 @@ class AdminController extends Controller
                     'users.organization_id' => auth()->user()->organization_id
                 ])
                 ->where('payouts.status', '!=', 'processing')
-                ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
                 ->select('payouts.*', 'users.name')->latest()->get();
 
             return $payout;
