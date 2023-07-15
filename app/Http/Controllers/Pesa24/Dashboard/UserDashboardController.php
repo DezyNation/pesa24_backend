@@ -117,7 +117,7 @@ class UserDashboardController extends Controller
         }
         $table = DB::table('transactions')
             ->whereBetween('transactions.created_at', [$start, $end])
-            ->where(['transactions.trigered_by' => auth()->user()->id, 'service_type' => $category]);
+            ->where(['service_type' => $category]);
         return [
             $category => [
                 'credit' => $table->sum('credit_amount'),
