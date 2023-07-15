@@ -949,8 +949,22 @@ class AdminController extends Controller
 
     public function printReports(Request $request)
     {
-        $data = $this->fundReports($request);
-        return $data;
+        $type = $request['type'];
+        switch ($type) {
+            case 'payouts':
+                $payout = $this->payoutReports($request);
+                return $payout;
+                break;
+
+            case 'funds':
+                $data = $this->fundReports($request);
+                return $data;
+                break;
+
+            default:
+                return 'error';
+                break;
+        }
     }
 
     public function fundReports(Request $request)
@@ -994,6 +1008,85 @@ class AdminController extends Controller
                 ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
                 ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', $request['status'])->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
             return $data;
+        }
+    }
+
+
+    public function payoutReports(Request $request)
+    {
+        $request->validate([
+            'report' => 'required'
+        ]);
+        $search = $request['search'];
+        $user_id = $request['userId'];
+        $status = $request['status'];
+        $report = $request['report'];
+
+        if (!empty($search)) {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->where("payouts.account_number", 'LIKE', '%' . $search . '%')->orWhere("payouts.reference_id", 'LIKE', '%' . $search . '%')->orWhere("payouts.utr", 'LIKE', '%' . $search . '%')
+                ->select('payouts.*', 'users.name')->latest()->get();
+
+            return $payout;
+        }
+
+        if (!empty($user_id) || !is_null($user_id)) {
+            if (!empty($status) || !is_null($status)) {
+                $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                    ->where([
+                        'users.organization_id' => auth()->user()->organization_id,
+                        'payouts.user_id' => $user_id
+                    ])
+                    ->where('payouts.status', $status)
+                    ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                    ->select('payouts.*', 'users.name')->latest()->get();
+
+                return $payout;
+            } else {
+                $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                    ->where([
+                        'users.organization_id' => auth()->user()->organization_id,
+                        'payouts.user_id' => $user_id
+                    ])
+                    ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                    ->select('payouts.*', 'users.name')->latest()->get();
+
+                return $payout;
+            }
+        }
+
+        if ($report == 'all') {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->where('payouts.status', '!=', 'processing')
+                ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                ->select('payouts.*', 'users.name')->latest()->get();
+
+            return $payout;
+        } elseif ($report == 'processing') {
+
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->where('payouts.status', 'processing')->orWhere('payouts.status', 'pending')->orWhere('payouts.status', 'queued')
+                ->select('payouts.*', 'users.name')->latest()->get();
+
+            return $payout;
+        } else {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->where('payouts.status', $report)
+                ->select('payouts.*', 'users.name')->latest()->get();
+
+            return $payout;
         }
     }
 
