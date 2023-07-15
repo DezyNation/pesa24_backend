@@ -191,7 +191,7 @@ class FundController extends Controller
         $wallet = $user->wallet;
         $phone = $user->phone_number;
 
-        if ($status = 'approved') {
+        if ($status == 'approved') {
             $closing_balance = $wallet + $request['amount'];
         } else {
             $closing_balance = $wallet;
