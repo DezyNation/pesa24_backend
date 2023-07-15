@@ -269,7 +269,7 @@ class PayoutController extends CommissionController
             'status' => $transfer['status'],
         ];
         $this->apiRecords($reference_id, 'janpay', json_encode($array));
-        DB::table('transactions')->where('transaction_id', $reference_id)->update(['metadata->utr' => $transfer['utr']]);
+        DB::table('transactions')->where('transaction_id', $reference_id)->update(['metadata->utr' => $transfer['utr'], 'updated_at' => now()]);
 
         if ($transfer['status'] == 'processed') {
             // $this->payoutCommission($payout->user_id, $payout->amount, $reference_id, $payout->account_number);
