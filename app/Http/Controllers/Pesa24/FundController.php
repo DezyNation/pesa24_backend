@@ -203,6 +203,7 @@ class FundController extends Controller
             'funds.approved' => $request['approved'],
             'funds.declined' => $request['declined'],
             'funds.closing_balance' => $closing_balance,
+            'funds.opening_balance' => $wallet,
             'funds.parent_id' => auth()->user()->id,
             'funds.updated_at' => now()
         ]);
