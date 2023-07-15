@@ -47,7 +47,7 @@ class WebhookController extends CommissionController
         if ($request['payload.payout.entity.status'] == 'processed') {
             $result = $data->get();
             $utr = $request['payload.payout.entity.utr'] ?? 'No UTR';
-            event(new PayoutStatusUpdated("Ref.ID {$request['payload.payout.entity.reference_id']} ($utr)", $content = "Payout {$request['payload.payout.entity.id']} {$request['payload.payout.entity.status']}", $result[0]->user_id));
+            event(new PayoutStatusUpdated("Ref.ID {Amount {$result[0]->amount} ($utr)", $content = "Payout {$request['payload.payout.entity.id']} {$request['payload.payout.entity.status']}", $result[0]->user_id));
             // $this->payoutCommission($result[0]->user_id, $request['payload.payout.entity.amount'] / 100, $request['payload.payout.entity.reference_id'], $result[0]->account_number);
         }
         if ($request['payload.payout.entity.status'] == 'reversed' || $request['payload.payout.entity.status'] == 'cancelled' || $request['payload.payout.entity.status'] == 'failed' || $request['payload.payout.entity.status'] == 'rejected') {
@@ -64,7 +64,7 @@ class WebhookController extends CommissionController
             $this->transaction(0, "Payout Reversal for account $account_number", 'payout', $result[0]->user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $request['payload.payout.entity.amount'] / 100);
             $commission = $this->razorpayReversal($result[0]->amount, $result[0]->user_id, $transaction_id, $result[0]->account_number);
             $utr = $request['payload.payout.entity.utr'] ?? 'No UTR';
-            event(new PayoutStatusUpdated("Ref.ID {$request['payload.payout.entity.reference_id']} ($utr)", "Payout {$request['payload.payout.entity.id']} {$request['payload.payout.entity.status']}", $result[0]->user_id));
+            event(new PayoutStatusUpdated("Amount {$result[0]->amount} ($utr)", "Payout {$request['payload.payout.entity.id']} {$request['payload.payout.entity.status']}", $result[0]->user_id));
         }
 
         return response()->noContent();
