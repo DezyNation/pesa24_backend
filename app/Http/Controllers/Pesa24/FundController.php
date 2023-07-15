@@ -184,12 +184,14 @@ class FundController extends Controller
             'beneficiaryId' => 'required|exists:users,id'
         ]);
 
+        $status = $request['status'];
+
         $user = User::find($request['beneficiaryId']);
         $name = $user->name;
         $wallet = $user->wallet;
         $phone = $user->phone_number;
 
-        if ($request['status'] = 'approved') {
+        if ($status == 'approved') {
             $closing_balance = $wallet + $request['amount'];
         } else {
             $closing_balance = $wallet;
@@ -197,16 +199,17 @@ class FundController extends Controller
 
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id])->update([
             'funds.admin_remarks' => $request['remarks'] ?? null,
-            'funds.status' => $request['status'],
+            'funds.status' => $status,
             'funds.approved' => $request['approved'],
             'funds.declined' => $request['declined'],
             'funds.closing_balance' => $closing_balance,
+            'funds.opening_balance' => $wallet,
             'funds.parent_id' => auth()->user()->id,
             'funds.updated_at' => now()
         ]);
 
         $transaction_id = "FUND" . strtoupper(Str::random(5));
-        if ($request['status'] == 'approved') {
+        if ($status == 'approved') {
             $amount = auth()->user()->wallet - $request['amount'];
             $metadata = [
                 'status' => true,
