@@ -70,7 +70,7 @@ class UserDashboardController extends Controller
 
         $cms = $this->userTable($tenure, 'cms', $request, $user_id);
 
-        $cms = $this->userTable($tenure, 'payout-commission', $request, $user_id);
+        $payout_commission = $this->userTable($tenure, 'payout-commission', $request, $user_id);
 
         $recharge = $this->userTable($tenure, 'recharge', $request, $user_id);
 
@@ -87,7 +87,8 @@ class UserDashboardController extends Controller
             $cms,
             $recharge,
             $funds,
-            $payout_charge
+            $payout_charge,
+            $payout_commission
         ];
 
         return response($array);
@@ -318,6 +319,10 @@ class UserDashboardController extends Controller
 
         $cms = $this->adminUserTable($tenure, 'cms', $request, $user_id);
 
+        $payout_commission = $this->adminUserTable($tenure, 'payout-commission', $request, $user_id);
+
+        $payout_charge = $this->adminUserTable($tenure, 'payout-charge', $request, $user_id);
+
         $cms = $this->adminUserTable($tenure, 'payout-commission', $request, $user_id);
 
         $recharge = $this->adminUserTable($tenure, 'recharge', $request, $user_id);
@@ -335,6 +340,8 @@ class UserDashboardController extends Controller
             $cms,
             $recharge,
             $funds,
+            $payout_charge,
+            $payout_commission
         ];
 
         return response($array);
