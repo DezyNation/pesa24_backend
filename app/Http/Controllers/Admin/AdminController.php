@@ -956,7 +956,7 @@ class AdminController extends Controller
                 return $payout;
                 break;
 
-            case 'funds':
+            case 'fund-requests':
                 $data = $this->fundReports($request);
                 return $data;
                 break;
@@ -1074,6 +1074,7 @@ class AdminController extends Controller
                 ->where([
                     'users.organization_id' => auth()->user()->organization_id
                 ])
+                ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
                 ->where('payouts.status', 'processing')->orWhere('payouts.status', 'pending')->orWhere('payouts.status', 'queued')
                 ->select('payouts.*', 'users.name')->latest()->get();
 
@@ -1083,6 +1084,7 @@ class AdminController extends Controller
                 ->where([
                     'users.organization_id' => auth()->user()->organization_id
                 ])
+                ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
                 ->where('payouts.status', $report)
                 ->select('payouts.*', 'users.name')->latest()->get();
 
