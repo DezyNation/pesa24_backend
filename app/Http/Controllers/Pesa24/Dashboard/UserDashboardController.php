@@ -47,7 +47,7 @@ class UserDashboardController extends Controller
         return $data;
     }
 
-    public function overView(Request $request, $user_id)
+    public function overView(Request $request)
     {
         $user_id = auth()->user()->id;
         $tenure = $request['tenure'];
