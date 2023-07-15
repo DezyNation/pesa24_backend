@@ -47,33 +47,33 @@ class UserDashboardController extends Controller
         return $data;
     }
 
-    public function overView(Request $request)
+    public function overView(Request $request, $user_id)
     {
         $tenure = $request['tenure'];
 
-        $aeps = $this->userTable($tenure, 'aeps', $request);
+        $aeps = $this->userTable($tenure, 'aeps', $request, $user_id);
 
-        $bbps = $this->userTable($tenure, 'bbps', $request);
+        $bbps = $this->userTable($tenure, 'bbps', $request, $user_id);
 
-        $dmt = $this->userTable($tenure, 'dmt', $request);
+        $dmt = $this->userTable($tenure, 'dmt', $request, $user_id);
 
-        $pan = $this->userTable($tenure, 'pan', $request);
+        $pan = $this->userTable($tenure, 'pan', $request, $user_id);
 
-        $payout = $this->userTable($tenure, 'payout', $request);
+        $payout = $this->userTable($tenure, 'payout', $request, $user_id);
 
-        $payout_charge = $this->userTable($tenure, 'payout-charge', $request);
+        $payout_charge = $this->userTable($tenure, 'payout-charge', $request, $user_id);
 
-        $lic = $this->userTable($tenure, 'lic', $request);
+        $lic = $this->userTable($tenure, 'lic', $request, $user_id);
 
-        $fastag = $this->userTable($tenure, 'fastag', $request);
+        $fastag = $this->userTable($tenure, 'fastag', $request, $user_id);
 
-        $cms = $this->userTable($tenure, 'cms', $request);
+        $cms = $this->userTable($tenure, 'cms', $request, $user_id);
 
-        $cms = $this->userTable($tenure, 'payout-commission', $request);
+        $cms = $this->userTable($tenure, 'payout-commission', $request, $user_id);
 
-        $recharge = $this->userTable($tenure, 'recharge', $request);
+        $recharge = $this->userTable($tenure, 'recharge', $request, $user_id);
 
-        $funds = $this->fundRequests($tenure);
+        $funds = $this->fundRequests($tenure, $user_id);
 
         $array = [
             $aeps,
@@ -92,7 +92,7 @@ class UserDashboardController extends Controller
         return response($array);
     }
 
-    public function userTable($tenure, $category, $request)
+    public function userTable($tenure, $category, $request, $id)
     {
         $tenure;
         switch ($tenure) {
@@ -117,7 +117,7 @@ class UserDashboardController extends Controller
         }
         $table = DB::table('transactions')
             ->whereBetween('transactions.created_at', [$start, $end])
-            ->where(['service_type' => $category]);
+            ->where(['transactions.trigered_by' => $id, 'service_type' => $category]);
         return [
             $category => [
                 'credit' => $table->sum('credit_amount'),
@@ -162,7 +162,7 @@ class UserDashboardController extends Controller
         ];
     }
 
-    public function fundRequests($tenure)
+    public function fundRequests($tenure, $user_id)
     {
         switch ($tenure) {
             case 'week':
@@ -187,7 +187,7 @@ class UserDashboardController extends Controller
 
         $not_approved = DB::table('funds')
             ->whereBetween('created_at', [$start, $end])
-            ->where(['funds.approved' => 0, 'funds.user_id' => auth()->user()->id])->count();
+            ->where(['funds.approved' => 0, 'funds.user_id' => $user_id])->count();
 
         $all = DB::table('funds')
             ->whereBetween('created_at', [$start, $end])
