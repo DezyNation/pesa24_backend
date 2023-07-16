@@ -1141,7 +1141,7 @@ class AdminController extends Controller
             ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
             ->where('roles.name', '!=', 'admin')
             ->select(DB::raw('MAX(transactions.id) as id'))
-            ->whereDate('transactions.created_at', $date)
+            ->whereDate('transactions.created_at', '<', $date)
             ->groupBy('transactions.trigered_by')
             ->get();
 
@@ -1157,7 +1157,7 @@ class AdminController extends Controller
             ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
             ->where('roles.name', '!=', 'admin')
             ->select(DB::raw('MIN(transactions.id) as id'))
-            ->whereDate('transactions.created_at', $date)
+            ->whereDate('transactions.created_at', '<', $date)
             ->groupBy('transactions.trigered_by')
             ->get();
 
