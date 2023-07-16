@@ -1145,7 +1145,10 @@ class AdminController extends Controller
             ->groupBy('transactions.trigered_by')
             ->get();
 
-        $transactions = DB::table('transactions')->whereIn('id', $lastTransactions->pluck('id'))
+        $transactions = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->whereIn('transactions.id', $lastTransactions->pluck('id'))
+            ->select('transactions.*', 'users.name as user_name', 'users.phone_number as user_phone')
             ->get();
 
         $firstTransactions = DB::table('transactions')
@@ -1158,7 +1161,10 @@ class AdminController extends Controller
             ->groupBy('transactions.trigered_by')
             ->get();
 
-        $initialTransactions = DB::table('transactions')->whereIn('id', $firstTransactions->pluck('id'))
+        $initialTransactions = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->whereIn('transactions.id', $firstTransactions->pluck('id'))
+            ->select('transactions.*', 'users.name as user_name', 'users.phone_number as user_phone')
             ->get();
 
         return [
