@@ -895,7 +895,7 @@ class AdminController extends Controller
     {
         $search = $request['search'];
         if (!empty($search) || !is_null($search)) {
-            $data = DB::table('transactions')->where('trigered_by', $id)->orWhere('user_id', $id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
+            $data = DB::table('transactions')->where('trigered_by', $id)->orWhere('user_id', $id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->latest()->orderByDesc('transactions.id')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
             return $data;
         }
 
@@ -903,7 +903,7 @@ class AdminController extends Controller
             $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(function ($q) use ($id) {
                 $q->where('trigered_by', $id)
                     ->orWhere('user_id', $id);
-            })->latest()->get();
+            })->latest()->orderByDesc('transactions.id')->get();
 
             return $data;
         }
@@ -911,7 +911,7 @@ class AdminController extends Controller
         $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('service_type', $name)->where(function ($q) use ($id) {
             $q->where('trigered_by', $id)
                 ->orWhere('user_id', $id);
-        })->latest()->get();
+        })->latest()->orderByDesc('transactions.id')->get();
         return $data;
     }
 
