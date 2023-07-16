@@ -1131,27 +1131,42 @@ class AdminController extends Controller
         return $data;
     }
 
-    public function userMarket(Request $request)
+    public function marketOverview(Request $request)
     {
+        $date = $request['date'] ?? Carbon::today();
 
-        $transaction = Transaction::whereDate('created_at', '2023-07-14')->orderByDesc('id')->groupBy('trigered_by')->get();
-        return $transaction;
-        $today = '2023-07-14T00:00';
-        $tomorrow = '2023-07-14T23:59';
-        // $today = Carbon::createFromFormat('Y-m-d H:i:s');
-        // $tomorrow = Carbon::tomorrow();
-
-        // return ['today' => $today, 'tomorrow' => $tomorrow];
-        $data = DB::table('transactions')
+        $lastTransactions = DB::table('transactions')
             ->join('users', 'users.id', '=', 'transactions.trigered_by')
             ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
             ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
-            // ->whereBetween('transactions.created_at', [Carbon::today(), Carbon::tomorrow()])
-            ->whereDate('transactions.created_at', '2023-07-14')
-            ->orderByDesc('transactions.id')
+            ->where('roles.name', '!=', 'admin')
+            ->select(DB::raw('MAX(transactions.id) as id'))
+            ->whereDate('transactions.created_at', $date)
             ->groupBy('transactions.trigered_by')
-            ->select('transactions.*')
             ->get();
-        return $data;
+
+        $transactions = DB::table('transactions')->whereIn('id', $lastTransactions->pluck('id'))
+            ->get();
+
+        $firstTransactions = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
+            ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('roles.name', '!=', 'admin')
+            ->select(DB::raw('MIN(transactions.id) as id'))
+            ->whereDate('transactions.created_at', $date)
+            ->groupBy('transactions.trigered_by')
+            ->get();
+
+        $initialTransactions = DB::table('transactions')->whereIn('id', $firstTransactions->pluck('id'))
+            ->get();
+
+        return [
+            'opening_transactions' => $initialTransactions,
+            'opening_balance' => $initialTransactions->sum('opening_balance'),
+            'closing_transactions' => $transactions,
+            'closing_balance' => $transactions->sum('closing_balance')
+        ];
+        return $transactions;
     }
 }
