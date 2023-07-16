@@ -238,7 +238,7 @@ class FundController extends Controller
         $wallet = $user->wallet;
         $status = $request['status'];
         $time = date('d-m-Y h:i:s A');
-        $newmsg = "Hello $name, Your fund request has been $status and Now Your Bal $wallet on the date of $time. '-From P24 Technology Pvt. Ltd";
+        $newmsg = "Hello $name, Your fund request has been $status and Now Your Bal $closing_balance on the date of $time. '-From P24 Technology Pvt. Ltd";
         $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
 
         return $data;
