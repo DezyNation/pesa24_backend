@@ -57,14 +57,6 @@ Route::get('/', function () {
     return ['Application' => 'Janpay'];
 });
 
-Route::get('password', function () {
-    User::where('id', 93)->update([
-        'password' => Hash::make('password'),
-        'mpin' => Hash::make(1234)
-    ]);
-    return true;
-});
-
 // Route::get('test', [AdminController::class, 'marketOverview']);
 
 // Route::get('inquiry', [BBPSController::class, 'payBill']);
