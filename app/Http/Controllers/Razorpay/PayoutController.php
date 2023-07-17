@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use App\Events\PayoutStatusUpdated;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Client\Response;
@@ -267,6 +268,7 @@ class PayoutController extends CommissionController
         $array = [
             'event' => 'admin update payout',
             'status' => $transfer['status'],
+            'utr' => $transfer['utr'] ?? 'no utr',
         ];
         $this->apiRecords($reference_id, 'janpay', json_encode($array));
         DB::table('transactions')->where('transaction_id', $reference_id)->update(['metadata->utr' => $transfer['utr'], 'updated_at' => now()]);
@@ -278,7 +280,7 @@ class PayoutController extends CommissionController
             $closing_balance = $user->wallet + $payout->amount;
             $metadata = [
                 'status' => $transfer['status'],
-                'utr' => $transfer['utr'],
+                'utr' => $transfer['utr'] ?? 'no utr',
                 'reference_id' => $reference_id,
                 'amount' => $payout->amount
             ];
@@ -286,6 +288,7 @@ class PayoutController extends CommissionController
             $this->notAdmintransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $closing_balance, json_encode($metadata), $payout->amount);
             $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id, $payout->account_number);
         }
+        event(new PayoutStatusUpdated("Amount {$payout->amount} ({$array['utr']})", "Payout $id {$array['status']}", $payout->user_id));
 
         return $transfer['status'];
     }
