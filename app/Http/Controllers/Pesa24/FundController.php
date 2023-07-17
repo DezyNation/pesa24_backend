@@ -197,7 +197,7 @@ class FundController extends Controller
             $closing_balance = $wallet;
         }
 
-        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id])->update([
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id, 'funds.status' => 'pending'])->update([
             'funds.admin_remarks' => $request['remarks'] ?? null,
             'funds.status' => $status,
             'funds.approved' => $request['approved'],
@@ -214,6 +214,7 @@ class FundController extends Controller
             $metadata = [
                 'status' => true,
                 'amount_transfered' => $request['amount'],
+                'fund_id' => $request['id'],
                 'remarks' => $request['remarks'] ?? null,
                 'reference_id' => $transaction_id,
                 'transaction_from' => auth()->user()->name
@@ -226,6 +227,7 @@ class FundController extends Controller
                 'status' => true,
                 'amount_added' => $request['amount'],
                 'remarks' => $request['remarks'] ?? null,
+                'fund_id' => $request['id'],
                 'reference_id' => $transaction_id,
                 'transaction_from' => auth()->user()->name,
                 'phone_number' => auth()->user()->phone_number
