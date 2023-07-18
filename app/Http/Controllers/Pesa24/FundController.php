@@ -365,11 +365,11 @@ class FundController extends Controller
                 'amount_reversed' => $request['amount'],
                 'remarks' => $request['remarks'] ?? null,
                 'reference_id' => $transaction_id,
-                'transaction_from' => auth()->user()->name
+                'transaction_from' => auth()->user()->name,
+                'phone_number' => auth()->user()->phone_number
             ];
 
-            $transaction_id = "FUND" . strtoupper(Str::random(5));
-            $this->transaction($request['amount'], "Fund reversed from {$user->name} {$user->phone_number} wallet", 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata));
+            $this->notAdmintransaction($request['amount'], "Fund reversed from {$user->name} {$user->phone_number} wallet", 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata));
         }
 
         return $data;
