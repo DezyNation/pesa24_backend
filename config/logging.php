@@ -75,6 +75,12 @@ return [
             'level' => 'info',
         ],
 
+        'reversals' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/reversal.log'),
+            'level' => 'info',
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
