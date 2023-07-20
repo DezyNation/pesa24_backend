@@ -60,11 +60,11 @@ Route::middleware(['auth:api'])->get('/user', function (Request $request) {
 });
 
 // Route::resource('users', UserController::class);
-Route::post('users/otp', [UserController::class, 'otp']);
+Route::post('users/otp', [UserController::class, 'otp'])->middleware('active');
 Route::post('users/verify-otp', [UserController::class, 'verifyOtp']);
 Route::get('services', [Controller::class, 'index']);
 
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'active'])->group(function () {
     /*------------------------USER------------------------*/
     Route::post('user/update', [ProfileController::class, 'update']);
     Route::post('user/add-bank', [ProfileController::class, 'addBank']);
@@ -96,7 +96,7 @@ Route::middleware(['auth:api'])->group(function () {
         }
         return true;
     });
-    Route::post('user/pay/onboard-fee', [KycVerificationController::class, 'onboardFee'])->middleware(['profile']);
+    Route::post('user/pay/onboard-fee', [KycVerificationController::class, 'onboardFee'])->middleware(['profile', 'active']);
 
     /*-----------------------Tickets-----------------------*/
     Route::post('tickets', [TicketController::class, 'store']);
@@ -105,8 +105,8 @@ Route::middleware(['auth:api'])->group(function () {
     /*-----------------------Tickets-----------------------*/
 
     /*-----------------------Password and MPIN-----------------------*/
-    Route::post('user/new-mpin', [ProfileController::class, 'newMpin'])->middleware('otp');
-    Route::post('user/new-password', [ProfileController::class, 'newPass'])->middleware('otp');
+    Route::post('user/new-mpin', [ProfileController::class, 'newMpin'])->middleware(['otp', 'active']);
+    Route::post('user/new-password', [ProfileController::class, 'newPass'])->middleware(['otp', 'active']);
     /*-----------------------Fund Requests-----------------------*/
 
     Route::post('fund/request-fund', [FundRequestController::class, 'fundRequest']);
@@ -124,7 +124,7 @@ Route::middleware(['auth:api'])->group(function () {
 });
 
 Route::post('eko/aeps/money-transfer/{service_id}', [EkoAepsApiController::class, 'moneyTransfer'])->middleware(['auth:api', 'profile', 'kyc']);
-Route::middleware(['auth:api', 'minimum_balance'])->group(function () {
+Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () {
     /*-------------------------EKO ONBOARD-------------------------*/
     Route::get('eko/send-otp', [KycVerificationController::class, 'sendEkoOtp']);
     Route::get('eko-status', function () {
@@ -252,7 +252,7 @@ Route::get('admin/all-users-list/{role}/{id?}', [UserController::class, 'userInf
 Route::post('admin/create/user', [UserController::class, 'store'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);
 Route::get('parent/users-list/{role}/{id?}', [UserController::class, 'childUser'])->middleware(['auth:api', 'role:distributor|super_distributor']);
 Route::get('parent/users-transactions/{id?}', [UserController::class, 'userReport'])->middleware(['auth:api', 'role:distributor|super_distributor']);
-Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
+Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 'admin'], function () {
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
     Route::get('users', [UserController::class, 'index']);
     Route::get('fund/fetch-fund/{id}', [FundRequestController::class, 'adminfetchFundUser']);
@@ -346,7 +346,7 @@ Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback'])
 Route::any('payout-callback', [WebhookController::class, 'confirmPayout']);
 Route::any('onboard-callback-paysprint', [CallbackController::class, 'onboardCallback']);
 
-Route::group(['middleware' => ['auth:api', 'role:admin'], 'prefix' => 'admin'], function () {
+Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 'admin'], function () {
     Route::post('service-status', [GlobalServiceController::class, 'manageService']);
     Route::get('services', [GlobalServiceController::class, 'getServices']);
     Route::post('services', [GlobalServiceController::class, 'createService']);

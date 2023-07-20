@@ -78,6 +78,7 @@ class Kernel extends HttpKernel
         'paysprint_merchant' => \App\Http\Middleware\PaysprintOnboard::class,
         'eko' => \App\Http\Middleware\EkoOnboard::class,
         'otp' => \App\Http\Middleware\OTPCheck::class,
-        'charge' => \App\Http\Middleware\Payout::class
+        'charge' => \App\Http\Middleware\Payout::class,
+        'active' => \App\Http\Middleware\BlockedUser::class,
     ];
 }
