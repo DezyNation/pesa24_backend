@@ -300,7 +300,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
 
     Route::post('paysprint/payout/add-account', [PaysprintPayout::class, 'addAccount']);
     Route::get('user/status/{id}/{bool}', [AdminController::class, 'active'])->middleware('permission:user-edit');
-    Route::get('send-otp', [AdminController::class, 'adminOtp'])->middleware('permission:user-edit');
+    Route::get('send-otp/{opion?}', [AdminController::class, 'adminOtp'])->middleware('permission:user-edit');
     Route::get('block-admin/{id}/{bool}', [AdminController::class, 'blockAdmin'])->middleware('permission:block-admin');
     Route::post('user/remarks', [AdminController::class, 'userRemarks'])->middleware('permission:user-edit');
     Route::get('settlement-accounts', [AdminController::class, 'settlementAccount']);
