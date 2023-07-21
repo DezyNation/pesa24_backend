@@ -54,14 +54,14 @@ use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayo
 */
 
 Route::get('/', function () {
-    $duplicates = DB::table('transactions')
-        ->join('users', 'users.id', 'transactions.trigered_by')
-        ->select('transactions.*', 'users.id as user_id', 'users.name as user_name', 'users.phone_number as user_phone', 'trigered_by',DB::raw('COUNT(*) as `count`'))
-        ->groupBy('transaction_id', 'trigered_by')
-        ->having('count', '>', 4)
-        // ->havingRaw('COUNT(*) > 4')
-        ->get();
-    return $duplicates;
+    // $duplicates = DB::table('transactions')
+    //     ->join('users', 'users.id', 'transactions.trigered_by')
+    //     ->select('transactions.*', 'users.id as user_id', 'users.name as user_name', 'users.phone_number as user_phone', 'trigered_by',DB::raw('COUNT(*) as `count`'))
+    //     ->groupBy('transaction_id', 'trigered_by')
+    //     ->having('count', '>', 4)
+    //     // ->havingRaw('COUNT(*) > 4')
+    //     ->get();
+    // return $duplicates;
     return ['Application' => 'Janpay'];
 });
 
