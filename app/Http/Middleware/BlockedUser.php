@@ -16,7 +16,7 @@ class BlockedUser
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (is_null(auth()->user()->id)) {
+        if (is_null(auth()->user())) {
             $email = $request['email'];
             $phone_number = $request['phone_number'];
         } else {
