@@ -27,7 +27,7 @@ Route::post('password/send-otp', [AuthenticatedSessionController::class, 'passOt
     ->middleware('auth:api', 'active');
 
 Route::post('admin-register', [RegisteredUserController::class, 'registerAdmin'])->middleware(['permission:user-create', 'active']);
-Route::post('admin-update-user', [RegisteredUserController::class, 'adminUpdate'])->middleware(['auth:api','permission:user-edit', 'active']);
+Route::post('admin-update-user', [RegisteredUserController::class, 'adminUpdate'])->middleware(['auth:api','permission:user-edit', 'active', 'otp']);
 Route::post('admin-send-creds', [PasswordResetLinkController::class, 'adminSendCreds'])->middleware(['auth:api','permission:user-edit', 'active']);
 
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
