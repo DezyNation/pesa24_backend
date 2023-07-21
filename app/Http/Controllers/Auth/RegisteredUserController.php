@@ -207,6 +207,11 @@ class RegisteredUserController extends Controller
             // 'pincode' => ['required', 'integer'],
         ]);
 
+        // $otp = rand(1000, 9999);
+        // $phone = 7017200263;
+        // $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
+        // $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
+
         $user = User::where('organization_id', auth()->user()->organization_id)->findOrFail($request['userId']);
         if ($request->hasFile('aadhaarFront')) {
             $aadhaar_front = $request->file('aadhaarFront')->store('aadhar_front');
