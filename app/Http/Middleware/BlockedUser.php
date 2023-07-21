@@ -16,7 +16,14 @@ class BlockedUser
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = User::where('email', $request['email'] ?? auth()->user()->email)->orWhere('phone_number', $request['phone_number'])->first();
+        if (is_null(auth()->user()->id)) {
+            $email = $request['email'];
+            $phone_number = $request['phone_number'];
+        } else {
+            $email = auth()->user()->email;
+            $phone_number = auth()->user()->phone_number;
+        }
+        $user = User::where('email', $email)->orWhere('phone_number', $phone_number)->first();
         if ($user->is_active == 0) {
             return response("You can not access to the specified resourece", 403);
         }
