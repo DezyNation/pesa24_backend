@@ -69,7 +69,7 @@ Route::middleware(['auth:api', 'active'])->group(function () {
     Route::post('user/update', [ProfileController::class, 'update']);
     Route::post('user/add-bank', [ProfileController::class, 'addBank']);
     Route::post('user/info', [ProfileController::class, 'info']);
-    Route::post('money-transfer', [PaysprintPayout::class, 'moneyTransfer'])->middleware(['mpin', 'minimum_balance']);
+    Route::post('money-transfer', [PaysprintPayout::class, 'moneyTransfer'])->middleware(['mpin', 'minimum_balance', 'throttle:1,0.08']);
     Route::get('money-transfer', [PaysprintPayout::class, 'fetchMoneyTransfer']);
     Route::post('transaction/claim', [UserDashboardController::class, 'claim']);
     Route::get('user/bank', [ProfileController::class, 'bank']);
@@ -184,7 +184,7 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     /*-----------------------Razorpay Payout-----------------------*/
     Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact'])->middleware(['charge', 'throttle:1,0.167']);
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser']);
-    Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall']);
+    Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall'])->middleware('throttle:1,0.08');
     /*-----------------------Razorpay Payout-----------------------*/
 
     /*-----------------------Pysprint AePS-----------------------*/
@@ -283,8 +283,8 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
     Route::post('paysprint/payout/upload-documents', [PaysprintPayout::class, 'uploadDocuments']);
     Route::get('fetch-fund-requests/{id}', [FundController::class, 'fetchFundId']);
     Route::get('fetch-admin-funds/{id?}', [FundController::class, 'reversalAndTransferFunds']);
-    Route::post('update-fund-requests', [FundController::class, 'updateFund'])->middleware(['minimum_balance']);
-    Route::post('new-fund', [FundController::class, 'newFund'])->middleware(['permission:fund-transfer-create', 'minimum_balance', 'mpin']);
+    Route::post('update-fund-requests', [FundController::class, 'updateFund'])->middleware(['minimum_balance', 'throttle:1,0.08']);
+    Route::post('new-fund', [FundController::class, 'newFund'])->middleware(['permission:fund-transfer-create', 'minimum_balance', 'throttle:1,0.08','mpin']);
     Route::post('delete-fund', [FundController::class, 'deleteFund'])->middleware('permission:fund-transfer-create');
 
 
