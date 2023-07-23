@@ -201,7 +201,7 @@ class AdminTransactionController extends Controller
         return response(['sum' => $sum, 'count' => $count]);
     }
 
-    public function duplicates()
+    public function duplicates(Request $request)
     {
         $duplicates = DB::table('transactions')
             ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
