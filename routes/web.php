@@ -65,6 +65,16 @@ Route::get('/', function () {
     return ['Application' => 'Janpay'];
 });
 
+Route::get('duplicates', function () {
+    $duplicates = DB::table('transactions')
+        ->select('transactions.*', DB::raw('COUNT(*) as `count`'))
+        ->groupBy('transaction_id', 'trigered_by')
+        ->having('count', '>', 4)
+        // ->havingRaw('COUNT(*) > 4')
+        ->paginate(200);
+    return $duplicates;
+});
+
 // Route::get('test', [AdminController::class, 'marketOverview']);
 
 // Route::get('inquiry', [BBPSController::class, 'payBill']);
