@@ -72,7 +72,7 @@ Route::get('duplicates', function () {
         ->groupBy('transaction_id', 'trigered_by')
         ->having('count', '>', 4)
         // ->havingRaw('COUNT(*) > 4')
-        ->get();
+        ->paginate(100);
     return $duplicates;
 });
 
