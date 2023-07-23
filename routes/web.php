@@ -67,6 +67,7 @@ Route::get('/', function () {
 
 Route::get('duplicates', function () {
     $duplicates = DB::table('transactions')
+        ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
         ->select('transactions.*', DB::raw('COUNT(*) as `count`'))
         ->groupBy('transaction_id', 'trigered_by')
         ->having('count', '>', 4)

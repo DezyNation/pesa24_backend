@@ -293,6 +293,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
     });
     Route::get('transactions-type/{data}', [AdminTransactionController::class, 'categoryIndex']);
     Route::get('transactions/{id?}', [AdminTransactionController::class, 'view']);
+    Route::get('duplicate-transactions', [AdminTransactionController::class, 'duplicates']);
     Route::get('transactions-user/{id}', [AdminTransactionController::class, 'userTransction']);
     Route::post('transactions-period', [AdminTransactionController::class, 'dailySales']);
     Route::post('transactions-statistics', [AdminController::class, 'sumCategory']);

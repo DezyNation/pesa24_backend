@@ -200,4 +200,17 @@ class AdminTransactionController extends Controller
 
         return response(['sum' => $sum, 'count' => $count]);
     }
+
+    public function duplicates()
+    {
+        $duplicates = DB::table('transactions')
+            ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+            ->select('transactions.*', DB::raw('COUNT(*) as `count`'))
+            ->groupBy('transaction_id', 'trigered_by')
+            ->having('count', '>', 4)
+            ->get();
+            // ->havingRaw('COUNT(*) > 4')
+            // ->paginate(200);
+        return $duplicates;
+    }
 }
