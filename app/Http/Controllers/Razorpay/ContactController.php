@@ -28,7 +28,6 @@ class ContactController extends FundAccountController
         if (array_key_exists('id', $response->json())) {
             DB::table('users')->where('id', auth()->user()->id)->update(['rzp_contact_id' => $response['id'], 'updated_at' => now()]);
         }
-        Log::channel('response')->info($response);
         return $this->createFundAcc($request);
     }
 }
