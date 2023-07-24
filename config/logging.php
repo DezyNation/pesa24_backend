@@ -64,19 +64,19 @@ return [
         ],
 
         'response' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/response.log'),
             'level' => 'info',
         ],
 
         'callback' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/razorpay.log'),
             'level' => 'info',
         ],
 
         'reversals' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/reversal.log'),
             'level' => 'info',
         ],
