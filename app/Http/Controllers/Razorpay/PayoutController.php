@@ -48,7 +48,7 @@ class PayoutController extends CommissionController
             'account_number' => $request['bank_account']['account_number'],
             'fees' => $transfer['fees'] ?? 0,
             'tax' => $transfer['tax'] ?? 0,
-            'status' => $transfer['status'] ?? 0,
+            'status' => "dev" ?? 0,
             'utr' => $transfer['utr'] ?? null ?? 0,
             'ifsc' => $account_details['ifsc'],
             'mode' => $transfer['mode'] ?? 0,
