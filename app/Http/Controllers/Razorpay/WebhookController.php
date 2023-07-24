@@ -29,7 +29,7 @@ class WebhookController extends CommissionController
                 return response("Transaction Not found");
             }
             $payout = $payout->get();
-            if ($payout[0]->status == 'processed' || $payout[0]->status == 'reveresed' || $payout[0]->status == 'cancelled' || $payout[0]->status == 'failed' || $payout[0]->status == 'processing') {
+            if ($payout[0]->status == 'processed' || $payout[0]->status == 'reveresed' || $payout[0]->status == 'cancelled' || $payout[0]->status == 'failed') {
                 $array = [
                     'status' => true,
                     'message' => 'transaction was processed already'
