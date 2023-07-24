@@ -21,7 +21,7 @@ class ContactController extends FundAccountController
             'reference_id' =>  "JANPAY".uniqid(),
         ];
 
-        $response = Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
+        $response = Http::withBasicAuth(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'))->withHeaders([
             'Content-type' => 'application/json'
         ])->post('https://api.razorpay.com/v1/contacts', $data);
         if (array_key_exists('id', $response->json())) {
