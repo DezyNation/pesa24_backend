@@ -26,7 +26,7 @@ class PayoutController extends CommissionController
             'currency' => 'INR',
             'mode' => 'IMPS',
             'queue_if_low_balance' => false,
-            'purpose' => 'dev test',
+            'purpose' => 'payout',
             // 'narrartion' => 'JANPAY',
             'reference_id' => "DEV" . uniqid(),
         ];
