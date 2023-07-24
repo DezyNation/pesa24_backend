@@ -17,8 +17,8 @@ class ContactController extends FundAccountController
             'name' => auth()->user()->name,
             'email' => auth()->user()->email,
             'contact' => auth()->user()->phone_number,
-            'type' => 'employee',
-            'reference_id' =>  "JANPAY".uniqid(),
+            'type' => 'development',
+            'reference_id' =>  "DEV".uniqid(),
         ];
 
         $response = Http::withBasicAuth(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'))->withHeaders([

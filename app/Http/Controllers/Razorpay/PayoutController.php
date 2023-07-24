@@ -20,15 +20,15 @@ class PayoutController extends CommissionController
     public function bankPayout(Response $request, $amount, array $account_details)
     {
         $data = [
-            'account_number' => '409001982207',
+            'account_number' => '409002011425',
             'fund_account_id' => $request['id'],
             'amount' => $amount * 100,
             'currency' => 'INR',
             'mode' => 'IMPS',
             'queue_if_low_balance' => false,
-            'purpose' => 'payout',
+            'purpose' => 'dev test',
             // 'narrartion' => 'JANPAY',
-            'reference_id' => "JND" . uniqid(),
+            'reference_id' => "DEV" . uniqid(),
         ];
 
         $transfer =  Http::withBasicAuth(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'))->withHeaders([
