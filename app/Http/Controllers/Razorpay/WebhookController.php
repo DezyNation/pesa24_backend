@@ -15,7 +15,7 @@ class WebhookController extends CommissionController
     public function confirmPayout(Request $request)
     {
         Log::channel('callback')->info('callback-razorpay', $request->all());
-        DB::transaction(function () use ($request){
+        // DB::transaction(function () use ($request){
 
             $payout_id = $request['payload.payout.entity.id'];
             $payout = DB::table('payouts')->where('payout_id', $payout_id);
@@ -75,7 +75,7 @@ class WebhookController extends CommissionController
                 $utr = $request['payload.payout.entity.utr'] ?? 'No UTR';
                 event(new PayoutStatusUpdated("Amount {$result[0]->amount} ($utr)", "Payout {$request['payload.payout.entity.id']} {$request['payload.payout.entity.status']}", $result[0]->user_id));
             }
-        });
+        // });
         return response()->noContent();
     }
 }
