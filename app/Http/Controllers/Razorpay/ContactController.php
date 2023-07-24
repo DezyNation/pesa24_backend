@@ -17,7 +17,7 @@ class ContactController extends FundAccountController
             'name' => auth()->user()->name,
             'email' => auth()->user()->email,
             'contact' => auth()->user()->phone_number,
-            'type' => 'development',
+            'type' => 'payout',
             'reference_id' =>  "DEV".uniqid(),
         ];
         $key = env('RAZORPAY_KEY');
