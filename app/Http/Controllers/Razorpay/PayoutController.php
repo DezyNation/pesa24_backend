@@ -248,7 +248,7 @@ class PayoutController extends CommissionController
         }
         $payout = $get_payout->get();
         $payout = $payout[0];
-        if ($payout->status == 'reversed' || $payout->status == 'cancelled' || $payout->status == 'processed' || $payout->status == 'rejected') {
+        if ($payout->status == 'reversed' || $payout->status == 'cancelled' || $payout->status == 'processed' || $payout->status == 'rejected' || $payout->status == 'failed') {
             return response($payout->status);
         }
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
