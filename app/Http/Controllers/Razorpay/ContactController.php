@@ -30,8 +30,7 @@ class ContactController extends FundAccountController
                 return response("OTP is wrong!", 406);
             }
         }
-
-        return response()->noContent();
+        
         $data = [
             'name' => auth()->user()->name,
             'email' => auth()->user()->email,
