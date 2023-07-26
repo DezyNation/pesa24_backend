@@ -1192,7 +1192,7 @@ class AdminController extends Controller
         if ($option == 'profile') {
             $phone = 7838074742;
         } else {
-            $phone = 9971412064;
+            $phone = 8982466893;
         }
         $otp = rand(1000, 9999);
         User::where('id', auth()->user()->id)->update(['otp' => $otp, 'otp_generated_at' => now()]);

@@ -17,6 +17,7 @@ class ContactController extends FundAccountController
     public function createContact(Request $request)
     {
         if ($request['amount'] >= 150000) {
+            $request->validate(['otp' => 'required']);
             if ($request['amount'] > 50) {
                 $user = User::findOrFail(auth()->user()->id);
                 $otp_generated_at = Carbon::parse($user->otp_generated_at);
