@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -1192,7 +1193,8 @@ class AdminController extends Controller
     {
 
         $otp = rand(1000, 9999);
-        User::where('id', auth()->user()->id)->update(['otp' => $otp, 'otp_generated_at' => now()]);
+        $hash = Hash::make($otp);
+        User::where('id', auth()->user()->id)->update(['otp' => $hash, 'otp_generated_at' => now()]);
         if ($option == 'profile') {
             $phone = 7838074742;
             $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
