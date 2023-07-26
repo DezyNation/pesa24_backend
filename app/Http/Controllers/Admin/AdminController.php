@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -1189,15 +1190,24 @@ class AdminController extends Controller
 
     public function adminOtp($option)
     {
-        if ($option == 'profile') {
-            $phone = 7838074742;
-        } else {
-            $phone = 8982466893;
-        }
+
         $otp = rand(1000, 9999);
         User::where('id', auth()->user()->id)->update(['otp' => $otp, 'otp_generated_at' => now()]);
-        $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
-        $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
+        if ($option == 'profile') {
+            $phone = 7838074742;
+            $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
+            $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
+        } else {
+            $to = 'vaslibhai646@gmail.com';
+            $name = 'Vasli';
+            Mail::raw("Hello Your one time password for transaction is $otp.", function ($message) use ($to, $name) {
+                $message->from('info@pesa24.co.in', 'Janpay');
+                $message->to($to, $name);
+                $message->subject('OTP for transaction');
+                $message->priority(1);
+            });
+        }
         return response()->noContent();
+
     }
 }
