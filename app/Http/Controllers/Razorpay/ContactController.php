@@ -13,6 +13,11 @@ class ContactController extends FundAccountController
 {
     public function createContact(Request $request)
     {
+        if ($request['amount'] > 150000) {
+            $this->middleware('otp');
+        }
+
+        return response()->noContent();
         $data = [
             'name' => auth()->user()->name,
             'email' => auth()->user()->email,

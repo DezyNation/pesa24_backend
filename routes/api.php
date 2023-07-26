@@ -224,6 +224,7 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     Route::post('paysprint/lic/fetch-bill', [LICController::class, 'fetchBill']);
     Route::post('paysprint/bbps/pay-bill/{service_code}', [BillController::class, 'payBill'])->middleware('mpin');
     Route::post('paysprint/lic/pay-bill/{service_code?}', [LICController::class, 'payLicBill'])->middleware('mpin');
+    Route::post('send-otp/{option}', [AdminController::class, 'adminOtp']);
     /*-----------------------Paysprint BBPS-----------------------*/
     /*-----------------------Paysprint Recharge-----------------------*/
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
@@ -301,7 +302,6 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
 
     Route::post('paysprint/payout/add-account', [PaysprintPayout::class, 'addAccount']);
     Route::get('user/status/{id}/{bool}', [AdminController::class, 'active'])->middleware('permission:user-edit');
-    Route::get('send-otp/{opion?}', [AdminController::class, 'adminOtp'])->middleware('permission:user-edit');
     Route::get('block-admin/{id}/{bool}', [AdminController::class, 'blockAdmin'])->middleware('permission:block-admin');
     Route::post('user/remarks', [AdminController::class, 'userRemarks'])->middleware('permission:user-edit');
     Route::get('settlement-accounts', [AdminController::class, 'settlementAccount']);
