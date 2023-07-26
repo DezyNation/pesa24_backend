@@ -18,17 +18,16 @@ class ContactController extends FundAccountController
     {
         if ($request['amount'] >= 150000) {
             $request->validate(['otp' => 'required']);
-            if ($request['amount'] > 50) {
-                $user = User::findOrFail(auth()->user()->id);
-                $otp_generated_at = Carbon::parse($user->otp_generated_at);
-                $current_time = Carbon::parse(now());
-                $difference = $current_time->diffInRealMinutes($otp_generated_at);
-                if ($difference > 1) {
-                    return response("OTP expired!", 406);
-                }
-                if (!Hash::check($request['otp'], $user->otp)) {
-                    return response("OTP is wrong!", 406);
-                }
+
+            $user = User::findOrFail(auth()->user()->id);
+            $otp_generated_at = Carbon::parse($user->otp_generated_at);
+            $current_time = Carbon::parse(now());
+            $difference = $current_time->diffInRealMinutes($otp_generated_at);
+            if ($difference > 5) {
+                return response("OTP expired!", 406);
+            }
+            if (!Hash::check($request['otp'], $user->otp)) {
+                return response("OTP is wrong!", 406);
             }
         }
 
@@ -38,7 +37,7 @@ class ContactController extends FundAccountController
             'email' => auth()->user()->email,
             'contact' => auth()->user()->phone_number,
             'type' => 'employee',
-            'reference_id' =>  "JANPAY".uniqid(),
+            'reference_id' =>  "JANPAY" . uniqid(),
         ];
 
         $response = Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
