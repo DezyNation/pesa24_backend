@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\UserController;
 use App\Models\User;
 use App\Models\Package;
 use App\Models\ParentUser;
@@ -64,6 +65,8 @@ Route::get('/', function () {
     // return $duplicates;
     return ['Application' => 'Janpay'];
 });
+
+Route::get('excel', [UserController::class, 'test']);
 
 Route::get('duplicates', function () {
     $duplicates = DB::table('transactions')
