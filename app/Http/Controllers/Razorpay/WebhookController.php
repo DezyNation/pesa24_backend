@@ -41,7 +41,7 @@ class WebhookController extends CommissionController
             if ($request['payload.payout.entity.status'] == 'reversed') {
                 Log::channel('reversals')->info('reversal', $request->all());
 
-                return response()->noContent();
+                return true;
             }
 
             $data = DB::table('payouts')->where('payout_id', $payout_id);
@@ -76,6 +76,6 @@ class WebhookController extends CommissionController
                 event(new PayoutStatusUpdated("Amount {$result[0]->amount} ($utr)", "Payout {$request['payload.payout.entity.id']} {$request['payload.payout.entity.status']}", $result[0]->user_id));
             }
         });
-        return response()->noContent();
+        return true;
     }
 }
