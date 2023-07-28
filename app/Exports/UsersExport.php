@@ -14,34 +14,43 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class UsersExport implements FromCollection, WithHeadings, WithStyles, WithChunkReading
 {
+
+    protected $from;
+    protected $to;
+    protected $search;
+    protected $user_id;
+
+    public function __construct($from, $to, $search, $user_id)
+    {
+        $this->from = $from;
+        $this->to = $to;
+        $this->search = $search;
+        $this->user_id = $user_id;
+    }
     /**
      * @return \Illuminate\Support\Collection
      */
-    public function collection($search = null, $from = null, $to = null, $user_id = null)
+    public function collection()
     {
-        $request['search'] = $search;
-        $request['from'] = $from;
-        $request['to'] = $to;
-        $request['userId'] = $user_id;
-        if (!empty($search) || !is_null($search)) {
+        if (!empty($this->search) || !is_null($this->search)) {
             $data = DB::table('transactions')
                 ->join('users', 'users.id', '=', 'transactions.user_id')
                 ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
-                ->where('transactions.transaction_for', 'LIKE', '%' . $search . '%')->orWhere('transactions.transaction_id', 'LIKE', '%' . $search . '%')
-                ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                ->where('transactions.transaction_for', 'LIKE', '%' . $this->search . '%')->orWhere('transactions.transaction_id', 'LIKE', '%' . $this->search . '%')
+                ->whereBetween('transactions.created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
                 ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
                 ->latest('transactions.created_at')->orderByDesc('transactions.id')
                 ->get();
 
             return $data;
         }
-        if (!is_null($request['userId']) || !empty($request['userId'])) {
+        if (!is_null($this->user_id) || !empty($this->user_id)) {
             $data = DB::table('transactions')
                 ->join('users', 'users.id', '=', 'transactions.user_id')
                 ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
-                ->where('transactions.trigered_by', $request['userId'])
-                ->orWhere('transactions.user_id', $request['userId'])
-                ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                ->where('transactions.trigered_by', $this->user_id)
+                ->orWhere('transactions.user_id', $this->user_id)
+                ->whereBetween('transactions.created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
                 ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
                 ->latest('transactions.created_at')->orderByDesc('transactions.id')
                 ->get();
@@ -53,7 +62,7 @@ class UsersExport implements FromCollection, WithHeadings, WithStyles, WithChunk
         $data = DB::table('transactions')
             ->join('users', 'users.id', '=', 'transactions.user_id')
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
-            ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+            ->whereBetween('transactions.created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
             ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
             ->latest('transactions.created_at')->orderByDesc('transactions.id')
             ->get();

@@ -1106,7 +1106,7 @@ class AdminController extends Controller
 
     public function printLedger(Request $request)
     {
-        return Excel::download(new UsersExport($request['search'], $request['from'], $request['to'], $request['userId']), 'users.xlsx');
+        return Excel::download(new UsersExport($request['from'], $request['to'], $request['search'], $request['userId']), 'ledger.xlsx');
     }
 
     public function marketOverview(Request $request)
