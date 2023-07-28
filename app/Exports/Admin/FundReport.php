@@ -76,7 +76,7 @@ class FundReport implements FromCollection, WithHeadings, WithStyles, WithChunkR
 
     public function headings(): array
     {
-        return ["Req ID", "Status", "Transfer Date", "Request Timestamp", "Trnxn ID", "Amount", "Opening Balance", "Closing Balance", "Requested Bank", "Trnxn Type", "User Name", "Updated By", "Remarks", "Admin Remarks"];
+        return ["Req ID", "Status", "Transfer Date", "Request Timestamp", "Trnxn ID", "Amount", "Opening Balance", "Closing Balance", "Requested Bank", "Trnxn Type", "User Name", "Phone Number","Updated By", "Remarks", "Admin Remarks"];
     }
 
     public function styles(Worksheet $sheet)
