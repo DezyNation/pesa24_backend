@@ -17,11 +17,12 @@ class UsersExport implements FromCollection, WithHeadings, WithStyles, WithChunk
     /**
      * @return \Illuminate\Support\Collection
      */
-    public function collection($search = null, $from = null, $to = null)
+    public function collection($search = null, $from = null, $to = null, $user_id = null)
     {
         $request['search'] = $search;
         $request['from'] = $from;
         $request['to'] = $to;
+        $request['userId'] = $user_id;
         if (!empty($search) || !is_null($search)) {
             $data = DB::table('transactions')
                 ->join('users', 'users.id', '=', 'transactions.user_id')
