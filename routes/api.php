@@ -263,6 +263,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
     Route::get('overview', [AdminController::class, 'sumCategory']);
     Route::get('pending-requests', [AdminController::class, 'pendingRequest']);
     Route::get('users/{id}', [UserController::class, 'show']);
+    Route::get('excel', [UserController::class, 'test']);
     Route::get('tickets', [TicketController::class, 'adminTicket']);
     Route::post('tickets', [TicketController::class, 'adminUpdateTicket']);
     Route::get('packages/{id}', [PackageController::class, 'parentPackage']);
