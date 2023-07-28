@@ -35,7 +35,7 @@ class LedgerExport implements FromCollection, WithHeadings, WithStyles, WithChun
     {
         $search = $this->search;
         if (!empty($search) || !is_null($search)) {
-            $data = DB::table('transactions')->where('trigered_by', auth()->user()->id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->select('transactions.transaction_id', 'transactions.service_type', 'transactions.transaction_for', 'transactions.credit_amount', 'transactions._debit_amount', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.created_at', 'transactions.updated_at')->latest()->get();
+            $data = DB::table('transactions')->where('trigered_by', auth()->user()->id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->select('transactions.transaction_id', 'transactions.service_type', 'transactions.transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.created_at', 'transactions.updated_at')->latest()->get();
             // ->paginate(200);
             return $data;
         }
@@ -44,7 +44,7 @@ class LedgerExport implements FromCollection, WithHeadings, WithStyles, WithChun
                 $data = DB::table('transactions')->whereBetween('created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])->where('service_type', $this->name)->where(function ($q) {
                     $q->where('trigered_by', auth()->user()->id);
                 })->whereJsonContains('metadata->status', $this->status)
-                    ->select('transactions.transaction_id', 'transactions.service_type', 'transactions.transaction_for', 'transactions.credit_amount', 'transactions._debit_amount', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.created_at', 'transactions.updated_at')
+                    ->select('transactions.transaction_id', 'transactions.service_type', 'transactions.transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.created_at', 'transactions.updated_at')
                     ->latest()
                     ->get();
                 return $data;
@@ -52,13 +52,13 @@ class LedgerExport implements FromCollection, WithHeadings, WithStyles, WithChun
             $data = DB::table('transactions')->whereBetween('created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])->where('service_type', $this->name)->where(function ($q) {
                 $q->where('trigered_by', auth()->user()->id);
             })
-                ->select('transactions.transaction_id', 'transactions.service_type', 'transactions.transaction_for', 'transactions.credit_amount', 'transactions._debit_amount', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.created_at', 'transactions.updated_at')
+                ->select('transactions.transaction_id', 'transactions.service_type', 'transactions.transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.created_at', 'transactions.updated_at')
                 ->latest()
                 ->get();
             return $data;
         }
         $data = DB::table('transactions')->whereBetween('created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->orWhere('user_id', auth()->user()->id)
-            ->select('transactions.transaction_id', 'transactions.service_type', 'transactions.transaction_for', 'transactions.credit_amount', 'transactions._debit_amount', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.created_at', 'transactions.updated_at')
+            ->select('transactions.transaction_id', 'transactions.service_type', 'transactions.transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.created_at', 'transactions.updated_at')
             ->latest()->get();
         return $data;
     }

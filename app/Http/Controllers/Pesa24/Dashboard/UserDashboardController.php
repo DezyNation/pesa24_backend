@@ -349,9 +349,10 @@ class UserDashboardController extends Controller
         return response($array);
     }
 
-    public function printReports(Request $request, $name)
+    public function printReports(Request $request)
     {
         $type = $request['type'];
+        $name = $request['name'];
         switch ($type) {
             case 'fund-requests':
                 $data = $this->fundReports($request);
@@ -375,6 +376,6 @@ class UserDashboardController extends Controller
 
     public function printLedger(Request $request, $name)
     {
-        return Excel::download(new LedgerExport($request['from'], $request['to'], $request['search'], $request['status'], $name));
+        return Excel::download(new LedgerExport($request['from'], $request['to'], $request['search'], $request['status'], $name), 'ledger.xlsx');
     }
 }
