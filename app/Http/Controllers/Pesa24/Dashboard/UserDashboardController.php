@@ -399,6 +399,6 @@ class UserDashboardController extends Controller
 
     public function printLedger(Request $request, $name)
     {
-        return Excel::download(new LedgerExport($request['from'], $request['to'], $request['search'], $request['status'], $name), 'ledger.xlsx');
+        return Excel::download(new LedgerExport($request['from'], $request['to'], $request['search'], $request['status'], $name), 'ledger.pdf');
     }
 }
