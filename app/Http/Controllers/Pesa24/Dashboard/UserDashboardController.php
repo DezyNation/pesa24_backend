@@ -27,17 +27,11 @@ class UserDashboardController extends Controller
         if (!is_null($name) || !empty($name)) {
             if (!is_null($request['status']) || !empty($request['status'])) {
                 // $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => auth()->user()->id, 'service_type' => $name])->orWhere(['user_id' =>  auth()->user()->id, 'service_type' => $name])->whereJsonContains('metadata->status', $request['status'])->latest()->get();
-                $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('service_type', $name)->where(function ($q) {
-                    $q->where('trigered_by', auth()->user()->id);
-                        // ->orWhere('user_id', auth()->user()->id);
-                })->whereJsonContains('metadata->status', $request['status'])->latest()->get();
+                $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->whereJsonContains('metadata->status', $request['status'])->latest()->get();
                 // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $request['status']]);
                 return $data;
             }
-            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('service_type', $name)->where(function ($q) {
-                $q->where('trigered_by', auth()->user()->id);
-                    // ->orWhere('user_id', auth()->user()->id);
-            })->latest()->get();
+            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->get();
             // $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => auth()->user()->id, 'service_type' => $name])->orWhere(['user_id' =>  auth()->user()->id, 'service_type' => $name])->latest()->get();
             // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $request['status']]);
             return $data;
