@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\Admin\FundReport;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Package;
@@ -990,6 +991,8 @@ class AdminController extends Controller
 
     public function fundReports(Request $request)
     {
+
+        return Excel::download(new FundReport($request['from'], $request['to'], $request['search'], $request['userId'], $request['status']), 'fundreport.xlsx');
 
         if (!empty($request['search']) || !is_null($request['search'])) {
             $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
