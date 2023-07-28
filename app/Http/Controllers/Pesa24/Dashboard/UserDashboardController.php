@@ -18,27 +18,49 @@ class UserDashboardController extends Controller
 
     public function transactionLedger(Request $request, $name = null)
     {
+        $id = auth()->user()->id;
+
         $search = $request['search'];
         if (!empty($search) || !is_null($search)) {
-            $data = DB::table('transactions')->where('trigered_by', auth()->user()->id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->latest()->get();
-            // ->paginate(200);
+            $data = DB::table('transactions')->where('trigered_by', $id)->orWhere('user_id', $id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->latest()->orderByDesc('transactions.id')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
             return $data;
         }
-        if (!is_null($name) || !empty($name)) {
-            if (!is_null($request['status']) || !empty($request['status'])) {
-                // $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => auth()->user()->id, 'service_type' => $name])->orWhere(['user_id' =>  auth()->user()->id, 'service_type' => $name])->whereJsonContains('metadata->status', $request['status'])->latest()->get();
-                $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->whereJsonContains('metadata->status', $request['status'])->latest()->get();
-                // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $request['status']]);
-                return $data;
-            }
-            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->get();
-            // $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => auth()->user()->id, 'service_type' => $name])->orWhere(['user_id' =>  auth()->user()->id, 'service_type' => $name])->latest()->get();
-            // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $request['status']]);
+
+        if ($name == 'all') {
+            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(function ($q) use ($id) {
+                $q->where('trigered_by', $id);
+                // ->orWhere('user_id', $id);
+            })->latest()->orderByDesc('transactions.id')->get();
+
             return $data;
         }
-        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->orWhere('user_id', auth()->user()->id)->latest()->get();
-        // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
+
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('service_type', $name)->where(function ($q) use ($id) {
+            $q->where('trigered_by', $id);
+            // ->orWhere('user_id', $id);
+        })->latest()->orderByDesc('transactions.id')->get();
         return $data;
+        // $search = $request['search'];
+        // if (!empty($search) || !is_null($search)) {
+        //     $data = DB::table('transactions')->where('trigered_by', auth()->user()->id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->latest()->get();
+        //     // ->paginate(200);
+        //     return $data;
+        // }
+        // if (!is_null($name) || !empty($name)) {
+        //     if (!is_null($request['status']) || !empty($request['status'])) {
+        //         // $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => auth()->user()->id, 'service_type' => $name])->orWhere(['user_id' =>  auth()->user()->id, 'service_type' => $name])->whereJsonContains('metadata->status', $request['status'])->latest()->get();
+        //         $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->whereJsonContains('metadata->status', $request['status'])->latest()->get();
+        //         // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $request['status']]);
+        //         return $data;
+        //     }
+        //     $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => auth()->user()->id])->latest()->get();
+        //     // $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => auth()->user()->id, 'service_type' => $name])->orWhere(['user_id' =>  auth()->user()->id, 'service_type' => $name])->latest()->get();
+        //     // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $request['status']]);
+        //     return $data;
+        // }
+        // $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('trigered_by', auth()->user()->id)->orWhere('user_id', auth()->user()->id)->latest()->get();
+        // // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
+        // return $data;
     }
 
     public function overView(Request $request)
