@@ -74,6 +74,7 @@ Route::middleware(['auth:api', 'active'])->group(function () {
     Route::post('transaction/claim', [UserDashboardController::class, 'claim']);
     Route::get('user/bank', [ProfileController::class, 'bank']);
     Route::get('user/daily-sales', [UserDashboardController::class, 'dailySales']);
+    Route::get('user/print-reports', [UserDashboardController::class, 'printReports']);
     Route::get('user/services', [ProfileController::class, 'userServices']);
     Route::get('user/ledger/{name?}', [UserDashboardController::class, 'transactionLedger']);
     Route::post('user/wallet', [ProfileController::class, 'wallet']);

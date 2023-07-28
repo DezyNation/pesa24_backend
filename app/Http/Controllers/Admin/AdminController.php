@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\Admin\FundReport;
+use App\Exports\Admin\PayoutExport;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Package;
@@ -1038,6 +1039,9 @@ class AdminController extends Controller
 
     public function payoutReports(Request $request, $processing)
     {
+
+        return Excel::download(new PayoutExport($request['from'], $request['to'], $request['search'], $request['userId'], $request['status'], $processing), 'payout.xlsx');
+
         if (!empty($request['userId']) || !is_null($request['userId'])) {
             if (!empty($request['status']) || !is_null($request['status'])) {
                 $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
