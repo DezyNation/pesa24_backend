@@ -7,15 +7,19 @@ use App\Models\User;
 use App\Models\Package;
 use App\Models\Transaction;
 use Illuminate\Support\Str;
+use App\Exports\UsersExport;
 use Illuminate\Http\Request;
+use App\Exports\Admin\FundReport;
 use Illuminate\Support\Facades\DB;
+use App\Exports\Admin\PayoutExport;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -990,6 +994,8 @@ class AdminController extends Controller
     public function fundReports(Request $request)
     {
 
+        return Excel::download(new FundReport($request['from'], $request['to'], $request['search'], $request['userId'], $request['status']), 'fundreport.xlsx');
+
         if (!empty($request['search']) || !is_null($request['search'])) {
             $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
                 ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
@@ -1034,6 +1040,9 @@ class AdminController extends Controller
 
     public function payoutReports(Request $request, $processing)
     {
+
+        return Excel::download(new PayoutExport($request['from'], $request['to'], $request['search'], $request['userId'], $request['status'], $processing), 'payout.xlsx');
+
         if (!empty($request['userId']) || !is_null($request['userId'])) {
             if (!empty($request['status']) || !is_null($request['status'])) {
                 $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
@@ -1105,43 +1114,7 @@ class AdminController extends Controller
 
     public function printLedger(Request $request)
     {
-        $search = $request['search'];
-        if (!empty($search) || !is_null($search)) {
-            $data = DB::table('transactions')
-                ->join('users', 'users.id', '=', 'transactions.user_id')
-                ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
-                ->where('transactions.transaction_for', 'LIKE', '%' . $search . '%')->orWhere('transactions.transaction_id', 'LIKE', '%' . $search . '%')
-                ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
-                ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
-                ->latest('transactions.created_at')->orderByDesc('transactions.id')
-                ->get();
-
-            return $data;
-        }
-        if (!is_null($request['userId']) || !empty($request['userId'])) {
-            $data = DB::table('transactions')
-                ->join('users', 'users.id', '=', 'transactions.user_id')
-                ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
-                ->where('transactions.trigered_by', $request['userId'])
-                ->orWhere('transactions.user_id', $request['userId'])
-                ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
-                ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
-                ->latest('transactions.created_at')->orderByDesc('transactions.id')
-                ->get();
-
-
-            return $data;
-        }
-
-        $data = DB::table('transactions')
-            ->join('users', 'users.id', '=', 'transactions.user_id')
-            ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
-            ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
-            ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
-            ->latest('transactions.created_at')->orderByDesc('transactions.id')
-            ->get();
-
-        return $data;
+        return Excel::download(new UsersExport($request['from'], $request['to'], $request['search'], $request['userId']), 'ledger.xlsx');
     }
 
     public function marketOverview(Request $request)

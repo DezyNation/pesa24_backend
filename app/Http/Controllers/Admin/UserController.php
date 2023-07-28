@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\UsersExport;
 use App\Models\User;
 use App\Models\ParentUser;
 use Illuminate\Support\Str;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\v1\UserResource;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -369,6 +371,11 @@ class UserController extends Controller
         }
 
         return $data;
+    }
+
+    public function test()
+    {
+        return Excel::download(new UsersExport, 'users.xlsx');
     }
 }
 

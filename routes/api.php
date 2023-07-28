@@ -74,6 +74,7 @@ Route::middleware(['auth:api', 'active'])->group(function () {
     Route::post('transaction/claim', [UserDashboardController::class, 'claim']);
     Route::get('user/bank', [ProfileController::class, 'bank']);
     Route::get('user/daily-sales', [UserDashboardController::class, 'dailySales']);
+    Route::get('user/print-reports', [UserDashboardController::class, 'printReports']);
     Route::get('user/services', [ProfileController::class, 'userServices']);
     Route::get('user/ledger/{name?}', [UserDashboardController::class, 'transactionLedger']);
     Route::post('user/wallet', [ProfileController::class, 'wallet']);
@@ -263,6 +264,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
     Route::get('overview', [AdminController::class, 'sumCategory']);
     Route::get('pending-requests', [AdminController::class, 'pendingRequest']);
     Route::get('users/{id}', [UserController::class, 'show']);
+    Route::get('excel', [UserController::class, 'test']);
     Route::get('tickets', [TicketController::class, 'adminTicket']);
     Route::post('tickets', [TicketController::class, 'adminUpdateTicket']);
     Route::get('packages/{id}', [PackageController::class, 'parentPackage']);
