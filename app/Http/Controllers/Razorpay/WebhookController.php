@@ -75,7 +75,7 @@ class WebhookController extends CommissionController
                 $utr = $request['payload.payout.entity.utr'] ?? 'No UTR';
                 event(new PayoutStatusUpdated("Amount {$result[0]->amount} ($utr)", "Payout {$request['payload.payout.entity.id']} {$request['payload.payout.entity.status']}", $result[0]->user_id));
             }
+            return true;
         });
-        return true;
     }
 }
