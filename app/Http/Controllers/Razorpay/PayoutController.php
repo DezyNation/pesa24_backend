@@ -32,7 +32,7 @@ class PayoutController extends CommissionController
         ];
         $key = env('RAZORPAY_KEY');
         $secret = env('RAZORPAY_SECRET');
-        $transfer = Http::withBasicAuth($key, $secret)->withHeaders([
+        $transfer = Http::withBasicAuth('rzp_live_30O4Gliwt4pmRX', 'LnhYUNNyMP5oQuD9cDFfyQ6t')->withHeaders([
             'Content-Type' => 'application/json'
         ])->post('https://api.razorpay.com/v1/payouts', $data);
 
