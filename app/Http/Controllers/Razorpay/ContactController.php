@@ -37,7 +37,6 @@ class ContactController extends FundAccountController
             'reference_id' =>  "DEV".uniqid(),
         ];
 
-        return response(['metadata' => $data]);
         $key = env('RAZORPAY_KEY');
         $secret = env('RAZORPAY_SECRET');
         $response = Http::withBasicAuth($key, $secret)->withHeaders([
