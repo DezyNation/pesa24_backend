@@ -32,7 +32,7 @@ class UserDashboardController extends Controller
             $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(function ($q) use ($id) {
                 $q->where('trigered_by', $id);
                 // ->orWhere('user_id', $id);
-            })->latest()->orderByDesc('transactions.id')->get();
+            })->latest()->orderByDesc('transactions.id')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
 
             return $data;
         }
@@ -40,7 +40,7 @@ class UserDashboardController extends Controller
         $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('service_type', $name)->where(function ($q) use ($id) {
             $q->where('trigered_by', $id);
             // ->orWhere('user_id', $id);
-        })->latest()->orderByDesc('transactions.id')->get();
+        })->latest()->orderByDesc('transactions.id')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
         return $data;
 
         // $search = $request['search'];
