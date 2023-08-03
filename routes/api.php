@@ -230,7 +230,7 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     /*-----------------------Paysprint Recharge-----------------------*/
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
     Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
-    Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge'])->middleware('mpin');
+    Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge'])->middleware('mpin', 'throttle:1,0.167');
     /*-----------------------Paysprint Recharge-----------------------*/
     /*-----------------------Paysprint CMS-----------------------*/
     Route::post('paysprint/cms/fino', [FinoCMSController::class, 'generateUrl']);
