@@ -79,23 +79,28 @@ class RechargeController extends CommissionController
 
     public function doRecharge(Request $request)
     {
+        $request->validate([
+            'operator' => 'required',
+            'canumber' => 'required',
+            'amount' => 'required|numeric'
+        ]);
         $token = $this->token();
         $data = [
             'operator' =>  $request['operator'],
             'canumber' =>  $request['canumber'],
             'amount' =>  $request['amount'],
-            'referenceid' => uniqid(),
+            'referenceid' => uniqid("JND", true),
         ];
 
-        $response = Http::withHeaders([
+        $transaction_id = $data['referenceid'];
+        $response = Http::asJson()->withHeaders([
             'Token' => $token,
             'accept' => 'application/json',
-            'Authorisedkey' => env('AUTHORISED_KEY'),
-            'content-type' => 'application/json',
+            'Authorisedkey' => env('AUTHORISED_KEY')
         ])->post('https://api.paysprint.in/api/v1/service/recharge/recharge/dorecharge', $data);
 
 
-        if ($response->json('status') == true) {
+        if ($response->json('response_code') == 1 || $response->json('response_code') == 2 || $response->json('response_code') == 0) {
             $metadata = [
                 'status' => $response['status'],
                 'mobile_number' => $data['canumber'],
@@ -107,27 +112,12 @@ class RechargeController extends CommissionController
                 'reference_id' => $response['refid'],
                 'acknowldgement_number' => $response['ackno'],
             ];
-            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $balance_left = $walletAmt[0] - $data['amount'];
+            $walletAmt = auth()->user()->wallet;
+            $balance_left = $walletAmt - $data['amount'];
 
-            $transaction_id = "RECH" . strtoupper(Str::random(9));
-            $this->transaction($data['amount'], "Recharge for Mobile {$data['canumber']}", 'recharge', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
-            $this->rechargeCommissionPaysprint(auth()->user()->id, $data['operator'],  $request['amount']);
+            $this->transaction($data['amount'], "Recharge for Mobile {$data['canumber']}", 'recharge', auth()->user()->id, $walletAmt, $transaction_id, $balance_left, json_encode($metadata));
+            $this->rechargeCommissionPaysprint(auth()->user()->id, $data['operator'],  $request['amount'], $transaction_id, $data['canumber']);
         } else {
-            if ($response['response_code'] == 16) {
-                $metadata = [
-                    'status' => false,
-                    'mobile_number' => $data['canumber'],
-                    'user' => auth()->user()->name,
-                    'user_id' => auth()->user()->id,
-                    'user_phone' => auth()->user()->phone_number,
-                    'amount' => $data['amount'],
-                    'refid' => $data['referenceid'],
-                    'operator' => $data['operator'],
-                    'reason' => "Server Busy"
-                ];
-                return [$response, 'metadata' => $metadata];
-            }
             $metadata = [
                 'status' => false,
                 'mobile_number' => $data['canumber'],
@@ -136,11 +126,10 @@ class RechargeController extends CommissionController
                 'user_phone' => auth()->user()->phone_number,
                 'amount' => $data['amount'],
                 'refid' => $data['referenceid'],
-                'operator' => $data['operator']
+                'operator' => $data['operator'],
+                'reason' => "Server Busy"
             ];
-            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $transaction_id = "RECH" . strtoupper(Str::random(9));
-            $this->transaction(0, "Recharge for Mobile {$data['canumber']}", 'recharge', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+            return [$response, 'metadata' => $metadata];
         }
 
         return [$response->body(), 'metadata' => $metadata];
