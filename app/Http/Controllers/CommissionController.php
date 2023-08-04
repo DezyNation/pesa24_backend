@@ -711,7 +711,7 @@ class CommissionController extends Controller
     {
         $table = DB::table('recharges')
             ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
-            ->where(['package_user.user_id' => $user_id, 'recharges.paysprint_id' => $operator])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
+            ->where(['package_user.user_id' => $user_id])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
             ->get();
 
         if ($table->isEmpty()) {
@@ -768,7 +768,7 @@ class CommissionController extends Controller
     {
         $table = DB::table('recharges')
             ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
-            ->where(['package_user.user_id' => $user_id, 'recharges.paysprint_id' => $operator])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
+            ->where(['package_user.user_id' => $user_id])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
             ->get();
 
         if ($table->isEmpty()) {
