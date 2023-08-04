@@ -750,7 +750,7 @@ class CommissionController extends Controller
             'wallet' => $closing_balance
         ]);
 
-        if (!$table->parents) {
+        if (!$table->parent) {
             return response("No commission for parents");
         }
 
@@ -808,7 +808,7 @@ class CommissionController extends Controller
         ]);
 
 
-        if (!$table->parents) {
+        if (!$table->parent) {
             return response("No comission for parents");
         }
 
