@@ -750,7 +750,7 @@ class CommissionController extends Controller
 
         $this->notAdmintransaction($debit, "Recharge Commission for $canumber", 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
-        if (!$table->parents) {
+        if (!$table->parent) {
             return response("No commission for parents");
         }
 
@@ -807,7 +807,7 @@ class CommissionController extends Controller
 
         $this->notAdmintransaction($debit, "Recharge Commission for $canumber", 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
-        if (!$table->parents) {
+        if (!$table->parent) {
             return response("No comission for parents");
         }
 
