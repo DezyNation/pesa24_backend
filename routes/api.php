@@ -43,7 +43,7 @@ use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
 use App\Http\Controllers\Paysprint\CMS\FinoCMSController;
 use App\Http\Controllers\Paysprint\PANController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
-use App\Http\Controllers\SRKMoney\PayoutController as SRKMoneyPayoutController;
+use App\Http\Controllers\SRK\PayoutController as SRKMoneyPayoutController;
 
 /*
 |--------------------------------------------------------------------------

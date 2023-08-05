@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\SRKMoney;
+namespace App\Http\Controllers\SRK;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
