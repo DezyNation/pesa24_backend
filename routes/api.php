@@ -43,6 +43,7 @@ use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
 use App\Http\Controllers\Paysprint\CMS\FinoCMSController;
 use App\Http\Controllers\Paysprint\PANController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
+use App\Http\Controllers\SRKMoney\PayoutController as SRKMoneyPayoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -189,7 +190,7 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     /*-----------------------Razorpay Payout-----------------------*/
 
     /*-----------------------SRK Payout-----------------------*/
-    Route::post('srk/payout/new-payout/{service_id}', [ContactController::class, 'createContact'])->middleware(['throttle:1,0.167', 'charge', 'multiple_transaction']);
+    Route::post('srk/payout/new-payout/{service_id}', [SRKMoneyPayoutController::class, 'payout'])->middleware(['throttle:1,0.167', 'charge', 'multiple_transaction']);
     /*-----------------------SRK Payout-----------------------*/
 
     /*-----------------------Pysprint AePS-----------------------*/
