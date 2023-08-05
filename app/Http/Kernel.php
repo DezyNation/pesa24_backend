@@ -80,5 +80,6 @@ class Kernel extends HttpKernel
         'otp' => \App\Http\Middleware\OTPCheck::class,
         'charge' => \App\Http\Middleware\Payout::class,
         'active' => \App\Http\Middleware\BlockedUser::class,
+        'multiple_transaction' => \App\Http\Middleware\MultipleTransaction::class,
     ];
 }

@@ -707,11 +707,11 @@ class CommissionController extends Controller
 
     /*-------------------------------------Recharge Commissions-------------------------------------*/
 
-    public function rechargeCommissionPaysprint($user_id, $operator, $amount)
+    public function rechargeCommissionPaysprint($user_id, $operator, $amount, $transaction_id, $canumber)
     {
         $table = DB::table('recharges')
             ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
-            ->where(['package_user.user_id' => $user_id, 'recharges.paysprint_id' => $operator])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
+            ->where(['package_user.user_id' => $user_id])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
             ->get();
 
         if ($table->isEmpty()) {
@@ -719,7 +719,6 @@ class CommissionController extends Controller
         }
 
         $table = $table[0];
-
         $user = User::findOrFail($user_id);
         $role = $user->getRoleNames()[0];
 
@@ -727,28 +726,29 @@ class CommissionController extends Controller
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
-        $role_commission = $table->{$role_commission_name};
+        $role_commission = $table->$role_commission_name;
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
-            $debit = $amount * $fixed_charge / 100;
+        } else {
+            $debit =  $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
         $metadata = [
-            'status' => true
+            'status' => true,
+            'amount' => $amount,
+            'canumber' => $canumber,
+            'operator' => $operator,
+            'credit' => $credit,
+            'debit' => $debit
         ];
 
-        $transaction_id = "RECHARGE" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Recharge Commission', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
-        $user->update([
-            'wallet' => $closing_balance
-        ]);
+        $this->notAdmintransaction($debit, "Recharge Commission for $canumber", 'recharge-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parent) {
             return response("No commission for parents");
@@ -758,17 +758,17 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->rechargeParentCommissionPaysprint($parent_id[0], $operator, $amount);
+            $this->rechargeParentCommissionPaysprint($parent_id[0], $operator, $amount, $transaction_id, $canumber);
         }
 
         return true;
     }
 
-    public function rechargeParentCommissionPaysprint($user_id, $operator, $amount)
+    public function rechargeParentCommissionPaysprint($user_id, $operator, $amount, $transaction_id, $canumber)
     {
         $table = DB::table('recharges')
             ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
-            ->where(['package_user.user_id' => $user_id, 'recharges.paysprint_id' => $operator])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
+            ->where(['package_user.user_id' => $user_id])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
             ->get();
 
         if ($table->isEmpty()) {
@@ -776,37 +776,36 @@ class CommissionController extends Controller
         }
 
         $table = $table[0];
-
         $user = User::findOrFail($user_id);
-        $role = $user->getRoleNames()[0];
+        $role = $user[0]->getRoleNames()[0];
 
         $fixed_charge = 0;
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
-        $role_commission = $table->{$role_commission_name};
+        $role_commission = $table->$role_commission_name;
         $opening_balance = $user->wallet;
 
         if ($is_flat) {
             $debit = $fixed_charge;
             $credit = $role_commission - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
-        } elseif (!$is_flat) {
-            $debit = $amount * $fixed_charge / 100;
+        } else {
+            $debit =  $amount * $fixed_charge / 100;
             $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
             $closing_balance = $opening_balance - $debit + $credit;
         }
 
         $metadata = [
-            'status' => true
+            'status' => true,
+            'amount' => $amount,
+            'canumber' => $canumber,
+            'operator' => $operator,
+            'credit' => $credit,
+            'debit' => $debit
         ];
 
-        $transaction_id = "RECHRGE" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'Recharge Commission', 'recharge', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
-        $user->update([
-            'wallet' => $closing_balance
-        ]);
-
+        $this->notAdmintransaction($debit, "Recharge Commission for $canumber", 'recharge-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parent) {
             return response("No comission for parents");
@@ -816,7 +815,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->rechargeParentCommissionPaysprint($parent_id[0], $operator, $amount);
+            $this->rechargeParentCommissionPaysprint($parent_id[0], $operator, $amount, $transaction_id, $canumber);
         }
 
         return true;

@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response;
+
+class MultipleTransaction
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        $current_time = now();
+        $recent_time = now()->subHours(12);
+        $query = DB::table('payouts')->whereBetween('created_at', [$recent_time, $current_time])->where(['status' => 'processed', 'amount' => $request['amount'], 'account_number' => $request['account']])->exists();
+        if ($query) {
+            return response("This transaction is not allowed at the moment", 405);
+        }
+        return $next($request);
+    }
+}
