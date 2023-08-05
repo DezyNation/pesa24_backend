@@ -18,7 +18,11 @@ class MultipleTransaction
     {
         $current_time = now();
         $recent_time = now()->subHours(12);
-        $query = DB::table('payouts')->whereBetween('created_at', [$recent_time, $current_time])->where(['status' => 'processed', 'amount' => $request['amount'], 'account_number' => $request['account']])->exists();
+        $query = DB::table('transactions')->whereBetween('created_at', [$recent_time, $current_time])
+            ->where(['metadata->status' => 'processed', 'amount' => $request['amount'], 'account_number' => $request['account']])
+            ->orWhere(['metadata->status' => 'success', 'amount' => $request['amount'], 'account_number' => $request['account']])
+            ->orWhere(['metadata->status' => 'pending', 'amount' => $request['amount'], 'account_number' => $request['account']])
+            ->exists();
         if ($query) {
             return response("This transaction is not allowed at the moment", 405);
         }

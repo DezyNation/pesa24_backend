@@ -188,6 +188,10 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall'])->middleware('throttle:1,0.08');
     /*-----------------------Razorpay Payout-----------------------*/
 
+    /*-----------------------SRK Payout-----------------------*/
+    Route::post('srk/payout/new-payout/{service_id}', [ContactController::class, 'createContact'])->middleware(['throttle:1,0.167', 'charge', 'multiple_transaction']);
+    /*-----------------------SRK Payout-----------------------*/
+
     /*-----------------------Pysprint AePS-----------------------*/
     Route::post('paysprint/aeps/money-transfer/{service_id}', [AepsApiController::class, 'withdrwal'])->middleware('paysprint_merchant');
     Route::post('paysprint/aeps/mini-statement/{service_id}', [AepsApiController::class, 'miniStatement'])->middleware('paysprint_merchant');
