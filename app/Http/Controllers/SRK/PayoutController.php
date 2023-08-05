@@ -66,8 +66,16 @@ class PayoutController extends CommissionController
         $wallet = auth()->user()->wallet;
         $balance_left = $wallet - $amount;
         if ($response['data']['txn_status'] == 'SUCCESS' || $response['data']['txn_status'] == 'PENDING') {
+            if ($response['data']['txn_status'] == 'SUCCESS') {
+                $status = 'processed';
+            }
+
+            if ($response['data']['txn_status'] == 'PENDING') {
+                $status = 'processing';
+            }
+
             $metadata = [
-                'status' => strtolower($response['data']['txn_status']),
+                'status' => $status ?? $response['data']['txn_status'],
                 'amount' => $data['amount'],
                 'account_number' => $data['account'],
                 'ifsc' => $data['bankifsc'],
@@ -80,7 +88,7 @@ class PayoutController extends CommissionController
                 'created_at' => date('Y-m-d H:i:s')
             ];
             $metadata2 = [
-                'status' => strtolower($response['data']['txn_status']),
+                'status' => $status,
                 'amount' => $data['amount'],
                 'account_number' => $data['account'],
                 'ifsc' => $data['bankifsc'],
