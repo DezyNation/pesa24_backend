@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Models\Ticket;
 use App\Models\Package;
 use App\Models\Service;
+use App\Models\Transaction;
 use App\Models\PackageService;
 use App\Models\KYCVerification;
 use Laravel\Sanctum\HasApiTokens;
@@ -36,6 +37,7 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'password',
         'first_name',
+        'otp_generated_at',
         'is_active',
         'last_name',
         'otp',
@@ -270,5 +272,10 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class, 'trigerd_by');
     }
 }

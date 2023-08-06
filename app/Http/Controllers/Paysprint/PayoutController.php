@@ -225,14 +225,15 @@ class PayoutController extends CommissionController
         return $response;
     }
 
-    public function fetchMoneyTransfer()
+    public function fetchMoneyTransfer(Request $request)
     {
         $data = DB::table('money_transfers')
             ->join('users as recievers', 'recievers.id', '=', 'money_transfers.reciever_id')
             ->where('money_transfers.sender_id', auth()->user()->id)
+            ->whereBetween('money_transfers.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
             ->select('recievers.name', 'recievers.phone_number', 'recievers.id as reciever_id', 'money_transfers.*')
             ->latest()
-            ->paginate(100);
+            ->paginate(200);
 
         return $data;
     }
@@ -250,6 +251,13 @@ class PayoutController extends CommissionController
         if (!$user) {
             return response("User not found!", 404);
         }
+
+        $sender_name = auth()->user()->name;
+        $sender_id = auth()->user()->id;
+
+        $reciever_name = $user->name;
+        $reciever_id = $user->id;
+
         $transaction_id = strtoupper(uniqid() . Str::random(8));
         $metadata = [
             'status' => true,
@@ -271,7 +279,7 @@ class PayoutController extends CommissionController
         ]);
 
         $final_amount = $user->wallet + $request['amount'];
-        $this->transaction(0, 'Money Transfer to your account', 'fund-transfer', $request['beneficiaryId'], $user->wallet, $transaction_id, $final_amount, json_encode($metadata), $request['amount']);
+        $this->notAdmintransaction(0, "Money recieved from $sender_name ($sender_id)", 'fund-transfer', $request['beneficiaryId'], $user->wallet, $transaction_id, $final_amount, json_encode($metadata), $request['amount']);
         $user->update(['wallet' => $final_amount]);
 
         $metadata = [
@@ -286,7 +294,7 @@ class PayoutController extends CommissionController
         ];
         $user = User::findOrFail(auth()->user()->id);
         $final_amount = $user->wallet - $request['amount'];
-        $this->transaction($request['amount'], 'Money Transfer to User account', 'fund-transfer', auth()->user()->id, $user->wallet, $transaction_id, $final_amount, json_encode($metadata));
+        $this->transaction($request['amount'], "Money Transfer to $reciever_name ($reciever_id)", 'fund-transfer', auth()->user()->id, $user->wallet, $transaction_id, $final_amount, json_encode($metadata));
         $user->update(['wallet' => $final_amount]);
         return response()->json(['message' => "Successfull", 'metadata' => $metadata]);
     }

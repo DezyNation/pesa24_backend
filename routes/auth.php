@@ -13,22 +13,22 @@ Route::post('/register', [RegisteredUserController::class, 'store'])
     ->name('register');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-    ->middleware(['guest', 'normal'])
+    ->middleware(['guest', 'normal', 'active'])
     ->name('login');
 
 Route::post('admin/login', [AuthenticatedSessionController::class, 'store'])
-    ->middleware(['guest', 'admin'])
+    ->middleware(['guest', 'admin', 'active'])
     ->name('login');
 
 Route::post('/send-otp', [AuthenticatedSessionController::class, 'sendOtp'])
-    ->middleware('guest');
+    ->middleware(['guest', 'active']);
 
 Route::post('password/send-otp', [AuthenticatedSessionController::class, 'passOtp'])
-    ->middleware('auth:api');
+    ->middleware('auth:api', 'active');
 
-Route::post('admin-register', [RegisteredUserController::class, 'registerAdmin'])->middleware('permission:user-create');
-Route::post('admin-update-user', [RegisteredUserController::class, 'adminUpdate'])->middleware(['auth:api','permission:user-edit']);
-Route::post('admin-send-creds', [PasswordResetLinkController::class, 'adminSendCreds'])->middleware(['auth:api','permission:user-edit']);
+Route::post('admin-register', [RegisteredUserController::class, 'registerAdmin'])->middleware(['permission:user-create', 'active']);
+Route::post('admin-update-user', [RegisteredUserController::class, 'adminUpdate'])->middleware(['auth:api','permission:user-edit', 'active', 'otp']);
+Route::post('admin-send-creds', [PasswordResetLinkController::class, 'adminSendCreds'])->middleware(['auth:api','permission:user-edit', 'active']);
 
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
     ->middleware('guest')

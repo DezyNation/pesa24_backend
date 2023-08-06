@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 
@@ -22,37 +23,155 @@ class FundController extends Controller
     {
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
             ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
-            ->where(['users.organization_id' => auth()->user()->organization_id])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(100);
+            ->where(['users.organization_id' => auth()->user()->organization_id])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(200);
         return $data;
     }
 
-    public function pendingfetchFund($type)
+    public function pendingfetchFund(Request $request, $type, $id = null)
     {
+
+        if (!empty($request['search']) || !is_null($request['search'])) {
+            if (empty($request['pageSize'])) {
+                $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                    ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                    ->where('funds.transaction_id', 'like', '%' . $request['search'] . '%')
+                    ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                    ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
+            } else {
+                $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                    ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                    ->where('funds.transaction_id', 'like', '%' . $request['search'] . '%')
+                    ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                    ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'pageSize' => $request['pageSize'], 'status' => $request['status'], 'search' => $request['search']]);
+            }
+
+            return $data;
+        }
+
+        if (!empty($request['userId']) || !is_null($request['userId'])) {
+            if (!empty($request['status']) || !is_null($request['status'])) {
+                if (empty($request['pageSize'])) {
+                    $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                        ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                        ->where(['funds.user_id' => $request['userId'], 'funds.status' => $request['status']])
+                        ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                        ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
+                    return $data;
+                } else {
+                    $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                        ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                        ->where(['funds.user_id' => $request['userId'], 'funds.status' => $request['status']])
+                        ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                        ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userId' => $request['userId'], 'status' => $request['status'], 'search' => $request['search']]);
+                    return $data;
+                }
+            }
+
+            if (empty($request['pageSize'])) {
+                if (!empty($request['status']) || !is_null($request['status'])) {
+
+                    $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                        ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                        ->where('funds.user_id', $request['userId'])
+                        ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                        ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', $request['status'])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
+                    return $data;
+                }
+                $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                    ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                    ->where('funds.user_id', $request['userId'])
+                    ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                    ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
+                return $data;
+            } else {
+                if (!empty($request['status']) || !is_null($request['status'])) {
+                    $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                        ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                        ->where('funds.user_id', $request['userId'])
+                        ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                        ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', $request['status'])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userId' => $request['userId'], 'pageSize' => $request['pageSize'], 'search' => $request['search'], 'status' => $request['status']]);
+                    return $data;
+                }
+                $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                    ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                    ->where('funds.user_id', $request['userId'])
+                    ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                    ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userId' => $request['userId'], 'pageSize' => $request['pageSize'], 'search' => $request['search'], 'status' => $request['status']]);
+                return $data;
+            }
+        }
+
+        if (empty($request['pageSize'])) {
+            $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
+            return $data;
+        }
+
+        if (!empty($request['status']) || !is_null($request['status'])) {
+
+            $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                ->where('funds.status', $request['status'])
+                ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'pageSize' => $request['pageSize'], 'status' => $request['status'], 'search' => $request['search']]);
+
+            return $data;
+        }
         if ($type == 'pending') {
             $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
                 ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
-                ->where(['users.organization_id' => auth()->user()->organization_id, 'funds.status' => 'pending'])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(100);
+                // ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                ->where(['users.organization_id' => auth()->user()->organization_id, 'funds.status' => 'pending'])->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'pageSize' => $request['pageSize'], 'status' => $request['status'], 'search' => $request['search']]);
             return $data;
         }
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
             ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
-            ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest()->paginate(100);
+            ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+            ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'pageSize' => $request['pageSize'], 'status' => $request['status'], 'search' => $request['search']]);
         return $data;
     }
 
     public function fetchFundId($id)
     {
-        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $id, 'users.organization_id' => auth()->user()->organization_id])->paginate(100);
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $id, 'users.organization_id' => auth()->user()->organization_id])->paginate(200);
         return $data;
     }
 
-    public function reversalAndTransferFunds()
+    public function reversalAndTransferFunds(Request $request, $id = null)
     {
+
+        $search = $request['search'];
+        // if (!is_null($search) || !empty($search)) {
+        //     $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+        //         ->where('funds.transaction_id', 'like', '%' . $search . '%')
+        //         ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+        //         ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+        //         ->select('users.name', 'users.phone_number', 'funds.transaction_id', 'funds.user_id', 'funds.amount', 'funds.remarks', 'funds.transaction_type', 'funds.created_at', 'admin.name as admin_name', 'admin.id as admin_id', 'admin.phone_number as admin_phone', 'funds.id')
+        //         ->latest('funds.updated_at')
+        //         ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userId' => $request['userId'], 'search' => $request['search']]);
+        //     return $data;
+        // }
+
+        if (!is_null($request['userId']) || !empty($request['userId'])) {
+            $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                ->where('transaction_type', 'transfer')
+                ->where('funds.user_id', $request['userId'])
+                ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->select('users.name', 'users.phone_number', 'funds.transaction_id', 'funds.user_id', 'funds.amount', 'funds.remarks', 'funds.transaction_type', 'funds.created_at', 'admin.name as admin_name', 'admin.id as admin_id', 'admin.phone_number as admin_phone', 'funds.id')
+                ->latest('funds.updated_at')
+                ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userId' => $request['userId'], 'search' => $request['search']]);
+            return $data;
+        }
         $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
             ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
             ->where('transaction_type', 'transfer')->orWhere('transaction_type', 'reversal')
-            ->select('users.name', 'users.phone_number', 'funds.transaction_id', 'funds.user_id', 'funds.amount', 'funds.remarks', 'funds.transaction_type', 'funds.created_at', 'admin.name as admin_name', 'admin.id as admin_id', 'funds.id')
-            ->paginate(100);
+            ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+            ->select('users.name', 'users.phone_number', 'funds.transaction_id', 'funds.user_id', 'funds.amount', 'funds.remarks', 'funds.transaction_type', 'funds.created_at', 'admin.name as admin_name', 'admin.id as admin_id', 'admin.phone_number as admin_phone', 'funds.id')
+            ->latest('funds.updated_at')
+            ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
         return $data;
     }
 
@@ -65,46 +184,63 @@ class FundController extends Controller
             'beneficiaryId' => 'required|exists:users,id'
         ]);
 
-        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id])->update([
-            'funds.admin_remarks' => $request['remarks'] ?? null,
-            'funds.status' => $request['status'],
-            'funds.approved' => $request['approved'],
-            'funds.declined' => $request['declined'],
-            'funds.parent_id' => auth()->user()->id,
-            'funds.updated_at' => now()
-        ]);
-
-
-        if ($request['status'] == 'approved') {
-            $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
-            $amount = $wallet[0] + $request['amount'];
-            $transaction_id = "FUND" . strtoupper(Str::random(5));
-            $metadata = [
-                'status' => true,
-                'amount_added' => $request['amount'],
-                'reference_id' => $transaction_id,
-                'transaction_from' => auth()->user()->name
-            ];
-            $this->transaction(0, 'Fund transfered to user`s wallet', 'fund-request', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
-
-            $amount = auth()->user()->wallet - $request['amount'];
-            $transaction_id = "FUND" . strtoupper(Str::random(5));
-            $metadata = [
-                'status' => true,
-                'amount_transfered' => $request['amount'],
-                'reference_id' => $transaction_id,
-                'transaction_from' => auth()->user()->name
-            ];
-            $this->transaction($request['amount'], 'Fund added to user`s wallet', 'fund-request', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
-        }
+        $status = $request['status'];
 
         $user = User::find($request['beneficiaryId']);
         $name = $user->name;
         $wallet = $user->wallet;
         $phone = $user->phone_number;
+
+        if ($status == 'approved') {
+            $closing_balance = $wallet + $request['amount'];
+        } else {
+            $closing_balance = $wallet;
+        }
+
+        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id, 'funds.status' => 'pending'])->update([
+            'funds.admin_remarks' => $request['remarks'] ?? null,
+            'funds.status' => $status,
+            'funds.approved' => $request['approved'],
+            'funds.declined' => $request['declined'],
+            'funds.closing_balance' => $closing_balance,
+            'funds.opening_balance' => $wallet,
+            'funds.parent_id' => auth()->user()->id,
+            'funds.updated_at' => now()
+        ]);
+
+        $transaction_id = "FUND" . strtoupper(Str::random(5));
+        if ($status == 'approved') {
+            $amount = auth()->user()->wallet - $request['amount'];
+            $metadata = [
+                'status' => true,
+                'amount_transfered' => $request['amount'],
+                'fund_id' => $request['id'],
+                'remarks' => $request['remarks'] ?? null,
+                'reference_id' => $transaction_id,
+                'transaction_from' => auth()->user()->name
+            ];
+            $this->transaction($request['amount'], "Fund request approved for $name - $phone", 'fund-request', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
+
+            $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
+            $amount = $wallet[0] + $request['amount'];
+            $metadata = [
+                'status' => true,
+                'amount_added' => $request['amount'],
+                'remarks' => $request['remarks'] ?? null,
+                'fund_id' => $request['id'],
+                'reference_id' => $transaction_id,
+                'transaction_from' => auth()->user()->name,
+                'phone_number' => auth()->user()->phone_number
+            ];
+            $this->notAdmintransaction(0, "Fund request approved by {$metadata['transaction_from']} - {$metadata['phone_number']}", 'fund-request', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
+        }
+
+        $name = $user->name;
+        $phone = $user->phone_number;
+        $wallet = $user->wallet;
         $status = $request['status'];
         $time = date('d-m-Y h:i:s A');
-        $newmsg = "Hello $name, Your fund request has been $status and Now Your Bal $wallet on the date of $time. '-From P24 Technology Pvt. Ltd";
+        $newmsg = "Hello $name, Your fund request has been $status and Now Your Bal $closing_balance on the date of $time. '-From P24 Technology Pvt. Ltd";
         $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
 
         return $data;
@@ -125,7 +261,7 @@ class FundController extends Controller
             'admin_remarks'
         )
             ->latest()
-            ->paginate(100);
+            ->paginate(200);
 
         return $data;
     }
@@ -166,6 +302,14 @@ class FundController extends Controller
             return response("You can not send to money to yourself.", 403);
         }
 
+        $user = User::find($request['beneficiaryId']);
+        if ($request['transactionType'] == 'transfer') {
+            $opening_balance = $user->wallet;
+            $closing_balance = $user->wallet + $request['amount'];
+        } else {
+            $opening_balance = $user->wallet;
+            $closing_balance = $user->wallet - $request['amount'];
+        }
         $transaction_id = "FUND" . strtoupper(Str::random(5));
 
         $data = DB::table('funds')->insert([
@@ -177,32 +321,20 @@ class FundController extends Controller
             'transaction_date' => date('Y-m-d H:i:s'),
             'approved' => 1,
             'status' => 'approved',
+            'opening_balance' => $opening_balance,
+            'closing_balance' => $closing_balance,
             'remarks' => $request['remarks'] ?? null,
             'created_at' => now(),
             'updated_at' => now()
         ]);
 
         if ($request['transactionType'] == 'transfer') {
-            $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
-            $amount = $wallet[0] + $request['amount'];
-            $transaction_id = "FUND" . strtoupper(Str::random(5));
-            $metadata = [
-                'status' => true,
-                'amount_added' => $request['amount'],
-                'reference_id' => $transaction_id,
-                'transaction_from' => auth()->user()->name
-            ];
-            $this->transaction(0, 'Fund added to user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
-            DB::table('users')->where('id', $request['beneficiaryId'])->update([
-                'wallet' => $amount,
-                'updated_at' => now()
-            ]);
-
             $amount = auth()->user()->wallet - $request['amount'];
-            $transaction_id = "FUND" . strtoupper(Str::random(5));
+            $user = User::find($request['beneficiaryId']);
             $metadata = [
                 'status' => true,
                 'amount_transfered' => $request['amount'],
+                'remarks' => $request['remarks'] ?? null,
                 'reference_id' => $transaction_id,
                 'transaction_from' => auth()->user()->name
             ];
@@ -212,7 +344,18 @@ class FundController extends Controller
                 'updated_at' => now()
             ]);
 
-            $this->transaction($request['amount'], 'Fund added to user`s wallet', 'funds', auth()->user()->id, $wallet[0], $transaction_id, $amount, json_encode($metadata));
+            $this->transaction($request['amount'], "Fund transfer initiated for user {$user->name} - {$user->phone_number}", 'funds', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
+            $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
+            $amount = $wallet[0] + $request['amount'];
+            $metadata = [
+                'status' => true,
+                'amount_added' => $request['amount'],
+                'reference_id' => $transaction_id,
+                'remarks' => $request['remarks'] ?? null,
+                'transaction_from' => auth()->user()->name,
+                'phone_number' => auth()->user()->phone_number
+            ];
+            $this->notAdmintransaction(0, "Fund transfered initiated by admin {$metadata['transaction_from']} - {$metadata['phone_number']}", 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
         } else {
             $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
             $amount = $wallet[0] - $request['amount'];
@@ -220,12 +363,13 @@ class FundController extends Controller
             $metadata = [
                 'status' => true,
                 'amount_reversed' => $request['amount'],
+                'remarks' => $request['remarks'] ?? null,
                 'reference_id' => $transaction_id,
-                'transaction_from' => auth()->user()->name
+                'transaction_from' => auth()->user()->name,
+                'phone_number' => auth()->user()->phone_number
             ];
 
-            $transaction_id = "FUND" . strtoupper(Str::random(5));
-            $this->transaction($request['amount'], 'Fund reversed from user`s wallet', 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata));
+            $this->notAdmintransaction($request['amount'], "Fund reversed from {$user->name} {$user->phone_number} wallet", 'funds', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata));
         }
 
         return $data;

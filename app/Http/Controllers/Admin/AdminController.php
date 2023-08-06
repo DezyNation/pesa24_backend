@@ -2,16 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Package;
+use App\Models\Transaction;
 use Illuminate\Support\Str;
+use App\Exports\UsersExport;
 use Illuminate\Http\Request;
+use App\Exports\Admin\FundReport;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
+use App\Exports\Admin\PayoutExport;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Database\Eloquent\Collection;
 
 class AdminController extends Controller
 {
@@ -20,10 +28,10 @@ class AdminController extends Controller
         $search = $request['search'];
         $org_id = auth()->user()->organization_id;
         if (!empty($search) || !is_null($search)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->paginate(100);
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->paginate(200);
             return $user;
         }
-        $role = User::role($role)->paginate(100);
+        $role = User::role($role)->paginate(200);
 
         return $role;
     }
@@ -48,7 +56,17 @@ class AdminController extends Controller
 
     public function active($id, $bool)
     {
-        User::where('id', $id)->update([
+        User::role('retailer')->where('id', $id)->update([
+            'is_active' => $bool
+        ]);
+
+        return response()->noContent();
+    }
+
+
+    public function blockAdmin($id, $bool)
+    {
+        User::role('admin')->where('id', $id)->update([
             'is_active' => $bool
         ]);
 
@@ -177,7 +195,7 @@ class AdminController extends Controller
                 ->where('p.organization_id', auth()->user()->organization_id)
                 ->select('p.id', 'p.name', 'p.status', 'p.is_default', 'a.name AS user_name', DB::raw('COUNT(u.id) AS assigned_users_count'))
                 ->groupBy('p.id', 'p.name')
-                ->paginate(100);
+                ->paginate(200);
         }
         return $data;
     }
@@ -596,9 +614,9 @@ class AdminController extends Controller
 
     public function sumAmounts()
     {
-        $table = DB::table('users')->where('organization_id', auth()->user()->organization_id);
-        $capped_sum = $table->sum('minimum_balance');
-        $wallet_sum = $table->sum('wallet');
+        $wallet_sum = User::role(['retailer', 'distributor', 'super_distributor'])->sum('wallet');
+        $capped_sum = User::role(['retailer', 'distributor', 'super_distributor'])->sum('minimum_balance');
+        // $wallet_sum = $table->sum('wallet');
         return ['capping_sum' => $capped_sum, 'wallet_sum' => $wallet_sum];
     }
 
@@ -894,16 +912,280 @@ class AdminController extends Controller
     {
         $search = $request['search'];
         if (!empty($search) || !is_null($search)) {
-            $data = DB::table('transactions')->where('trigered_by', $id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->latest()->paginate(100);
+            $data = DB::table('transactions')->where('trigered_by', $id)->orWhere('user_id', $id)->where('transaction_for', 'like', '%' . $search . '%')->orWhere('transaction_id', 'like', '%' . $search . '%')->latest()->orderByDesc('transactions.id')->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
             return $data;
         }
 
         if ($name == 'all') {
-            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['trigered_by' => $id])->latest()->paginate(100);
+            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(function ($q) use ($id) {
+                $q->where('trigered_by', $id);
+                // ->orWhere('user_id', $id);
+            })->latest()->orderByDesc('transactions.id')->get();
+
             return $data;
         }
 
-        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(['service_type' => $name, 'trigered_by' => $id])->latest()->paginate(100);
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('service_type', $name)->where(function ($q) use ($id) {
+            $q->where('trigered_by', $id);
+            // ->orWhere('user_id', $id);
+        })->latest()->orderByDesc('transactions.id')->get();
         return $data;
+    }
+
+    public function walletTransfers(Request $request, $id = null)
+    {
+        if (!is_null($request['userId']) || !empty($request['userId'])) {
+            $request->validate([
+                'userType' => 'required'
+            ]);
+            if ($request['userType'] == 'sender') {
+                $query_for = "sender_id";
+            } else {
+                $query_for = "reciever_id";
+            }
+            $data = DB::table('money_transfers')
+                ->join('users as recievers', 'recievers.id', '=', 'money_transfers.reciever_id')
+                ->join('users as senders', 'senders.id', '=', 'money_transfers.sender_id')
+                ->where("money_transfers.$query_for", $request['userId'])
+                ->whereBetween('money_transfers.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->select('recievers.name as reciever_name', 'recievers.phone_number as reciever_phone', 'recievers.id as reciever_id', 'money_transfers.*', 'senders.name as sender_name', 'senders.id as sender_id', 'senders.phone_number as sender_phone')
+                ->latest()
+                ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userType' => $request['userType'], 'userId' => $request['userId']]);
+        } else {
+            $data = DB::table('money_transfers')
+                ->join('users as recievers', 'recievers.id', '=', 'money_transfers.reciever_id')
+                ->join('users as senders', 'senders.id', '=', 'money_transfers.sender_id')
+                ->whereBetween('money_transfers.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->select('recievers.name as reciever_name', 'recievers.phone_number as reciever_phone', 'recievers.id as reciever_id', 'money_transfers.*', 'senders.name as sender_name', 'senders.id as sender_id', 'senders.phone_number as sender_phone')
+                ->latest()
+                ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to']]);
+        }
+
+        return $data;
+    }
+
+    public function printReports(Request $request)
+    {
+        $type = $request['type'];
+        switch ($type) {
+            case 'payouts':
+
+                $processing = $request['report'];
+                $payout = $this->payoutReports($request, $processing);
+                return $payout;
+                break;
+
+            case 'fund-requests':
+                $data = $this->fundReports($request);
+                return $data;
+                break;
+
+            case 'ledger':
+                $data = $this->printLedger($request);
+                return $data;
+                break;
+
+            default:
+                return 'error';
+                break;
+        }
+    }
+
+    public function fundReports(Request $request)
+    {
+
+        return Excel::download(new FundReport($request['from'], $request['to'], $request['search'], $request['userId'], $request['status']), 'fundreport.xlsx');
+
+        if (!empty($request['search']) || !is_null($request['search'])) {
+            $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                ->where('funds.transaction_id', 'like', '%' . $request['search'] . '%')
+                ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
+            return $data;
+        }
+
+
+        if (!empty($request['userId']) || !is_null($request['userId'])) {
+            if ($request['status'] == 'all') {
+                $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                    ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                    ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                    ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.user_id', $request['userId'])->where('funds.status', '!=', 'pending')->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
+                return $data;
+            } else {
+                $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                    ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                    ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                    ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.user_id', $request['userId'])->where('funds.status', $request['status'])->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
+                return $data;
+            }
+        }
+
+        if ($request['status'] == 'all') {
+            $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
+            return $data;
+        } else {
+            $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
+                ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
+                ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', $request['status'])->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.*', 'funds.id as fund_id', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id')->latest('funds.created_at')->get();
+            return $data;
+        }
+    }
+
+
+    public function payoutReports(Request $request, $processing)
+    {
+
+        return Excel::download(new PayoutExport($request['from'], $request['to'], $request['search'], $request['userId'], $request['status'], $processing), 'payout.xlsx');
+
+        if (!empty($request['userId']) || !is_null($request['userId'])) {
+            if (!empty($request['status']) || !is_null($request['status'])) {
+                $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                    ->where([
+                        'users.organization_id' => auth()->user()->organization_id,
+                        'payouts.user_id' => $request['userId']
+                    ])
+                    ->where('payouts.status', $request['status'])
+                    ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                    ->select('payouts.*', 'users.name')->latest()->get();
+
+                return $payout;
+            } else {
+                $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                    ->where([
+                        'users.organization_id' => auth()->user()->organization_id,
+                        'payouts.user_id' => $request['userId']
+                    ])
+                    ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                    ->select('payouts.*', 'users.name')->latest()->get();
+
+                return $payout;
+            }
+        }
+        $search = $request['search'];
+        if (!empty($search)) {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->where("payouts.account_number", 'LIKE', '%' . $search . '%')->orWhere("payouts.reference_id", 'LIKE', '%' . $search . '%')->orWhere("payouts.utr", 'LIKE', '%' . $search . '%')
+                ->select('payouts.*', 'users.name')->latest()->get();
+
+            return $payout;
+        }
+        if ($processing == 'all') {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->where('payouts.status', '!=', 'processing')
+                ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                ->select('payouts.*', 'users.name')->latest()->get();
+
+            return $payout;
+        } elseif ($processing == 'processing') {
+
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                ->where('payouts.status', 'processing')->orWhere('payouts.status', 'pending')->orWhere('payouts.status', 'queued')
+                ->select('payouts.*', 'users.name')->latest()->get();
+
+            return $payout;
+        } else {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                ->where('payouts.status', $processing)
+                ->select('payouts.*', 'users.name')->latest()->get();
+
+            return $payout;
+        }
+    }
+
+    public function printLedger(Request $request)
+    {
+        return Excel::download(new UsersExport($request['from'], $request['to'], $request['search'], $request['userId']), 'ledger.xlsx');
+    }
+
+    public function marketOverview(Request $request)
+    {
+        $date = $request['date'] ?? Carbon::today();
+
+        $lastTransactions = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
+            ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('roles.name', '!=', 'admin')
+            ->select(DB::raw('MAX(transactions.id) as id'))
+            ->whereDate('transactions.created_at', '<=', $date)
+            ->groupBy('transactions.trigered_by')
+            ->get();
+
+        $transactions = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->whereIn('transactions.id', $lastTransactions->pluck('id'))
+            ->select('transactions.*', 'users.name as user_name', 'users.phone_number as user_phone')
+            ->get();
+
+        $firstTransactions = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
+            ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('roles.name', '!=', 'admin')
+            ->select(DB::raw('MIN(transactions.id) as id'))
+            ->whereDate('transactions.created_at', '<=', $date)
+            ->groupBy('transactions.trigered_by')
+            ->get();
+
+        $initialTransactions = DB::table('transactions')
+            ->join('users', 'users.id', '=', 'transactions.trigered_by')
+            ->whereIn('transactions.id', $firstTransactions->pluck('id'))
+            ->select('transactions.*', 'users.name as user_name', 'users.phone_number as user_phone')
+            ->get();
+
+        return [
+            'opening_transactions' => $initialTransactions,
+            'opening_balance' => $initialTransactions->sum('opening_balance'),
+            'closing_transactions' => $transactions,
+            'closing_balance' => $transactions->sum('closing_balance')
+        ];
+        return $transactions;
+    }
+
+    public function adminOtp($option)
+    {
+
+        $otp = rand(1000, 9999);
+        $hash = Hash::make($otp);
+        User::where('id', auth()->user()->id)->update(['otp' => $hash, 'otp_generated_at' => now()]);
+        if ($option == 'profile') {
+            $phone = 7838074742;
+            $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
+            $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
+        } else {
+            $phone = 8982466893;
+            $to = 'vaslibhai646@gmail.com';
+            $name = 'Vasli';
+            $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
+            Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
+            Mail::raw("Hello Your one time password is $otp for transaction", function ($message) use ($to, $name) {
+                $message->from('info@pesa24.co.in', 'Janpay');
+                $message->to($to, $name);
+                $message->subject('Authorize Transaction');
+                $message->priority(1);
+            });
+        }
+
+        return response()->noContent();
     }
 }

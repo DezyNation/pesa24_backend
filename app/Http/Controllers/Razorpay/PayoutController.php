@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Razorpay;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use App\Events\PayoutStatusUpdated;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\CommissionController;
-use Illuminate\Validation\Rule;
 
 class PayoutController extends CommissionController
 {
@@ -23,9 +25,10 @@ class PayoutController extends CommissionController
             'amount' => $amount * 100,
             'currency' => 'INR',
             'mode' => 'IMPS',
+            'queue_if_low_balance' => false,
             'purpose' => 'payout',
-            'narration' => 'pesa24',
-            'reference_id' => "PESA24" . uniqid(),
+            // 'narrartion' => 'JANPAY',
+            'reference_id' => "JND" . uniqid(),
         ];
 
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBdsPIl35', '1vrEAOIW45345HsUQdKrnSWlF')->withHeaders([
@@ -93,6 +96,7 @@ class PayoutController extends CommissionController
                 'created_at' => date('Y-m-d H:i:s')
             ];
             $this->transaction($amount, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->payoutCommission(auth()->user()->id, $amount, $transaction_id, $metadata['account_number']);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         } else {
             $metadata = [
@@ -163,20 +167,55 @@ class PayoutController extends CommissionController
         return $payout;
     }
 
-    public function fetchPayoutAdmin(Request $request, $processing = null)
+    public function fetchPayoutAdmin(Request $request, $processing)
     {
+        if (!empty($request['userId']) || !is_null($request['userId'])) {
+            if (!empty($request['status']) || !is_null($request['status'])) {
+                $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                    ->where([
+                        'users.organization_id' => auth()->user()->organization_id,
+                        'payouts.user_id' => $request['userId']
+                    ])
+                    ->where('payouts.status', $request['status'])
+                    ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                    ->select('payouts.*', 'users.name')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userId' => $request['userId'], 'status' => $request['status']]);
+
+                return $payout;
+            } else {
+                $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                    ->where([
+                        'users.organization_id' => auth()->user()->organization_id,
+                        'payouts.user_id' => $request['userId']
+                    ])
+                    ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                    ->select('payouts.*', 'users.name')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'userId' => $request['userId'], 'status' => $request['status']]);
+
+                return $payout;
+            }
+        }
         $search = $request['search'];
         if (!empty($search)) {
             $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
                 ->where([
                     'users.organization_id' => auth()->user()->organization_id
                 ])
-                ->where("payouts.account_number", 'LIKE', '%'.$search.'%')->orWhere("payouts.reference_id", 'LIKE', '%'.$search.'%')
-                ->select('payouts.*', 'users.name')->latest()->paginate(100);
+                ->where("payouts.account_number", 'LIKE', '%' . $search . '%')->orWhere("payouts.reference_id", 'LIKE', '%' . $search . '%')->orWhere("payouts.utr", 'LIKE', '%' . $search . '%')
+                ->select('payouts.*', 'users.name')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $request['status']]);
 
             return $payout;
         }
-        if ($processing == 'processing') {
+        if ($processing == 'all') {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->where('payouts.status', '!=', 'processing')
+                ->whereBetween('payouts.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->select('payouts.*', 'users.name')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $request['status']]);
+
+            return $payout;
+        } elseif ($processing == 'processing') {
+
             $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
                 ->where([
                     'users.organization_id' => auth()->user()->organization_id
@@ -185,15 +224,16 @@ class PayoutController extends CommissionController
                 ->select('payouts.*', 'users.name')->latest()->get();
 
             return $payout;
-        }
-        $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
+        } else {
+            $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
             ->where([
                 'users.organization_id' => auth()->user()->organization_id
             ])
-            ->where('payouts.status', '!=', 'processing')
-            ->select('payouts.*', 'users.name')->latest()->paginate(80);
+            ->where('payouts.status', $processing)
+            ->select('payouts.*', 'users.name')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $request['status']]);
 
-        return $payout;
+            return $payout;
+        }
     }
 
     public function payoutCall(Request $request)
@@ -202,12 +242,15 @@ class PayoutController extends CommissionController
             'payoutId' => ['required', 'exists:payouts,payout_id']
         ]);
         $id = $request['payoutId'];
-        $get_payout = DB::table('payouts')->where(['payout_id' => $id, 'status' => 'processing']);
+        $get_payout = DB::table('payouts')->where(['payout_id' => $id]);
         if (!$get_payout->exists()) {
             return response($get_payout->get());
         }
         $payout = $get_payout->get();
         $payout = $payout[0];
+        if ($payout->status == 'reversed' || $payout->status == 'cancelled' || $payout->status == 'processed' || $payout->status == 'rejected' || $payout->status == 'failed') {
+            return response($payout->status);
+        }
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
             'Content-Type' => 'application/json'
         ])->get("https://api.razorpay.com/v1/payouts/$id");
@@ -225,25 +268,27 @@ class PayoutController extends CommissionController
         $array = [
             'event' => 'admin update payout',
             'status' => $transfer['status'],
+            'utr' => $transfer['utr'] ?? 'no utr',
         ];
         $this->apiRecords($reference_id, 'janpay', json_encode($array));
-        DB::table('transactions')->where('transaction_id', $reference_id)->update(['metadata->utr' => $transfer['utr']]);
+        DB::table('transactions')->where('transaction_id', $reference_id)->update(['metadata->utr' => $transfer['utr'], 'updated_at' => now(), 'metadata->status' => $array['status']]);
 
         if ($transfer['status'] == 'processed') {
-            $this->payoutCommission($payout->user_id, $payout->amount, $reference_id, $payout->account_number);
-        } elseif ($transfer['status'] == 'rejected' || $transfer['status'] == 'reversed' || $transfer['status'] == 'cancelled') {
+            // $this->payoutCommission($payout->user_id, $payout->amount, $reference_id, $payout->account_number);
+        } elseif ($transfer['status'] == 'rejected' || $transfer['status'] == 'reversed' || $transfer['status'] == 'cancelled' || $transfer['status'] == 'failed') {
             $user = User::find($payout->user_id);
             $closing_balance = $user->wallet + $payout->amount;
             $metadata = [
                 'status' => $transfer['status'],
-                'utr' => $transfer['utr'],
+                'utr' => $transfer['utr'] ?? 'no utr',
                 'reference_id' => $reference_id,
                 'amount' => $payout->amount
             ];
             $account_number = $payout->account_number;
             $this->notAdmintransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $closing_balance, json_encode($metadata), $payout->amount);
-            $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id);
+            $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id, $payout->account_number);
         }
+        event(new PayoutStatusUpdated("Amount {$payout->amount} ({$array['utr']})", "Payout $id {$array['status']}", $payout->user_id));
 
         return $transfer['status'];
     }

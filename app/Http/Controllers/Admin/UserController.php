@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\UsersExport;
 use App\Models\User;
 use App\Models\ParentUser;
 use Illuminate\Support\Str;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\v1\UserResource;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -279,16 +281,16 @@ class UserController extends Controller
         $org_id = auth()->user()->organization_id;
 
         if (!empty($search) || !is_null($search)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->paginate(100);
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->paginate(200);
             return $user;
         }
         if (is_null($id)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->paginate(100);
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->paginate(200);
             return $user;
         }
 
 
-        $user = User::role($role)->with('packages:name')->where(['id' => $id, 'organization_id' => $org_id])->paginate(100);
+        $user = User::role($role)->with('packages:name')->where(['id' => $id, 'organization_id' => $org_id])->paginate(200);
         return $user;
     }
 
@@ -369,6 +371,11 @@ class UserController extends Controller
         }
 
         return $data;
+    }
+
+    public function test()
+    {
+        return Excel::download(new UsersExport, 'users.xlsx');
     }
 }
 

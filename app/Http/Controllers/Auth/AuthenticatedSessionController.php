@@ -42,7 +42,7 @@ class AuthenticatedSessionController extends Controller
             }
             $otp = rand(1001, 9999);
             Mail::to($user->email)->queue(new SendOtp($otp));
-            $user->update(['otp' => Hash::make($otp)]);
+            $user->update(['otp' => Hash::make($otp), 'otp_generated_at' => now()]);
 
 
 
@@ -56,7 +56,7 @@ class AuthenticatedSessionController extends Controller
             }
             $phone = $request['phone_number'];
             $otp = rand(1000, 9999);
-            $user->update(['otp' => Hash::make($otp)]);
+            $user->update(['otp' => Hash::make($otp), 'otp_generated_at' => now()]);
             $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
             $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
             // return response("OTP sent on your phone", 200);
@@ -69,7 +69,7 @@ class AuthenticatedSessionController extends Controller
         $phone = auth()->user()->phone_number;
         $user = User::where('phone_number', $phone)->first();
         $otp = rand(1000, 9999);
-        $user->update(['otp' => Hash::make($otp)]);
+        $user->update(['otp' => Hash::make($otp), 'otp_generated_at' => now()]);
         $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
         $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
         // return response("OTP sent on your phone", 200);
@@ -87,7 +87,7 @@ class AuthenticatedSessionController extends Controller
             }
             $otp = rand(1001, 9999);
             Mail::to($user->email)->queue(new SendOtp($otp));
-            $user->update(['otp' => Hash::make($otp)]);
+            $user->update(['otp' => Hash::make($otp), 'otp_generated_at' => now()]);
 
 
 
@@ -101,7 +101,7 @@ class AuthenticatedSessionController extends Controller
             }
             $phone = $request['phone_number'];
             $otp = rand(1000, 9999);
-            $user->update(['otp' => Hash::make($otp)]);
+            $user->update(['otp' => Hash::make($otp), 'otp_generated_at' => now()]);
             $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
             $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
             // return response("OTP sent on your phone", 200);

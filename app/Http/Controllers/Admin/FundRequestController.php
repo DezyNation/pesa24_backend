@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -34,6 +35,8 @@ class FundRequestController extends Controller
             'transaction_type' => $request['transactionType'],
             'transaction_id' => $request['transactionId'],
             'transaction_date' => $request['transactionDate'],
+            // 'opening_balance' => auth()->user()->wallet,
+            // 'closing_balance' => auth()->user()->wallet,
             'receipt' => $imgPath ?? null,
             'created_at' => now(),
             'updated_at' => now()
@@ -99,20 +102,69 @@ class FundRequestController extends Controller
         return $data;
     }
 
-    public function fetchFundUser()
+    public function fetchFundUser(Request $request)
     {
-        $data = DB::table('funds')->where('user_id', auth()->user()->id)->select(
-            'amount',
-            'bank_name',
-            'transaction_id',
-            'status',
-            'transaction_type',
-            'transaction_date',
-            'receipt',
-            'remarks',
-            'admin_remarks',
-            'created_at'
-        )->latest()->paginate(100);
+        $search = $request['search'];
+        $status = $request['status'];
+        if (!empty($status)) {
+            $data = DB::table('funds')
+                ->where('user_id', auth()->user()->id)
+                ->where('transaction_type', '!=', 'transfer')->where('transaction_type', '!=', 'reversal')
+                ->where('status', $status)
+                ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->select(
+                    'amount',
+                    'bank_name',
+                    'transaction_id',
+                    'status',
+                    'transaction_type',
+                    'transaction_date',
+                    'receipt',
+                    'remarks',
+                    'admin_remarks',
+                    'created_at',
+                    'updated_at'
+                )->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $status, 'search' => $search]);
+                return $data;
+        }
+        if (!empty($search)) {
+            $data = DB::table('funds')
+                ->where('user_id', auth()->user()->id)
+                ->where('transaction_type', '!=', 'transfer')->where('transaction_type', '!=', 'reversal')
+                ->where('transaction_id', 'like', "%" . $search . "%")
+                ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+                ->select(
+                    'amount',
+                    'bank_name',
+                    'transaction_id',
+                    'status',
+                    'transaction_type',
+                    'transaction_date',
+                    'receipt',
+                    'remarks',
+                    'admin_remarks',
+                    'created_at',
+                    'updated_at'
+                )->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $status, 'search' => $search]);
+                return $data;
+        }
+        $data = DB::table('funds')
+            ->where('user_id', auth()->user()->id)
+            ->where('transaction_type', '!=', 'transfer')->where('transaction_type', '!=', 'reversal')
+            ->whereBetween('funds.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
+            ->select(
+                'amount',
+                'bank_name',
+                'transaction_id',
+                'status',
+                'transaction_type',
+                'transaction_date',
+                'receipt',
+                'remarks',
+                'admin_remarks',
+                'created_at',
+                'updated_at'
+            )->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $status, 'search' => $search]);
 
         return $data;
     }
@@ -129,8 +181,9 @@ class FundRequestController extends Controller
             'receipt',
             'remarks',
             'admin_remarks',
-            'created_at'
-        )->latest()->paginate(100);
+            'created_at',
+            'updated_at'
+        )->latest()->paginate(200);
 
         return $data;
     }
@@ -156,7 +209,5 @@ class FundRequestController extends Controller
         ]);
 
         return response()->json(['message' => 'Fund transfer Successful']);
-
-
     }
 }

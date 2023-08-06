@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\UserController;
 use App\Models\User;
 use App\Models\Package;
 use App\Models\ParentUser;
 use Illuminate\Support\Str;
 use App\Models\Organization;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
@@ -37,6 +40,7 @@ use App\Http\Controllers\Pesa24\Dashboard\UserDashboardController;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
 use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
+use App\Http\Controllers\Razorpay\PayoutController as RazorpayPayoutController;
 use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayoutController;
 
 /*
@@ -53,6 +57,21 @@ use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayo
 Route::get('/', function () {
     return ['Application' => 'Janpay'];
 });
+
+Route::get('excel', [UserController::class, 'test']);
+
+Route::get('duplicates', function () {
+    $duplicates = DB::table('transactions')
+        ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+        ->select('transactions.*', DB::raw('COUNT(*) as `count`'))
+        ->groupBy('transaction_id', 'trigered_by')
+        ->having('count', '>', 4)
+        // ->havingRaw('COUNT(*) > 4')
+        ->paginate(200);
+    return $duplicates;
+});
+
+// Route::get('test', [AdminController::class, 'marketOverview']);
 
 // Route::get('inquiry', [BBPSController::class, 'payBill']);
 // Route::get('dmt', [TransactionController::class, 'initiateTransaction']);

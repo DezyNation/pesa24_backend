@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -21,6 +22,12 @@ class OTPCheck
             'otp' => 'required'
         ]);
         $user = User::findOrFail(auth()->user()->id);
+        $otp_generated_at = Carbon::parse($user->otp_generated_at);
+        $current_time = Carbon::parse(now());
+        $difference = $current_time->diffInRealMinutes($otp_generated_at);
+        if ($difference > 1) {
+            return response("OTP expired!", 406);
+        }
         if (!Hash::check($request['otp'], $user->otp)) {
             return response("OTP is wrong!", 406);
         }
