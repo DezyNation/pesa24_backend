@@ -34,6 +34,9 @@ class AuthenticatedSessionController extends Controller
     public function sendOtp(LoginRequest $request)
     {
         if ($request['authMethod'] == 'email') {
+            $request->validate([
+                'email' => 'email|exists:users,email'
+            ]);
             $user = User::where('email', $request['email'])->first();
             if (!$user || !Hash::check($request['password'], $user->password)) {
                 throw ValidationException::withMessages([
@@ -48,6 +51,9 @@ class AuthenticatedSessionController extends Controller
 
             return response("OTP sent on your mobile number", 200);
         } else {
+            $request->validate([
+                'phone_number' => 'exists:users,phone_number'
+            ]);
             $user = User::where('phone_number', $request['phone_number'])->first();
             if (!$user || !Hash::check($request['password'], $user->password)) {
                 throw ValidationException::withMessages([
