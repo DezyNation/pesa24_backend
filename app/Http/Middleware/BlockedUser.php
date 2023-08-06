@@ -24,6 +24,9 @@ class BlockedUser
             $phone_number = auth()->user()->phone_number;
         }
         $user = User::where('email', $email)->orWhere('phone_number', $phone_number)->first();
+        if (empty($user)) {
+            return response("User not found.", 404);
+        }
         if ($user->is_active == 0) {
             return response("You can not access to the specified resourece", 403);
         }
