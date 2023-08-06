@@ -43,6 +43,8 @@ class RechargeController extends CommissionController
             'content-type' => 'application/json',
         ])->post("https://api.paysprint.in/api/v1/service/recharge/recharge/getoperator", []);
 
+        return $response;
+
         return collect($response->json($key = 'data'))->whereIn('category', [$type]);
     }
 
