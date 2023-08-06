@@ -81,5 +81,6 @@ class Kernel extends HttpKernel
         'charge' => \App\Http\Middleware\Payout::class,
         'active' => \App\Http\Middleware\BlockedUser::class,
         'multiple_transaction' => \App\Http\Middleware\MultipleTransaction::class,
+        'idempotency' => \App\Http\Middleware\TestIdempotency::class,
     ];
 }
