@@ -31,7 +31,7 @@ class PayoutController extends CommissionController
             'reference_id' => "JND" . uniqid(),
         ];
 
-        $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
+        $transfer =  Http::withBasicAuth(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'))->withHeaders([
             'Content-Type' => 'application/json'
         ])->post('https://api.razorpay.com/v1/payouts', $data);
 
