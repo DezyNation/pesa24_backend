@@ -1194,4 +1194,34 @@ class AdminController extends Controller
 
         return response()->noContent();
     }
+
+    public function fetchRecharge(Request $request, $status)
+    {
+        $search = $request['search'];
+        $user_id = $request['userId'];
+        $from = $request['from'] ?? Carbon::today();
+        $to = $request['to'] ?? Carbon::tomorrow();
+
+        if (!is_null($search) || !empty($search)) {
+            $data = DB::table('recharge_requests')
+            ->join('users', 'users.id', '=', 'recharge_requests.user_id')
+            ->select('payouts.*', 'users.name', 'users.phone_number')
+            ->where('reference_id', 'like', "%".$search."%")->orWhere('ca_number', 'like', "%".$search."%")->paginate(200);
+            return $data;
+        }
+
+        if (!is_null($user_id) || !empty($user_id)) {
+            $data = DB::table('recharge_requests')
+            ->join('users', 'users.id', '=', 'recharge_requests.user_id')
+            ->select('payouts.*', 'users.name', 'users.phone_number')
+            ->where('user_id', $user_id)->whereBetween('created_at', [$from, $to])->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search'=> $search]);
+            return $data;
+        }
+
+        $data = DB::table('recharge_requests')
+        ->join('users', 'users.id', '=', 'recharge_requests.user_id')
+        ->select('payouts.*', 'users.name', 'users.phone_number')
+        ->where('status', $status)->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search'=> $search]);
+        return $data;
+    }
 }

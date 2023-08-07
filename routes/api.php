@@ -188,7 +188,7 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser']);
     Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall'])->middleware('throttle:1,0.08');
     /*-----------------------Razorpay Payout-----------------------*/
-    
+
     /*-----------------------SRK Payout-----------------------*/
     Route::post('srk/payout/new-payout/{service_id}', [SRKPayoutController::class, 'payout'])->middleware(['throttle:1,0.167', 'charge']);
     /*-----------------------SRK Payout-----------------------*/
@@ -278,6 +278,8 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
     Route::post('link-package', [AdminDashboardcontroller::class, 'packageService']);
 
     Route::get('payouts/{processing}', [PayoutController::class, 'fetchPayoutAdmin']);
+    Route::get('recharges/{status}', [AdminController::class, 'fetchRecharge']);
+    Route::post('paysprint/update-recharges', [RechargeController::class, 'statusEnquiry']);
     Route::get('fetch-fund-requests/{id}', [FundRequestController::class, 'fetchFundId']);
 
     Route::post('razorpay/fetch-payout/{processing?}', [PayoutController::class, 'fetchPayoutAdmin']);
