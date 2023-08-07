@@ -30,5 +30,6 @@ class RechargeController extends Controller
         $response = Http::post('https://www.incomewallet.in/apiservice.asmx/Recharge', $data);
 
         Log::channel('response')->info($response);
+        return $response;
     }
 }
