@@ -20,7 +20,7 @@ class RechargeController extends Controller
         $data = [
             'apiToken' => env('INCOME_WALLET_API_TOKEN'),
             'mn' => $request['canumber'],
-            'reqid' => uniqid('JND'),
+            'reqid' => substr(uniqid('JND', true), 0, 20),
             'op' => $request['incomeWalletOperatorCode'],
             'amt' => $request['amount'],
             'filed1' => $request['field1'] ?? '',
