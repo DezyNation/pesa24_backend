@@ -23,9 +23,7 @@ class TestController extends Controller
         ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::tomorrow()])
         ->latest('transactions.created_at')
         ->get()
-        ->groupBy(['trigered_by', 'service_type'])
-        ->sum('credit_amount');
-        
+        ->groupBy(['trigered_by', 'service_type']);
 
         return $data;
     }
