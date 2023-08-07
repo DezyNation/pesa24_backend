@@ -28,7 +28,7 @@ class TestController extends Controller
         ;
 
         $records = collect($data);
-        return $records->groupBy(['trigerd_by', 'service_type']);
+        return $records->groupBy(['trigered_by', 'service_type']);
 
         return $data;
     }
