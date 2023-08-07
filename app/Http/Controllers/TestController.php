@@ -32,7 +32,7 @@ class TestController extends Controller
         // $records->groupBy(['trigered_by', 'service_type']);
         $transaction = $records->groupBy(['trigered_by', 'service_type'])->map(function ($item) {
             return $item->map(function ($key) {
-                return ['transactions' => $key, 'debit_amount' => $key->sum('debit_amount'), 'credit_amount' => $key->sum('credit_amount')];
+                return ['debit_amount' => $key->sum('debit_amount'), 'credit_amount' => $key->sum('credit_amount')];
             });
         });
 
