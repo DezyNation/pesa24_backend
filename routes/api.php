@@ -303,7 +303,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
     Route::get('transactions/{id?}', [AdminTransactionController::class, 'view']);
     Route::get('duplicate-transactions', [AdminTransactionController::class, 'duplicates']);
     Route::get('transactions-user/{id}', [AdminTransactionController::class, 'userTransction']);
-    Route::post('transactions-period', [AdminTransactionController::class, 'dailySales']);
+    Route::get('transactions-period', [AdminTransactionController::class, 'dailySales']);
     Route::post('transactions-statistics', [AdminController::class, 'sumCategory']);
     Route::post('user/update', [ProfileController::class, 'adminUpdateProfile']);
 

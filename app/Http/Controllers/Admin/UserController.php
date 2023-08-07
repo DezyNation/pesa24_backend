@@ -282,7 +282,13 @@ class UserController extends Controller
         $org_id = auth()->user()->organization_id;
 
         if (!empty($search) || !is_null($search)) {
-            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.phone_number', 'like', '%' . $search . '%')->paginate(200);
+            $user = User::role($role)->with('packages:name')->where(['organization_id' => $org_id])->where('users.id', 'like', '%' . $search . '%')->orWhere('users.phone_number', 'like', '%' . $search . '%')->paginate(200);
+            return $user;
+        }
+        if ($role == 'all') {
+            $user = User::where(['organization_id' => $org_id])
+            ->select('id', 'name', 'phone_number', 'wallet')
+            ->paginate(200);
             return $user;
         }
         if (is_null($id)) {
@@ -308,6 +314,10 @@ class UserController extends Controller
             return $user;
         }
 
+        if ($role == 'all') {
+            $user = User::with('packages:name')->where('organization_id', $org_id)->get();
+            return $user;
+        }
         $user = User::role($role)->with('packages:name')->where(['id' => $id, 'organization_id' => $org_id])->get();
         return $user;
     }
@@ -389,7 +399,7 @@ class UserController extends Controller
             ->groupBy(['trigered_by', 'service_type'])
             ->get();
 
-            return $data;
+        return $data;
     }
 }
 
