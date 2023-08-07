@@ -78,4 +78,9 @@ class CallbackController extends CommissionController
         Log::channel('response')->info('request', $request->all());
         echo json_encode($arr);
     }
+
+    public function incomeWallet(Request $request)
+    {
+        Log::channel('response')->info('income-wallet',$request->all());
+    }
 }

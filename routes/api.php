@@ -37,6 +37,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Pesa24\Dashboard\UserDashboardController;
 use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
+use App\Http\Controllers\IncomeWallet\RechargeController as IncomeWalletRechargeController;
 use App\Http\Controllers\Paysprint\AxisController;
 use App\Http\Controllers\Paysprint\BBPS\FastTagController;
 use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
@@ -237,6 +238,9 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
     Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge'])->middleware('mpin', 'throttle:1,0.167');
     /*-----------------------Paysprint Recharge-----------------------*/
+    /*-----------------------IncomeWallet Recharge-----------------------*/
+    Route::post('incomewallet/bbps/mobile-recharge/do-recharge', [IncomeWalletRechargeController::class, 'recharge'])->middleware('mpin', 'throttle:1,0.167');
+    /*-----------------------IncomeWallet Recharge-----------------------*/
     /*-----------------------Paysprint CMS-----------------------*/
     Route::post('paysprint/cms/fino', [FinoCMSController::class, 'generateUrl']);
     Route::post('paysprint/cms/airtel', [AirtelCMSController::class, 'generateUrl']);
@@ -356,6 +360,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
 Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);
 Route::any('payout-callback', [WebhookController::class, 'confirmPayout']);
 Route::any('onboard-callback-paysprint', [CallbackController::class, 'onboardCallback']);
+Route::any('income-wallet-callback', [CallbackController::class, 'incomeWallet']);
 
 Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 'admin'], function () {
     Route::post('service-status', [GlobalServiceController::class, 'manageService']);
