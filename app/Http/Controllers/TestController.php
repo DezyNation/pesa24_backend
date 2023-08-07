@@ -20,7 +20,7 @@ class TestController extends Controller
         ->select('transactions.*', 'users.name as trigered_by_name', 'users.phone_number as trigered_by_phone', 'users.organization_id', 'beneficiaries.name', 'beneficiaries.phone_number', 'users.wallet as wallet_amount')
         ->where('users.organization_id', 7)
         ->where('roles.name', '!=', 'admin')
-        ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+        ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::now()->endOfDecade()])
         ->latest('transactions.created_at')
         ->groupBy(['trigered_by', 'service_type'])
         ->get();
