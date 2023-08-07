@@ -24,7 +24,7 @@ class TestController extends Controller
         ->latest('transactions.created_at')
         ->get()
         ->groupBy('trigered_by', 'service_type')
-        ->sum('debit_amount')
+        // ->sum('debit_amount')
         ;
 
         return $data;
