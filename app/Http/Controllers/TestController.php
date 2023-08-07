@@ -22,8 +22,8 @@ class TestController extends Controller
         ->where('roles.name', '!=', 'admin')
         ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::tomorrow()])
         ->latest('transactions.created_at')
-        ->sum('credit_amount');
-        // ->groupBy(['trigered_by', 'service_type']);
+        ->get()
+        ->groupBy(['trigered_by', 'service_type']);
 
         return $data;
     }
