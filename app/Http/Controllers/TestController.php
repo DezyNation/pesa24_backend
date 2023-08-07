@@ -21,7 +21,7 @@ class TestController extends Controller
             // 'users.name as trigered_by_name', 'users.phone_number as trigered_by_phone', 'users.organization_id', 'beneficiaries.name', 'beneficiaries.phone_number', 'users.wallet as wallet_amount', 
             ->where('users.organization_id', 7)
             ->where('roles.name', '!=', 'admin')
-            ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::now()->startOfDecade(), $request['to'] ?? Carbon::tomorrow()])
+            ->whereBetween('transactions.created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
             ->latest('transactions.created_at')
             ->get()
             // ->groupBy(['trigered_by', 'service_type'])
@@ -29,7 +29,6 @@ class TestController extends Controller
         ;
 
         $records = collect($data);
-        // $records->groupBy(['trigered_by', 'service_type']);
         $transaction = $records->groupBy(['trigered_by', 'service_type'])->map(function ($item) {
             return $item->map(function ($key) {
                 return ['debit_amount' => $key->sum('debit_amount'), 'credit_amount' => $key->sum('credit_amount')];
