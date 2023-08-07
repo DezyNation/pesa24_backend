@@ -34,7 +34,7 @@ class TestController extends Controller
             return $item->map(function ($key) {
                 return ['transactions' => $key, 'debit_amount' => $key->sum('debit_amount'), 'credit_amount' => $key->sum('credit_amount')];
             });
-        });
+        })->forget('transactions');
 
         return $transaction;
     }
