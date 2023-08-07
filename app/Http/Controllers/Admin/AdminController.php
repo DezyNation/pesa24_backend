@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\Admin\FundReport;
-use App\Exports\Admin\PayoutExport;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Package;
@@ -11,11 +9,14 @@ use App\Models\Transaction;
 use Illuminate\Support\Str;
 use App\Exports\UsersExport;
 use Illuminate\Http\Request;
+use App\Exports\Admin\FundReport;
 use Illuminate\Support\Facades\DB;
+use App\Exports\Admin\PayoutExport;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Eloquent\Collection;
@@ -1163,16 +1164,28 @@ class AdminController extends Controller
 
     public function adminOtp($option)
     {
-        if ($option == 'profile') {
-            $phone = 7838074742;
-        } else {
-            $phone = 9971412064;
-        }
+
         $otp = rand(1000, 9999);
         $hash = Hash::make($otp);
         User::where('id', auth()->user()->id)->update(['otp' => $hash, 'otp_generated_at' => now()]);
-        $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
-        $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
+        if ($option == 'profile') {
+            $phone = 7838074742;
+            $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
+            $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
+        } else {
+            $phone = 8982466893;
+            $to = 'vaslibhai646@gmail.com';
+            $name = 'Vasli';
+            $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
+            Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
+            Mail::raw("Hello Your one time password is $otp for transaction", function ($message) use ($to, $name) {
+                $message->from('info@pesa24.co.in', 'Janpay');
+                $message->to($to, $name);
+                $message->subject('Authorize Transaction');
+                $message->priority(1);
+            });
+        }
+
         return response()->noContent();
     }
 }

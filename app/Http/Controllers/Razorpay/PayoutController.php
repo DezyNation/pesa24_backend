@@ -20,7 +20,7 @@ class PayoutController extends CommissionController
     public function bankPayout(Response $request, $amount, array $account_details)
     {
         $data = [
-            'account_number' => '409002011425',
+            'account_number' => '409001982207',
             'fund_account_id' => $request['id'],
             'amount' => $amount * 100,
             'currency' => 'INR',
@@ -28,11 +28,10 @@ class PayoutController extends CommissionController
             'queue_if_low_balance' => false,
             'purpose' => 'payout',
             // 'narrartion' => 'JANPAY',
-            'reference_id' => "DEV" . uniqid(),
+            'reference_id' => "JND" . uniqid(),
         ];
-        $key = env('RAZORPAY_KEY');
-        $secret = env('RAZORPAY_SECRET');
-        $transfer = Http::withBasicAuth($key, $secret)->withHeaders([
+
+        $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
             'Content-Type' => 'application/json'
         ])->post('https://api.razorpay.com/v1/payouts', $data);
 
@@ -252,11 +251,7 @@ class PayoutController extends CommissionController
         if ($payout->status == 'reversed' || $payout->status == 'cancelled' || $payout->status == 'processed' || $payout->status == 'rejected' || $payout->status == 'failed') {
             return response($payout->status);
         }
-
-        $key = env('RAZORPAY_KEY');
-        $secret = env('RAZORPAY_SECRET');
-        
-        $transfer =  Http::withBasicAuth($key, $secret)->withHeaders([
+        $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
             'Content-Type' => 'application/json'
         ])->get("https://api.razorpay.com/v1/payouts/$id");
 

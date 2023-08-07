@@ -34,9 +34,7 @@ class FundAccountController extends PayoutController
             'bank_account' => $account_details
         ];
 
-        $key = env('RAZORPAY_KEY');
-        $secret = env('RAZORPAY_SECRET');
-        $response = Http::withBasicAuth($key, $secret)
+        $response = Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')
             ->post('https://api.razorpay.com/v1/fund_accounts', $data);
 
             Log::channel('response')->info($response);

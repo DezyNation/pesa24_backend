@@ -43,7 +43,7 @@ use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
 use App\Http\Controllers\Paysprint\CMS\FinoCMSController;
 use App\Http\Controllers\Paysprint\PANController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
-use App\Http\Controllers\SRK\PayoutController as SRKMoneyPayoutController;
+use App\Http\Controllers\SRK\PayoutController as SRKPayoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -184,13 +184,13 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     // Route::post('eko/dmt/transaction-refund-otp/{tid}', [TransactionController::class, 'refund']);
     Route::post('paysprint/bank/bank-verify', [DMTController::class, 'penneyDrop']);
     /*-----------------------Razorpay Payout-----------------------*/
-    Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact'])->middleware(['throttle:1,0.167', 'charge', 'multiple_transaction']);
+    Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact'])->middleware(['throttle:1,0.167', 'charge']);
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser']);
     Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall'])->middleware('throttle:1,0.08');
     /*-----------------------Razorpay Payout-----------------------*/
-
+    
     /*-----------------------SRK Payout-----------------------*/
-    Route::post('srk/payout/new-payout/{service_id}', [SRKMoneyPayoutController::class, 'payout'])->middleware(['throttle:1,0.167', 'charge', 'multiple_transaction']);
+    Route::post('srk/payout/new-payout/{service_id}', [SRKPayoutController::class, 'payout'])->middleware(['throttle:1,0.167', 'charge']);
     /*-----------------------SRK Payout-----------------------*/
 
     /*-----------------------Pysprint AePS-----------------------*/
