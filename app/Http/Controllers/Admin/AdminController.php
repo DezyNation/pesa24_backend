@@ -636,6 +636,10 @@ class AdminController extends Controller
 
         $payout_commission = $this->table($tennure, 'payout-commission', $request);
 
+        $recharge = $this->table($tennure, 'recharge', $request);
+
+        $recharge_commission = $this->table($tennure, 'recharge-commission', $request);
+
         $wallet = $this->roleWalletSum();
 
         $payout_transaction = $this->payoutTransactions();
@@ -668,7 +672,9 @@ class AdminController extends Controller
             $funds,
             $users,
             $payout_commission,
-            $payout_transaction
+            $payout_transaction,
+            $recharge,
+            $recharge_commission
         ];
 
         return response($array);

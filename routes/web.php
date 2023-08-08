@@ -58,18 +58,8 @@ Route::get('/', function () {
     return ['Application' => 'Janpay'];
 });
 
-Route::get('excel', [UserController::class, 'test']);
-
-Route::get('duplicates', function () {
-    $duplicates = DB::table('transactions')
-        ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
-        ->select('transactions.*', DB::raw('COUNT(*) as `count`'))
-        ->groupBy('transaction_id', 'trigered_by')
-        ->having('count', '>', 4)
-        // ->havingRaw('COUNT(*) > 4')
-        ->paginate(200);
-    return $duplicates;
-});
+Route::get('test', [TestController::class, 'test']);
+// ->middleware('idempotency');
 
 // Route::get('test', [AdminController::class, 'marketOverview']);
 
