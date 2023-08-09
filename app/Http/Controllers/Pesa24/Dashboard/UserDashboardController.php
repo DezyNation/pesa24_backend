@@ -24,7 +24,11 @@ class UserDashboardController extends Controller
 
         $search = $request['search'];
         if (!empty($search) || !is_null($search)) {
-            $data = DB::table('transactions')->where('trigered_by', $id)->where('transaction_id', 'like', '%' . $search . '%')->orWhere('transaction_for', 'like', '%' . $search . '%')->orWhere('metadata->status', 'like', '%' . $search . '%')->latest()->orderByDesc('transactions.id')->get();
+            $data = DB::table('transactions')->where('trigered_by', $id)->where('transaction_id', 'like', '%' . $search . '%')->where(function ($query) use ($search) {
+                $query->where('transaction_for', 'like', '%' . $search . '%')
+                    ->orWhere('metadata->status', 'like', '%' . $search . '%');
+            })
+                ->latest()->orderByDesc('transactions.id')->get();
             return $data;
         }
 
