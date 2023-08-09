@@ -32,7 +32,9 @@ class UserDashboardController extends Controller
                 ->orWhere('metadata->status', 'like', '%' . $search . '%');
                         //    ->orWhere() 
                     // ->latest()->orderByDesc('transactions.id');
-                })->get();
+                })
+                ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
+                // ->get();
             return $data;
         }
 
