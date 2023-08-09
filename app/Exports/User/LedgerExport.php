@@ -37,7 +37,15 @@ class LedgerExport implements FromCollection, WithHeadings, WithStyles, WithChun
 
         $search = $this->search;
         if (!empty($search) || !is_null($search)) {
-            $data = DB::table('transactions')->where('trigered_by', $id)->where('transaction_id', 'like', '%' . $search . '%')->orWhere('transaction_for', 'like', '%' . $search . '%')->latest()->orderByDesc('transactions.id')
+            $data = DB::table('transactions')->where('trigered_by', $id)
+            ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+            ->where(function ($query) use ($search) {
+                $query->where('transaction_for', 'like', '%' . $search . '%')
+                ->orWhere('transaction_id', 'like', '%' . $search . '%')
+                ->orWhere('metadata->status', 'like', '%' . $search . '%');
+                        //    ->orWhere() 
+                    // ->latest()->orderByDesc('transactions.id');
+                })
             ->select('transactions.transaction_id', 'transactions.service_type', 'transactions.transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.created_at', 'transactions.updated_at')
             ->get();
             return $data;
