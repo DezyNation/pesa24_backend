@@ -68,7 +68,7 @@ class RechargeController extends CommissionController
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,
                 'amount' => $data['amount'],
-                'refid' => $data['reference_id'],
+                'refid' => $data['ref_id'],
                 'operator' => $data['operator'],
                 'reason' => "Server Busy"
             ];
