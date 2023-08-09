@@ -33,7 +33,7 @@ class RechargeCharge
 
         $table = $table[0];
         $user = User::findOrFail($user_id);
-        $role = $user[0]->getRoleNames()[0];
+        $role = $user->getRoleNames()[0];
 
         $fixed_charge = 0;
         $is_flat = $table->is_flat;
