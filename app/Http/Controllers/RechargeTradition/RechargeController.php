@@ -45,7 +45,7 @@ class RechargeController extends CommissionController
 
         if ($status == 'Pending' || $status == 'Accepted' || $status == 'Success') {
             $metadata = [
-                'status' => $status,
+                'status' => strtolower($status),
                 'mobile_number' => $data['number'],
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
