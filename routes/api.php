@@ -184,13 +184,13 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     // Route::post('eko/dmt/transaction-refund-otp/{tid}', [TransactionController::class, 'refund']);
     Route::post('paysprint/bank/bank-verify', [DMTController::class, 'penneyDrop']);
     /*-----------------------Razorpay Payout-----------------------*/
-    Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact'])->middleware(['throttle:1,0.167', 'charge']);
+    Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact'])->middleware(['throttle:1,0.167', 'charge', 'mpin']);
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser']);
     Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall'])->middleware('throttle:1,0.08');
     /*-----------------------Razorpay Payout-----------------------*/
 
     /*-----------------------SRK Payout-----------------------*/
-    Route::post('srk/payout/new-payout/{service_id}', [SRKPayoutController::class, 'payout'])->middleware(['throttle:1,0.167', 'charge']);
+    Route::post('srk/payout/new-payout/{service_id}', [SRKPayoutController::class, 'payout'])->middleware(['throttle:1,0.167', 'charge', 'mpin']);
     /*-----------------------SRK Payout-----------------------*/
 
     /*-----------------------Pysprint AePS-----------------------*/
