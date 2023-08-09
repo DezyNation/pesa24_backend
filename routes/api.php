@@ -237,11 +237,11 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     /*-----------------------Paysprint Recharge-----------------------*/
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
     Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
-    Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge'])->middleware('mpin', 'throttle:1,0.167');
+    Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge'])->middleware(['mpin', 'throttle:1,0.167', 'recharge']);
     /*-----------------------Paysprint Recharge-----------------------*/
 
     /*-----------------------IncomeWallet Recharge-----------------------*/
-    Route::post('incomewallet/bbps/mobile-recharge/do-recharge', [IncomeWalletRechargeController::class, 'recharge'])->middleware('mpin', 'throttle:1,0.167');
+    Route::post('incomewallet/bbps/mobile-recharge/do-recharge', [IncomeWalletRechargeController::class, 'recharge'])->middleware(['mpin', 'throttle:1,0.167', 'recharge']);
     /*-----------------------IncomeWallet Recharge-----------------------*/
 
     /*-----------------------IncomeWallet Recharge-----------------------*/
