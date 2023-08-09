@@ -169,7 +169,7 @@ class FundRequestController extends Controller
         return $data;
     }
 
-    public function adminfetchFundUser($id)
+    public function adminfetchFundUser(Request $request, $id)
     {
         $data = DB::table('funds')
         ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
