@@ -25,6 +25,7 @@ class UserDashboardController extends Controller
         $search = $request['search'];
         if (!empty($search) || !is_null($search)) {
             $data = DB::table('transactions')->where('trigered_by', $id)
+            ->where('service_type', $name)
             ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
             ->where(function ($query) use ($search) {
                 $query->where('transaction_for', 'like', '%' . $search . '%')
@@ -49,7 +50,8 @@ class UserDashboardController extends Controller
             return $data;
         }
 
-        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where('service_type', $name)->where(function ($q) use ($id) {
+        $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+        ->where('service_type', $name)->where(function ($q) use ($id) {
             $q->where('trigered_by', $id);
             // ->orWhere('user_id', $id);
         })->latest()->orderByDesc('transactions.id')
