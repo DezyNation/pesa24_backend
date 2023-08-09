@@ -71,7 +71,7 @@ class RechargeController extends CommissionController
                 'amount' => $data['amount'],
                 'refid' => $data['ref_id'],
                 'operator' => $data['operator'],
-                'reason' => "Server Busy"
+                'reason' => $response['message']
             ];
             return [$response, 'metadata' => $metadata];
         }
