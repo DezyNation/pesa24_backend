@@ -23,7 +23,7 @@ class RechargeController extends CommissionController
             'ref_id' => uniqid("JND", true)
         ];
 
-        $response = Http::post('https://www.rechargetradition.com/webservices/api/recharge', $data);
+        $response = Http::get('https://www.rechargetradition.com/webservices/api/recharge', $data);
         $transaction_id = $data['ref_id'];
         $status = $response['status'];
         $this->apiRecords($transaction_id, 'recharge-tradition', $response);
