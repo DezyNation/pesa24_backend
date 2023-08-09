@@ -41,8 +41,8 @@ class UserDashboardController extends Controller
                 $q->where('trigered_by', $id);
                 // ->orWhere('user_id', $id);
             })->latest()->orderByDesc('transactions.id')
-                ->get();
-            // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
+                // ->get();
+            ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
 
             return $data;
         }
@@ -51,8 +51,8 @@ class UserDashboardController extends Controller
             $q->where('trigered_by', $id);
             // ->orWhere('user_id', $id);
         })->latest()->orderByDesc('transactions.id')
-            ->get();
-        // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
+            // ->get();
+        ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
         return $data;
 
         // $search = $request['search'];
