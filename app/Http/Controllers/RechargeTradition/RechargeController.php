@@ -60,6 +60,7 @@ class RechargeController extends CommissionController
 
             $this->transaction($data['amount'], "Recharge for Mobile {$data['number']}", 'recharge', auth()->user()->id, $walletAmt, $transaction_id, $balance_left, json_encode($metadata));
             $this->rechargeCommissionPaysprint(auth()->user()->id, $data['operator'],  $request['amount'], $transaction_id, $data['number']);
+            return [$response, 'metadata' => $metadata];
         } else {
             $metadata = [
                 'status' => 'failed',
