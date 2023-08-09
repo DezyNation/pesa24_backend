@@ -44,6 +44,7 @@ use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
 use App\Http\Controllers\Paysprint\CMS\FinoCMSController;
 use App\Http\Controllers\Paysprint\PANController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
+use App\Http\Controllers\RechargeTradition\RechargeController as RechargeTraditionRechargeController;
 use App\Http\Controllers\SRK\PayoutController as SRKPayoutController;
 
 /*
@@ -185,13 +186,13 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     // Route::post('eko/dmt/transaction-refund-otp/{tid}', [TransactionController::class, 'refund']);
     Route::post('paysprint/bank/bank-verify', [DMTController::class, 'penneyDrop']);
     /*-----------------------Razorpay Payout-----------------------*/
-    Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact'])->middleware(['throttle:1,0.167', 'charge']);
+    Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact'])->middleware(['throttle:1,0.167', 'charge', 'mpin']);
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser']);
     Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall'])->middleware('throttle:1,0.08');
     /*-----------------------Razorpay Payout-----------------------*/
 
     /*-----------------------SRK Payout-----------------------*/
-    Route::post('srk/payout/new-payout/{service_id}', [SRKPayoutController::class, 'payout'])->middleware(['throttle:1,0.167', 'charge']);
+    Route::post('srk/payout/new-payout/{service_id}', [SRKPayoutController::class, 'payout'])->middleware(['throttle:1,0.167', 'charge', 'mpin']);
     /*-----------------------SRK Payout-----------------------*/
 
     /*-----------------------Pysprint AePS-----------------------*/
@@ -238,9 +239,15 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
     Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge'])->middleware('mpin', 'throttle:1,0.167');
     /*-----------------------Paysprint Recharge-----------------------*/
+
     /*-----------------------IncomeWallet Recharge-----------------------*/
     Route::post('incomewallet/bbps/mobile-recharge/do-recharge', [IncomeWalletRechargeController::class, 'recharge'])->middleware('mpin', 'throttle:1,0.167');
     /*-----------------------IncomeWallet Recharge-----------------------*/
+
+    /*-----------------------IncomeWallet Recharge-----------------------*/
+    Route::post('rechargetradition/bbps/mobile-recharge/do-recharge', [RechargeTraditionRechargeController::class, 'recharge'])->middleware(['mpin', 'throttle:1,0.167', 'recharge']);
+    /*-----------------------IncomeWallet Recharge-----------------------*/
+
     /*-----------------------Paysprint CMS-----------------------*/
     Route::post('paysprint/cms/fino', [FinoCMSController::class, 'generateUrl']);
     Route::post('paysprint/cms/airtel', [AirtelCMSController::class, 'generateUrl']);
@@ -284,6 +291,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
     Route::get('payouts/{processing}', [PayoutController::class, 'fetchPayoutAdmin']);
     Route::get('recharges/{status}', [AdminController::class, 'fetchRecharge']);
     Route::post('paysprint/update-recharges', [RechargeController::class, 'statusEnquiry']);
+    Route::post('paysprint/update-recharges', [RechargeTraditionRechargeController::class, 'updateRecharge']);
     Route::get('fetch-fund-requests/{id}', [FundRequestController::class, 'fetchFundId']);
 
     Route::post('razorpay/fetch-payout/{processing?}', [PayoutController::class, 'fetchPayoutAdmin']);
@@ -361,6 +369,7 @@ Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback'])
 Route::any('payout-callback', [WebhookController::class, 'confirmPayout']);
 Route::any('onboard-callback-paysprint', [CallbackController::class, 'onboardCallback']);
 Route::any('income-wallet-callback', [CallbackController::class, 'incomeWallet']);
+Route::any('recharge-tradition-callback', [CallbackController::class, 'rechargeTradition']);
 
 Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 'admin'], function () {
     Route::post('service-status', [GlobalServiceController::class, 'manageService']);
