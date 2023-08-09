@@ -29,7 +29,7 @@ class UserDashboardController extends Controller
                     $query->where('transaction_for', 'like', '%' . $search . '%')->orWhere('metadata->status', 'like', '%' . $search . '%');
                         //    ->orWhere() 
                     // ->latest()->orderByDesc('transactions.id');
-                });
+                })->get();
             return $data;
         }
 
