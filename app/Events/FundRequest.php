@@ -39,7 +39,7 @@ class FundRequest
     public function broadcastOn(): array
     {
         return [
-            new Channel('fund-request'),
+            new Channel('janpay-01-production'),
         ];
     }
 }
