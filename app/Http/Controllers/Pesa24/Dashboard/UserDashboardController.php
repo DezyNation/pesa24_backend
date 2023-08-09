@@ -24,7 +24,12 @@ class UserDashboardController extends Controller
 
         $search = $request['search'];
         if (!empty($search) || !is_null($search)) {
-            $data = DB::table('transactions')->where('trigered_by', $id)->where('transaction_id', 'like', '%' . $search . '%')->orWhere('transaction_for', 'like', '%' . $search . '%')->orWhere('metadata->status', 'like', '%' . $search . '%')->latest()->orderByDesc('transactions.id')->get();
+            $data = DB::table('transactions')->where('trigered_by', $id)->where('transaction_id', 'like', '%' . $search . '%')
+                ->where(function ($query) use ($search) {
+                    $query->where('transaction_for', 'like', '%' . $search . '%')->orWhere('metadata->status', 'like', '%' . $search . '%');
+                        //    ->orWhere() 
+                    // ->latest()->orderByDesc('transactions.id');
+                });
             return $data;
         }
 
@@ -33,7 +38,7 @@ class UserDashboardController extends Controller
                 $q->where('trigered_by', $id);
                 // ->orWhere('user_id', $id);
             })->latest()->orderByDesc('transactions.id')
-            ->get();
+                ->get();
             // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
 
             return $data;
@@ -43,7 +48,7 @@ class UserDashboardController extends Controller
             $q->where('trigered_by', $id);
             // ->orWhere('user_id', $id);
         })->latest()->orderByDesc('transactions.id')
-        ->get();
+            ->get();
         // ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
         return $data;
 
