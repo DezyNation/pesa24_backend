@@ -28,7 +28,7 @@ class RechargeController extends CommissionController
         $status = $response['status'];
         $this->apiRecords($transaction_id, 'recharge-tradition', $response);
         Log::channel('response')->info('recharge-tradition', $response->json());
-        DB::table('recharge_request')->insert([
+        DB::table('recharge_requests')->insert([
             'user_id' => auth()->user()->id,
             'provider' => 'recharge-tradition',
             'operator' => $data['operator'],
