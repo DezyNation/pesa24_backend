@@ -291,7 +291,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
     Route::get('payouts/{processing}', [PayoutController::class, 'fetchPayoutAdmin']);
     Route::get('recharges/{status}', [AdminController::class, 'fetchRecharge']);
     Route::post('paysprint/update-recharges', [RechargeController::class, 'statusEnquiry']);
-    Route::post('paysprint/update-recharges', [RechargeTraditionRechargeController::class, 'updateRecharge']);
+    Route::post('rechargetradition/update-recharges', [RechargeTraditionRechargeController::class, 'updateRecharge']);
     Route::get('fetch-fund-requests/{id}', [FundRequestController::class, 'fetchFundId']);
 
     Route::post('razorpay/fetch-payout/{processing?}', [PayoutController::class, 'fetchPayoutAdmin']);
