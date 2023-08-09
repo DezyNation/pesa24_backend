@@ -111,6 +111,8 @@ class UserDashboardController extends Controller
 
         $recharge = $this->userTable($tenure, 'recharge', $request, $user_id);
 
+        $recharge_commission = $this->userTable($tenure, 'recharge-commission', $request, $user_id);
+
         $funds = $this->fundRequests($tenure, $user_id);
 
         $array = [
@@ -125,7 +127,8 @@ class UserDashboardController extends Controller
             $recharge,
             $funds,
             $payout_charge,
-            $payout_commission
+            $payout_commission,
+            $recharge_commission
         ];
 
         return response($array);

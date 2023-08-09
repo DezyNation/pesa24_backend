@@ -78,4 +78,51 @@ class CallbackController extends CommissionController
         Log::channel('response')->info('request', $request->all());
         echo json_encode($arr);
     }
+
+    public function incomeWallet(Request $request)
+    {
+        Log::channel('response')->info('income-wallet', $request->all());
+    }
+
+    public function rechargeTradition(Request $request)
+    {
+        Log::channel('response')->info('recharge-tradition', $request->all());
+        $transaction_id = $request['refId'];
+        $recharge = DB::table('recharge_requests')->where('reference_id', $transaction_id)->first();
+
+        if ($recharge->status !== 'Pending' || $recharge->status !== 'Accepted') {
+            return response("This recharge has been processed already.");
+        }
+
+        if ($request['status'] == 'Success') {
+            DB::table('recharge_requests')->where('reference_id', $transaction_id)->update([
+                'status' => 'success',
+                'updated_at' => now()
+            ]);
+
+            DB::table('recharge_requests')->where('reference_id', $transaction_id)->update([
+                'metadata->status' => 'success',
+                'updated_at' => now()
+            ]);
+        }
+
+        if ($request['status'] == 'Failed' || $request['status'] == 'Refunded') {
+            DB::table('recharge_requests')->where('reference_id', $transaction_id)->update([
+                'status' => 'failed',
+                'updated_at' => now()
+            ]);
+            $user = User::find($recharge->user_id);
+            $wallet = $user->wallet;
+            $closing_balance = $wallet + $recharge->amount;
+            $metadata = [
+                'status' => $request['status'],
+                'event' => 'recharge.refund',
+                'operator_name' => $request['operatorCode'],
+                'opt_id' => $request['operatorId']
+            ];
+
+            $this->notAdmintransaction(0, "Recharge refund for {$recharge->ca_number}", 'recharge', $recharge->user_id, $wallet, $recharge->reference_id, $closing_balance, json_encode($metadata), $recharge->amount);
+            $this->rechargeRevCommission($recharge->user_id, $request['operatorCode'], $recharge->amount, $transaction_id, $recharge->ca_number);
+        }
+    }
 }

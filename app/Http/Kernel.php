@@ -79,6 +79,7 @@ class Kernel extends HttpKernel
         'eko' => \App\Http\Middleware\EkoOnboard::class,
         'otp' => \App\Http\Middleware\OTPCheck::class,
         'charge' => \App\Http\Middleware\Payout::class,
+        'recharge' => \App\Http\Middleware\RechargeCharge::class,
         'active' => \App\Http\Middleware\BlockedUser::class,
         'multiple_transaction' => \App\Http\Middleware\MultipleTransaction::class,
         'idempotency' => \App\Http\Middleware\TestIdempotency::class,
