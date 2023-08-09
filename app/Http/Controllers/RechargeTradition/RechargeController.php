@@ -31,7 +31,7 @@ class RechargeController extends CommissionController
         DB::table('recharge_request')->insert([
             'user_id' => auth()->user()->id,
             'provider' => 'recharge-tradition',
-            'operator' => $data['operatorid'],
+            'operator' => $data['operator'],
             'operator_name' => $request['operatorName'],
             'status' => strtolower($status),
             'amount' => $data['amount'],
