@@ -19,7 +19,7 @@ class RechargeController extends CommissionController
             'api_token' => env('RECHARGE_TRADITION_TOKEN'),
             'number' => $request['canumber'],
             'amount' => $request['amount'],
-            'operator' => $request['operator'],
+            'operator' => $request['secondaryOperatorCode'],
             'ref_id' => uniqid("JND", true)
         ];
 
@@ -31,9 +31,9 @@ class RechargeController extends CommissionController
         DB::table('recharge_request')->insert([
             'user_id' => auth()->user()->id,
             'provider' => 'recharge-tradition',
-            'operator' => $response['operatorid'],
+            'operator' => $data['operatorid'],
             'operator_name' => $request['operatorName'],
-            'status' => $status,
+            'status' => strtolower($status),
             'amount' => $data['amount'],
             'reference_id' => $transaction_id,
             'ca_number' => $data['number'],
