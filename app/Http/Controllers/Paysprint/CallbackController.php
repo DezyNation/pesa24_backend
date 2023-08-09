@@ -86,6 +86,7 @@ class CallbackController extends CommissionController
 
     public function rechargeTradition(Request $request)
     {
+        Log::channel('response')->info('recharge-tradition', $request->all());
         $transaction_id = $request['refId'];
         $recharge = DB::table('recharge_requests')->where('reference_id', $transaction_id)->first();
 
