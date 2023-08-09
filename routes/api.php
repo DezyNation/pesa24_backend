@@ -346,6 +346,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
 
     Route::get('user-reports/{name}/{id}', [AdminController::class, 'userReports']);
     Route::get('print-report', [AdminController::class, 'printReports']);
+    Route::get('user/print-report', [AdminController::class, 'printUserReports']);
 
     Route::get('user/overview/{user_id}', [UserDashboardController::class, 'adminOverview']);
     Route::get('market-overview', [AdminController::class, 'marketOverview']);

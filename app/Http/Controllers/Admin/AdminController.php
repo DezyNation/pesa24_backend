@@ -970,6 +970,33 @@ class AdminController extends Controller
         return $data;
     }
 
+
+    public function printUserReports(Request $request, $id)
+    {
+        $type = $request['type'];
+        switch ($type) {
+            case 'payouts':
+
+                $processing = $request['report'];
+                $payout = $this->payoutReports($request, $processing);
+                return $payout;
+                break;
+
+            case 'fund-requests':
+                $data = $this->fundUserReports($request);
+                return $data;
+                break;
+
+            case 'ledger':
+                $data = $this->printLedger($request);
+                return $data;
+                break;
+
+            default:
+                return 'error';
+                break;
+        }
+    }
     public function printReports(Request $request)
     {
         $type = $request['type'];
