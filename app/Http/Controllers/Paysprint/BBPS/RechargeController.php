@@ -113,7 +113,7 @@ class RechargeController extends CommissionController
             DB::table('recharge_requests')->insert([
                 'user_id' => auth()->user()->id,
                 'provider' => 'paysprint',
-                'operator' => $response['operatorid'],
+                'operator' => $response['operator'],
                 'operator_name' => $request['operatorName'],
                 'status' => $status,
                 'amount' => $data['amount'],
