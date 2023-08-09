@@ -14,10 +14,14 @@ return new class extends Migration
         Schema::create('recharge_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+            $table->string('provider')->nullable();
             $table->string('operator')->nullable();
+            $table->string('operator_name')->nullable();
+            $table->decimal('amount', 16, 4)->nullable();
             $table->string('status')->nullable();
             $table->string('response_code')->nullable();
             $table->string('ca_number')->nullable();
+            $table->string('reference_id')->nullable();
             $table->string('ack_no')->nullable();
             $table->timestamps();
         });

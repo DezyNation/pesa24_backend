@@ -820,6 +820,119 @@ class CommissionController extends Controller
 
         return true;
     }
+    public function rechargeRevCommission($user_id, $operator, $amount, $transaction_id, $canumber)
+    {
+        $table = DB::table('recharges')
+            ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
+            ->where(['package_user.user_id' => $user_id])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
+            ->get();
+
+        if ($table->isEmpty()) {
+            return response("No commissions.");
+        }
+
+        $table = $table[0];
+        $user = User::findOrFail($user_id);
+        $role = $user->getRoleNames()[0];
+
+        $fixed_charge = $table->fixed_charge;
+        $is_flat = $table->is_flat;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->$role_commission_name;
+        $opening_balance = $user->wallet;
+
+        if ($is_flat) {
+            $debit = $fixed_charge;
+            $credit = $role_commission - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance + $debit - $credit;
+        } else {
+            $debit =  $amount * $fixed_charge / 100;
+            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance - $credit + $debit;
+        }
+
+        $metadata = [
+            'status' => true,
+            'amount' => $amount,
+            'canumber' => $canumber,
+            'operator' => $operator,
+            'credit' => $credit,
+            'debit' => $debit
+        ];
+
+        $this->notAdmintransaction($credit, "Recharge Commission refund for $canumber", 'recharge-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+
+        if (!$table->parent) {
+            return response("No commission for parents");
+        }
+
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+
+        if ($parent->exists()) {
+            $parent_id = $parent->pluck('parent_id');
+            $this->rechargeParentRev($parent_id[0], $operator, $amount, $transaction_id, $canumber);
+        }
+
+        return true;
+    }
+
+    public function rechargeParentRev($user_id, $operator, $amount, $transaction_id, $canumber)
+    {
+        $table = DB::table('recharges')
+            ->join('package_user', 'package_user.package_id', '=', 'recharges.package_id')
+            ->where(['package_user.user_id' => $user_id])->where('recharges.from', '<', $amount)->where('recharges.to', '>=', $amount)
+            ->get();
+
+        if ($table->isEmpty()) {
+            return response("No Comissions.");
+        }
+
+        $table = $table[0];
+        $user = User::findOrFail($user_id);
+        $role = $user[0]->getRoleNames()[0];
+
+        $fixed_charge = 0;
+        $is_flat = $table->is_flat;
+        $gst = $table->gst;
+        $role_commission_name = $role . "_commission";
+        $role_commission = $table->$role_commission_name;
+        $opening_balance = $user->wallet;
+
+        if ($is_flat) {
+            $debit = $fixed_charge;
+            $credit = $role_commission - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance + $debit - $credit;
+        } else {
+            $debit =  $amount * $fixed_charge / 100;
+            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+            $closing_balance = $opening_balance + $debit - $credit;
+        }
+
+        $metadata = [
+            'status' => true,
+            'amount' => $amount,
+            'canumber' => $canumber,
+            'operator' => $operator,
+            'credit' => $credit,
+            'debit' => $debit
+        ];
+
+        $this->notAdmintransaction($credit, "Recharge Commission refund for $canumber", 'recharge-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+
+        if (!$table->parent) {
+            return response("No comission for parents");
+        }
+
+        $parent = DB::table('user_parent')->where('user_id', $user_id);
+
+        if ($parent->exists()) {
+            $parent_id = $parent->pluck('parent_id');
+            $this->rechargeParentRev($parent_id[0], $operator, $amount, $transaction_id, $canumber);
+        }
+
+        return true;
+    }
 
     public function rechargeCommissionEko($user_id, $operator, $amount)
     {
