@@ -59,8 +59,8 @@ Route::get('/', function () {
     return ['Application' => 'Janpay'];
 });
 
-Route::get('test', [TestController::class, 'test']);
-// ->middleware('idempotency');
+Route::get('test', [TestController::class, 'test'])
+->middleware('idempotency');
 
 // Route::get('test', [AdminController::class, 'marketOverview']);
 
