@@ -187,7 +187,6 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     Route::post('paysprint/bank/bank-verify', [DMTController::class, 'penneyDrop']);
     /*-----------------------Razorpay Payout-----------------------*/
     Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact'])->middleware(['throttle:1,0.167', 'charge', 'mpin']);
-    Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser']);
     /*-----------------------Razorpay Payout-----------------------*/
     
     /*-----------------------SRK Payout-----------------------*/
@@ -263,6 +262,7 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     Route::post('paysprint/axis/account', [AxisController::class, 'generateUcc']);
     /*-----------------------Paysprint Axis-----------------------*/
 });
+Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser'])->middleware(['auth:api', 'active']);
 Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall'])->middleware(['auth:api', 'active', 'throttle:1,0.08']);
 
 Route::get('admin/packages', [AdminController::class, 'packages'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);
