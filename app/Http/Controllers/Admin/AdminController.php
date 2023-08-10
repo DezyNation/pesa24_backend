@@ -1231,34 +1231,40 @@ class AdminController extends Controller
 
         if (!is_null($search) || !empty($search)) {
             $data = DB::table('recharge_requests')
-            ->join('users', 'users.id', '=', 'recharge_requests.user_id')
-            ->select('recharge_requests.*', 'users.name', 'users.phone_number')
-            ->where('reference_id', 'like', "%".$search."%")->orWhere('ca_number', 'like', "%".$search."%")->paginate(200);
+                ->join('users', 'users.id', '=', 'recharge_requests.user_id')
+                ->select('recharge_requests.*', 'users.name', 'users.phone_number')
+                ->where('reference_id', 'like', "%" . $search . "%")->orWhere('ca_number', 'like', "%" . $search . "%")->paginate(200);
             return $data;
         }
 
         if (!is_null($user_id) || !empty($user_id)) {
             $data = DB::table('recharge_requests')
-            ->join('users', 'users.id', '=', 'recharge_requests.user_id')
-            ->select('recharge_requests.*', 'users.name', 'users.phone_number')
-            ->where('user_id', $user_id)->whereBetween('created_at', [$from, $to])->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search'=> $search]);
+                ->join('users', 'users.id', '=', 'recharge_requests.user_id')
+                ->select('recharge_requests.*', 'users.name', 'users.phone_number')
+                ->where('user_id', $user_id)->whereBetween('created_at', [$from, $to])->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search' => $search]);
             return $data;
         }
 
         if ($status == 'pending') {
             $data = DB::table('recharge_requests')
-            ->join('users', 'users.id', '=', 'recharge_requests.user_id')
-            ->select('recharge_requests.*', 'users.name', 'users.phone_number')
-            ->where('status', $status)
-            ->get();
+                ->join('users', 'users.id', '=', 'recharge_requests.user_id')
+                ->select('recharge_requests.*', 'users.name', 'users.phone_number')
+                ->where('status', $status)
+                ->get();
             // ->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search'=> $search]);
+            return $data;
+        } else if ($status == 'all') {
+            $data = DB::table('recharge_requests')
+                ->join('users', 'users.id', '=', 'recharge_requests.user_id')
+                ->select('recharge_requests.*', 'users.name', 'users.phone_number')
+                ->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search' => $search]);
             return $data;
         }
 
         $data = DB::table('recharge_requests')
-        ->join('users', 'users.id', '=', 'recharge_requests.user_id')
-        ->select('recharge_requests.*', 'users.name', 'users.phone_number')
-        ->where('status', $status)->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search'=> $search]);
+            ->join('users', 'users.id', '=', 'recharge_requests.user_id')
+            ->select('recharge_requests.*', 'users.name', 'users.phone_number')
+            ->where('status', $status)->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search' => $search]);
         return $data;
     }
 }
