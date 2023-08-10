@@ -18,7 +18,7 @@ class MinimumBalance
     {
         $user = User::with('roles:name')->select('id', 'minimum_balance', 'wallet')->findOrFail(auth()->user()->id)->makeVisible(['wallet', 'minimum_balance']);
         $minimumBalance = $user['roles'][0]['pivot']['minimum_balance'];
-        $final_amount = auth()->user()->wallet - $request['amount'];
+        $final_amount = $user->wallet - $request['amount'];
         if ($final_amount < $minimumBalance || $final_amount < $user->minimum_balance) {
             return response("Insufficient Balance.", 403);
         }
