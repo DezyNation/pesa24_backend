@@ -9,12 +9,14 @@ use Illuminate\Support\Facades\DB;
 use App\Events\PayoutStatusUpdated;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\CommissionController;
+use Illuminate\Support\Facades\Cache;
 
 class WebhookController extends CommissionController
 {
     public function confirmPayout(Request $request)
     {
         Log::channel('callback')->info('callback-razorpay', $request->all());
+        Cache::put($request->header('x-razorpay-event-id'), $request->header('x-razorpay-event-id'), 600);
         DB::transaction(function () use ($request) {
 
             $payout_id = $request['payload.payout.entity.id'];

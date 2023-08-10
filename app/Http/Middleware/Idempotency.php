@@ -4,10 +4,11 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
-class TestIdempotency
+class Idempotency
 {
     /**
      * Handle an incoming request.
@@ -17,7 +18,8 @@ class TestIdempotency
     public function handle(Request $request, Closure $next): Response
     {
         if (Cache::has($request['time'])) {
-            return response("Request is processing", 400);
+            Log::channel('reversal')->info('idempotency', $request->all());
+            return response("Request is processing", 200);
         }
         return $next($request);
     }
