@@ -1382,7 +1382,7 @@ class CommissionController extends Controller
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
         $role_commission = $table->$role_commission_name;
-        $opening_balance = $user->wallet;
+        $opening_balance = $user[0]->wallet;
 
         if ($is_flat) {
             $debit = 0;
@@ -1399,9 +1399,6 @@ class CommissionController extends Controller
             'amount' => $amount
         ];
         $this->notAdmintransaction($credit, "Charge Reversal for $account_number", 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
-        $user->update([
-            'wallet' => $closing_balance
-        ]);
 
         if (!$table->parents) {
             return response("No comissions to parent users.");
