@@ -26,7 +26,7 @@ class UserDashboardController extends Controller
         if (!empty($search) || !is_null($search)) {
             $data = DB::table('transactions')->where('trigered_by', $id)
             ->where('service_type', $name)
-            ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+            // ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
             ->where(function ($query) use ($search) {
                 $query->where('transaction_for', 'like', '%' . $search . '%')
                 ->orWhere('transaction_id', 'like', '%' . $search . '%')
