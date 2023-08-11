@@ -63,7 +63,7 @@ class UsersExport implements FromCollection, WithHeadings, WithStyles, WithChunk
             ->join('users', 'users.id', '=', 'transactions.user_id')
             ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
             ->whereBetween('transactions.created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
-            ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.metadata', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at')
+            ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.created_at', 'transactions.updated_at', 'transactions.metadata')
             ->latest('transactions.created_at')->orderByDesc('transactions.id')
             ->get();
 
@@ -72,7 +72,7 @@ class UsersExport implements FromCollection, WithHeadings, WithStyles, WithChunk
 
     public function headings(): array
     {
-        return ["Name", "Credit Amount", "Debit Amount", "Opening Balance", "Closing balance", "Service Type", "Trxn ID", "Trxn By", "Phone", "Description", "Created At", "Updated At"];
+        return ["Name", "Credit Amount", "Debit Amount", "Trxn By", "Opening Balance", "Closing balance", "Service Type", "Trxn ID", "User name", "Phone", "Description", "Created At", "Updated At", "Metadata"];
     }
 
     public function styles(Worksheet $sheet)
