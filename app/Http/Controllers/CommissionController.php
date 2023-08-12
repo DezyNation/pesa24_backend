@@ -1357,12 +1357,12 @@ class CommissionController extends Controller
         $parent = DB::table('user_parent')->where('user_id', $user_id);
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->payoutReversalParent($parent_id, $amount, $transaction_id, $account_number);
+            $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
         }
         return $table;
     }
 
-    public function payoutReversalParent($user_id, $amount, $transaction_id, $account_number)
+    public function payoutReversalParent(int $user_id, $amount, $transaction_id, $account_number)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -1408,7 +1408,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->payoutReversalParent($parent_id, $amount, $transaction_id, $account_number);
+            $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
         }
 
         return $table;
