@@ -1233,7 +1233,8 @@ class AdminController extends Controller
             $data = DB::table('recharge_requests')
                 ->join('users', 'users.id', '=', 'recharge_requests.user_id')
                 ->select('recharge_requests.*', 'users.name', 'users.phone_number')
-                ->where('reference_id', 'like', "%" . $search . "%")->orWhere('ca_number', 'like', "%" . $search . "%")->paginate(200);
+                ->where('reference_id', 'like', "%" . $search . "%")->orWhere('ca_number', 'like', "%" . $search . "%")
+                ->latest('recharge_requests.created_at')->paginate(200);
             return $data;
         }
 
@@ -1241,7 +1242,8 @@ class AdminController extends Controller
             $data = DB::table('recharge_requests')
                 ->join('users', 'users.id', '=', 'recharge_requests.user_id')
                 ->select('recharge_requests.*', 'users.name', 'users.phone_number')
-                ->where('user_id', $user_id)->whereBetween('created_at', [$from, $to])->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search' => $search]);
+                ->where('user_id', $user_id)->whereBetween('created_at', [$from, $to])
+                ->latest('recharge_requests.created_at')->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search' => $search]);
             return $data;
         }
 
@@ -1250,6 +1252,7 @@ class AdminController extends Controller
                 ->join('users', 'users.id', '=', 'recharge_requests.user_id')
                 ->select('recharge_requests.*', 'users.name', 'users.phone_number')
                 ->where('status', $status)
+                ->latest('recharge_requests.created_at')
                 ->get();
             // ->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search'=> $search]);
             return $data;
@@ -1257,6 +1260,7 @@ class AdminController extends Controller
             $data = DB::table('recharge_requests')
                 ->join('users', 'users.id', '=', 'recharge_requests.user_id')
                 ->select('recharge_requests.*', 'users.name', 'users.phone_number')
+                ->latest('recharge_requests.created_at')
                 ->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search' => $search]);
             return $data;
         }
@@ -1264,7 +1268,8 @@ class AdminController extends Controller
         $data = DB::table('recharge_requests')
             ->join('users', 'users.id', '=', 'recharge_requests.user_id')
             ->select('recharge_requests.*', 'users.name', 'users.phone_number')
-            ->where('status', $status)->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search' => $search]);
+            ->where('status', $status)
+            ->latest('recharge_requests.created_at')->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search' => $search]);
         return $data;
     }
 }
