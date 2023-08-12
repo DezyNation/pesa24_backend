@@ -20,7 +20,7 @@ class RechargeController extends CommissionController
             'number' => $request['canumber'],
             'amount' => $request['amount'],
             'operator' => $request['secondaryOperatorCode'],
-            'ref_id' => uniqid("JNDRCH")
+            'ref_id' => uniqid("RCH")
         ];
 
         $response = Http::get('https://www.rechargetradition.com/webservices/api/recharge', $data);
