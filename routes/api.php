@@ -37,12 +37,14 @@ use App\Http\Controllers\Eko\MoneyTransfer\TransactionController;
 use App\Http\Controllers\Pesa24\Dashboard\UserDashboardController;
 use App\Http\Controllers\pesa24\dashboard\AdminDashboardcontroller;
 use App\Http\Controllers\Eko\MoneyTransfer\CustomerRecipientController;
+use App\Http\Controllers\IncomeWallet\RechargeController as IncomeWalletRechargeController;
 use App\Http\Controllers\Paysprint\AxisController;
 use App\Http\Controllers\Paysprint\BBPS\FastTagController;
 use App\Http\Controllers\Paysprint\CMS\AirtelCMSController;
 use App\Http\Controllers\Paysprint\CMS\FinoCMSController;
 use App\Http\Controllers\Paysprint\PANController;
 use App\Http\Controllers\Paysprint\PayoutController as PaysprintPayout;
+use App\Http\Controllers\RechargeTradition\RechargeController as RechargeTraditionRechargeController;
 use App\Http\Controllers\SRK\PayoutController as SRKPayoutController;
 
 /*
@@ -185,15 +187,13 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     // Route::post('eko/dmt/transaction-refund-otp/{tid}', [TransactionController::class, 'refund']);
     Route::post('paysprint/bank/bank-verify', [DMTController::class, 'penneyDrop']);
     /*-----------------------Razorpay Payout-----------------------*/
-    Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact'])->middleware(['throttle:1,0.167', 'charge']);
-    Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser']);
-    Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall'])->middleware('throttle:1,0.08');
+    Route::post('razorpay/payout/new-payout/{service_id}', [ContactController::class, 'createContact'])->middleware(['throttle:1,0.167', 'charge', 'mpin']);
     /*-----------------------Razorpay Payout-----------------------*/
     
     /*-----------------------SRK Payout-----------------------*/
-    Route::post('srk/payout/new-payout/{service_id}', [SRKPayoutController::class, 'payout'])->middleware(['throttle:1,0.167', 'charge']);
+    Route::post('srk/payout/new-payout/{service_id}', [SRKPayoutController::class, 'payout'])->middleware(['throttle:1,0.167', 'charge', 'mpin']);
     /*-----------------------SRK Payout-----------------------*/
-
+    
     /*-----------------------Pysprint AePS-----------------------*/
     Route::post('paysprint/aeps/money-transfer/{service_id}', [AepsApiController::class, 'withdrwal'])->middleware('paysprint_merchant');
     Route::post('paysprint/aeps/mini-statement/{service_id}', [AepsApiController::class, 'miniStatement'])->middleware('paysprint_merchant');
@@ -202,20 +202,20 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     Route::get('paysprint/aeps/fetch-bank/{service_id}', [AepsApiController::class, 'bankList'])->middleware('paysprint_merchant');
     Route::post('paysprint/aeps/transaction-status/{service_id}', [AepsApiController::class, 'transactionStatus'])->middleware('paysprint_merchant');
     /*-----------------------Pysprint AePS-----------------------*/
-
+    
     /*-----------------------Paysprint Payout-----------------------*/
     Route::post('paysprint/payout/account-status/{service_id}', [PaysprintPayout::class, 'accountStatus']);
     Route::post('paysprint/payout/new-payout', [PaysprintPayout::class, 'doTransaction'])->middleware('bank', 'mpin', 'role:admin');
     Route::post('paysprint/payout/transaction-status/{service_id}', [PaysprintPayout::class, 'status']);
     /*-----------------------Paysprint Payout-----------------------*/
-
+    
     /*-----------------------Paysprint DMT-----------------------*/
     Route::post('paysprint/dmt/customer-info/{service_id}', [DMTController::class, 'remiterQuery']);
     Route::post('paysprint/dmt/create-customer/{service_id}', [DMTController::class, 'registerRemiter']);
-
+    
     Route::post('paysprint/dmt/initiate-payment/{service_id}', [DMTController::class, 'newTransaction'])->middleware('mpin');
     Route::get('paysprint/dmt/banks/{service_id}', [DMTController::class, 'dmtBanks']);
-
+    
     Route::post('paysprint/dmt/recipient-list/{service_id}', [DMTController::class, 'fetchBeneficiary']);
     Route::post('paysprint/dmt/add-recipient/{service_id}', [DMTController::class, 'registerBeneficiary']);
     Route::post('paysprint/dmt/delete-recipient/{service_id}', [DMTController::class, 'deleteBeneficiary']);
@@ -223,8 +223,8 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     /*-----------------------Paysprint PAN-----------------------*/
     Route::post('paysprint/pan/start', [PANController::class, 'generateUrl']);
     /*-----------------------Paysprint PAN-----------------------*/
-
-
+    
+    
     /*-----------------------Paysprint BBPS-----------------------*/
     Route::get('paysprint/bbps/operators/categories/{id?}', [BillController::class, 'operatorParameter']);
     Route::post('paysprint/bbps/fetch-bill', [BillController::class, 'fetchBill']);
@@ -236,8 +236,17 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     /*-----------------------Paysprint Recharge-----------------------*/
     Route::get('paysprint/bbps/mobile-operators/{type}', [RechargeController::class, 'operatorList']);
     Route::post('paysprint/bbps/mobile-recharge/browse', [RechargeController::class, 'browsePlans']);
-    Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge'])->middleware('mpin', 'throttle:1,0.167');
+    Route::post('paysprint/bbps/mobile-recharge/do-recharge', [RechargeController::class, 'doRecharge'])->middleware(['mpin', 'throttle:1,0.167', 'recharge']);
     /*-----------------------Paysprint Recharge-----------------------*/
+    
+    /*-----------------------IncomeWallet Recharge-----------------------*/
+    Route::post('incomewallet/bbps/mobile-recharge/do-recharge', [IncomeWalletRechargeController::class, 'recharge'])->middleware(['mpin', 'throttle:1,0.167', 'recharge']);
+    /*-----------------------IncomeWallet Recharge-----------------------*/
+    
+    /*-----------------------IncomeWallet Recharge-----------------------*/
+    Route::post('rechargetradition/bbps/mobile-recharge/do-recharge', [RechargeTraditionRechargeController::class, 'recharge'])->middleware(['mpin', 'throttle:1,0.167', 'recharge']);
+    /*-----------------------IncomeWallet Recharge-----------------------*/
+    
     /*-----------------------Paysprint CMS-----------------------*/
     Route::post('paysprint/cms/fino', [FinoCMSController::class, 'generateUrl']);
     Route::post('paysprint/cms/airtel', [AirtelCMSController::class, 'generateUrl']);
@@ -254,6 +263,8 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     Route::post('paysprint/axis/account', [AxisController::class, 'generateUcc']);
     /*-----------------------Paysprint Axis-----------------------*/
 });
+Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser'])->middleware(['auth:api', 'active']);
+Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall'])->middleware(['auth:api', 'active', 'throttle:1,0.08']);
 
 Route::get('admin/packages', [AdminController::class, 'packages'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);
 Route::get('admin/all-users-list/{role}/{id?}', [UserController::class, 'userInfoPackage'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);
@@ -279,6 +290,9 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
     Route::post('link-package', [AdminDashboardcontroller::class, 'packageService']);
 
     Route::get('payouts/{processing}', [PayoutController::class, 'fetchPayoutAdmin']);
+    Route::get('recharges/{status}', [AdminController::class, 'fetchRecharge']);
+    Route::post('paysprint/update-recharges', [RechargeController::class, 'statusEnquiry']);
+    Route::post('rechargetradition/update-recharges', [RechargeTraditionRechargeController::class, 'updateRecharge']);
     Route::get('fetch-fund-requests/{id}', [FundRequestController::class, 'fetchFundId']);
 
     Route::post('razorpay/fetch-payout/{processing?}', [PayoutController::class, 'fetchPayoutAdmin']);
@@ -347,14 +361,17 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
 
     Route::get('user-reports/{name}/{id}', [AdminController::class, 'userReports']);
     Route::get('print-report', [AdminController::class, 'printReports']);
+    Route::get('user/print-report', [AdminController::class, 'printUserReports']);
 
     Route::get('user/overview/{user_id}', [UserDashboardController::class, 'adminOverview']);
     Route::get('market-overview', [AdminController::class, 'marketOverview']);
 });
 
 Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);
-Route::any('payout-callback', [WebhookController::class, 'confirmPayout']);
-Route::any('callback-paysprint', [CallbackController::class, 'onboardCallback']);
+Route::any('payout-callback', [WebhookController::class, 'confirmPayout'])->middleware('idempotency');
+Route::any('onboard-callback-paysprint', [CallbackController::class, 'onboardCallback']);
+Route::any('income-wallet-callback', [CallbackController::class, 'incomeWallet']);
+Route::any('recharge-tradition-callback', [CallbackController::class, 'rechargeTradition']);
 
 Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 'admin'], function () {
     Route::post('service-status', [GlobalServiceController::class, 'manageService']);

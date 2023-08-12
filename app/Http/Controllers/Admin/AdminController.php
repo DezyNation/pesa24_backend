@@ -970,6 +970,33 @@ class AdminController extends Controller
         return $data;
     }
 
+
+    public function printUserReports(Request $request, $id)
+    {
+        $type = $request['type'];
+        switch ($type) {
+            case 'payouts':
+
+                $processing = $request['report'];
+                $payout = $this->payoutReports($request, $processing);
+                return $payout;
+                break;
+
+            case 'fund-requests':
+                $data = $this->fundUserReports($request);
+                return $data;
+                break;
+
+            case 'ledger':
+                $data = $this->printLedger($request);
+                return $data;
+                break;
+
+            default:
+                return 'error';
+                break;
+        }
+    }
     public function printReports(Request $request)
     {
         $type = $request['type'];
@@ -1193,5 +1220,56 @@ class AdminController extends Controller
         }
 
         return response()->noContent();
+    }
+
+    public function fetchRecharge(Request $request, $status)
+    {
+        $search = $request['search'];
+        $user_id = $request['userId'];
+        $from = $request['from'] ?? Carbon::today();
+        $to = $request['to'] ?? Carbon::tomorrow();
+
+        if (!is_null($search) || !empty($search)) {
+            $data = DB::table('recharge_requests')
+                ->join('users', 'users.id', '=', 'recharge_requests.user_id')
+                ->select('recharge_requests.*', 'users.name', 'users.phone_number')
+                ->where('reference_id', 'like', "%" . $search . "%")->orWhere('ca_number', 'like', "%" . $search . "%")
+                ->latest('recharge_requests.created_at')->paginate(200);
+            return $data;
+        }
+
+        if (!is_null($user_id) || !empty($user_id)) {
+            $data = DB::table('recharge_requests')
+                ->join('users', 'users.id', '=', 'recharge_requests.user_id')
+                ->select('recharge_requests.*', 'users.name', 'users.phone_number')
+                ->where('user_id', $user_id)->whereBetween('created_at', [$from, $to])
+                ->latest('recharge_requests.created_at')->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search' => $search]);
+            return $data;
+        }
+
+        if ($status == 'pending') {
+            $data = DB::table('recharge_requests')
+                ->join('users', 'users.id', '=', 'recharge_requests.user_id')
+                ->select('recharge_requests.*', 'users.name', 'users.phone_number')
+                ->where('status', $status)
+                ->latest('recharge_requests.created_at')
+                ->get();
+            // ->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search'=> $search]);
+            return $data;
+        } else if ($status == 'all') {
+            $data = DB::table('recharge_requests')
+                ->join('users', 'users.id', '=', 'recharge_requests.user_id')
+                ->select('recharge_requests.*', 'users.name', 'users.phone_number')
+                ->latest('recharge_requests.created_at')
+                ->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search' => $search]);
+            return $data;
+        }
+
+        $data = DB::table('recharge_requests')
+            ->join('users', 'users.id', '=', 'recharge_requests.user_id')
+            ->select('recharge_requests.*', 'users.name', 'users.phone_number')
+            ->where('status', $status)
+            ->latest('recharge_requests.created_at')->paginate(200)->appends(['userId' => $user_id, 'from' => $from, 'to' => $to, 'search' => $search]);
+        return $data;
     }
 }

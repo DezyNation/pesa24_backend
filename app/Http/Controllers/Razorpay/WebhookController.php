@@ -9,12 +9,14 @@ use Illuminate\Support\Facades\DB;
 use App\Events\PayoutStatusUpdated;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\CommissionController;
+use Illuminate\Support\Facades\Cache;
 
 class WebhookController extends CommissionController
 {
     public function confirmPayout(Request $request)
     {
         Log::channel('callback')->info('callback-razorpay', $request->all());
+        Cache::put($request->header('x-razorpay-event-id'), $request->header('x-razorpay-event-id'), 600);
         DB::transaction(function () use ($request) {
 
             $payout_id = $request['payload.payout.entity.id'];
@@ -73,7 +75,7 @@ class WebhookController extends CommissionController
                 $this->transaction(0, "Payout Reversal for account $account_number", 'payout', $result[0]->user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $request['payload.payout.entity.amount'] / 100);
                 $commission = $this->razorpayReversal($result[0]->amount, $result[0]->user_id, $transaction_id, $result[0]->account_number);
                 $utr = $request['payload.payout.entity.utr'] ?? 'No UTR';
-                event(new PayoutStatusUpdated("Amount {$result[0]->amount} ($utr)", "Payout {$request['payload.payout.entity.id']} {$request['payload.payout.entity.status']}", $result[0]->user_id));
+                event(new PayoutStatusUpdated("Amount {$result[0]->amount} ($utr)", "Payout {$request['payload.payout.entity.status']}", $result[0]->user_id));
             }
             return true;
         });

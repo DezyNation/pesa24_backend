@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\FundRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -47,6 +48,7 @@ class FundRequestController extends Controller
         $phone = 7017200263;
         $user_phone = auth()->user()->phone_number;
         $name = auth()->user()->name;
+        event(new FundRequest("$name ($id)", $amount));
         $message = "$name mob $user_phone Raised a fund request amt $amount, on date:$date $time.'-From P24 Pvt. Ltd.";
         // $message = "Hello ADMIN, Your fund request has been raised and Now Your Bal $balance on the date of $today. -From P24 Technology Pvt. Ltd.";
         Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$message", []);
@@ -169,9 +171,11 @@ class FundRequestController extends Controller
         return $data;
     }
 
-    public function adminfetchFundUser($id)
+    public function adminfetchFundUser(Request $request, $id)
     {
-        $data = DB::table('funds')->where('user_id', $id)->select(
+        $data = DB::table('funds')
+        ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+        ->where('user_id', $id)->select(
             'amount',
             'bank_name',
             'transaction_id',
