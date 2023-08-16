@@ -1357,6 +1357,9 @@ class CommissionController extends Controller
         $parent = DB::table('user_parent')->where('user_id', $user_id);
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
+            if (is_null($parent_id[0])) {
+                return response("Parent not found");
+            }
             $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
         }
         return $table;
@@ -1375,14 +1378,14 @@ class CommissionController extends Controller
         }
         $table = $table[0];
         $user = User::findOrFail($user_id);
-        $role = $user[0]->getRoleNames()[0];
+        $role = $user->getRoleNames()[0];
 
         $fixed_charge = $table->fixed_charge;
         $is_flat = $table->is_flat;
         $gst = $table->gst;
         $role_commission_name = $role . "_commission";
         $role_commission = $table->$role_commission_name;
-        $opening_balance = $user[0]->wallet;
+        $opening_balance = $user->wallet;
 
         if ($is_flat) {
             $debit = 0;
@@ -1408,6 +1411,9 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
+            if (is_null($parent_id[0])) {
+                return response("Parent not found");
+            }
             $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
         }
 
