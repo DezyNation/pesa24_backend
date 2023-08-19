@@ -73,7 +73,7 @@ class BillController extends CommissionController
             'operator' => $request['operator_id'],
             'canumber' => $request['canumber'],
             'amount' => $request['amount'],
-            'referenceid' => uniqid() . Str::random(12),
+            'referenceid' => uniqid("PES24-BP"),
             'latitude' => $request['latitude'],
             'longitude' => $request['longitude'],
             'mode' => 'online',
@@ -84,13 +84,12 @@ class BillController extends CommissionController
             'token' => $token,
             'content-type' => 'application/json',
             'Authorisedkey' => env('AUTHORISED_KEY'),
-            ])->post('https://api.paysprint.in/api/v1/service/bill-payment/bill/paybill', $data);
-            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $balance_left = $walletAmt[0] - $data['amount'];
+        ])->post('https://api.paysprint.in/api/v1/service/bill-payment/bill/paybill', $data);
 
-            $transaction_id = "BBPS" . strtoupper(Str::random(9));
         $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-        $transaction_id = "DMT" . strtoupper(Str::random(9));
+        $balance_left = $walletAmt[0] - $data['amount'];
+        $transaction_id = $data['referenceid'];
+
         if ($response->json($key = 'response_code') == 1 || $response->json($key = 'response_code') == 0) {
             $metadata = [
                 'status' => $response['status'],
@@ -99,14 +98,15 @@ class BillController extends CommissionController
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,
                 'message' => $response['message'],
+                'operator_name' => $request['operatorName'],
+                'category' => $request['category'],
                 'amount' => $data['amount'],
                 'operator_id' => $response['operatorid'],
                 'reference_id' => $data['referenceid'],
                 'acknowldgement_number' => $response['ackno'],
             ];
-            $this->transaction($data['amount'], "Bill Payment", 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
-            $this->bbpsPaysprintCommission(auth()->user()->id, $data['operator'], $data['amount']);
-
+            $this->transaction($data['amount'], "Bill payment for {$data['canumber']}", 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->bbpsPaysprintCommission(auth()->user()->id, $data['operator'], $data['amount'], $data['canumber']);
         } elseif ($response->json($key = 'response_code') == 16 || $response->json($key = 'response_code') == 6 || $response->json($key = 'response_code') == 12) {
             $metadata = [
                 'status' => false,
@@ -114,12 +114,14 @@ class BillController extends CommissionController
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'operator_id' => $request['operator_id'],
+                'operator_name' => $request['operatorName'],
+                'category' => $request['category'],
                 'user_phone' => auth()->user()->phone_number,
                 'canumber' => $data['canumber'],
                 'amount' => $data['amount'],
                 'message' => "Server Busy pleasy try later!"
             ];
-            $this->transaction($data['amount'], 'Bill payment', 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction($data['amount'], "Bill payment for {$data['canumber']}", 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             return response(["Server Busy pleasy try later!", 'metadata' => $metadata], 501);
         } else {
             $metadata = [
@@ -127,6 +129,8 @@ class BillController extends CommissionController
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,
+                'operator_name' => $request['operatorName'],
+                'category' => $request['category'],
                 'operator_id' => $request['operator_id'],
                 'canumber' => $data['canumber'],
                 'amount' => $data['amount'],

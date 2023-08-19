@@ -1046,7 +1046,7 @@ class CommissionController extends Controller
 
     /*-------------------------------------BBPS Commissions-------------------------------------*/
 
-    public function bbpsPaysprintCommission($user_id, $operator, $amount)
+    public function bbpsPaysprintCommission($user_id, $operator, $amount, $canumber)
     {
         $table = DB::table('b_b_p_s')
             ->join('package_user', 'package_user.package_id', '=', 'b_b_p_s.package_id')
@@ -1080,11 +1080,12 @@ class CommissionController extends Controller
         }
 
         $metadata = [
-            'status' => true
+            'status' => true,
+            'canumber' => $canumber
         ];
 
         $transaction_id = "RECHARGE" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'BBPS bill Comission', 'bbps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, "Bill payment commission for {$metadata['canumber']}", 'bbps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
         $user->update([
             'wallet' => $closing_balance
         ]);
@@ -1096,13 +1097,13 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->bbpsParentPaysprintCommission($parent_id[0], $operator, $amount);
+            $this->bbpsParentPaysprintCommission($parent_id[0], $operator, $amount, $canumber);
         }
 
         return true;
     }
 
-    public function bbpsParentPaysprintCommission($user_id, $operator, $amount)
+    public function bbpsParentPaysprintCommission($user_id, $operator, $amount, $canumber)
     {
         $table = DB::table('b_b_p_s')
             ->join('package_user', 'package_user.package_id', '=', 'b_b_p_s.package_id')
@@ -1135,13 +1136,11 @@ class CommissionController extends Controller
             $closing_balance = $opening_balance - $debit + $credit;
         }
         $metadata = [
-            'status' => true
+            'status' => true,
+            'canumber' => $canumber
         ];
         $transaction_id = "BBPSCOM" . strtoupper(Str::random(9));
-        $this->transaction($debit, 'BBPS Bill COMISSIONS', 'bbps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
-        $user->update([
-            'wallet' => $closing_balance
-        ]);
+        $this->transaction($debit, "Bill payment commission for {$metadata['canumber']}", 'bbps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No commission for parents");
@@ -1151,7 +1150,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->bbpsParentPaysprintCommission($parent_id[0], $operator, $amount);
+            $this->bbpsParentPaysprintCommission($parent_id[0], $operator, $amount, $canumber);
         }
 
         return true;
