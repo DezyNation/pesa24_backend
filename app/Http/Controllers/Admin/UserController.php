@@ -340,10 +340,10 @@ class UserController extends Controller
                 ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
                 ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
                 ->join('package_user', 'package_user.user_id', '=', 'users.id')
-                // ->join('packages', 'packages.id', 'package_user.package_id')
+                ->join('packages', 'packages.id', 'package_user.package_id')
                 ->where(['user_parent.parent_id' => auth()->user()->id
                 , 'roles.name' => $role])
-                ->select('users.id', 'users.name', 'users.email', 'users.phone_number', 'roles.name as role', 'users.alternate_phone', 'users.line', 'users.city', 'users.state', 'users.pincode', 'users.wallet', 'users.minimum_balance', 'users.kyc', 'users.aadhar_front', 'users.aadhar_back', 'users.pan_photo', 'users.profile_pic', 'users.gender', 'users.dob', 'users.gst_number')
+                ->select('users.id', 'users.name', 'users.email', 'users.phone_number', 'roles.name as role_name', 'users.alternate_phone', 'users.line', 'users.city', 'users.state', 'users.pincode', 'users.wallet', 'users.minimum_balance', 'packages.name as package_name', 'users.kyc', 'users.aadhar_front', 'users.aadhar_back', 'users.pan_photo', 'users.profile_pic', 'users.gender', 'users.dob', 'users.gst_number')
                 ->get();
             return  $user;
         }
@@ -355,7 +355,7 @@ class UserController extends Controller
             ->join('packages', 'packages.id', 'package_user.package_id')
             ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
             ->where(['user_parent.parent_id' => auth()->user()->id, 'users.id' => $id, 'roles.name' => $role])
-            ->select('users.id', 'users.name', 'users.email', 'users.phone_number', 'users.alternate_phone', 'users.line', 'users.line', 'users.city', 'users.state', 'users.pincode', 'users.wallet', 'users.minimum_balance', 'users.kyc', 'roles.name as role_name', 'users.aadhar_front', 'users.aadhar_back', 'users.pan_photo', 'users.profile_pic', 'packages.name as package_name', 'users.gender', 'users.dob', 'users.gst_number')
+            ->select('users.id', 'users.name', 'users.email', 'users.phone_number', 'users.alternate_phone', 'users.line', 'users.city', 'users.state', 'users.pincode', 'users.wallet', 'users.minimum_balance', 'users.kyc', 'roles.name as role_name', 'users.aadhar_front', 'users.aadhar_back', 'users.pan_photo', 'users.profile_pic', 'packages.name as package_name', 'users.gender', 'users.dob', 'users.gst_number')
             ->get();
         return $user;
     }
