@@ -339,7 +339,7 @@ class UserController extends Controller
                 ->join('users', 'users.id', '=', 'user_parent.user_id')
                 ->join('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
                 ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
-                // ->join('package_user', 'package_user.user_id', '=', 'users.id')
+                ->join('package_user', 'package_user.user_id', '=', 'users.id')
                 // ->join('packages', 'packages.id', 'package_user.package_id')
                 ->where(['user_parent.parent_id' => auth()->user()->id
                 , 'roles.name' => $role])
