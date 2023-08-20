@@ -529,10 +529,10 @@ class AepsApiController extends CommissionController
                 'paysprint_merchant' => $data['submerchantid'],
                 'updated_at' => now()
             ]);
-            return $data['submerchantid'];
+
+            return response()->json(['response' => $response->json(), 'merchant_id' => $data['submerchantid']]);
         }
 
-        return response($response->json());
     }
 
     public function twoFactorAuth(Request $request)
