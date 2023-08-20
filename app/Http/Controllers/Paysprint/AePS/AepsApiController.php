@@ -530,8 +530,10 @@ class AepsApiController extends CommissionController
                 'updated_at' => now()
             ]);
 
-            return response()->json(['response' => $response->json(), 'merchant_id' => $data['submerchantid']]);
+            return response()->json(['merchant_id' => $data['submerchantid']]);
         }
+
+        return false;
 
     }
 
