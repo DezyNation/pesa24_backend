@@ -48,7 +48,7 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true,
         ];
-        $this->transaction($debit, 'Commission AePS', 'aeps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, 'Commission AePS', 'aeps-cw-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -124,7 +124,7 @@ class CommissionController extends Controller
 
     /*-------------------------------------AePS Mini-statement Commission-------------------------------------*/
 
-    public function aepsMiniComission($user_id)
+    public function aepsMiniComission($user_id, $canumber)
     {
         $table = DB::table('ae_p_s_mini_statements')
             ->join('package_user', 'package_user.package_id', '=', 'ae_p_s_mini_statements.package_id')
@@ -164,7 +164,7 @@ class CommissionController extends Controller
         $metadata = [
             'status' => true,
         ];
-        $this->transaction($debit, 'Commission AePS mini statement', 'aeps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, "Commission AePS mini statement $canumber", 'aeps-ms-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -174,13 +174,13 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->parentAepsMiniComission($parent_id[0]);
+            $this->parentAepsMiniComission($parent_id[0], $canumber);
         }
 
         return true;
     }
 
-    public function parentAepsMiniComission($user_id)
+    public function parentAepsMiniComission($user_id, $canumber)
     {
         $table = DB::table('ae_p_s_mini_statements')
             ->join('package_user', 'package_user.package_id', '=', 'ae_p_s_mini_statements.package_id')
@@ -221,7 +221,7 @@ class CommissionController extends Controller
             'status' => true,
         ];
 
-        $this->transaction($debit, 'Commission AePS mini statement', 'aeps', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        $this->transaction($debit, "Commission AePS mini statement for $canumber", 'aeps-ms-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
 
         if (!$table->parents) {
             return response("No comission for parents");
@@ -231,7 +231,7 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->parentAepsMiniComission($parent_id[0]);
+            $this->parentAepsMiniComission($parent_id[0], $canumber);
         }
 
         return true;

@@ -126,7 +126,7 @@ class AepsApiController extends CommissionController
                 'amount' => $encryption['amount'],
                 'aadhaar_number' => $request['aadhaarNo'],
                 'bank_code' => $request['bankCode'],
-                'bank_name' => $request['bankName']??null,
+                'bank_name' => $request['bankName'] ?? null,
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
                 'user_id' => auth()->user()->id,
@@ -140,7 +140,7 @@ class AepsApiController extends CommissionController
                 'status' => false,
                 'amount' => $encryption['amount'],
                 'aadhaar_number' => $request['aadhaarNo'],
-                'bank_name' => $request['bankName']??null,
+                'bank_name' => $request['bankName'] ?? null,
                 'bank_code' => $request['bankCode'],
                 'user_name' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
@@ -187,15 +187,17 @@ class AepsApiController extends CommissionController
         if (!array_key_exists('status', $response->json())) {
             $metadata = [
                 'status' => false,
-                'message' => $response['message']??$response,
+                'message' => $response['message'] ?? $response,
                 'aadhaar_number' => $request['aadhaarNo'],
-                'bank_name' => $request['bankName']??null,
+                'bank_name' => $request['bankName'] ?? null,
                 'bank_code' => $request['bankCode'],
                 'user_id' => auth()->user()->id,
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
             ];
-            $this->transaction(0, 'AePS: Balance Enquiry', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
+
+            return response(['metadata' => $metadata]);
+            // $this->transaction(0, 'AePS: Balance Enquiry', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
         }
         $this->apiRecords($data['client_ref_id'], 'eko', $response);
         if ($response['status'] == 0) {
@@ -205,26 +207,26 @@ class AepsApiController extends CommissionController
                 'user_name' => auth()->user()->name,
                 'aadhaar_number' => $request['aadhaarNo'],
                 'user_phone' => auth()->user()->phone_number,
-                'bank_name' => $request['bankName']??null,
+                'bank_name' => $request['bankName'] ?? null,
                 'bank_code' => $request['bankCode'],
                 'bank_ref_num' => $response['data']['bank_ref_num'],
                 'mini_statment' => $response['data']['mini_statement_list'],
                 'message' => $response['message']
             ];
-            $this->transaction(0, 'AePS: Mini Statement', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
-            $this->aepsMiniComission(auth()->user()->id);
+            $this->transaction(0, "AePS: Mini Statement for {$data['customerId']}", 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
+            $this->aepsMiniComission(auth()->user()->id, $data['customerId']);
         } else {
             $metadata = [
                 'status' => false,
                 'user_id' => auth()->user()->id,
                 'bank_code' => $request['bankCode'],
-                'bank_name' => $request['bankName']??null,
+                'bank_name' => $request['bankName'] ?? null,
                 'aadhaar_number' => $request['aadhaarNo'],
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
                 'message' => $response['message']
             ];
-            $this->transaction(0, 'AePS: Mini Statement', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
+            // $this->transaction(0, 'AePS: Mini Statement', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
         }
         return response(['metadata' => $metadata]);
     }
@@ -241,9 +243,9 @@ class AepsApiController extends CommissionController
         $data = [
             "service_type" => "3",
             "initiator_id" => 9758105858,
-            "user_code" => $encryption['user_code'] ,
-            "customer_id" => $request['customerId'] ,
-            "bank_code" => $request['bankCode'] ,
+            "user_code" => $encryption['user_code'],
+            "customer_id" => $request['customerId'],
+            "bank_code" => $request['bankCode'],
             "amount" => $encryption['amount'],
             "client_ref_id" => "PESA24AEPSB" . strtoupper(uniqid()),
             "pipe" => "0",
@@ -266,15 +268,17 @@ class AepsApiController extends CommissionController
         if (!array_key_exists('status', $response->json())) {
             $metadata = [
                 'status' => false,
-                'message' => $response['message']??$response,
+                'message' => $response['message'] ?? $response,
                 'aadhaar_number' => $request['aadhaarNo'],
-                'bank_name' => $request['bankName']??null,
+                'bank_name' => $request['bankName'] ?? null,
                 'bank_code' => $request['bankCode'],
                 'user_id' => auth()->user()->id,
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
             ];
-            $this->transaction(0, 'AePS: Balance Enquiry', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
+            $this->transaction(0, "Balance enquiry for {$data['customer_id']}", 'aeps-be', auth()->user()->id, auth()->user()->wallet, $data['referenceno'], auth()->user()->wallet, $response->json(), 0);
+
+            // $this->transaction(0, 'AePS: Balance Enquiry', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
         }
         if ($response['status'] == 0) {
             $metadata = [
@@ -283,7 +287,7 @@ class AepsApiController extends CommissionController
                 'bank_ref_num' => $response['data']['bank_ref_num'],
                 'aadhar' => $response['data']['aadhar'],
                 'aadhaar_number' => $request['aadhaarNo'],
-                'bank_name' => $request['bankName']??null,
+                'bank_name' => $request['bankName'] ?? null,
                 'bank_code' => $request['bankCode'],
                 // 'merchantname' => $response['data']['merchantname'],
                 'message' => $response['message'],
@@ -298,13 +302,13 @@ class AepsApiController extends CommissionController
                 'status' => false,
                 'message' => $response['message'],
                 'aadhaar_number' => $request['aadhaarNo'],
-                'bank_name' => $request['bankName']??null,
+                'bank_name' => $request['bankName'] ?? null,
                 'bank_code' => $request['bankCode'],
                 'user_id' => auth()->user()->id,
                 'user_name' => auth()->user()->name,
                 'user_phone' => auth()->user()->phone_number,
             ];
-            $this->transaction(0, 'AePS: Balance Enquiry', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
+            // $this->transaction(0, 'AePS: Balance Enquiry', 'aeps', auth()->user()->id, $opening_balance, $transaction_id, $opening_balance, json_encode($metadata));
         }
         return response(['metadata' => $metadata]);
     }
@@ -320,21 +324,6 @@ class AepsApiController extends CommissionController
         $this->apiRecords($transaction_id, 'eko', $response);
         return $response;
     }
-
-    // public function fundSettlement(Request $request)
-    // {
-    //     $data = [
-    //         'service_code' => "39",
-    //         'initiator_id' => 7411111111,
-    //         'user_code' => auth()->user()->user_code ??  20810200
-    //     ];
-
-    //     $response = Http::asForm()->withHeaders(
-    //         $this->headerArray()
-    //     )->put('https://api.eko.in:25002/ekoapi/v1/user/service/activate', $data);
-    //     return $response;
-    //     $this->apiRecords($data['user_code'], 'eko', $response);
-    // }
 
     public function bankSettlement(Request $request)
     {
@@ -406,7 +395,20 @@ class AepsApiController extends CommissionController
     }
 }
 
+// public function fundSettlement(Request $request)
+// {
+//     $data = [
+//         'service_code' => "39",
+//         'initiator_id' => 7411111111,
+//         'user_code' => auth()->user()->user_code ??  20810200
+//     ];
 
+//     $response = Http::asForm()->withHeaders(
+//         $this->headerArray()
+//     )->put('https://api.eko.in:25002/ekoapi/v1/user/service/activate', $data);
+//     return $response;
+//     $this->apiRecords($data['user_code'], 'eko', $response);
+// }
 /**
  * initiate transaction.
  * charge the fixed amount

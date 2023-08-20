@@ -45,7 +45,7 @@ class AepsApiController extends CommissionController
         $data = [
             'latitude' => $latlong[0],
             'longitude' => $latlong[1],
-            'referenceno' => uniqid(),
+            'referenceno' => "APB" . time() . Str::random(4),
             'ipaddress' => $request->ip(),
             'mobilenumber' => $request['customerId'],
             'adhaarnumber' => $request['aadhaarNo'],
@@ -83,6 +83,8 @@ class AepsApiController extends CommissionController
                 'message' => $response['message'] ?? "Transaction Failed",
                 'user_phone' => auth()->user()->phone_number,
             ];
+
+            $this->transaction(0, "Balance enquiry for {$metadata['mobile_number']}", 'aeps-be', auth()->user()->id, auth()->user()->wallet, $data['referenceno'], auth()->user()->wallet, $response->json(), 0);
         } else {
             $metadata = [
                 'status' => false,
@@ -114,12 +116,12 @@ class AepsApiController extends CommissionController
         $pid = $request['pid'];
 
         $latlong = explode(",", $request['latlong']);
-
+        $transaction_id = "APC" . time() . strtoupper(Str::random(4));
         $data = [
             'latitude' => $latlong[0],
             'longitude' => $latlong[1],
             'mobilenumber' => $request['customerId'],
-            'referenceno' => uniqid(),
+            'referenceno' => $transaction_id,
             'ipaddress' => $request->ip(),
             'amount' => $request['amount'],
             'adhaarnumber' => $request['aadhaarNo'],
@@ -150,7 +152,6 @@ class AepsApiController extends CommissionController
         }
 
         if ($response['status'] == true && $response['response_code'] == 1) {
-            $transaction_id = "AEPSW" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => $response['status'],
                 'user_id' => auth()->user()->id,
@@ -169,10 +170,9 @@ class AepsApiController extends CommissionController
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
             $balance_left = $walletAmt[0] + $data['amount'];
 
-            $this->transaction(0, "AePS withdrawal for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata), $data['amount']);
+            $this->transaction(0, "AePS withdrawal for {$data['mobilenumber']}", 'aeps-cw', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata), $data['amount']);
             $this->aepsComission($data['amount'], auth()->user()->id);
         } else {
-            $transaction_id = "AEPS" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => false,
                 'user_id' => auth()->user()->id,
@@ -201,7 +201,7 @@ class AepsApiController extends CommissionController
         $response = Http::withHeaders([
             'Token' => $token,
             'Authorisedkey' => env('AUTHORISED_KEY'),
-        ])->post('https://paysprint.in/service-api/api/v1/service/aeps/banklist/index', []);
+        ])->post('https://api.paysprint.in/api/v1/service/aeps/banklist/index', []);
 
         return $response;
     }
@@ -250,11 +250,12 @@ class AepsApiController extends CommissionController
 
         $latlong = explode(",", $request['latlong']);
 
+        $transaction_id = "APM" . time() . Str::random(4);
         $data = [
             'latitude' => $latlong[0],
             'longitude' => $latlong[1],
             'mobilenumber' => $request['customerId'],
-            'referenceno' => uniqid(),
+            'referenceno' => $transaction_id,
             'ipaddress' => $request->ip(),
             'adhaarnumber' => $request['aadhaarNo'],
             'accessmodetype' => 'SITE',
@@ -289,7 +290,6 @@ class AepsApiController extends CommissionController
         }
 
         if ($response['status'] == true && $response['response_code'] == 1) {
-            $transaction_id = "AEPSW" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => $response['status'],
                 'user_id' => auth()->user()->id,
@@ -305,10 +305,9 @@ class AepsApiController extends CommissionController
                 'acknowldgement_number' => $response['ackno'],
             ];
 
-            $this->transaction(0, "AePS Mini Statement for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata), $data['amount']);
-            $this->aepsMiniComission(auth()->user()->id);
+            $this->transaction(0, "AePS Mini Statement for {$data['mobilenumber']}", 'aeps-ms', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata), $data['amount']);
+            $this->aepsMiniComission(auth()->user()->id, $data['mobilenumber']);
         } else {
-            $transaction_id = "MINIS" . strtoupper(Str::random(9));
             $metadata = [
                 'status' => false,
                 'user_id' => auth()->user()->id,
@@ -322,7 +321,7 @@ class AepsApiController extends CommissionController
                 'mobile_number' => $data['mobilenumber'],
             ];
             $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $this->transaction(0, "Mini Statement for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
+            // $this->transaction(0, "Mini Statement for {$data['mobilenumber']}", 'aeps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
         }
 
         return [$response->object(), 'metadata' => $metadata];
