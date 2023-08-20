@@ -55,7 +55,7 @@ use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayo
 */
 
 Route::get('/', function () {
-    return ['Application' => 'Janpay'];
+    return ['Application' => 'Pesa24'];
 });
 
 // Route::get('test', [TestController::class, 'test']);
