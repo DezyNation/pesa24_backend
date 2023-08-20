@@ -73,7 +73,7 @@ class BillController extends CommissionController
             'operator' => $request['operator_id'],
             'canumber' => $request['canumber'],
             'amount' => $request['amount'],
-            'referenceid' => uniqid("PES24-BP"),
+            'referenceid' => "BBP".time().Str::random(4),
             'latitude' => $request['latitude'],
             'longitude' => $request['longitude'],
             'mode' => 'online',
@@ -121,7 +121,7 @@ class BillController extends CommissionController
                 'amount' => $data['amount'],
                 'message' => "Server Busy pleasy try later!"
             ];
-            $this->transaction($data['amount'], "Bill payment for {$data['canumber']}", 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            // $this->transaction($data['amount'], "Bill payment for {$data['canumber']}", 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
             return response(["Server Busy pleasy try later!", 'metadata' => $metadata], 501);
         } else {
             $metadata = [
@@ -135,8 +135,6 @@ class BillController extends CommissionController
                 'canumber' => $data['canumber'],
                 'amount' => $data['amount'],
             ];
-
-            $this->transaction(0, 'Bill payment', 'bbps', auth()->user()->id, $walletAmt[0], $transaction_id, $walletAmt[0], json_encode($metadata));
 
             return response([$response['message'], 'metadata' => $metadata], 400);
         }
