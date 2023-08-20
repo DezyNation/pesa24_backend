@@ -271,7 +271,7 @@ Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall'])-
 Route::get('admin/packages', [AdminController::class, 'packages'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);
 Route::get('admin/all-users-list/{role}/{id?}', [UserController::class, 'userInfoPackage'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);
 Route::post('admin/create/user', [UserController::class, 'store'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);
-Route::get('parent/users-list/{role}/{id?}', [UserController::class, 'childUser'])->middleware(['auth:api', 'role:distributor|super_distributor']);
+Route::get('parent/users-list/{role}', [UserController::class, 'childUser'])->middleware(['auth:api', 'role:distributor|super_distributor']);
 Route::get('parent/users-transactions/{id?}', [UserController::class, 'userReport'])->middleware(['auth:api', 'role:distributor|super_distributor']);
 Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 'admin'], function () {
     Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUserAll']);
