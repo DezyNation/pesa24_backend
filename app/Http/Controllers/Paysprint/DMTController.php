@@ -192,7 +192,7 @@ class DMTController extends CommissionController
             'mobile' => $request['customerId'],
             'accno' => $request['accountNumber'],
             'benename' => $request['beneficiaryName'],
-            'referenceid' => "JANPAY" . uniqid(),
+            'referenceid' => "PS24DMT".time().Str::random(4),
             'pincode' => auth()->user()->pincode,
             'address' => auth()->user()->line,
             'bankid' => $request['selectedBankCode'],
@@ -249,14 +249,14 @@ class DMTController extends CommissionController
                 'message' => $response['message'] ?? null
             ];
 
-            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $balance_left = $walletAmt[0] - $request['amount'];
+            $walletAmt = auth()->user()->wallet;
+            $balance_left = $walletAmt - $request['amount'];
             DB::table('users')->where('id', auth()->user()->id)->update([
                 'wallet' => $balance_left,
                 'updated_at' => now()
             ]);
 
-            $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt, $transaction_id, $balance_left, json_encode($metadata));
             $this->dmtCommission(auth()->user()->id, $request['amount'], $transaction_id);
         } elseif ($response['txn_status'] == 2) {
             $metadata = [
@@ -274,14 +274,10 @@ class DMTController extends CommissionController
                 'message' => $response['message'] ?? null
             ];
 
-            $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-            $balance_left = $walletAmt[0] - $request['amount'];
-            DB::table('users')->where('id', auth()->user()->id)->update([
-                'wallet' => $balance_left,
-                'updated_at' => now()
-            ]);
+            $walletAmt = auth()->user()->wallet;
+            $balance_left = $walletAmt - $request['amount'];
 
-            $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction($request['amount'], 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt, $transaction_id, $balance_left, json_encode($metadata));
         } elseif ($response['txn_status'] == 0 || $response['txn_status'] == 5) {
             if ($response['response_code'] == 13) {
                 $metadata = [
@@ -302,8 +298,8 @@ class DMTController extends CommissionController
                 'reference_id' => $data['referenceid'] ?? null,
                 'beneficiary_name' => $data['benename'] ?? null
             ];
-            $walletAmt = auth()->user()->wallet;
-            $this->transaction(0, 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt, json_encode($metadata));
+            // $walletAmt = auth()->user()->wallet;
+            // $this->transaction(0, 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt, json_encode($metadata));
             return ['response' => $response->body(), 'metadata' => $metadata];
         } else {
 
@@ -319,8 +315,8 @@ class DMTController extends CommissionController
                 'reference_id' => $data['referenceid'] ?? null,
                 'beneficiary_name' => $data['benename'] ?? null
             ];
-            $walletAmt = auth()->user()->wallet;
-            $this->transaction(0, 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt, json_encode($metadata));
+            // $walletAmt = auth()->user()->wallet;
+            // $this->transaction(0, 'DMT Transaction', 'dmt', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt, json_encode($metadata));
             return ['response' => $response->body(), 'metadata' => $metadata];
         }
 
