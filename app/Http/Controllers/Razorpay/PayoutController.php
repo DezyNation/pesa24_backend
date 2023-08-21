@@ -266,8 +266,9 @@ class PayoutController extends CommissionController
         $reference_id = $payout->reference_id;
 
         $array = [
-            'event' => 'admin update payout',
+            'event' => 'update.payout',
             'status' => $transfer['status'],
+            'user' => auth()->user()->name,
             'utr' => $transfer['utr'] ?? 'no utr',
         ];
         $this->apiRecords($reference_id, 'janpay', json_encode($array));
