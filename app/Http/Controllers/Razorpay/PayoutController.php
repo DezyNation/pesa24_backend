@@ -72,6 +72,7 @@ class PayoutController extends CommissionController
             $metadata = [
                 'status' => $transfer['status'],
                 'amount' => $amount,
+                'payout_id' => $transfer['id'] ?? null,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
                 'utr' => null,
@@ -85,6 +86,7 @@ class PayoutController extends CommissionController
             $metadata2 = [
                 'status' => $transfer['status'],
                 'amount' => $amount,
+                'payout_id' => $transfer['id'] ?? null,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
                 // 'utr' => null,
@@ -105,6 +107,7 @@ class PayoutController extends CommissionController
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
                 'utr' => null,
+                'payout_id' => $transfer['id'] ?? null,
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,
@@ -118,6 +121,7 @@ class PayoutController extends CommissionController
                 'amount' => $data['amount'] / 100,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
+                'payout_id' => $transfer['id'] ?? null,
                 // 'utr' => null,
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
