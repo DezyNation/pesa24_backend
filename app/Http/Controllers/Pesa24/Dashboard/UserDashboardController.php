@@ -23,10 +23,37 @@ class UserDashboardController extends Controller
         $id = auth()->user()->id;
 
         $search = $request['search'];
+
+        if ($name == 'all') {
+            if (!empty($search) || !is_null($search)) {
+                $data = DB::table('transactions')->where('trigered_by', $id)
+                // ->where('service_type', $name)
+                // ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+                ->where(function ($query) use ($search) {
+                    $query->where('transaction_for', 'like', '%' . $search . '%')
+                    ->orWhere('transaction_id', 'like', '%' . $search . '%')
+                    ->orWhere('metadata->status', 'like', '%' . $search . '%');
+                            //    ->orWhere() 
+                        // ->latest()->orderByDesc('transactions.id');
+                    })
+                    ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
+                    // ->get();
+                return $data;
+            }
+            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(function ($q) use ($id) {
+                $q->where('trigered_by', $id);
+                // ->orWhere('user_id', $id);
+            })->latest()->orderByDesc('transactions.id')
+                // ->get();
+            ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
+
+            return $data;
+        }
+
         if (!empty($search) || !is_null($search)) {
             $data = DB::table('transactions')->where('trigered_by', $id)
             ->where('service_type', $name)
-            ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+            // ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
             ->where(function ($query) use ($search) {
                 $query->where('transaction_for', 'like', '%' . $search . '%')
                 ->orWhere('transaction_id', 'like', '%' . $search . '%')
@@ -36,17 +63,6 @@ class UserDashboardController extends Controller
                 })
                 ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
                 // ->get();
-            return $data;
-        }
-
-        if ($name == 'all') {
-            $data = DB::table('transactions')->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])->where(function ($q) use ($id) {
-                $q->where('trigered_by', $id);
-                // ->orWhere('user_id', $id);
-            })->latest()->orderByDesc('transactions.id')
-                // ->get();
-            ->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'search' => $request['search']]);
-
             return $data;
         }
 

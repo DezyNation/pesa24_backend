@@ -20,12 +20,19 @@ class RechargeController extends CommissionController
             'number' => $request['canumber'],
             'amount' => $request['amount'],
             'operator' => $request['secondaryOperatorCode'],
-            'ref_id' => uniqid("JNDRCH")
+            'ref_id' => uniqid("RCH")
         ];
 
         $response = Http::get('https://www.rechargetradition.com/webservices/api/recharge', $data);
         $transaction_id = $data['ref_id'];
-        $status = $response['status'];
+        $status = strtolower($response['status']);
+        if ($status == 'error') {
+            $status = 'failed';
+        }
+
+        if ($status == 'accepted') {
+            $status = 'pending';
+        }
         $this->apiRecords($transaction_id, 'recharge-tradition', $response);
         Log::channel('response')->info('recharge-tradition', $response->json());
         DB::table('recharge_requests')->insert([
@@ -33,19 +40,20 @@ class RechargeController extends CommissionController
             'provider' => 'recharge-tradition',
             'operator' => $data['operator'],
             'operator_name' => $request['operatorName'],
-            'status' => strtolower($status),
+            'status' => $status,
             'amount' => $data['amount'],
             'reference_id' => $transaction_id,
             'ca_number' => $data['number'],
             'ack_no' => $response['txn_id'],
             'opt_id' => $response['opt_id'],
+            'remarks' => $response['message'] ?? null,
             'created_at' => now(),
             "updated_at" => now()
         ]);
 
-        if ($status == 'Pending' || $status == 'Accepted' || $status == 'Success') {
+        if ($status == 'pending' || $status == 'success') {
             $metadata = [
-                'status' => strtolower($status),
+                'status' => $status,
                 'mobile_number' => $data['number'],
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
@@ -87,7 +95,7 @@ class RechargeController extends CommissionController
 
         $recharge = DB::table('recharge_requests')->where('reference_id', $reference_id)->first();
 
-        if ($recharge->status !== 'Pending' || $recharge->status !== 'Accepted') {
+        if ($recharge->status !== 'pending') {
             return response("This recharge has been processed already.");
         }
 
@@ -106,17 +114,17 @@ class RechargeController extends CommissionController
             $closing_balance = $wallet + $recharge->amount;
 
             DB::table('recharge_requests')->where('reference_id', $reference_id)->update([
-                'status' => $response['status'],
+                'status' => strtolower($response['status']),
                 'updated_at' => now()
             ]);
 
             DB::table('transactions')->where('transaction_id', $reference_id)->update([
-                'metadata->status' => $response['status'],
+                'metadata->status' => strtolower($response['status']),
                 'updated_at' => now()
             ]);
 
             $metadata = [
-                'status' => $response['status'],
+                'status' => strtolower($response['status']),
                 'event' => 'recharge.refund',
                 'operator_name' => $response['operator'],
                 'message' => $response['message'],

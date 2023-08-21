@@ -1357,12 +1357,15 @@ class CommissionController extends Controller
         $parent = DB::table('user_parent')->where('user_id', $user_id);
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->payoutReversalParent($parent_id, $amount, $transaction_id, $account_number);
+            if (is_null($parent_id[0])) {
+                return response("Parent not found");
+            }
+            $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
         }
         return $table;
     }
 
-    public function payoutReversalParent($user_id, $amount, $transaction_id, $account_number)
+    public function payoutReversalParent(int $user_id, $amount, $transaction_id, $account_number)
     {
         $table = DB::table('payoutcommissions')
             ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
@@ -1375,7 +1378,7 @@ class CommissionController extends Controller
         }
         $table = $table[0];
         $user = User::findOrFail($user_id);
-        $role = $user[0]->getRoleNames()[0];
+        $role = $user->getRoleNames()[0];
 
         $fixed_charge = $table->fixed_charge;
         $is_flat = $table->is_flat;
@@ -1399,9 +1402,6 @@ class CommissionController extends Controller
             'amount' => $amount
         ];
         $this->notAdmintransaction($credit, "Charge Reversal for $account_number", 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
-        $user->update([
-            'wallet' => $closing_balance
-        ]);
 
         if (!$table->parents) {
             return response("No comissions to parent users.");
@@ -1411,7 +1411,10 @@ class CommissionController extends Controller
 
         if ($parent->exists()) {
             $parent_id = $parent->pluck('parent_id');
-            $this->payoutReversalParent($parent_id, $amount, $transaction_id, $account_number);
+            if (is_null($parent_id[0])) {
+                return response("Parent not found");
+            }
+            $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
         }
 
         return $table;

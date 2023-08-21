@@ -90,7 +90,7 @@ class RechargeController extends CommissionController
             'operator' =>  $request['operator'],
             'canumber' =>  $request['canumber'],
             'amount' =>  $request['amount'],
-            'referenceid' => uniqid("JNDRCH"),
+            'referenceid' => uniqid("RCH"),
         ];
 
         $transaction_id = $data['referenceid'];

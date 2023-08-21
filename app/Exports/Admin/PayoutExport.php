@@ -75,7 +75,7 @@ class PayoutExport implements FromCollection, WithHeadings, WithStyles, WithChun
                 ->where([
                     'users.organization_id' => auth()->user()->organization_id
                 ])
-                ->where('payouts.status', '!=', 'processing')
+                // ->where('payouts.status', '!=', 'processing')
                 ->whereBetween('payouts.created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
                 ->select('payouts.id', 'payouts.created_at', 'payouts.user_id', 'users.name', 'users.phone_number', 'payouts.reference_id', 'payouts.payout_id', 'payouts.utr', 'payouts.amount', 'payouts.beneficiary_name', 'payouts.account_number', 'payouts.status', 'payouts.updated_at')->latest()->get();
 

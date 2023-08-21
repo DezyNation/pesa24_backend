@@ -72,6 +72,7 @@ class PayoutController extends CommissionController
             $metadata = [
                 'status' => $transfer['status'],
                 'amount' => $amount,
+                'payout_id' => $transfer['id'] ?? null,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
                 'utr' => null,
@@ -85,6 +86,7 @@ class PayoutController extends CommissionController
             $metadata2 = [
                 'status' => $transfer['status'],
                 'amount' => $amount,
+                'payout_id' => $transfer['id'] ?? null,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
                 // 'utr' => null,
@@ -105,6 +107,7 @@ class PayoutController extends CommissionController
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
                 'utr' => null,
+                'payout_id' => $transfer['id'] ?? null,
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
                 'user_phone' => auth()->user()->phone_number,
@@ -118,6 +121,7 @@ class PayoutController extends CommissionController
                 'amount' => $data['amount'] / 100,
                 'account_number' => $request['bank_account']['account_number'],
                 'ifsc' => $account_details['ifsc'],
+                'payout_id' => $transfer['id'] ?? null,
                 // 'utr' => null,
                 'user' => auth()->user()->name,
                 'user_id' => auth()->user()->id,
@@ -266,8 +270,9 @@ class PayoutController extends CommissionController
         $reference_id = $payout->reference_id;
 
         $array = [
-            'event' => 'admin update payout',
+            'event' => 'update.payout',
             'status' => $transfer['status'],
+            'user' => auth()->user()->name,
             'utr' => $transfer['utr'] ?? 'no utr',
         ];
         $this->apiRecords($reference_id, 'janpay', json_encode($array));
@@ -288,7 +293,7 @@ class PayoutController extends CommissionController
             $this->notAdmintransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $closing_balance, json_encode($metadata), $payout->amount);
             $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id, $payout->account_number);
         }
-        event(new PayoutStatusUpdated("Amount {$payout->amount} ({$array['utr']})", "Payout $id {$array['status']}", $payout->user_id));
+        event(new PayoutStatusUpdated("Amount {$payout->amount} ({$array['utr']})", "Payout {$array['status']}", $payout->user_id));
 
         return $transfer['status'];
     }
