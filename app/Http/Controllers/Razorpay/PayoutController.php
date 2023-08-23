@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\CommissionController;
+use Illuminate\Support\Facades\Cache;
 
 class PayoutController extends CommissionController
 {
@@ -69,6 +70,7 @@ class PayoutController extends CommissionController
         $transaction_id = $data['reference_id'];
         $this->apiRecords($data['reference_id'], 'razorpay', $transfer);
         if ($transfer['status'] == 'processing' || $transfer['status'] == 'processed' || $transfer['status'] == 'queued' || $transfer['status'] == 'pending') {
+            Cache::put($transfer['id'], $transfer['id'], 7200);
             $metadata = [
                 'status' => $transfer['status'],
                 'amount' => $amount,
