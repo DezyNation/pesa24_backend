@@ -176,7 +176,7 @@ class PayoutController extends CommissionController
             'Content-Type: application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/dotransaction', $data);
         Log::channel('response')->info($response);
-            $this->apiRecords($data['refid'], 'paysprint', $response);
+        $this->apiRecords($data['refid'], 'paysprint', $response);
         if ($response->json($key = 'status') == true) {
             $transaction_id = "PAY" . strtoupper(Str::random(9));
             $metadata = [
@@ -261,6 +261,7 @@ class PayoutController extends CommissionController
         $metadata = [
             'status' => true,
             'event' => 'money-transfer',
+            'reciever' => $reciever_name . ' ' . $reciever_id,
             'transaction_id' => $transaction_id,
             'created_at' => date("F j, Y, g:i a"),
             'amount' => $request['amount'],
@@ -286,6 +287,7 @@ class PayoutController extends CommissionController
             'event' => 'money-transfer',
             'amount' => $request['amount'],
             'transaction_id' => $transaction_id,
+            'reciever' => $reciever_name . ' ' . $reciever_id,
             'user' => auth()->user()->name,
             'user_id' => auth()->user()->id,
             'user_phone' => auth()->user()->phone_number,
