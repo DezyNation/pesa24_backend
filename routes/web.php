@@ -64,7 +64,7 @@ Route::get('test', function () {
     ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
     ->select('transactions.*', DB::raw('COUNT(*) as `count`'))
     ->groupBy('opening_balance', 'trigered_by')
-    ->having('count', '>', 4)
+    ->having('count', '>', 1)
     ->get();
 // ->havingRaw('COUNT(*) > 4')
 // ->paginate(200);
