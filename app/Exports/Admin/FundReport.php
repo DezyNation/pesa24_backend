@@ -37,7 +37,7 @@ class FundReport implements FromCollection, WithHeadings, WithStyles, WithChunkR
             $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')
                 ->join('users as admin', 'admin.id', '=', 'funds.parent_id')
                 ->where('funds.transaction_id', 'like', '%' . $this->search . '%')
-                ->whereBetween('funds.created_at', [$this->from ?? Carbon::now()->startOfDecade(), $this->to ?? Carbon::now()->endOfDecade()])
+                ->whereBetween('funds.created_at', [$this->from ?? Carbon::now()->startOfMonth(), $this->to ?? Carbon::now()->endOfMonth()])
                 ->where(['users.organization_id' => auth()->user()->organization_id])->where('funds.status', '!=', 'pending')->where('funds.transaction_type', '!=', 'transfer')->where('funds.transaction_type', '!=', 'reversal')->select('funds.id as fund_id', 'funds.status', 'funds.transaction_date', 'funds.created_at', 'funds.transaction_id', 'funds.amount', 'funds.opening_balance', 'funds.closing_balance', 'funds.bank_name', 'funds.transaction_type', 'users.name', 'users.phone_number', 'admin.name as admin_name', 'admin.id as admin_id', 'funds.remarks', 'funds.admin_remarks')->latest('funds.created_at')->get();
             return $data;
         }
