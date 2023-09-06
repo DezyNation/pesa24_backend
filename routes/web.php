@@ -59,6 +59,15 @@ Route::get('/', function () {
     return ['Application' => 'Janpay'];
 });
 
+Route::get('test', function () {
+    $data = DB::table('transactions')
+        ->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
+        ->select('*')
+        ->whereRaw('credit_amount = LAG(credit_amount) OVER (ORDER BY created_at)')
+        ->get();
+    return $data;
+});
+
 // Route::get('test', [TestController::class, 'test']);
 // ->middleware('idempotency');
 
