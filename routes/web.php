@@ -73,7 +73,7 @@ Route::get('test', function () {
             $records[] = $rec;
         }
         $previousVale = $rec->credit_amount;
-        echo $records;
+        print_r($records);
     }
     return $data;
 });
