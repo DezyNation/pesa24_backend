@@ -60,22 +60,17 @@ Route::get('/', function () {
 });
 
 Route::get('test', function () {
-    $data = DB::table('transactions')
-        ->orderBy('created_at')
-        ->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
-        // ->select('*')
-        // ->whereRaw('credit_amount = LAG(credit_amount) OVER (ORDER BY created_at)')
-        ->get();
-        $previousVale = null;
-        $records = [];
-    foreach ($data as $rec) {
-        if ($rec->opening_balance == $previousVale) {
-            $records[] = $rec;
-        }
-        $previousVale = $rec->opening_balance;
-        print_r($records);
-    }
-    return $data;
+    $duplicates = DB::table('transactions')
+    ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+    ->select('transactions.*', DB::raw('COUNT(*) as `count`'))
+    ->groupBy('opening_balance', 'trigered_by')
+    ->having('count', '>', 4)
+    ->get();
+// ->havingRaw('COUNT(*) > 4')
+// ->paginate(200);
+return $duplicates;
+
+    // return $data;
 });
 
 // Route::get('test', [TestController::class, 'test']);
