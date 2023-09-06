@@ -65,16 +65,16 @@ Route::get('test', function () {
         ->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
         // ->select('*')
         // ->whereRaw('credit_amount = LAG(credit_amount) OVER (ORDER BY created_at)')
-        ->get();
+        ->count();
         $previousVale = null;
         $records = [];
-    foreach ($data as $rec) {
-        if ($rec->credit_amount == $previousVale) {
-            $records[] = $rec;
-        }
-        $previousVale = $rec->credit_amount;
-        print_r($records);
-    }
+    // foreach ($data as $rec) {
+    //     if ($rec->credit_amount == $previousVale) {
+    //         $records[] = $rec;
+    //     }
+    //     $previousVale = $rec->credit_amount;
+    //     print_r($records);
+    // }
     return $data;
 });
 
