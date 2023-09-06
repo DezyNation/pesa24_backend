@@ -69,10 +69,10 @@ Route::get('test', function () {
         $previousVale = null;
         $records = [];
     foreach ($data as $rec) {
-        if ($rec->credit_amount == $previousVale) {
+        if ($rec->opening_balance == $previousVale) {
             $records[] = $rec;
         }
-        $previousVale = $rec->credit_amount;
+        $previousVale = $rec->opening_balance;
         print_r($records);
     }
     return $data;
