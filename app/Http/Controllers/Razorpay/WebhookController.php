@@ -17,6 +17,7 @@ class WebhookController extends CommissionController
     {
         Log::channel('callback')->info('callback-razorpay', $request->all());
         Cache::put($request->header('x-razorpay-event-id'), $request->header('x-razorpay-event-id'), 600);
+        Cache::put(time(), time(), 60);
         DB::transaction(function () use ($request) {
 
             $payout_id = $request['payload.payout.entity.id'];
