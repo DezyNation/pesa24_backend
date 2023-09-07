@@ -263,7 +263,7 @@ Route::middleware(['auth:api', 'minimum_balance', 'active'])->group(function () 
     /*-----------------------Paysprint Axis-----------------------*/
 });
 Route::get('razorpay/fetch-payout/{service_id}', [PayoutController::class, 'fetchPayoutUser'])->middleware(['auth:api', 'active']);
-Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall'])->middleware(['auth:api', 'active', 'throttle:1,0.08']);
+Route::post('razorpay/payment-status', [PayoutController::class, 'payoutCall'])->middleware(['auth:api', 'active', 'throttle:1,0.08', 'idempotency']);
 
 Route::get('admin/packages', [AdminController::class, 'packages'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);
 Route::get('admin/all-users-list/{role}/{id?}', [UserController::class, 'userInfoPackage'])->middleware(['auth:api', 'role:distributor|super_distributor|admin']);

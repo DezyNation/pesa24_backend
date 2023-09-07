@@ -1202,7 +1202,7 @@ class AdminController extends Controller
         $hash = Hash::make($otp);
         User::where('id', auth()->user()->id)->update(['otp' => $hash, 'otp_generated_at' => now()]);
         if ($option == 'profile') {
-            $phone = 7838074742;
+            $phone = 7017200263;
             $text = "$otp is your verification OTP for change your Mpin/Password. '-From P24 Technology Pvt. Ltd";
             $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
         } else {

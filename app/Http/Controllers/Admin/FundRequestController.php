@@ -32,6 +32,7 @@ class FundRequestController extends Controller
             'user_id' => $id,
             'parent_id' => $id,
             'amount' => $amount,
+            'remarks' => $request['remarks'],
             'bank_name' => $request['bankName'],
             'transaction_type' => $request['transactionType'],
             'transaction_id' => $request['transactionId'],

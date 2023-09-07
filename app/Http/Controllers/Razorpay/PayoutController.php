@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\CommissionController;
+use Illuminate\Support\Facades\Cache;
 
 class PayoutController extends CommissionController
 {
@@ -69,6 +70,7 @@ class PayoutController extends CommissionController
         $transaction_id = $data['reference_id'];
         $this->apiRecords($data['reference_id'], 'razorpay', $transfer);
         if ($transfer['status'] == 'processing' || $transfer['status'] == 'processed' || $transfer['status'] == 'queued' || $transfer['status'] == 'pending') {
+            Cache::put($transfer['id'], $transfer['id'], 7200);
             $metadata = [
                 'status' => $transfer['status'],
                 'amount' => $amount,
@@ -230,11 +232,11 @@ class PayoutController extends CommissionController
             return $payout;
         } else {
             $payout = DB::table('payouts')->join('users', 'users.id', '=', 'payouts.user_id')
-            ->where([
-                'users.organization_id' => auth()->user()->organization_id
-            ])
-            ->where('payouts.status', $processing)
-            ->select('payouts.*', 'users.name')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $request['status']]);
+                ->where([
+                    'users.organization_id' => auth()->user()->organization_id
+                ])
+                ->where('payouts.status', $processing)
+                ->select('payouts.*', 'users.name')->latest()->paginate(200)->appends(['from' => $request['from'], 'to' => $request['to'], 'status' => $request['status']]);
 
             return $payout;
         }
@@ -245,56 +247,59 @@ class PayoutController extends CommissionController
         $request->validate([
             'payoutId' => ['required', 'exists:payouts,payout_id']
         ]);
-        $id = $request['payoutId'];
-        $get_payout = DB::table('payouts')->where(['payout_id' => $id]);
-        if (!$get_payout->exists()) {
-            return response($get_payout->get());
-        }
-        $payout = $get_payout->get();
-        $payout = $payout[0];
-        if ($payout->status == 'reversed' || $payout->status == 'cancelled' || $payout->status == 'processed' || $payout->status == 'rejected' || $payout->status == 'failed') {
-            return response($payout->status);
-        }
-        $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
-            'Content-Type' => 'application/json'
-        ])->get("https://api.razorpay.com/v1/payouts/$id");
+        DB::transaction(function () use ($request) {
+            $id = $request['payoutId'];
+            $get_payout = DB::table('payouts')->where(['payout_id' => $id]);
+            if (!$get_payout->exists()) {
+                return response($get_payout->get());
+            }
+            $payout = $get_payout->get();
+            $payout = $payout[0];
+            if ($payout->status == 'reversed' || $payout->status == 'cancelled' || $payout->status == 'processed' || $payout->status == 'rejected' || $payout->status == 'failed') {
+                return response($payout->status);
+            }
+            $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
+                'Content-Type' => 'application/json'
+            ])->get("https://api.razorpay.com/v1/payouts/$id");
 
-        $this->apiRecords($payout->reference_id, 'razorpay', $transfer);
+            $this->apiRecords($payout->reference_id, 'razorpay', $transfer);
 
-        DB::table('payouts')->where('payout_id', $id)->update([
-            'status' => $transfer['status'],
-            'utr' => $transfer['utr'],
-            'updated_at' => now()
-        ]);
-
-        $reference_id = $payout->reference_id;
-
-        $array = [
-            'event' => 'update.payout',
-            'status' => $transfer['status'],
-            'user' => auth()->user()->name,
-            'utr' => $transfer['utr'] ?? 'no utr',
-        ];
-        $this->apiRecords($reference_id, 'janpay', json_encode($array));
-        DB::table('transactions')->where('transaction_id', $reference_id)->update(['metadata->utr' => $transfer['utr'], 'updated_at' => now(), 'metadata->status' => $array['status']]);
-
-        if ($transfer['status'] == 'processed') {
-            // $this->payoutCommission($payout->user_id, $payout->amount, $reference_id, $payout->account_number);
-        } elseif ($transfer['status'] == 'rejected' || $transfer['status'] == 'reversed' || $transfer['status'] == 'cancelled' || $transfer['status'] == 'failed') {
-            $user = User::find($payout->user_id);
-            $closing_balance = $user->wallet + $payout->amount;
-            $metadata = [
+            DB::table('payouts')->where('payout_id', $id)->update([
                 'status' => $transfer['status'],
-                'utr' => $transfer['utr'] ?? 'no utr',
-                'reference_id' => $reference_id,
-                'amount' => $payout->amount
-            ];
-            $account_number = $payout->account_number;
-            $this->notAdmintransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $closing_balance, json_encode($metadata), $payout->amount);
-            $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id, $payout->account_number);
-        }
-        // event(new PayoutStatusUpdated("Amount {$payout->amount} ({$array['utr']})", "Payout {$array['status']}", $payout->user_id));
+                'utr' => $transfer['utr'],
+                'updated_at' => now()
+            ]);
 
-        return $transfer['status'];
+            $reference_id = $payout->reference_id;
+
+            $array = [
+                'event' => 'update.payout',
+                'status' => $transfer['status'],
+                'user' => auth()->user()->name,
+                'utr' => $transfer['utr'] ?? 'no utr',
+            ];
+            $this->apiRecords($reference_id, 'janpay', json_encode($array));
+            DB::table('transactions')->where('transaction_id', $reference_id)->update(['metadata->utr' => $transfer['utr'], 'updated_at' => now(), 'metadata->status' => $array['status']]);
+
+            if ($transfer['status'] == 'processed') {
+                // $this->payoutCommission($payout->user_id, $payout->amount, $reference_id, $payout->account_number);
+            } elseif ($transfer['status'] == 'rejected' || $transfer['status'] == 'reversed' || $transfer['status'] == 'cancelled' || $transfer['status'] == 'failed') {
+                $user = User::find($payout->user_id);
+                $closing_balance = $user->wallet + $payout->amount;
+                $metadata = [
+                    'status' => $transfer['status'],
+                    'utr' => $transfer['utr'] ?? 'no utr',
+                    'reference_id' => $reference_id,
+                    'amount' => $payout->amount
+                ];
+                $account_number = $payout->account_number;
+                $this->notAdmintransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $closing_balance, json_encode($metadata), $payout->amount);
+                $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id, $payout->account_number);
+            }
+
+            // event(new PayoutStatusUpdated("Amount {$payout->amount} ({$array['utr']})", "Payout {$array['status']}", $payout->user_id));
+
+            return $transfer['status'];
+        });
     }
 }

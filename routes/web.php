@@ -59,6 +59,20 @@ Route::get('/', function () {
     return ['Application' => 'Janpay'];
 });
 
+Route::get('test', function () {
+    $duplicates = DB::table('transactions')
+    ->whereBetween('created_at', [$request['from'] ?? Carbon::today(), $request['to'] ?? Carbon::tomorrow()])
+    ->select('transactions.*', DB::raw('COUNT(*) as `count`'))
+    ->groupBy('opening_balance', 'trigered_by')
+    ->having('count', '>', 1)
+    ->get();
+// ->havingRaw('COUNT(*) > 4')
+// ->paginate(200);
+return $duplicates;
+
+    // return $data;
+});
+
 // Route::get('test', [TestController::class, 'test']);
 // ->middleware('idempotency');
 

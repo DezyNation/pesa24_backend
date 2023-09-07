@@ -176,7 +176,7 @@ class PayoutController extends CommissionController
             'Content-Type: application/json'
         ])->post('https://paysprint.in/service-api/api/v1/service/payout/payout/dotransaction', $data);
         Log::channel('response')->info($response);
-            $this->apiRecords($data['refid'], 'paysprint', $response);
+        $this->apiRecords($data['refid'], 'paysprint', $response);
         if ($response->json($key = 'status') == true) {
             $transaction_id = "PAY" . strtoupper(Str::random(9));
             $metadata = [
@@ -239,63 +239,70 @@ class PayoutController extends CommissionController
 
     public function moneyTransfer(Request $request)
     {
-        if ($request['beneficiaryId'] == auth()->user()->id) {
-            return response("You can not send to money to yourself.", 403);
-        }
+        DB::transaction(function () use ($request) {
 
-        $request->validate([
-            'amount' => 'min:1|numeric'
-        ]);
-        $user = User::find($request['beneficiaryId']);
-        if (!$user) {
-            return response("User not found!", 404);
-        }
 
-        $sender_name = auth()->user()->name;
-        $sender_id = auth()->user()->id;
+            if ($request['beneficiaryId'] == auth()->user()->id) {
+                return response("You can not send to money to yourself.", 403);
+            }
 
-        $reciever_name = $user->name;
-        $reciever_id = $user->id;
+            $request->validate([
+                'amount' => 'min:1|numeric'
+            ]);
+            $user = User::find($request['beneficiaryId']);
+            if (!$user) {
+                return response("User not found!", 404);
+            }
 
-        $transaction_id = strtoupper(uniqid() . Str::random(8));
-        $metadata = [
-            'status' => true,
-            'event' => 'money-transfer',
-            'transaction_id' => $transaction_id,
-            'created_at' => date("F j, Y, g:i a"),
-            'amount' => $request['amount'],
-            'from' => auth()->user()->name . " " . auth()->user()->phone_number
-        ];
-        $data = DB::table('money_transfers')->insert([
-            'sender_id' => auth()->user()->id,
-            'reciever_id' => $request['beneficiaryId'],
-            'amount' => $request['amount'],
-            'remarks' => $request['remarks'],
-            'transaction_id' => $transaction_id,
-            'metadata' => json_encode($metadata),
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
+            $sender_name = auth()->user()->name;
+            $sender_id = auth()->user()->id;
 
-        $final_amount = $user->wallet + $request['amount'];
-        $this->notAdmintransaction(0, "Money recieved from $sender_name ($sender_id)", 'fund-transfer', $request['beneficiaryId'], $user->wallet, $transaction_id, $final_amount, json_encode($metadata), $request['amount']);
-        $user->update(['wallet' => $final_amount]);
+            $reciever_name = $user->name;
+            $reciever_id = $user->id;
 
-        $metadata = [
-            'status' => true,
-            'event' => 'money-transfer',
-            'amount' => $request['amount'],
-            'transaction_id' => $transaction_id,
-            'user' => auth()->user()->name,
-            'user_id' => auth()->user()->id,
-            'user_phone' => auth()->user()->phone_number,
-            'created_at' => date("F j, Y, g:i a"),
-        ];
-        $user = User::findOrFail(auth()->user()->id);
-        $final_amount = $user->wallet - $request['amount'];
-        $this->transaction($request['amount'], "Money Transfer to $reciever_name ($reciever_id)", 'fund-transfer', auth()->user()->id, $user->wallet, $transaction_id, $final_amount, json_encode($metadata));
-        $user->update(['wallet' => $final_amount]);
-        return response()->json(['message' => "Successfull", 'metadata' => $metadata]);
+            $transaction_id = strtoupper(uniqid() . Str::random(8));
+            $metadata = [
+                'status' => true,
+                'event' => 'money-transfer',
+                'reciever' => $reciever_name . ' ' . $reciever_id,
+                'transaction_id' => $transaction_id,
+                'created_at' => date("F j, Y, g:i a"),
+                'amount' => $request['amount'],
+                'from' => auth()->user()->name . " " . auth()->user()->phone_number
+            ];
+            $data = DB::table('money_transfers')->insert([
+                'sender_id' => auth()->user()->id,
+                'reciever_id' => $request['beneficiaryId'],
+                'amount' => $request['amount'],
+                'remarks' => $request['remarks'],
+                'transaction_id' => $transaction_id,
+                'metadata' => json_encode($metadata),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            $final_amount = $user->wallet + $request['amount'];
+            $this->notAdmintransaction(0, "Money recieved from $sender_name ($sender_id)", 'fund-transfer', $request['beneficiaryId'], $user->wallet, $transaction_id, $final_amount, json_encode($metadata), $request['amount']);
+            $user->update(['wallet' => $final_amount]);
+
+            $metadata = [
+                'status' => true,
+                'event' => 'money-transfer',
+                'amount' => $request['amount'],
+                'transaction_id' => $transaction_id,
+                'reciever' => $reciever_name . ' ' . $reciever_id,
+                'user' => auth()->user()->name,
+                'user_id' => auth()->user()->id,
+                'user_phone' => auth()->user()->phone_number,
+                'created_at' => date("F j, Y, g:i a"),
+            ];
+            $user = User::findOrFail(auth()->user()->id);
+            $final_amount = $user->wallet - $request['amount'];
+            $this->transaction($request['amount'], "Money Transfer to $reciever_name ($reciever_id)", 'fund-transfer', auth()->user()->id, $user->wallet, $transaction_id, $final_amount, json_encode($metadata));
+            $user->update(['wallet' => $final_amount]);
+
+            return response()->json(['message' => "Successfull", 'metadata' => $metadata]);
+        });
     }
 
     public function uploadDocuments($id)
