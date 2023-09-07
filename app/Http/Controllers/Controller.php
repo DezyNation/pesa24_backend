@@ -69,7 +69,7 @@ class Controller extends BaseController
 
     public function transaction(float $amount, string $service, string $service_type, float $user_id, float $opening_balance, string $transaction_id, float $closing_balance, string $metadata, float $credit = 0)
     {
-        DB::transaction(function () use ($amount, $service, $service_type, $user_id, $opening_balance, $transaction_id, $closing_balance, $metadata, $credit) {
+        // DB::transaction(function () use ($amount, $service, $service_type, $user_id, $opening_balance, $transaction_id, $closing_balance, $metadata, $credit) {
             DB::table('transactions')->insert([
                 'debit_amount' => $amount,
                 'transaction_for' => $service,
@@ -88,7 +88,7 @@ class Controller extends BaseController
             User::where('id', $user_id)->update([
                 'wallet' => $closing_balance
             ]);
-        });
+        // }, 2);
 
 
         return response()->json(['message' => 'Transaction successful.']);
@@ -96,7 +96,7 @@ class Controller extends BaseController
 
     public function notAdmintransaction(float $amount, string $service, string $service_type, float $user_id, float $opening_balance, string $transaction_id, float $closing_balance, string $metadata, float $credit = 0)
     {
-        DB::transaction(function () use ($amount, $service, $service_type, $user_id, $opening_balance, $transaction_id, $closing_balance, $metadata, $credit) {
+        // DB::transaction(function () use ($amount, $service, $service_type, $user_id, $opening_balance, $transaction_id, $closing_balance, $metadata, $credit) {
             DB::table('transactions')->insert([
                 'debit_amount' => $amount,
                 'transaction_for' => $service,
@@ -115,7 +115,7 @@ class Controller extends BaseController
             User::where('id', $user_id)->update([
                 'wallet' => $closing_balance
             ]);
-        });
+        // }, 2);
         return response()->json(['message' => 'Transaction successful.']);
     }
 
