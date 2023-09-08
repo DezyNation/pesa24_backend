@@ -17,7 +17,7 @@ class Idempotency
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Cache::has($request->header('x-razorpay-event-id')??1234)|| Cache::has($request['payoutId'])) {
+        if (Cache::has($request->header('x-razorpay-event-id') ?? 1234) || Cache::has($request['payoutId'])) {
             Log::channel('reversals')->info('idempotency', $request->all());
             return response("Request is processing", 200);
         }

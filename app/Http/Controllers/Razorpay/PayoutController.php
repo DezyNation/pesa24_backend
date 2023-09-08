@@ -247,7 +247,7 @@ class PayoutController extends CommissionController
         $request->validate([
             'payoutId' => ['required', 'exists:payouts,payout_id']
         ]);
-        DB::transaction(function () use ($request) {
+        $res = DB::transaction(function () use ($request) {
             $id = $request['payoutId'];
             $get_payout = DB::table('payouts')->where(['payout_id' => $id]);
             if (!$get_payout->exists()) {
@@ -308,9 +308,12 @@ class PayoutController extends CommissionController
                     'amount' => $transfer['amount'] / 100,
                     'to' => $payout->beneficiary_name ?? null,
                     'account_number' => $payout->account_number,
-                    'ifsc' => $payout->ifsc
+                    'ifsc' => $payout->ifsc,
+                    'created_at' => $payout->created_at
                 ]
             ];
         });
+
+        return $res;
     }
 }
