@@ -210,7 +210,7 @@ class FundController extends Controller
 
         $transaction_id = "FUND" . strtoupper(Str::random(5));
         if ($status == 'approved') {
-            $amount = auth()->user()->wallet - $request['amount'];
+            // $amount = auth()->user()->wallet - $request['amount'];
             $metadata = [
                 'status' => true,
                 'amount_transfered' => $request['amount'],
@@ -219,10 +219,10 @@ class FundController extends Controller
                 'reference_id' => $transaction_id,
                 'transaction_from' => auth()->user()->name
             ];
-            $this->transaction($request['amount'], "Fund request approved for $name - $phone", 'fund-request', auth()->user()->id, auth()->user()->wallet, $transaction_id, $amount, json_encode($metadata));
+            $this->transaction($request['amount'], "Fund request approved for $name - $phone", 'fund-request', auth()->user()->id, auth()->user()->wallet, $transaction_id, auth()->user()->wallet - $request['amount'], json_encode($metadata));
 
-            $wallet = DB::table('users')->where('id', $request['beneficiaryId'])->pluck('wallet');
-            $amount = $wallet[0] + $request['amount'];
+            // $wallet = $user->wallet;
+            // $amount = $wallet + $request['amount'];
             $metadata = [
                 'status' => true,
                 'amount_added' => $request['amount'],
@@ -232,7 +232,7 @@ class FundController extends Controller
                 'transaction_from' => auth()->user()->name,
                 'phone_number' => auth()->user()->phone_number
             ];
-            $this->notAdmintransaction(0, "Fund request approved by {$metadata['transaction_from']} - {$metadata['phone_number']}", 'fund-request', $request['beneficiaryId'], $wallet[0], $transaction_id, $amount, json_encode($metadata), $request['amount']);
+            $this->notAdmintransaction(0, "Fund request approved by {$metadata['transaction_from']} - {$metadata['phone_number']}", 'fund-request', $request['beneficiaryId'], $user->wallet, $transaction_id, $user->wallet + $request['amount'], json_encode($metadata), $request['amount']);
         }
 
         $name = $user->name;
