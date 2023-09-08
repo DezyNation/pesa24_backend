@@ -134,7 +134,7 @@ class PayoutController extends CommissionController
                 'created_at' => date('Y-m-d H:i:s')
             ];
             $this->transaction($data['amount'] / 100, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt-$amount, json_encode($metadata));
-            
+
             $this->transaction(0, "Refund Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt+$amount, json_encode($metadata), $data['amount'] / 100);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         }
@@ -258,6 +258,7 @@ class PayoutController extends CommissionController
             if ($payout->status == 'reversed' || $payout->status == 'cancelled' || $payout->status == 'processed' || $payout->status == 'rejected' || $payout->status == 'failed') {
                 return response($payout->status);
             }
+            Cache::put(time(), time());
             $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
                 'Content-Type' => 'application/json'
             ])->get("https://api.razorpay.com/v1/payouts/$id");
@@ -285,7 +286,6 @@ class PayoutController extends CommissionController
                 // $this->payoutCommission($payout->user_id, $payout->amount, $reference_id, $payout->account_number);
             } elseif ($transfer['status'] == 'rejected' || $transfer['status'] == 'reversed' || $transfer['status'] == 'cancelled' || $transfer['status'] == 'failed') {
                 $user = User::find($payout->user_id);
-                $closing_balance = $user->wallet + $payout->amount;
                 $metadata = [
                     'status' => $transfer['status'],
                     'utr' => $transfer['utr'] ?? 'no utr',
@@ -293,7 +293,7 @@ class PayoutController extends CommissionController
                     'amount' => $payout->amount
                 ];
                 $account_number = $payout->account_number;
-                $this->notAdmintransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $closing_balance, json_encode($metadata), $payout->amount);
+                $this->notAdmintransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $user->wallet + $payout->amount, json_encode($metadata), $payout->amount);
                 $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id, $payout->account_number);
             }
 
