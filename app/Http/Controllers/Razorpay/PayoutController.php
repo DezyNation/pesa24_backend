@@ -99,7 +99,7 @@ class PayoutController extends CommissionController
                 'to' => $request['bank_account']['name'] ?? null,
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->transaction($amount, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt-$amount, json_encode($metadata));
+            $this->transaction($amount, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt - $amount, json_encode($metadata));
             $this->payoutCommission(auth()->user()->id, $amount, $transaction_id, $metadata['account_number']);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         } else {
@@ -136,6 +136,9 @@ class PayoutController extends CommissionController
             $this->transaction($data['amount'] / 100, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt-$amount, json_encode($metadata));
 
             $this->transaction(0, "Refund Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt+$amount, json_encode($metadata), $data['amount'] / 100);
+            $this->transaction($data['amount'] / 100, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt - $amount, json_encode($metadata));
+
+            $this->transaction(0, "Refund Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt + $amount, json_encode($metadata), $data['amount'] / 100);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         }
     }
@@ -299,7 +302,18 @@ class PayoutController extends CommissionController
 
             // event(new PayoutStatusUpdated("Amount {$payout->amount} ({$array['utr']})", "Payout {$array['status']}", $payout->user_id));
 
-            return $transfer['status'];
+            return [
+                'metadata' =>
+                [
+                    'status' => $transfer['status'],
+                    'utr' => $transfer['utr'],
+                    'reference_id' => $transfer['reference_id'],
+                    'amount' => $transfer['amount'] / 100,
+                    'to' => $payout->beneficiary_name ?? null,
+                    'account_number' => $payout->account_number,
+                    'ifsc' => $payout->ifsc
+                ]
+            ];
         });
     }
 }
