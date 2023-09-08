@@ -70,7 +70,7 @@ class PayoutController extends CommissionController
         $transaction_id = $data['reference_id'];
         $this->apiRecords($data['reference_id'], 'razorpay', $transfer);
         if ($transfer['status'] == 'processing' || $transfer['status'] == 'processed' || $transfer['status'] == 'queued' || $transfer['status'] == 'pending') {
-            Cache::put($transfer['id'], $transfer['id'], 1800);
+            // Cache::put($transfer['id'], $transfer['id']);
             $metadata = [
                 'status' => $transfer['status'],
                 'amount' => $amount,
@@ -261,7 +261,7 @@ class PayoutController extends CommissionController
             if ($payout->status == 'reversed' || $payout->status == 'cancelled' || $payout->status == 'processed' || $payout->status == 'rejected' || $payout->status == 'failed') {
                 return response($payout->status);
             }
-            Cache::put(time(), time());
+            // Cache::put(time(), time());
             $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
                 'Content-Type' => 'application/json'
             ])->get("https://api.razorpay.com/v1/payouts/$id");
