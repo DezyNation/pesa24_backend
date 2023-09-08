@@ -16,7 +16,15 @@ class WebhookController extends CommissionController
     public function confirmPayout(Request $request)
     {
         Log::channel('callback')->info('callback-razorpay', $request->all());
+        if ($request['payload']['payout']['entity']['created_at'] - $request['created_at'] < 15) {
+            Log::channel('reversals')->info('timings', [
+                'payout_timing' => $request['payload']['payout']['entity']['created_at'],
+                'callback_timing' => $request['created_at']
+            ]);
+            return true;
+        }
         Cache::put($request->header('x-razorpay-event-id'), $request->header('x-razorpay-event-id'), 600);
+        Cache::put($request['payload.payout.entity.id'], $request['payload.payout.entity.id'], 300);
         DB::transaction(function () use ($request) {
 
             $payout_id = $request['payload.payout.entity.id'];

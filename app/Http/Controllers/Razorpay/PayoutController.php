@@ -70,7 +70,7 @@ class PayoutController extends CommissionController
         $transaction_id = $data['reference_id'];
         $this->apiRecords($data['reference_id'], 'razorpay', $transfer);
         if ($transfer['status'] == 'processing' || $transfer['status'] == 'processed' || $transfer['status'] == 'queued' || $transfer['status'] == 'pending') {
-            Cache::put($transfer['id'], $transfer['id'], 1800);
+            // Cache::put($transfer['id'], $transfer['id'], 1800);
             $metadata = [
                 'status' => $transfer['status'],
                 'amount' => $amount,
