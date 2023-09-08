@@ -310,7 +310,8 @@ class PayoutController extends CommissionController
                     'amount' => $transfer['amount'] / 100,
                     'to' => $payout->beneficiary_name ?? null,
                     'account_number' => $payout->account_number,
-                    'ifsc' => $payout->ifsc
+                    'ifsc' => $payout->ifsc,
+                    'created_at' => $payout->created_at
                 ]
             ];
         });
