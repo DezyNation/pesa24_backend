@@ -48,8 +48,12 @@ class UsersExport implements FromCollection, WithHeadings, WithStyles, WithChunk
             $data = DB::table('transactions')
                 ->join('users', 'users.id', '=', 'transactions.user_id')
                 ->join('users as admin', 'admin.id', '=', 'transactions.trigered_by')
-                ->where('transactions.trigered_by', $this->user_id)
-                ->orWhere('transactions.user_id', $this->user_id)
+                ->where(function ($q) {
+                    $q->where('transactions.trigered_by', $this->user_id)
+                        ->orWhere('transactions.user_id', $this->user_id);
+                })
+                // ->where('transactions.trigered_by', $this->user_id)
+                // ->orWhere('transactions.user_id', $this->user_id)
                 ->whereBetween('transactions.created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
                 ->select('users.name as transaction_for', 'transactions.credit_amount', 'transactions.debit_amount', 'transactions.trigered_by', 'transactions.opening_balance', 'transactions.closing_balance', 'transactions.service_type', 'transactions.transaction_id',  'admin.first_name as transaction_by', 'admin.phone_number as transaction_by_phone', 'transactions.transaction_for as description', 'transactions.metadata->remarks', 'transactions.created_at', 'transactions.updated_at')
                 ->latest('transactions.created_at')->orderByDesc('transactions.id')
