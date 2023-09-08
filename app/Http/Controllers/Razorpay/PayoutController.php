@@ -250,7 +250,7 @@ class PayoutController extends CommissionController
         $request->validate([
             'payoutId' => ['required', 'exists:payouts,payout_id']
         ]);
-        DB::transaction(function () use ($request) {
+        $res = DB::transaction(function () use ($request) {
             $id = $request['payoutId'];
             $get_payout = DB::table('payouts')->where(['payout_id' => $id]);
             if (!$get_payout->exists()) {
@@ -301,7 +301,6 @@ class PayoutController extends CommissionController
             }
 
             // event(new PayoutStatusUpdated("Amount {$payout->amount} ({$array['utr']})", "Payout {$array['status']}", $payout->user_id));
-
             return [
                 'metadata' =>
                 [
@@ -315,5 +314,9 @@ class PayoutController extends CommissionController
                 ]
             ];
         });
+
+        return $res;
+
+
     }
 }
