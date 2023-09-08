@@ -66,7 +66,7 @@ class WebhookController extends CommissionController
             if ($request['payload.payout.entity.status'] == 'processed') {
                 $result = $data->get();
                 $utr = $request['payload.payout.entity.utr'] ?? 'No UTR';
-                // event(new PayoutStatusUpdated("Amount {$result[0]->amount} ($utr)", $content = "Payout {$request['payload.payout.entity.id']} {$request['payload.payout.entity.status']}", $result[0]->user_id));
+                event(new PayoutStatusUpdated("Amt {$result[0]->amount} ($utr)", $content = "{$request['payload.payout.entity.status']}", $result[0]->user_id));
                 // $this->payoutCommission($result[0]->user_id, $request['payload.payout.entity.amount'] / 100, $request['payload.payout.entity.reference_id'], $result[0]->account_number);
             }
             if ($request['payload.payout.entity.status'] == 'cancelled' || $request['payload.payout.entity.status'] == 'failed' || $request['payload.payout.entity.status'] == 'rejected') {
