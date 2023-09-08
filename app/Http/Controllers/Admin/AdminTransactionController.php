@@ -74,8 +74,8 @@ class AdminTransactionController extends Controller
                 ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
                 ->where('roles.name', '!=', 'admin')
                 ->where(function ($q) use ($request) {
-                    $q->where('transactions.trigered_by', $request['userId'])
-                        ->orWhere('transactions.user_id', $request['userId']);
+                    $q->where('transactions.trigered_by', '=', $request['userId'])
+                        ->orWhere('transactions.user_id', '=', $request['userId']);
                 })
                 // ->where('transactions.trigered_by', $request['userId'])
                 // ->orWhere('transactions.user_id', $request['userId'])
