@@ -65,13 +65,12 @@ class PayoutController extends CommissionController
             'updated_at' => now(),
         ]);
 
-        $walletAmt = DB::table('users')->where('id', auth()->user()->id)->pluck('wallet');
-        $balance_left = $walletAmt[0] - $amount;
+        $walletAmt = auth()->user()->wallet;
+        // $balance_left = $walletAmt[0] - $amount;
         $transaction_id = $data['reference_id'];
         $this->apiRecords($data['reference_id'], 'razorpay', $transfer);
         if ($transfer['status'] == 'processing' || $transfer['status'] == 'processed' || $transfer['status'] == 'queued' || $transfer['status'] == 'pending') {
-            Cache::put($transfer['id'], $transfer['id'], 7200);
-            Cache::put(time(), time(), 60);
+            Cache::put($transfer['id'], $transfer['id'], 1800);
             $metadata = [
                 'status' => $transfer['status'],
                 'amount' => $amount,
@@ -100,7 +99,7 @@ class PayoutController extends CommissionController
                 'to' => $request['bank_account']['name'] ?? null,
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->transaction($amount, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
+            $this->transaction($amount, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt-$amount, json_encode($metadata));
             $this->payoutCommission(auth()->user()->id, $amount, $transaction_id, $metadata['account_number']);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         } else {
@@ -134,9 +133,9 @@ class PayoutController extends CommissionController
                 'r_status' => $transfer->status(),
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->transaction($data['amount'] / 100, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata));
-            $balance_left = $walletAmt[0] + $amount;
-            $this->transaction(0, "Refund Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt[0], $transaction_id, $balance_left, json_encode($metadata), $data['amount'] / 100);
+            $this->transaction($data['amount'] / 100, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt-$amount, json_encode($metadata));
+            
+            $this->transaction(0, "Refund Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt+$amount, json_encode($metadata), $data['amount'] / 100);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         }
     }
