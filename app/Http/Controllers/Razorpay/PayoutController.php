@@ -297,7 +297,7 @@ class PayoutController extends CommissionController
                 $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id, $payout->account_number);
             }
 
-            // event(new PayoutStatusUpdated("Amount {$payout->amount} ({$array['utr']})", "Payout {$array['status']}", $payout->user_id));
+            event(new PayoutStatusUpdated("Amount {$payout->amount} ({$array['utr']})", "Payout {$array['status']}", $payout->user_id));
 
             return [
                 'metadata' =>
