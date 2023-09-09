@@ -282,7 +282,7 @@ class PayoutController extends CommissionController
             ]);
 
             // $final_amount = $user->wallet + $request['amount'];
-            $this->notAdmintransaction(0, "Money recieved from $sender_name ($sender_id)", 'fund-transfer', $request['beneficiaryId'], $user->wallet, $transaction_id, $user->wallet + $request['amount'], json_encode($metadata), $request['amount']);
+            $this->generalTransaction(0, "Money recieved from $sender_name ($sender_id)", 'fund-transfer', $request['beneficiaryId'], $user->wallet, $transaction_id, $user->wallet + $request['amount'], json_encode($metadata), $request['amount']);
             // $user->update(['wallet' => $user->wallet + $request['amount']]);
 
             $metadata = [
