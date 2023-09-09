@@ -16,6 +16,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Validation\ValidationException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -261,6 +262,7 @@ class AuthenticatedSessionController extends Controller
 
     protected function respondWithToken($token)
     {
+        JWTAuth::refresh($token);
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
