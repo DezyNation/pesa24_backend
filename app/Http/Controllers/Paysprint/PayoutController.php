@@ -282,7 +282,7 @@ class PayoutController extends CommissionController
             ]);
 
             $final_amount = $user->wallet + $request['amount'];
-            $this->notAdmintransaction(0, "Money recieved from $sender_name ($sender_id)", 'fund-transfer', $request['beneficiaryId'], $user->wallet, $transaction_id, $final_amount, json_encode($metadata), $request['amount']);
+            $this->generalTransaction(0, "Money recieved from $sender_name ($sender_id)", 'fund-transfer', $request['beneficiaryId'], $user->wallet, $transaction_id, $final_amount, json_encode($metadata), $request['amount']);
             $user->update(['wallet' => $final_amount]);
 
             $metadata = [
@@ -298,7 +298,7 @@ class PayoutController extends CommissionController
             ];
             $user = User::findOrFail(auth()->user()->id);
             $final_amount = $user->wallet - $request['amount'];
-            $this->transaction($request['amount'], "Money Transfer to $reciever_name ($reciever_id)", 'fund-transfer', auth()->user()->id, $user->wallet, $transaction_id, $final_amount, json_encode($metadata));
+            $this->generalTransaction($request['amount'], "Money Transfer to $reciever_name ($reciever_id)", 'fund-transfer', auth()->user()->id, $user->wallet, $transaction_id, $final_amount, json_encode($metadata));
             $user->update(['wallet' => $final_amount]);
 
             return response()->json(['message' => "Successfull", 'metadata' => $metadata]);

@@ -183,67 +183,71 @@ class FundController extends Controller
             'status' => 'required',
             'beneficiaryId' => 'required|exists:users,id'
         ]);
+        $transaction = DB::transaction(function () use ($request) {
 
-        $status = $request['status'];
 
-        $user = User::find($request['beneficiaryId']);
-        $name = $user->name;
-        $wallet = $user->wallet;
-        $phone = $user->phone_number;
+            $status = $request['status'];
 
-        if ($status == 'approved') {
-            $closing_balance = $wallet + $request['amount'];
-        } else {
-            $closing_balance = $wallet;
-        }
+            $user = User::find($request['beneficiaryId']);
+            $name = $user->name;
+            $wallet = $user->wallet;
+            $phone = $user->phone_number;
 
-        $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id, 'funds.status' => 'pending'])->update([
-            'funds.admin_remarks' => $request['remarks'] ?? null,
-            'funds.status' => $status,
-            'funds.approved' => $request['approved'],
-            'funds.declined' => $request['declined'],
-            'funds.closing_balance' => $closing_balance,
-            'funds.opening_balance' => $wallet,
-            'funds.parent_id' => auth()->user()->id,
-            'funds.updated_at' => now()
-        ]);
+            if ($status == 'approved') {
+                $closing_balance = $wallet + $request['amount'];
+            } else {
+                $closing_balance = $wallet;
+            }
 
-        $transaction_id = "FUND" . strtoupper(Str::random(5));
-        if ($status == 'approved') {
-            // $amount = auth()->user()->wallet - $request['amount'];
-            $metadata = [
-                'status' => true,
-                'amount_transfered' => $request['amount'],
-                'fund_id' => $request['id'],
-                'remarks' => $request['remarks'] ?? null,
-                'reference_id' => $transaction_id,
-                'transaction_from' => auth()->user()->name
-            ];
-            $this->transaction($request['amount'], "Fund request approved for $name - $phone", 'fund-request', auth()->user()->id, auth()->user()->wallet, $transaction_id, auth()->user()->wallet - $request['amount'], json_encode($metadata));
+            $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id, 'funds.status' => 'pending'])->update([
+                'funds.admin_remarks' => $request['remarks'] ?? null,
+                'funds.status' => $status,
+                'funds.approved' => $request['approved'],
+                'funds.declined' => $request['declined'],
+                'funds.closing_balance' => $closing_balance,
+                'funds.opening_balance' => $wallet,
+                'funds.parent_id' => auth()->user()->id,
+                'funds.updated_at' => now()
+            ]);
 
-            // $wallet = $user->wallet;
-            // $amount = $wallet + $request['amount'];
-            $metadata = [
-                'status' => true,
-                'amount_added' => $request['amount'],
-                'remarks' => $request['remarks'] ?? null,
-                'fund_id' => $request['id'],
-                'reference_id' => $transaction_id,
-                'transaction_from' => auth()->user()->name,
-                'phone_number' => auth()->user()->phone_number
-            ];
-            $this->notAdmintransaction(0, "Fund request approved by {$metadata['transaction_from']} - {$metadata['phone_number']}", 'fund-request', $request['beneficiaryId'], $user->wallet, $transaction_id, $user->wallet + $request['amount'], json_encode($metadata), $request['amount']);
-        }
+            $transaction_id = "FUND" . strtoupper(Str::random(5));
+            if ($status == 'approved') {
+                // $amount = auth()->user()->wallet - $request['amount'];
+                $metadata = [
+                    'status' => true,
+                    'amount_transfered' => $request['amount'],
+                    'fund_id' => $request['id'],
+                    'remarks' => $request['remarks'] ?? null,
+                    'reference_id' => $transaction_id,
+                    'transaction_from' => auth()->user()->name
+                ];
+                $this->generalTransaction($request['amount'], "Fund request approved for $name - $phone", 'fund-request', auth()->user()->id, auth()->user()->wallet, $transaction_id, auth()->user()->wallet - $request['amount'], json_encode($metadata));
 
-        $name = $user->name;
-        $phone = $user->phone_number;
-        $wallet = $user->wallet;
-        $status = $request['status'];
-        $time = date('d-m-Y h:i:s A');
-        $newmsg = "Hello $name, Your fund request has been $status and Now Your Bal $closing_balance on the date of $time. '-From P24 Technology Pvt. Ltd";
-        $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
+                // $wallet = $user->wallet;
+                // $amount = $wallet + $request['amount'];
+                $metadata = [
+                    'status' => true,
+                    'amount_added' => $request['amount'],
+                    'remarks' => $request['remarks'] ?? null,
+                    'fund_id' => $request['id'],
+                    'reference_id' => $transaction_id,
+                    'transaction_from' => auth()->user()->name,
+                    'phone_number' => auth()->user()->phone_number
+                ];
+                $this->generalTransaction(0, "Fund request approved by {$metadata['transaction_from']} - {$metadata['phone_number']}", 'fund-request', $request['beneficiaryId'], $user->wallet, $transaction_id, $user->wallet + $request['amount'], json_encode($metadata), $request['amount']);
+            }
 
-        return $data;
+            $name = $user->name;
+            $phone = $user->phone_number;
+            $wallet = $user->wallet;
+            $status = $request['status'];
+            $time = date('d-m-Y h:i:s A');
+            $newmsg = "Hello $name, Your fund request has been $status and Now Your Bal $closing_balance on the date of $time. '-From P24 Technology Pvt. Ltd";
+            $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
+            return $data;
+        });
+        
+        return $transaction;
     }
 
     public function fetchFundUser()
