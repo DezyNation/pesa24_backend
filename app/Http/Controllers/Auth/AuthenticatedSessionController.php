@@ -150,7 +150,7 @@ class AuthenticatedSessionController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-                Auth::logoutOtherDevices();
+                Auth::logoutOtherDevices($request['password']);
                 return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'paysprint_id' => auth()->user()->paysprint_merchant, 'eko_id' => auth()->user()->user_code, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'profile_pic' => auth()->user()->profile_pic], 200);
             } else {
                 $creds = $request->only(['phone_number', 'password']);
@@ -177,7 +177,7 @@ class AuthenticatedSessionController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-                Auth::logoutOtherDevices();
+                Auth::logoutOtherDevices($request['password']);
                 return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'paysprint_id' => auth()->user()->paysprint_merchant, 'eko_id' => auth()->user()->user_code, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'profile_pic' => auth()->user()->profile_pic], 200);
             }
         } else {
@@ -207,7 +207,7 @@ class AuthenticatedSessionController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-                Auth::logoutOtherDevices();
+                Auth::logoutOtherDevices($request['password']);
                 return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'paysprint_id' => auth()->user()->paysprint_merchant, 'eko_id' => auth()->user()->user_code, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'profile_pic' => auth()->user()->profile_pic, 'wallet' => auth()->user()->wallet], 200);
             } else {
                 $creds = $request->only(['phone_number', 'password']);
@@ -234,7 +234,7 @@ class AuthenticatedSessionController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-                Auth::logoutOtherDevices();
+                Auth::logoutOtherDevices($request['password']);
                 return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'paysprint_id' => auth()->user()->paysprint_merchant, 'eko_id' => auth()->user()->user_code, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'profile_pic' => auth()->user()->profile_pic], 200);
             }
         }
