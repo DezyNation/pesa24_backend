@@ -511,16 +511,16 @@ class CommissionController extends Controller
         //     'wallet' => $closing_balance
         // ]);
 
-        if (!$table->parents) {
-            return response("No comissions to parent users.");
-        }
+        // if (!$table->parents) {
+        //     return response("No comissions to parent users.");
+        // }
 
-        $parent = DB::table('user_parent')->where('user_id', $user_id);
+        // $parent = DB::table('user_parent')->where('user_id', $user_id);
 
-        if ($parent->exists()) {
-            $parent_id = $parent->pluck('parent_id');
-            $this->payoutParentCommission($parent_id, $amount, $transaction_id, $account_number);
-        }
+        // if ($parent->exists()) {
+        //     $parent_id = $parent->pluck('parent_id');
+        //     $this->payoutParentCommission($parent_id, $amount, $transaction_id, $account_number);
+        // }
 
         return $table;
     }
@@ -571,16 +571,16 @@ class CommissionController extends Controller
         // ]);
 
 
-        if (!$table->parents) {
-            return response("No comissions to parent users.");
-        }
+        // if (!$table->parents) {
+        //     return response("No comissions to parent users.");
+        // }
 
-        $parent = DB::table('user_parent')->where('user_id', $user_id);
+        // $parent = DB::table('user_parent')->where('user_id', $user_id);
 
-        if ($parent->exists()) {
-            $parent_id = $parent->pluck('parent_id');
-            $this->payoutParentCommission($parent_id, $amount, $transaction_id, $account_number);
-        }
+        // if ($parent->exists()) {
+        //     $parent_id = $parent->pluck('parent_id');
+        //     $this->payoutParentCommission($parent_id, $amount, $transaction_id, $account_number);
+        // }
 
         return $table;
     }
@@ -1354,17 +1354,17 @@ class CommissionController extends Controller
             ];
             $this->notAdmintransaction($credit, "Charge Reversal for $account_number", 'payout-commission', $user_id, $user->wallet, $transaction_id, $closing_balance, json_encode($metadata), $debit);
 
-            if (!$table->parents) {
-                return response("No commissions to parent users.");
-            }
-            $parent = DB::table('user_parent')->where('user_id', $user_id);
-            if ($parent->exists()) {
-                $parent_id = $parent->pluck('parent_id');
-                if (is_null($parent_id[0])) {
-                    return response("Parent not found");
-                }
-                $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
-            }
+            // if (!$table->parents) {
+            //     return response("No commissions to parent users.");
+            // }
+            // $parent = DB::table('user_parent')->where('user_id', $user_id);
+            // if ($parent->exists()) {
+            //     $parent_id = $parent->pluck('parent_id');
+            //     if (is_null($parent_id[0])) {
+            //         return response("Parent not found");
+            //     }
+            //     $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
+            // }
             return $table;
         });
     }
@@ -1410,19 +1410,19 @@ class CommissionController extends Controller
             ];
             $this->notAdmintransaction($credit, "Charge Reversal for $account_number", 'payout', $user_id, $user->wallet, $transaction_id, $closing_balance, json_encode($metadata), $debit);
 
-            if (!$table->parents) {
-                return response("No comissions to parent users.");
-            }
+            // if (!$table->parents) {
+            //     return response("No comissions to parent users.");
+            // }
 
-            $parent = DB::table('user_parent')->where('user_id', $user_id);
+            // $parent = DB::table('user_parent')->where('user_id', $user_id);
 
-            if ($parent->exists()) {
-                $parent_id = $parent->pluck('parent_id');
-                if (is_null($parent_id[0])) {
-                    return response("Parent not found");
-                }
-                $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
-            }
+            // if ($parent->exists()) {
+            //     $parent_id = $parent->pluck('parent_id');
+            //     if (is_null($parent_id[0])) {
+            //         return response("Parent not found");
+            //     }
+            //     $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
+            // }
 
             return $table;
         });
