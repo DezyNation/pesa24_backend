@@ -17,7 +17,7 @@ class WebhookController extends CommissionController
     {
         Log::channel('callback')->info('callback-razorpay', $request->all());
         Cache::put($request->header('x-razorpay-event-id'), $request->header('x-razorpay-event-id'), 600);
-        if ($request['payload']['payout']['entity']['created_at'] - $request['created_at'] < 15 || $request['payload']['payout']['entity']['created_at'] - $request['created_at'] > 300) {
+        if ($request['payload']['payout']['entity']['created_at'] - $request['created_at'] < 15) {
             Log::channel('reversals')->info('timings', [
                 'payout_timing' => $request['payload']['payout']['entity']['created_at'],
                 'callback_timing' => $request['created_at']
