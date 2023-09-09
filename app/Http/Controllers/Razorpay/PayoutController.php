@@ -99,7 +99,7 @@ class PayoutController extends CommissionController
                 'to' => $request['bank_account']['name'] ?? null,
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->transaction($amount, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt - $amount, json_encode($metadata));
+            $this->generalTransaction($amount, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt - $amount, json_encode($metadata));
             $this->payoutCommission(auth()->user()->id, $amount, $transaction_id, $metadata['account_number']);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         } else {
@@ -133,9 +133,9 @@ class PayoutController extends CommissionController
                 'r_status' => $transfer->status(),
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->transaction($data['amount'] / 100, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt - $amount, json_encode($metadata));
+            $this->generalTransaction($data['amount'] / 100, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt - $amount, json_encode($metadata));
 
-            $this->transaction(0, "Refund Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt + $amount, json_encode($metadata), $data['amount'] / 100);
+            $this->generalTransaction(0, "Refund Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt + $amount, json_encode($metadata), $data['amount'] / 100);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         }
     }
