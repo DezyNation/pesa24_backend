@@ -18,7 +18,7 @@ class Concurrency
     public function handle(Request $request, Closure $next): Response
     {
         $user_id = auth()->user()->id;
-        if (Cache::has(time() . $request['beneficiaryId']) || Cache::has(time() . $request['payload']['payout']['entity']['notes']['userId']) || Cache::has(time() . auth()->user()->id)) {
+        if (Cache::has(time() . $request['beneficiaryId']) || Cache::has(time() . $request['payload']['payout']['entity']['notes']['userId'] ?? 1234) || Cache::has(time() . auth()->user()->id)) {
             Log::channel('concurrency', $request->all());
             return response("Please wait, another transaction is in process.", 503);
         }
