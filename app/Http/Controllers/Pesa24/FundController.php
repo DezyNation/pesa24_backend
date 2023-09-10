@@ -305,6 +305,8 @@ class FundController extends Controller
             'transactionType' => 'required|string',
         ]);
 
+        Cache::put(time().$request['beneficiaryId'], 3);
+
         if ($request['beneficiaryId'] == auth()->user()->id) {
             return response("You can not send to money to yourself.", 403);
         }

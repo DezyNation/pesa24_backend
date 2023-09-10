@@ -306,7 +306,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
     Route::get('fetch-fund-requests/{id}', [FundController::class, 'fetchFundId']);
     Route::get('fetch-admin-funds/{id?}', [FundController::class, 'reversalAndTransferFunds']);
     Route::post('update-fund-requests', [FundController::class, 'updateFund'])->middleware(['throttle:1,0.08' ,'minimum_balance', 'concurrency']);
-    Route::post('new-fund', [FundController::class, 'newFund'])->middleware(['permission:fund-transfer-create', 'minimum_balance', 'throttle:1,0.08','mpin']);
+    Route::post('new-fund', [FundController::class, 'newFund'])->middleware(['permission:fund-transfer-create', 'concurrency', 'minimum_balance', 'throttle:1,0.08','mpin']);
     Route::post('delete-fund', [FundController::class, 'deleteFund'])->middleware('permission:fund-transfer-create');
 
 
