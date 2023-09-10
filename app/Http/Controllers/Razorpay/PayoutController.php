@@ -29,6 +29,9 @@ class PayoutController extends CommissionController
             'queue_if_low_balance' => false,
             'purpose' => 'payout',
             // 'narrartion' => 'JANPAY',
+            'notes' => [
+                'userId' => auth()->user()->id,
+            ],
             'reference_id' => "JND" . uniqid(),
         ];
 
