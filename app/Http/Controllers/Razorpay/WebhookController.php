@@ -31,6 +31,7 @@ class WebhookController extends CommissionController
             ]);
             return true;
         }
+        Cache::put(time() . $request['payload']['payout']['entity']['notes']['userId'], time() . $request['payload']['payout']['entity']['notes']['userId'], 3);
         Cache::put($request['payload.payout.entity.id'], $request['payload.payout.entity.id'], 300);
         DB::transaction(function () use ($request) {
 

@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Paysprint;
 
-use Firebase\JWT\JWT;
-use Illuminate\Http\Request;
-use App\Http\Controllers\CommissionController;
-use Illuminate\Support\Str;
-use App\Models\User;
-use Carbon\Carbon;
 use CURLFile;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Carbon\Carbon;
+use App\Models\User;
+use Firebase\JWT\JWT;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\CommissionController;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PayoutController extends CommissionController
 {
@@ -270,6 +271,8 @@ class PayoutController extends CommissionController
                 'amount' => $request['amount'],
                 'from' => auth()->user()->name . " " . auth()->user()->phone_number
             ];
+            Cache::put(time() . $request['beneficiaryId'], time() . $request['beneficiaryId'], 3);
+            Cache::put(time() . auth()->user()->id, time() . auth()->user()->id, 3);
             $data = DB::table('money_transfers')->insert([
                 'sender_id' => auth()->user()->id,
                 'reciever_id' => $request['beneficiaryId'],
