@@ -43,6 +43,7 @@ use App\Http\Controllers\Paysprint\AePS\AepsApiController as PaysprintAeps;
 use App\Http\Controllers\Razorpay\PayoutController as RazorpayPayoutController;
 use App\Http\Controllers\Eko\MoneyTransfer\PayoutController as MoneyTransferPayoutController;
 use App\Http\Controllers\TestController;
+use Illuminate\Support\Facades\Cache;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,6 +72,19 @@ Route::get('test', function () {
 return $duplicates;
 
     // return $data;
+});
+
+Route::get('put', function()
+{
+Cache::put('value', 'value');
+});
+
+Route::get('check', function(){
+    if (Cache::has('value')) {
+        dd(true);
+    } else {
+        dd(false);
+    }
 });
 
 // Route::get('test', [TestController::class, 'test']);
