@@ -75,6 +75,12 @@ return [
             'level' => 'info',
         ],
 
+        'concurrency' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/razorpay.log'),
+            'level' => 'info',
+        ],
+
         'reversals' => [
             'driver' => 'daily',
             'path' => storage_path('logs/reversal.log'),

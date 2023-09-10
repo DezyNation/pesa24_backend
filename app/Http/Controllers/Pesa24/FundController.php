@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Pesa24;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class FundController extends Controller
 {
@@ -199,6 +200,8 @@ class FundController extends Controller
                 $closing_balance = $wallet;
             }
 
+            Cache::put(time() . $request['beneficiaryId'], time() . $request['beneficiaryId'], 3);
+
             $data = DB::table('funds')->join('users', 'users.id', '=', 'funds.user_id')->where(['funds.id' => $request['id'], 'users.organization_id' => auth()->user()->organization_id, 'funds.status' => 'pending'])->update([
                 'funds.admin_remarks' => $request['remarks'] ?? null,
                 'funds.status' => $status,
@@ -246,7 +249,7 @@ class FundController extends Controller
             $sms = Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$newmsg", []);
             return $data;
         });
-        
+
         return $transaction;
     }
 
@@ -301,6 +304,8 @@ class FundController extends Controller
             'amount' => 'required|min:1|numeric',
             'transactionType' => 'required|string',
         ]);
+
+        Cache::put(time().$request['beneficiaryId'], time().$request['beneficiaryId'], 3);
 
         if ($request['beneficiaryId'] == auth()->user()->id) {
             return response("You can not send to money to yourself.", 403);

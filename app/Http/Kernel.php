@@ -83,5 +83,6 @@ class Kernel extends HttpKernel
         'active' => \App\Http\Middleware\BlockedUser::class,
         'multiple_transaction' => \App\Http\Middleware\MultipleTransaction::class,
         'idempotency' => \App\Http\Middleware\Idempotency::class,
+        'concurrency' => \App\Http\Middleware\Concurrency::class,
     ];
 }

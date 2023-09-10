@@ -29,9 +29,12 @@ class PayoutController extends CommissionController
             'queue_if_low_balance' => false,
             'purpose' => 'payout',
             // 'narrartion' => 'JANPAY',
+            'notes' => [
+                'userId' => auth()->user()->id,
+            ],
             'reference_id' => "JND" . uniqid(),
         ];
-
+        Cache::put(time() . auth()->user()->id, time() . auth()->user()->id, 3);
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
             'Content-Type' => 'application/json'
         ])->post('https://api.razorpay.com/v1/payouts', $data);
@@ -259,6 +262,7 @@ class PayoutController extends CommissionController
                 return response($payout->status);
             }
             // Cache::put(time(), time());
+            Cache::put(time() . $payout->user_id, time() . $payout->user_id, 3);
             $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
                 'Content-Type' => 'application/json'
             ])->get("https://api.razorpay.com/v1/payouts/$id");
@@ -312,5 +316,7 @@ class PayoutController extends CommissionController
                 ]
             ];
         });
+
+        return $res;
     }
 }

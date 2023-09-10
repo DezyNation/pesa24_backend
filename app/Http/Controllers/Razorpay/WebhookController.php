@@ -16,6 +16,10 @@ class WebhookController extends CommissionController
     public function confirmPayout(Request $request)
     {
         Log::channel('callback')->info('callback-razorpay', $request->all());
+        if (Cache::has(time() . $request['payload']['payout']['entity']['notes']['userId'] ?? 1234)) {
+            Log::channel('concurrency', $request->all());
+            return response("Please wait, another transaction is in process.", 200);
+        }
         if ($request['payload']['payout']['entity']['created_at'] - $request['created_at'] < 15) {
             Log::channel('reversals')->info('timings', [
                 'payout_timing' => $request['payload']['payout']['entity']['created_at'],
@@ -31,6 +35,7 @@ class WebhookController extends CommissionController
             ]);
             return true;
         }
+        Cache::put(time() . $request['payload']['payout']['entity']['notes']['userId'], time() . $request['payload']['payout']['entity']['notes']['userId'], 3);
         Cache::put($request['payload.payout.entity.id'], $request['payload.payout.entity.id'], 300);
         DB::transaction(function () use ($request) {
 
