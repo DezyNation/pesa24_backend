@@ -239,7 +239,7 @@ class PayoutController extends CommissionController
 
     public function moneyTransfer(Request $request)
     {
-        DB::transaction(function () use ($request) {
+        $data = DB::transaction(function () use ($request) {
 
 
             if ($request['beneficiaryId'] == auth()->user()->id) {
@@ -281,9 +281,9 @@ class PayoutController extends CommissionController
                 'updated_at' => now()
             ]);
 
-            $final_amount = $user->wallet + $request['amount'];
-            $this->notAdmintransaction(0, "Money recieved from $sender_name ($sender_id)", 'fund-transfer', $request['beneficiaryId'], $user->wallet, $transaction_id, $final_amount, json_encode($metadata), $request['amount']);
-            $user->update(['wallet' => $final_amount]);
+            // $final_amount = $user->wallet + $request['amount'];
+            $this->generalTransaction(0, "Money recieved from $sender_name ($sender_id)", 'fund-transfer', $request['beneficiaryId'], $user->wallet, $transaction_id, $user->wallet + $request['amount'], json_encode($metadata), $request['amount']);
+            // $user->update(['wallet' => $user->wallet + $request['amount']]);
 
             $metadata = [
                 'status' => true,
@@ -297,12 +297,14 @@ class PayoutController extends CommissionController
                 'created_at' => date("F j, Y, g:i a"),
             ];
             $user = User::findOrFail(auth()->user()->id);
-            $final_amount = $user->wallet - $request['amount'];
-            $this->transaction($request['amount'], "Money Transfer to $reciever_name ($reciever_id)", 'fund-transfer', auth()->user()->id, $user->wallet, $transaction_id, $final_amount, json_encode($metadata));
-            $user->update(['wallet' => $final_amount]);
+            // $final_amount = $user->wallet - $request['amount'];
+            $this->generalTransaction($request['amount'], "Money Transfer to $reciever_name ($reciever_id)", 'fund-transfer', auth()->user()->id, $user->wallet, $transaction_id, $user->wallet - $request['amount'], json_encode($metadata));
+            // $user->update(['wallet' => $user->wallet - $request['amount']]);
 
             return response()->json(['message' => "Successfull", 'metadata' => $metadata]);
         });
+
+        return $data;
     }
 
     public function uploadDocuments($id)

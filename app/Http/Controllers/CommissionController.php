@@ -506,21 +506,21 @@ class CommissionController extends Controller
             'debit' => $debit,
             'amount' => $amount
         ];
-        $this->notAdmintransaction($debit, "Payout Charge for $account_number", 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
-        $user->update([
-            'wallet' => $closing_balance
-        ]);
+        $this->notAdmintransaction($debit, "Payout Charge for $account_number", 'payout-commission', $user_id, $user->wallet, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        // $user->update([
+        //     'wallet' => $closing_balance
+        // ]);
 
-        if (!$table->parents) {
-            return response("No comissions to parent users.");
-        }
+        // if (!$table->parents) {
+        //     return response("No comissions to parent users.");
+        // }
 
-        $parent = DB::table('user_parent')->where('user_id', $user_id);
+        // $parent = DB::table('user_parent')->where('user_id', $user_id);
 
-        if ($parent->exists()) {
-            $parent_id = $parent->pluck('parent_id');
-            $this->payoutParentCommission($parent_id, $amount, $transaction_id, $account_number);
-        }
+        // if ($parent->exists()) {
+        //     $parent_id = $parent->pluck('parent_id');
+        //     $this->payoutParentCommission($parent_id, $amount, $transaction_id, $account_number);
+        // }
 
         return $table;
     }
@@ -565,22 +565,22 @@ class CommissionController extends Controller
             'amount' => $amount
         ];
 
-        $this->notAdmintransaction($debit, "Payout Charge for $account_number", 'payout-commission', $user[0]->id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $credit);
-        $user[0]->update([
-            'wallet' => $closing_balance
-        ]);
+        $this->notAdmintransaction($debit, "Payout Charge for $account_number", 'payout-commission', $user[0]->id, $user[0]->wallet, $transaction_id, $closing_balance, json_encode($metadata), $credit);
+        // $user[0]->update([
+        //     'wallet' => $closing_balance
+        // ]);
 
 
-        if (!$table->parents) {
-            return response("No comissions to parent users.");
-        }
+        // if (!$table->parents) {
+        //     return response("No comissions to parent users.");
+        // }
 
-        $parent = DB::table('user_parent')->where('user_id', $user_id);
+        // $parent = DB::table('user_parent')->where('user_id', $user_id);
 
-        if ($parent->exists()) {
-            $parent_id = $parent->pluck('parent_id');
-            $this->payoutParentCommission($parent_id, $amount, $transaction_id, $account_number);
-        }
+        // if ($parent->exists()) {
+        //     $parent_id = $parent->pluck('parent_id');
+        //     $this->payoutParentCommission($parent_id, $amount, $transaction_id, $account_number);
+        // }
 
         return $table;
     }
@@ -1314,110 +1314,118 @@ class CommissionController extends Controller
 
     public function razorpayReversal($amount, $user_id, $transaction_id, $account_number)
     {
-        $table = DB::table('payoutcommissions')
-            ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
-            ->where('package_user.user_id', $user_id)->where('payoutcommissions.from', '<=', $amount)
-            ->where('payoutcommissions.to', '>=', $amount)
-            ->get();
+        DB::transaction(function () use ($amount, $user_id, $transaction_id, $account_number) {
 
-        if ($table->isEmpty()) {
-            return response("No commissions for this transactions.");
-        }
 
-        $table = $table[0];
-        $user = User::findOrFail($user_id);
-        $role = $user->getRoleNames()[0];
+            $table = DB::table('payoutcommissions')
+                ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
+                ->where('package_user.user_id', $user_id)->where('payoutcommissions.from', '<=', $amount)
+                ->where('payoutcommissions.to', '>=', $amount)
+                ->get();
 
-        $fixed_charge = $table->fixed_charge;
-        $is_flat = $table->is_flat;
-        $gst = $table->gst;
-        $role_commission_name = $role . "_commission";
-        $role_commission = $table->$role_commission_name;
-        $opening_balance = $user->wallet;
-
-        if ($is_flat) {
-            $debit = $fixed_charge;
-            $credit = $role_commission - $role_commission * $gst / 100;
-            $closing_balance = $opening_balance - $credit + $debit;
-        } else {
-            $debit = $amount * $fixed_charge / 100;
-            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
-            $closing_balance = $opening_balance - $credit + $debit;
-        }
-        $metadata = [
-            'status' => true,
-            'event' => 'refund',
-            'amount' => $amount
-        ];
-        $this->notAdmintransaction($credit, "Charge Reversal for $account_number", 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
-
-        if (!$table->parents) {
-            return response("No commissions to parent users.");
-        }
-        $parent = DB::table('user_parent')->where('user_id', $user_id);
-        if ($parent->exists()) {
-            $parent_id = $parent->pluck('parent_id');
-            if (is_null($parent_id[0])) {
-                return response("Parent not found");
+            if ($table->isEmpty()) {
+                return response("No commissions for this transactions.");
             }
-            $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
-        }
-        return $table;
+
+            $table = $table[0];
+            $user = User::findOrFail($user_id);
+            $role = $user->getRoleNames()[0];
+
+            $fixed_charge = $table->fixed_charge;
+            $is_flat = $table->is_flat;
+            $gst = $table->gst;
+            $role_commission_name = $role . "_commission";
+            $role_commission = $table->$role_commission_name;
+            $opening_balance = $user->wallet;
+
+            if ($is_flat) {
+                $debit = $fixed_charge;
+                $credit = $role_commission - $role_commission * $gst / 100;
+                $closing_balance = $opening_balance - $credit + $debit;
+            } else {
+                $debit = $amount * $fixed_charge / 100;
+                $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+                $closing_balance = $opening_balance - $credit + $debit;
+            }
+            $metadata = [
+                'status' => true,
+                'event' => 'refund',
+                'amount' => $amount
+            ];
+            $this->notAdmintransaction($credit, "Charge Reversal for $account_number", 'payout-commission', $user_id, $user->wallet, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+
+            // if (!$table->parents) {
+            //     return response("No commissions to parent users.");
+            // }
+            // $parent = DB::table('user_parent')->where('user_id', $user_id);
+            // if ($parent->exists()) {
+            //     $parent_id = $parent->pluck('parent_id');
+            //     if (is_null($parent_id[0])) {
+            //         return response("Parent not found");
+            //     }
+            //     $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
+            // }
+            return $table;
+        });
     }
 
     public function payoutReversalParent(int $user_id, $amount, $transaction_id, $account_number)
     {
-        $table = DB::table('payoutcommissions')
-            ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
-            ->where('package_user.user_id', $user_id)->where('payoutcommissions.from', '<=', $amount)
-            ->where('payoutcommissions.to', '>=', $amount)
-            ->get();
+        DB::transaction(function () use ($user_id, $amount, $transaction_id, $account_number) {
 
-        if ($table->isEmpty()) {
-            return response("No commissions for this transactions.");
-        }
-        $table = $table[0];
-        $user = User::findOrFail($user_id);
-        $role = $user->getRoleNames()[0];
 
-        $fixed_charge = $table->fixed_charge;
-        $is_flat = $table->is_flat;
-        $gst = $table->gst;
-        $role_commission_name = $role . "_commission";
-        $role_commission = $table->$role_commission_name;
-        $opening_balance = $user->wallet;
+            $table = DB::table('payoutcommissions')
+                ->join('package_user', 'package_user.package_id', '=', 'payoutcommissions.package_id')
+                ->where('package_user.user_id', $user_id)->where('payoutcommissions.from', '<=', $amount)
+                ->where('payoutcommissions.to', '>=', $amount)
+                ->get();
 
-        if ($is_flat) {
-            $debit = 0;
-            $credit = $role_commission - $role_commission * $gst / 100;
-            $closing_balance = $opening_balance - $credit + $debit;
-        } else {
-            $debit = $amount * $fixed_charge / 100;
-            $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
-            $closing_balance = $opening_balance - $credit + $debit;
-        }
-        $metadata = [
-            'status' => true,
-            'event' => 'refund',
-            'amount' => $amount
-        ];
-        $this->notAdmintransaction($credit, "Charge Reversal for $account_number", 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
-
-        if (!$table->parents) {
-            return response("No comissions to parent users.");
-        }
-
-        $parent = DB::table('user_parent')->where('user_id', $user_id);
-
-        if ($parent->exists()) {
-            $parent_id = $parent->pluck('parent_id');
-            if (is_null($parent_id[0])) {
-                return response("Parent not found");
+            if ($table->isEmpty()) {
+                return response("No commissions for this transactions.");
             }
-            $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
-        }
+            $table = $table[0];
+            $user = User::findOrFail($user_id);
+            $role = $user->getRoleNames()[0];
 
-        return $table;
+            $fixed_charge = $table->fixed_charge;
+            $is_flat = $table->is_flat;
+            $gst = $table->gst;
+            $role_commission_name = $role . "_commission";
+            $role_commission = $table->$role_commission_name;
+            $opening_balance = $user->wallet;
+
+            if ($is_flat) {
+                $debit = 0;
+                $credit = $role_commission - $role_commission * $gst / 100;
+                $closing_balance = $opening_balance - $credit + $debit;
+            } else {
+                $debit = $amount * $fixed_charge / 100;
+                $credit = $role_commission * $amount / 100 - $role_commission * $gst / 100;
+                $closing_balance = $opening_balance - $credit + $debit;
+            }
+            $metadata = [
+                'status' => true,
+                'event' => 'refund',
+                'amount' => $amount
+            ];
+            $this->notAdmintransaction($credit, "Charge Reversal for $account_number", 'payout', $user_id, $user->wallet, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+
+            // if (!$table->parents) {
+            //     return response("No comissions to parent users.");
+            // }
+
+            // $parent = DB::table('user_parent')->where('user_id', $user_id);
+
+            // if ($parent->exists()) {
+            //     $parent_id = $parent->pluck('parent_id');
+            //     if (is_null($parent_id[0])) {
+            //         return response("Parent not found");
+            //     }
+            //     $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
+            // }
+
+            return $table;
+        });
     }
 
     public function licCommission($user_id, $amount)

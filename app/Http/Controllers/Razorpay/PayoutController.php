@@ -70,7 +70,7 @@ class PayoutController extends CommissionController
         $transaction_id = $data['reference_id'];
         $this->apiRecords($data['reference_id'], 'razorpay', $transfer);
         if ($transfer['status'] == 'processing' || $transfer['status'] == 'processed' || $transfer['status'] == 'queued' || $transfer['status'] == 'pending') {
-            // Cache::put($transfer['id'], $transfer['id']);
+            // Cache::put($transfer['id'], $transfer['id'], 1800);
             $metadata = [
                 'status' => $transfer['status'],
                 'amount' => $amount,
@@ -99,7 +99,7 @@ class PayoutController extends CommissionController
                 'to' => $request['bank_account']['name'] ?? null,
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->transaction($amount, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt - $amount, json_encode($metadata));
+            $this->generalTransaction($amount, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt - $amount, json_encode($metadata));
             $this->payoutCommission(auth()->user()->id, $amount, $transaction_id, $metadata['account_number']);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         } else {
@@ -133,12 +133,9 @@ class PayoutController extends CommissionController
                 'r_status' => $transfer->status(),
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->transaction($data['amount'] / 100, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt-$amount, json_encode($metadata));
-
-            $this->transaction(0, "Refund Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt+$amount, json_encode($metadata), $data['amount'] / 100);
             $this->transaction($data['amount'] / 100, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt - $amount, json_encode($metadata));
 
-            $this->transaction(0, "Refund Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt + $amount, json_encode($metadata), $data['amount'] / 100);
+            $this->generalTransaction(0, "Refund Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt + $amount, json_encode($metadata), $data['amount'] / 100);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         }
     }
@@ -296,11 +293,12 @@ class PayoutController extends CommissionController
                     'amount' => $payout->amount
                 ];
                 $account_number = $payout->account_number;
-                $this->notAdmintransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $user->wallet + $payout->amount, json_encode($metadata), $payout->amount);
+                $this->notAdmintransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $closing_balance, json_encode($metadata), $payout->amount);
                 $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id, $payout->account_number);
             }
 
-            // event(new PayoutStatusUpdated("Amount {$payout->amount} ({$array['utr']})", "Payout {$array['status']}", $payout->user_id));
+            event(new PayoutStatusUpdated("Amt {$payout->amount} ({$array['utr']})", "{$array['status']}", $payout->user_id));
+
             return [
                 'metadata' =>
                 [
@@ -315,9 +313,5 @@ class PayoutController extends CommissionController
                 ]
             ];
         });
-
-        return $res;
-
-
     }
 }
