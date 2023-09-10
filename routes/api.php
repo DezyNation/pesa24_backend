@@ -367,7 +367,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin', 'active'], 'prefix' => 
 });
 
 Route::any('dmt-callback-paysprint', [CallbackController::class, 'dmtCallback']);
-Route::any('payout-callback', [WebhookController::class, 'confirmPayout'])->middleware(['idempotency', 'concurrency']);
+Route::any('payout-callback', [WebhookController::class, 'confirmPayout'])->middleware(['idempotency']);
 Route::any('onboard-callback-paysprint', [CallbackController::class, 'onboardCallback']);
 Route::any('income-wallet-callback', [CallbackController::class, 'incomeWallet']);
 Route::any('recharge-tradition-callback', [CallbackController::class, 'rechargeTradition']);
