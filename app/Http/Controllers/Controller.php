@@ -137,9 +137,7 @@ class Controller extends BaseController
                 'updated_at' => now()
             ]);
 
-            $user = User::lockForUpdate()->find($user_id);
-
-            $user->update(['wallet' => $closing_balance]);
+            DB::table('users')->where('id', $user_id)->update(['wallet' => $closing_balance, 'updated_at' => now()]);
             // User::where('id', $user_id)->update([
             //     'wallet' => $closing_balance
             // ]);
