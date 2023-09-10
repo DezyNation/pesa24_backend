@@ -262,7 +262,7 @@ class PayoutController extends CommissionController
                 return response($payout->status);
             }
             // Cache::put(time(), time());
-            Cache::put(time() . $payout->user_id, time() . $payout->user_id, 3);
+            // Cache::put(time() . $payout->user_id, time() . $payout->user_id, 3);
             $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
                 'Content-Type' => 'application/json'
             ])->get("https://api.razorpay.com/v1/payouts/$id");
