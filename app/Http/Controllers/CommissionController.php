@@ -1352,26 +1352,26 @@ class CommissionController extends Controller
                 'event' => 'refund',
                 'amount' => $amount
             ];
-            $this->notAdmintransaction($credit, "Charge Reversal for $account_number", 'payout-commission', $user_id, $user->wallet, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+            $this->generalTransaction($credit, "Charge Reversal for $account_number", 'payout-commission', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
 
-            // if (!$table->parents) {
-            //     return response("No commissions to parent users.");
-            // }
-            // $parent = DB::table('user_parent')->where('user_id', $user_id);
-            // if ($parent->exists()) {
-            //     $parent_id = $parent->pluck('parent_id');
-            //     if (is_null($parent_id[0])) {
-            //         return response("Parent not found");
-            //     }
-            //     $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
-            // }
+            if (!$table->parents) {
+                return response("No commissions to parent users.");
+            }
+            $parent = DB::table('user_parent')->where('user_id', $user_id);
+            if ($parent->exists()) {
+                $parent_id = $parent->pluck('parent_id');
+                if (is_null($parent_id[0])) {
+                    return response("Parent not found");
+                }
+                $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
+            }
             return $table;
         });
     }
 
     public function payoutReversalParent(int $user_id, $amount, $transaction_id, $account_number)
     {
-        DB::transaction(function () use ($user_id, $amount, $transaction_id, $account_number) {
+        $table = DB::transaction(function () use ($user_id, $amount, $transaction_id, $account_number) {
 
 
             $table = DB::table('payoutcommissions')
@@ -1408,24 +1408,23 @@ class CommissionController extends Controller
                 'event' => 'refund',
                 'amount' => $amount
             ];
-            $this->notAdmintransaction($credit, "Charge Reversal for $account_number", 'payout', $user_id, $user->wallet, $transaction_id, $closing_balance, json_encode($metadata), $debit);
+            $this->generalTransaction($credit, "Charge Reversal for $account_number", 'payout', $user_id, $opening_balance, $transaction_id, $closing_balance, json_encode($metadata), $debit);
 
-            // if (!$table->parents) {
-            //     return response("No comissions to parent users.");
-            // }
+            if (!$table->parents) {
+                return response("No comissions to parent users.");
+            }
 
-            // $parent = DB::table('user_parent')->where('user_id', $user_id);
+            $parent = DB::table('user_parent')->where('user_id', $user_id);
 
-            // if ($parent->exists()) {
-            //     $parent_id = $parent->pluck('parent_id');
-            //     if (is_null($parent_id[0])) {
-            //         return response("Parent not found");
-            //     }
-            //     $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
-            // }
-
-            return $table;
+            if ($parent->exists()) {
+                $parent_id = $parent->pluck('parent_id');
+                if (is_null($parent_id[0])) {
+                    return response("Parent not found");
+                }
+                $this->payoutReversalParent($parent_id[0], $amount, $transaction_id, $account_number);
+            }
         });
+        return $table;
     }
 
     public function licCommission($user_id, $amount)

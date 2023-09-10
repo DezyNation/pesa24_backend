@@ -144,7 +144,7 @@ class Controller extends BaseController
             //     'wallet' => $closing_balance
             // ]);
         }, 2);
-        // return response()->json(['message' => 'Transaction successful.']);
+        return response()->json(['message' => 'Transaction successful.']);
     }
 
     public function onboard()

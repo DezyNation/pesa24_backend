@@ -16,6 +16,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Validation\ValidationException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -233,7 +234,7 @@ class AuthenticatedSessionController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-
+                
                 return response(['token' => $this->respondWithToken($token), 'id' => auth()->user()->id, 'paysprint_id' => auth()->user()->paysprint_merchant, 'eko_id' => auth()->user()->user_code, 'profile_complete' => auth()->user()->profile, 'role' => auth()->user()->roles, 'name' => auth()->user()->name, 'profile_pic' => auth()->user()->profile_pic], 200);
             }
         }
