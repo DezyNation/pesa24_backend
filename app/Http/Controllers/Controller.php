@@ -137,7 +137,7 @@ class Controller extends BaseController
                 'updated_at' => now()
             ]);
 
-            $user = User::find($user_id);
+            $user = User::lockForUpdate()->find($user_id);
             $currentWallet = 50;
             // $user->wallet;
             if ($currentWallet !== User::find($user_id)->wallet) {
