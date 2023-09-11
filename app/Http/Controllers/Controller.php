@@ -126,6 +126,44 @@ class Controller extends BaseController
         // $user->wallet;
         if ($currentWallet !== User::find($user_id)->wallet) {
             Log::channel('reversals')->info("Conflict in wallet");
+            abort(400, "Conflict");
+        } else {
+
+            DB::transaction(function () use ($amount, $service, $service_type, $user_id, $opening_balance, $transaction_id, $closing_balance, $metadata, $credit) {
+                DB::table('transactions')->insert([
+                    'debit_amount' => $amount,
+                    'transaction_for' => $service,
+                    'user_id' => $user_id,
+                    'trigered_by' => $user_id,
+                    'credit_amount' => $credit,
+                    'opening_balance' => $opening_balance,
+                    'closing_balance' => $closing_balance,
+                    'service_type' => $service_type,
+                    'metadata' => $metadata,
+                    'transaction_id' => $transaction_id,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+
+                DB::table('users')->where('id', $user_id)->update(['wallet' => $closing_balance, 'updated_at' => now()]);
+
+                // $user->update(['wallet' => $closing_balance, 'updated_at' => now()]);
+                // User::where('id', $user_id)->update([
+                //     'wallet' => $closing_balance
+                // ]);
+            }, 2);
+        }
+        return response()->json(['message' => 'Transaction successful.']);
+    }
+
+    public function generalCallbackTransaction(float $amount, string $service, string $service_type, float $user_id, float $opening_balance, string $transaction_id, float $closing_balance, string $metadata, float $credit = 0)
+    {
+        $user = User::lockForUpdate()->find($user_id);
+        $currentWallet = 50;
+        // $user->wallet;
+        if ($currentWallet !== User::find($user_id)->wallet) {
+            Log::channel('reversals')->info("Conflict in wallet");
             abort(200, "Conflict");
         } else {
 
