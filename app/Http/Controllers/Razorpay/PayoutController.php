@@ -37,7 +37,7 @@ class PayoutController extends CommissionController
 
         if ($currentWallet !== User::find(auth()->user()->id)->wallet) {
             Log::channel('reversals')->info("Conflict in wallet payout");
-            abort(400, "Conflict with your balance.");
+            abort(400, "Another request is processing please retry.");
         }
 
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([

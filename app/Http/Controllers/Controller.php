@@ -126,7 +126,7 @@ class Controller extends BaseController
 
         if ($currentWallet !== User::find($user_id)->wallet) {
             Log::channel('reversals')->info("Conflict in wallet");
-            abort(400, "Conflict with user's balance.");
+            abort(400, "Another request is processing please retry.");
         } else {
             # code...
             DB::transaction(function () use ($amount, $service, $service_type, $user_id, $opening_balance, $transaction_id, $closing_balance, $metadata, $credit) {
@@ -161,7 +161,7 @@ class Controller extends BaseController
 
         if ($currentWallet !== User::find($user_id)->wallet) {
             Log::channel('reversals')->info("Conflict in wallet");
-            abort(200, "Conflict with user's balance.");
+            abort(200, "Another request is processing please retry.");
         } else {
             # code...
             DB::transaction(function () use ($amount, $service, $service_type, $user_id, $opening_balance, $transaction_id, $closing_balance, $metadata, $credit) {
