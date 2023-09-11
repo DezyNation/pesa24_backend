@@ -137,7 +137,15 @@ class Controller extends BaseController
                 'updated_at' => now()
             ]);
 
-            $user = DB::table('users')->where('id', $user_id)->update(['wallet' => $closing_balance, 'updated_at' => now()]);
+            $user = User::find($user_id);
+            $currentWallet = 50;
+            // $user->wallet;
+            if ($currentWallet !== User::find($user_id)->wallet) {
+                Log::channel('reversals')->info("Conflict in wallet");
+                abort(400, "Conflict");
+            } else {
+                DB::table('users')->where('id', $user_id)->update(['wallet' => $closing_balance, 'updated_at' => now()]);
+            }
 
             // $user->update(['wallet' => $closing_balance, 'updated_at' => now()]);
             // User::where('id', $user_id)->update([
