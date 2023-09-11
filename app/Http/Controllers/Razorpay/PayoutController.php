@@ -32,6 +32,14 @@ class PayoutController extends CommissionController
             'reference_id' => "JND" . uniqid(),
         ];
 
+        $user =  User::find(auth()->user()->id);
+        $currentWallet = $user->wallet;
+
+        if ($currentWallet !== User::find(auth()->user()->id)->wallet) {
+            Log::channel('reversals')->info("Conflict in wallet payout");
+            abort(400, "Conflict with your balance.");
+        }
+
         $transfer =  Http::withBasicAuth('rzp_live_XgWJpiVBPIl3AC', '1vrEAOIWxIxHkHUQdKrnSWlF')->withHeaders([
             'Content-Type' => 'application/json'
         ])->post('https://api.razorpay.com/v1/payouts', $data);
@@ -99,7 +107,7 @@ class PayoutController extends CommissionController
                 'to' => $request['bank_account']['name'] ?? null,
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->generalTransaction($amount, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt - $amount, json_encode($metadata));
+            $this->notAdmintransaction($amount, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt - $amount, json_encode($metadata));
             $this->payoutCommission(auth()->user()->id, $amount, $transaction_id, $metadata['account_number']);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         } else {
@@ -133,9 +141,9 @@ class PayoutController extends CommissionController
                 'r_status' => $transfer->status(),
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            $this->generalTransaction($data['amount'] / 100, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt - $amount, json_encode($metadata));
+            $this->notAdmintransaction($data['amount'] / 100, "Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt - $amount, json_encode($metadata));
 
-            $this->generalTransaction(0, "Refund Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt + $amount, json_encode($metadata), $data['amount'] / 100);
+            $this->notAdmintransaction(0, "Refund Bank Payout for acc {$metadata['account_number']}", 'payout', auth()->user()->id, $walletAmt, $transaction_id, $walletAmt + $amount, json_encode($metadata), $data['amount'] / 100);
             return response(['Transaction sucessfull', 'metadata' => $metadata2], 200);
         }
     }
@@ -262,6 +270,26 @@ class PayoutController extends CommissionController
                 'Content-Type' => 'application/json'
             ])->get("https://api.razorpay.com/v1/payouts/$id");
 
+            $user =  User::find($payout->user_id);
+            $currentWallet = $user->wallet;
+            if ($currentWallet !== User::find($payout->user_id)->wallet) {
+                Log::channel('reversals')->info("Conflict in wallet payout status");
+                abort(200, "Conflict with user's balance.");
+                return [
+                    'metadata' =>
+                    [
+                        'status' => $transfer['status'],
+                        'utr' => $transfer['utr'],
+                        'reference_id' => $transfer['reference_id'],
+                        'amount' => $transfer['amount'] / 100,
+                        'to' => $payout->beneficiary_name ?? null,
+                        'account_number' => $payout->account_number,
+                        'ifsc' => $payout->ifsc,
+                        'created_at' => $payout->created_at
+                    ]
+                ];
+            }
+
             $this->apiRecords($payout->reference_id, 'razorpay', $transfer);
 
             DB::table('payouts')->where('payout_id', $id)->update([
@@ -293,7 +321,7 @@ class PayoutController extends CommissionController
                     'amount' => $payout->amount
                 ];
                 $account_number = $payout->account_number;
-                $this->generalTransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $closing_balance, json_encode($metadata), $payout->amount);
+                $this->notAdmintransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $closing_balance, json_encode($metadata), $payout->amount);
                 $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id, $payout->account_number);
             }
 

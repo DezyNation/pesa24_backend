@@ -77,7 +77,7 @@ class WebhookController extends CommissionController
                     'amount' => $request['payload.payout.entity.amount'] / 100
                 ];
                 $account_number = $result[0]->account_number;
-                $this->generalTransaction(0, "Payout Reversal for account $account_number", 'payout', $result[0]->user_id, $user->wallet, $request['payload.payout.entity.reference_id'], $user->wallet + $request['payload.payout.entity.amount'] / 100, json_encode($metadata), $request['payload.payout.entity.amount'] / 100);
+                $this->generalCallbackTransaction(0, "Payout Reversal for account $account_number", 'payout', $result[0]->user_id, $user->wallet, $request['payload.payout.entity.reference_id'], $user->wallet + $request['payload.payout.entity.amount'] / 100, json_encode($metadata), $request['payload.payout.entity.amount'] / 100);
                 $commission = $this->razorpayReversal($result[0]->amount, $result[0]->user_id, $request['payload.payout.entity.reference_id'], $result[0]->account_number);
                 $utr = $request['payload.payout.entity.utr'] ?? 'No UTR';
                 // event(new PayoutStatusUpdated("Amt {$result[0]->amount} ($utr)", "{$request['payload.payout.entity.status']}", $result[0]->user_id));
