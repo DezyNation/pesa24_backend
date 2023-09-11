@@ -126,10 +126,8 @@ class Controller extends BaseController
         // $user->wallet;
         if ($currentWallet !== User::find($user_id)->wallet) {
             Log::channel('reversals')->info("Conflict in wallet");
-            abort(400, "Conflict");
+            abort(200, "Conflict");
         } else {
-            DB::table('users')->where('id', $user_id)->update(['wallet' => $closing_balance, 'updated_at' => now()]);
-
 
             DB::transaction(function () use ($amount, $service, $service_type, $user_id, $opening_balance, $transaction_id, $closing_balance, $metadata, $credit) {
                 DB::table('transactions')->insert([
@@ -146,6 +144,9 @@ class Controller extends BaseController
                     'created_at' => now(),
                     'updated_at' => now()
                 ]);
+
+
+                DB::table('users')->where('id', $user_id)->update(['wallet' => $closing_balance, 'updated_at' => now()]);
 
                 // $user->update(['wallet' => $closing_balance, 'updated_at' => now()]);
                 // User::where('id', $user_id)->update([
