@@ -275,6 +275,24 @@ class PayoutController extends CommissionController
                 'Content-Type' => 'application/json'
             ])->get("https://api.razorpay.com/v1/payouts/$id");
 
+            $user = User::lockForUpdate()->find($payout->user_id);
+            $currentWallet = $user->wallet;
+            if ($currentWallet !== User::find($payout->user_id)->wallet) {
+                Log::channel('reversals')->info("Conflict in wallet");
+                return [
+                    'metadata' =>
+                    [
+                        'status' => $transfer['status'],
+                        'utr' => $transfer['utr'],
+                        'reference_id' => $transfer['reference_id'],
+                        'amount' => $transfer['amount'] / 100,
+                        'to' => $payout->beneficiary_name ?? null,
+                        'account_number' => $payout->account_number,
+                        'ifsc' => $payout->ifsc,
+                        'created_at' => $payout->created_at
+                    ]
+                ];
+            }
             $this->apiRecords($payout->reference_id, 'razorpay', $transfer);
 
             DB::table('payouts')->where('payout_id', $id)->update([
@@ -305,7 +323,7 @@ class PayoutController extends CommissionController
                     'amount' => $payout->amount
                 ];
                 $account_number = $payout->account_number;
-                $this->generalTransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $user->wallet + $payout->amount, json_encode($metadata), $payout->amount);
+                $this->notAdmintransaction(0, "Payout Reversal for account $account_number", 'payout', $payout->user_id, $user->wallet, $reference_id, $user->wallet + $payout->amount, json_encode($metadata), $payout->amount);
                 $commission = $this->razorpayReversal($payout->amount, $payout->user_id, $reference_id, $payout->account_number);
             }
 
