@@ -112,9 +112,10 @@ class Controller extends BaseController
             'updated_at' => now()
         ]);
 
-        User::where('id', $user_id)->update([
-            'wallet' => $closing_balance
-        ]);
+        $user = User::find($user_id);
+        $user->lockForUpdate()->get();
+        $user->wallet = $closing_balance;
+        $user->save();
         // }, 2);
         return response()->json(['message' => 'Transaction successful.']);
     }
@@ -184,7 +185,10 @@ class Controller extends BaseController
                     'updated_at' => now()
                 ]);
 
-                DB::table('users')->where('id', $user_id)->update(['wallet' => $closing_balance, 'updated_at' => now()]);
+                $user = User::find($user_id);
+                $user->lockForUpdate()->get();
+                $user->wallet = $closing_balance;
+                $user->save();
                 // User::where('id', $user_id)->update([
                 //     'wallet' => $closing_balance
                 // ]);
