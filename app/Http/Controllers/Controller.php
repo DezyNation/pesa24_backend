@@ -121,14 +121,14 @@ class Controller extends BaseController
 
     public function generalTransaction(float $amount, string $service, string $service_type, float $user_id, float $opening_balance, string $transaction_id, float $closing_balance, string $metadata, float $credit = 0)
     {
-        $user = User::lockForUpdate()->find($user_id);
-        $currentWallet = 50;
-        // $user->wallet;
+        $user =  User::find($user_id);
+        $currentWallet = $user->wallet;
+
         if ($currentWallet !== User::find($user_id)->wallet) {
             Log::channel('reversals')->info("Conflict in wallet");
-            abort(400, "Conflict");
+            abort(400, "Another request is processing please retry.");
         } else {
-
+            # code...
             DB::transaction(function () use ($amount, $service, $service_type, $user_id, $opening_balance, $transaction_id, $closing_balance, $metadata, $credit) {
                 DB::table('transactions')->insert([
                     'debit_amount' => $amount,
@@ -145,28 +145,29 @@ class Controller extends BaseController
                     'updated_at' => now()
                 ]);
 
-
-                DB::table('users')->where('id', $user_id)->update(['wallet' => $closing_balance, 'updated_at' => now()]);
-
-                // $user->update(['wallet' => $closing_balance, 'updated_at' => now()]);
+                $user = User::find($user_id);
+                $user->lockForUpdate()->get();
+                $user->wallet = $closing_balance;
+                $user->save();
+                // DB::table('users')->where('id', $user_id)->update(['wallet' => $closing_balance, 'updated_at' => now()]);
                 // User::where('id', $user_id)->update([
                 //     'wallet' => $closing_balance
                 // ]);
             }, 2);
         }
-        return response()->json(['message' => 'Transaction successful.']);
+        // return response()->json(['message' => 'Transaction successful.']);
     }
 
     public function generalCallbackTransaction(float $amount, string $service, string $service_type, float $user_id, float $opening_balance, string $transaction_id, float $closing_balance, string $metadata, float $credit = 0)
     {
-        $user = User::lockForUpdate()->find($user_id);
-        $currentWallet = 50;
-        // $user->wallet;
+        $user =  User::find($user_id);
+        $currentWallet = $user->wallet;
+
         if ($currentWallet !== User::find($user_id)->wallet) {
             Log::channel('reversals')->info("Conflict in wallet");
-            abort(200, "Conflict");
+            abort(200, "Another request is processing please retry.");
         } else {
-
+            # code...
             DB::transaction(function () use ($amount, $service, $service_type, $user_id, $opening_balance, $transaction_id, $closing_balance, $metadata, $credit) {
                 DB::table('transactions')->insert([
                     'debit_amount' => $amount,
@@ -183,16 +184,13 @@ class Controller extends BaseController
                     'updated_at' => now()
                 ]);
 
-
                 DB::table('users')->where('id', $user_id)->update(['wallet' => $closing_balance, 'updated_at' => now()]);
-
-                // $user->update(['wallet' => $closing_balance, 'updated_at' => now()]);
                 // User::where('id', $user_id)->update([
                 //     'wallet' => $closing_balance
                 // ]);
             }, 2);
         }
-        return response()->json(['message' => 'Transaction successful.']);
+        // return response()->json(['message' => 'Transaction successful.']);
     }
 
     public function onboard()
